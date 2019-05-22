@@ -2,3 +2,8 @@
 /**
 Shortcode Style
 */
+div.rrze-jobs-single {
+    background-color: rgb(239, 239, 242);
+    padding: 10px;
+    border: 1px solid #C3C3CB;
+}
