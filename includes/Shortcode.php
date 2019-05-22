@@ -11,7 +11,7 @@ class Shortcode
      */
     public function __construct()
     {
-        //add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_shortcode('jobs', [$this, 'jobs_shortcode'], 10, 2);
     }
 
@@ -22,7 +22,7 @@ class Shortcode
     {
         wp_register_style('jobs-shortcode', plugins_url('assets/css/jobs-shortcode.min.css', plugin_basename(RRZE_PLUGIN_FILE)));
         //wp_register_script('jobs-shortcode', plugins_url('assets/js/jobs-shortcode.min.js', plugin_basename(RRZE_PLUGIN_FILE)));
-        wp_register_script('jobs-shortcode', plugins_url('assets/js/jobs-shortcode.js', plugin_basename(RRZE_PLUGIN_FILE)));
+        //wp_register_script('jobs-shortcode', plugins_url('assets/js/jobs-shortcode.js', plugin_basename(RRZE_PLUGIN_FILE)));
     }
 
     /**
@@ -64,7 +64,7 @@ class Shortcode
                     $custom_logo_id = get_theme_mod( 'custom_logo' );
                     $logo_url = has_custom_logo() ?  wp_get_attachment_url($custom_logo_id) : '';
 
-                    $output .= '<a href="' . get_permalink() . '" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list','rrze-jobs') . '</a><hr />';
+                    $output .= '<p></p><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list','rrze-jobs') . '</a></p>';
                     $output .= '<div itemscope itemtype="https://schema.org/JobPosting" class="rrze-jobs-single">';
                     $output .= '<div itemprop="description">' . $obj_job->Beschreibung . '</div>';
                     $output .= '<meta itemprop="title" content="' . $obj_job->Stellenbezeichnung . '" />'
@@ -90,7 +90,7 @@ class Shortcode
                                 . '<meta itemprop="url" content="' . $obj_job->HomepageBehoerde . '" />'
                             . '</span>';
                     $output .= '</div>';
-                    $output .= '<hr /><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list','rrze-jobs') . '</a>';
+                    $output .= '<p></p><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list','rrze-jobs') . '</a></p>';
 
                 } else {
                     $api_url = sprintf('https://www.interamt.de/koop/app/webservice_v2?partner=%s', $orgid);
@@ -123,7 +123,7 @@ class Shortcode
         }
         return $output;
 
-        //wp_enqueue_style('jobs-shortcode');
+        wp_enqueue_style('jobs-shortcode');
         //wp_enqueue_script('jobs-shortcode');
 
     }
