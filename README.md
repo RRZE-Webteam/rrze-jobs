@@ -16,4 +16,6 @@ GNU General Public License (GPL) Version 2
 
 ```html
 [jobs provider="Interamt" orgid="1234"]
+[jobs provider="Interamt" jobid="123456"]
+
 ```
