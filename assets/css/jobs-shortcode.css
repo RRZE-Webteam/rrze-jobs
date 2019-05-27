@@ -7,3 +7,6 @@ div.rrze-jobs-single {
     padding: 10px;
     border: 1px solid #C3C3CB;
 }
+.rrze-jobs-closelink {
+    margin:1em 1em 1em 2em;
+}
