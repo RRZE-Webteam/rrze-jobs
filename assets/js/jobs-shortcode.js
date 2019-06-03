@@ -13,7 +13,7 @@ jQuery(document).ready(function($) {
             },
             success: function (data, textStatus, XMLHttpRequest) {
                 //console.log( $.parseJSON(data));
-                $close_link = '<p id="link-container"><a href="#" class="view-all alignright rrze-jobs-closelink"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
+                $close_link = '<p name="link-container" class="rrze-jobs-closelink-container"><a href="#" class="view-all rrze-jobs-closelink"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
                 $('div.rrze-jobs-single, a.rrze-jobs-closelink').remove();
                 $('ul.rrze-jobs-list').after($close_link + $.parseJSON(data));
             },
