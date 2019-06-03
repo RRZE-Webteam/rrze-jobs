@@ -29,6 +29,9 @@ class Shortcode
                 'ajaxurl' => admin_url( 'admin-ajax.php' )
             )
         );
+        if (file_exists(WP_PLUGIN_DIR.'/rrze-elements/assets/css/rrze-elements.min.css')) {
+	        wp_register_style( 'rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css' );
+        }
     }
 
     /**
@@ -58,29 +61,23 @@ class Shortcode
 
         if (strtolower($provider) == 'interamt') {
             if ($orgid != '') {
-                if (!empty($_GET['jobid'])) {
-                    $output = '';
-                    $output .= '<a name="rrze-jobs-anchor"></a>';
-                    $output .= '<p><a href="' . get_permalink() . '#rrze-jobs-anchor" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list', 'rrze-jobs') . '</a></p>';
-
-                    $output .= $this->get_single_job($_GET['jobid']);
-                    $output .= '<p><a href="' . get_permalink() . '#rrze-jobs-anchor" class="view-all"><i class="fa fa-arrow-left" aria-hidden="true"></i> ' . __('back to list', 'rrze-jobs') . '</a></p>';
-                } else {
-                    $output .= '<a name="rrze-jobs-anchor"></a>';
-                    $output .= $this->get_job_list($orgid);
-                }
+	            $output = '';
+                $output .= $this->get_job_list($orgid);
             }
-            if ($orgid == '' && $jobid != '') {
+	        if (!empty($_GET['jobid'])) {
+		        $jobid = $_GET['jobid'];
+		        $output .= '<p class="rrze-jobs-closelink-container"><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
+            }
+            if ($jobid != '') {
                 $output .= $this->get_single_job($jobid);
             }
         }
 
+        wp_enqueue_style('rrze-elements');
         wp_enqueue_style('jobs-shortcode');
         wp_enqueue_script('jobs-shortcode');
 
         return $output;
-
-
     }
 
     public function rrze_jobs_ajax_function() {
@@ -94,14 +91,25 @@ class Shortcode
         $json = file_get_contents($api_url);
         $json = utf8_encode($json);
         $obj = json_decode($json);
-        /*print "<pre>";
-        var_dump($obj);
-        print "</pre>";
-        */
+	    $custom_logo_id = get_theme_mod('custom_logo');
+	    $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
+
         $output = '';
         $output .= '<ul class=\'rrze-jobs-list\'>';
         foreach ($obj->Stellenangebote as $job) {
-            $output .= '<li><a href="?jobid=' . $job->Id . '#rrze-jobs-anchor" data-jobid="' . $job->Id . '" class="joblink">' . $job->StellenBezeichnung . '</a> (' . $job->Bezahlung->Entgelt . ')' . '</li>';
+            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $job->Id . '" data-jobid="' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a> (' . $job->Bezahlung->Entgelt . ')'
+                . '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
+                . '<meta itemprop="datePosted" content="' . $this->transform_date($job->Daten->Eingestellt) . '" />'
+                . '<meta itemprop="description" content="' . $job->StellenBezeichnung . '" />'
+                . '<meta itemprop="validThrough" content="' . $this->transform_date($job->Daten->Bewerbungsfrist) . '" />'
+                . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+                . '<meta itemprop="name" content="' . $job->Behoerde . '" />'
+                . '<meta itemprop="logo" content="' . $logo_url . '" />'
+                . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
+                . '<meta itemprop="postalCode" content="' . $job->Ort->Plz . '" />'
+                . '<meta itemprop="addressLocality" content="' . $job->Ort->Stadt . '" />'
+                . '</span>'
+                . '</li>';
         }
         $output .= '</ul>';
         return $output;
@@ -112,37 +120,117 @@ class Shortcode
         $json_job = file_get_contents($api_url_job);
         $json_job = utf8_encode($json_job);
         $obj_job = json_decode($json_job);
-        /*print "<pre>";
-        var_dump($obj_job);
-        print "</pre>";*/
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
-        $output = '';
-        $output .= '<div itemscope itemtype="https://schema.org/JobPosting" class="rrze-jobs-single">';
-        $output .= '<div itemprop="description">' . $obj_job->Beschreibung . '</div>';
-        $output .= '<meta itemprop="title" content="' . $obj_job->Stellenbezeichnung . '" />'
-            . '<meta itemprop="datePosted" content="' . $obj_job->DatumOeffentlichAusschreiben . '" />'
-            //. '<span itemprop="baseSalary" itemscope itemtype="http://schema.org/PriceSpecification" >'
-            //    . '<meta itemprop="price" content="' . $obj_job->TarifEbeneVon . ' bis ' . $obj_job->TarifEbeneBis . '" />'
-            //. '</span>'
-            . '<meta itemprop="employmentType" content="' . $obj_job->Teilzeit . '" />'
-            . '<meta itemprop="validThrough" content="' . $obj_job->DatumBewerbungsfrist . '" />'
-            . '<meta itemprop="workHours" content="' . $obj_job->WochenarbeitszeitArbeitnehmer . '" />'
-            . '<meta itemprop="hiringOrganization" content="' . $obj_job->StellenangebotBehoerde . '" />'
+        if ($obj_job->TarifEbeneVon == $obj_job->TarifEbeneBis) {
+            $salary = ($obj_job->TarifEbeneVon != '') ? $obj_job->TarifEbeneVon : $obj_job->TarifEbeneBis;
+        } else {
+            $salary = $obj_job->TarifEbeneVon . ' – ' . $obj_job->TarifEbeneBis;
+        }
+        $application_email = 'RRZE-Bewerbungseingang@fau.de';
+        $application_subject = str_replace( [ "[" , "]" ] , [ "&#91;" , "&#93;" ] , $obj_job->Kennung ) . ' z.H. '
+            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerAnrede . ' '
+            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerVorname . ' '
+            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerNachname;
+        $application_mailto = 'mailto:' . $application_email . '?subject=' . $application_subject;
+        $date = date_create($obj_job->DatumBewerbungsfrist);
+        $date_deadline = date_format($date, 'd.m.Y');
+
+        $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $obj_job->Beschreibung . '</div>';
+
+        $sidebar = '';
+        $sidebar .= do_shortcode('<div>[button link="' . $application_mailto . '" width="full"]Jetzt bewerben![/button]</div>');
+
+        $sidebar .= '<div class="rrze-jobs-single-application"><dl>'
+            . '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
+            . '<dd itemprop="validThrough" content="' . $obj_job->DatumBewerbungsfrist . '">' . $date_deadline . '</dd>'
+            . '<dt>' . __('Referenz', 'rrze-jobs') . '</dt>'
+            . '<dd>' . str_replace( [ "[" , "]" ] , [ "&#91;" , "&#93;" ] , $obj_job->Kennung) . '</dd>'
+            . '<dt>' . __('Bewerbung', 'rrze-jobs') . '</dt>'
+            . '<dd>Bitte bewerben Sie sich ausschließlich per E-Mail an <a href="' . $application_mailto . '">RRZE-Bewerbungseingang@fau.de</a>, <br/>'
+            . 'Betreff: ' . $application_subject
+            . '</dd>'
+            . '</dl></div>';
+
+        $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
+        $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
+            . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $obj_job->Stellenbezeichnung . '</dd>';
+        /*if ($obj_job->AnzahlStellen != '') {
+            $sidebar .= '<dt>'.__('Anzahl Stellen','rrze-jobs') . '</dt><dd>' . $obj_job->AnzahlStellen . '</dd>';
+        }*/
+        if ($obj_job->DatumBesetzungZum != '') {
+            $sidebar .= '<dt>'.__('Besetzung zum','rrze-jobs') . '</dt><dd>' . $obj_job->DatumBesetzungZum . '</dd>';
+        }
+        if (!empty($obj_job->Einsatzort)) {
+            $sidebar .= '<dt>'.__('Einsatzort','rrze-jobs'). '</dt>'
+                . '<dd itemprop="hiringOrganization">' . $obj_job->StellenangebotBehoerde . '<br />'
+                         . $obj_job->Einsatzort->EinsatzortStrasse . '<br />'
+                         . $obj_job->Einsatzort->EinsatzortPLZ . ' ' . $obj_job->Einsatzort->EinsatzortOrt
+                . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+                    . '<meta itemprop="logo" content="' . $logo_url . '" />'
+                    . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
+                        . '<meta itemprop="name" content="' . $obj_job->StellenangebotBehoerde . '" />'
+                        . '<meta itemprop="streetAddress" content="' . $obj_job->Einsatzort->EinsatzortStrasse . '" />'
+                        . '<meta itemprop="postalCode" content="' . $obj_job->Einsatzort->EinsatzortPLZ . '" />'
+                        . '<meta itemprop="addressLocality" content="' . $obj_job->Einsatzort->EinsatzortOrt . '" />'
+                        . '<meta itemprop="addressRegion" content="' . $obj_job->BeschaeftigungBereichBundesland . '" />'
+                        . '<meta itemprop="url" content="' . $obj_job->HomepageBehoerde . '" />'
+                    .'</span></span>'
+                . '</dd>';
+        }
+        $sidebar .= '<hr />';
+
+        if ($salary != '') {
+            $sidebar .= '<dt>'.__('Entgelt','rrze-jobs') . '</dt><dd>' . $salary . '</dd>';
+        }
+        if ($obj_job->Teilzeit != '') {
+            $sidebar .= '<dt>'.__('Teilzeit / Vollzeit','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $obj_job->Teilzeit . '</dd>';
+        }
+        if ($obj_job->WochenarbeitszeitArbeitnehmer != '') {
+            $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . number_format($obj_job->WochenarbeitszeitArbeitnehmer, 1, ',', '.') . ' h</dd>';
+        }
+        if ($obj_job->BeschaeftigungDauer == 'befristet') {
+            $sidebar .= '<dt>'.__('Befristung (Monate)','rrze-jobs') . '</dt><dd>' . $obj_job->BefristetFuer . '</dd>';
+        }
+        $sidebar .= '<hr />';
+
+        if (!empty($obj_job->ExtAnsprechpartner)) {
+            $sidebar .= '<dt>'.__('Ansprechpartner für weitere Informationen','rrze-jobs') . '</dt>'
+                . '<dd>' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerAnrede . ' ' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerVorname . ' ' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerNachname;
+            if ($obj_job->ExtAnsprechpartner->ExtAnsprechpartnerTelefon != '') {
+                $sidebar.= '<br />' . __('Telefon', 'rrze-jobs') . ': ' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerTelefon;
+            }
+            if ($obj_job->ExtAnsprechpartner->ExtAnsprechpartnerMobil != '') {
+                $sidebar.= '<br />' . __('Mobil', 'rrze-jobs') . ': ' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerMobil;
+            }
+            if ($obj_job->ExtAnsprechpartner->ExtAnsprechpartnerEMail != '') {
+                $sidebar.= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerEMail . '">' . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerEMail . '</a>';
+            }
+            $sidebar .= '</dd>';
+        }
+        $sidebar .= '</dl>';
+
+        $sidebar .= '<div><meta itemprop="datePosted" content="' . $obj_job->DatumOeffentlichAusschreiben . '" />'
+            //. '<meta itemprop="hiringOrganization" content="' . $obj_job->StellenangebotBehoerde . '" />'
             . '<meta itemprop="qualifications" content="' . $obj_job->Qualifikation . '" />'
             . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $obj_job->Id . '" />'
-            . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-            . '<meta itemprop="name" content="' . $obj_job->StellenangebotBehoerde . '" />'
-            . '<meta itemprop="logo" content="' . $logo_url . '" />'
-            . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
-            . '<meta itemprop="streetAddress" content="' . $obj_job->Einsatzort->EinsatzortStrasse . '" />'
-            . '<meta itemprop="postalCode" content="' . $obj_job->Einsatzort->EinsatzortPLZ . '" />'
-            . '<meta itemprop="addressLocality" content="' . $obj_job->Einsatzort->EinsatzortOrt . '" />'
-            . '<meta itemprop="addressRegion" content="' . $obj_job->BeschaeftigungBereichBundesland . '" />'
-            . '</span>'
-            . '<meta itemprop="url" content="' . $obj_job->HomepageBehoerde . '" />'
-            . '</span>';
+            . '</div>';
+        $sidebar .= '</div>';
+
+        $output = '';
+        $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+        $output .= do_shortcode('[three_columns_two]' . $description .'[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
         $output .= '</div>';
+
         return $output;
+    }
+
+    private function transform_date($date) {
+        $date_parts = explode('.', $date);
+        if (empty($date_parts)) {
+            return '';
+        } else {
+            return $date_parts[2] . '-' . $date_parts[1] . '-' . $date_parts[0];
+        }
     }
 }
