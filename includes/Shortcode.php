@@ -127,6 +127,7 @@ class Shortcode
         $obj_job = json_decode($json_job);
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
+        $azubi = (strpos($obj_job->Stellenbezeichnung, 'Auszubildende') !== true) ? true : false;
         if ($obj_job->TarifEbeneVon == $obj_job->TarifEbeneBis) {
             $salary = ($obj_job->TarifEbeneVon != '') ? $obj_job->TarifEbeneVon : $obj_job->TarifEbeneBis;
         } else {
@@ -160,12 +161,17 @@ class Shortcode
         $application_mailto = 'mailto:' . $application_email . '?subject=' . $application_subject;
         $date = date_create($obj_job->DatumBewerbungsfrist);
         $date_deadline = date_format($date, 'd.m.Y');
-
-        $obj_job->Beschreibung = str_replace($kennung_old, $obj_job->Kennung, $obj_job->Beschreibung );
+		if (isset($kennung_old)) {
+			$obj_job->Beschreibung = str_replace( $kennung_old, $obj_job->Kennung, $obj_job->Beschreibung );
+		}
         $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $obj_job->Beschreibung . '</div>';
 
         $sidebar = '';
-        $sidebar .= do_shortcode('<div>[button link="' . $application_mailto . '" width="full"]Jetzt bewerben![/button]</div>');
+	    if ($azubi) {
+		    $sidebar .= do_shortcode( '<div>[button link="https://azb.rrze.fau.de/" width="full"]Jetzt bewerben![/button]</div>' );
+	    } else {
+		    $sidebar .= do_shortcode( '<div>[button link="' . $application_mailto . '" width="full"]Jetzt bewerben![/button]</div>' );
+	    }
 
         $sidebar .= '<div class="rrze-jobs-single-application"><dl>'
             . '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
@@ -174,8 +180,12 @@ class Shortcode
 	        $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>'
 	                   . '<dd>' . $obj_job->Kennung . '</dd>';
         }
-	    $sidebar .= '<dt>' . __('Bewerbung', 'rrze-jobs') . '</dt>'
-	                . '<dd>Bitte bewerben Sie sich ausschließlich per E-Mail an <a href="' . $application_mailto . '">' . $application_email . '</a>';
+	    $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
+        if ($azubi) {
+		    $sidebar .= '<dd>Online über unser <a href="https://azb.rrze.fau.de/">Azubi-Bewerbungsportal</a>';
+	    } else {
+		    $sidebar .= '<dd>Bitte bewerben Sie sich ausschließlich per E-Mail an <a href="' . $application_mailto . '">' . $application_email . '.</a>';
+	    }
         if ($obj_job->Kennung) {
 	        $sidebar .= ', <br/>Betreff: ' . $application_subject;
         }
