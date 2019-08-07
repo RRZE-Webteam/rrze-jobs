@@ -128,7 +128,6 @@ class Shortcode
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
         $azubi = (strpos($obj_job->Stellenbezeichnung, 'Auszubildende') !== false) ? true : false;
-        var_dump($azubi);
         if ($obj_job->TarifEbeneVon == $obj_job->TarifEbeneBis) {
             $salary = ($obj_job->TarifEbeneVon != '') ? $obj_job->TarifEbeneVon : $obj_job->TarifEbeneBis;
         } else {
