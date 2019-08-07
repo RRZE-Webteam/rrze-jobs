@@ -99,8 +99,11 @@ class Shortcode
         $output = '';
         $output .= '<ul class=\'rrze-jobs-list\'>';
         foreach ($obj->Stellenangebote as $job) {
-            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $job->Id . '" data-jobid="' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a> (' . $job->Bezahlung->Entgelt . ')'
-                . '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
+        	$output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $job->Id . '" data-jobid="' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a>';
+            if (isset($job->Bezahlung->Entgelt) && $job->Bezahlung->Entgelt != '') {
+	            $output .= ' (' . $job->Bezahlung->Entgelt . ')';
+            }
+	        $output .= '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
                 . '<meta itemprop="datePosted" content="' . $this->transform_date($job->Daten->Eingestellt) . '" />'
                 . '<meta itemprop="description" content="' . $job->StellenBezeichnung . '" />'
                 . '<meta itemprop="validThrough" content="' . $this->transform_date($job->Daten->Bewerbungsfrist) . '" />'
