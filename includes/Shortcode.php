@@ -89,6 +89,8 @@ class Shortcode
     private function get_job_list ($orgid) {
         $api_url = sprintf('https://www.interamt.de/koop/app/webservice_v2?partner=%s', $orgid);
         $json = file_get_contents($api_url);
+        if (!$json)
+        	return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
         $json = utf8_encode($json);
         $obj = json_decode($json);
 	    $custom_logo_id = get_theme_mod('custom_logo');
