@@ -89,6 +89,8 @@ class Shortcode
     private function get_job_list ($orgid) {
         $api_url = sprintf('https://www.interamt.de/koop/app/webservice_v2?partner=%s', $orgid);
         $json = file_get_contents($api_url);
+        if (!$json)
+        	return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
         $json = utf8_encode($json);
         $obj = json_decode($json);
 	    $custom_logo_id = get_theme_mod('custom_logo');
@@ -97,8 +99,11 @@ class Shortcode
         $output = '';
         $output .= '<ul class=\'rrze-jobs-list\'>';
         foreach ($obj->Stellenangebote as $job) {
-            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $job->Id . '" data-jobid="' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a> (' . $job->Bezahlung->Entgelt . ')'
-                . '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
+        	$output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $job->Id . '" data-jobid="' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a>';
+            if (isset($job->Bezahlung->Entgelt) && $job->Bezahlung->Entgelt != '') {
+	            $output .= ' (' . $job->Bezahlung->Entgelt . ')';
+            }
+	        $output .= '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
                 . '<meta itemprop="datePosted" content="' . $this->transform_date($job->Daten->Eingestellt) . '" />'
                 . '<meta itemprop="description" content="' . $job->StellenBezeichnung . '" />'
                 . '<meta itemprop="validThrough" content="' . $this->transform_date($job->Daten->Bewerbungsfrist) . '" />'
@@ -128,14 +133,35 @@ class Shortcode
             $salary = $obj_job->TarifEbeneVon . ' – ' . $obj_job->TarifEbeneBis;
         }
         $application_email = 'RRZE-Bewerbungseingang@fau.de';
-        $application_subject = str_replace( [ "[" , "]" ] , [ "&#91;" , "&#93;" ] , $obj_job->Kennung ) . ' z.H. '
-            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerAnrede . ' '
-            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerVorname . ' '
-            . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerNachname;
+        if ($obj_job->Kennung != 'keine') {
+        	$kennung_old = $obj_job->Kennung;
+	        switch ( mb_substr( $obj_job->Kennung, - 2 ) ) {
+		        case '-I':
+			        $obj_job->Kennung = preg_replace( '/-I$/', '-W', $obj_job->Kennung );
+			        break;
+		        case '-U':
+			        $obj_job->Kennung = preg_replace( '/-U$/', '-W', $obj_job->Kennung );
+			        break;
+		        default:
+			        $obj_job->Kennung = $obj_job->Kennung . '-W';
+	        }
+	        $obj_job->Kennung = str_replace( [ "[", "]" ], [ "&#91;", "&#93;" ], $obj_job->Kennung );
+        } else {
+	        $obj_job->Kennung = NULL;
+        }
+        if ($obj_job->Kennung) {
+	        $application_subject = $obj_job->Kennung . ' z.H. '
+	                               . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerAnrede . ' '
+	                               . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerVorname . ' '
+	                               . $obj_job->ExtAnsprechpartner->ExtAnsprechpartnerNachname;
+        } else {
+	        $application_subject = '';
+        }
         $application_mailto = 'mailto:' . $application_email . '?subject=' . $application_subject;
         $date = date_create($obj_job->DatumBewerbungsfrist);
         $date_deadline = date_format($date, 'd.m.Y');
 
+        $obj_job->Beschreibung = str_replace($kennung_old, $obj_job->Kennung, $obj_job->Beschreibung );
         $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $obj_job->Beschreibung . '</div>';
 
         $sidebar = '';
@@ -143,14 +169,18 @@ class Shortcode
 
         $sidebar .= '<div class="rrze-jobs-single-application"><dl>'
             . '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
-            . '<dd itemprop="validThrough" content="' . $obj_job->DatumBewerbungsfrist . '">' . $date_deadline . '</dd>'
-            . '<dt>' . __('Referenz', 'rrze-jobs') . '</dt>'
-            . '<dd>' . str_replace( [ "[" , "]" ] , [ "&#91;" , "&#93;" ] , $obj_job->Kennung) . '</dd>'
-            . '<dt>' . __('Bewerbung', 'rrze-jobs') . '</dt>'
-            . '<dd>Bitte bewerben Sie sich ausschließlich per E-Mail an <a href="' . $application_mailto . '">RRZE-Bewerbungseingang@fau.de</a>, <br/>'
-            . 'Betreff: ' . $application_subject
-            . '</dd>'
-            . '</dl></div>';
+            . '<dd itemprop="validThrough" content="' . $obj_job->DatumBewerbungsfrist . '">' . $date_deadline . '</dd>';
+        if ($obj_job->Kennung) {
+	        $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>'
+	                   . '<dd>' . $obj_job->Kennung . '</dd>';
+        }
+	    $sidebar .= '<dt>' . __('Bewerbung', 'rrze-jobs') . '</dt>'
+	                . '<dd>Bitte bewerben Sie sich ausschließlich per E-Mail an <a href="' . $application_mailto . '">' . $application_email . '</a>';
+        if ($obj_job->Kennung) {
+	        $sidebar .= ', <br/>Betreff: ' . $application_subject;
+        }
+	    $sidebar .= '</dd>'
+	                . '</dl></div>';
 
         $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
         $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
