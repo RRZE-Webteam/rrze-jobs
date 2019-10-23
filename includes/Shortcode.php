@@ -158,10 +158,14 @@ class Shortcode {
                 break;
             case 'univis':
                 foreach ($obj->Position as $job) {
-                    if ( $job->intern != 'intern' ) {
-                        if ( !$atts['jobtype'] || $job->group == $atts['jobtype'] ){
+                    // echo "<pre>";
+                    // var_dump($job, true);
+                    // echo "</pre>";
+
+                    // if ( $job->intern != 'intern' ) {
+                        // if ( !$atts['jobtype'] || $job->group == $atts['jobtype'] ){
                             $output .= '<li itemscope itemtype="https://schema.org/JobPosting">';
-                            $output .= '<a href="?provider=univis&jobid=' . urlencode($job->acontact->UnivISRef->key) . '" data-jobid="' . urlencode($job->acontact->UnivISRef->key) . '" class="joblink">';
+                            $output .= '<a href="?provider=univis&jobid="" data-jobid="" class="joblink">';
                             $output .= '<span itemprop="title">' . htmlentities( $job->title ) . '</span>';
                             $output .= '</a>';
                 
@@ -174,21 +178,21 @@ class Shortcode {
                             //          key : Person.zwiss.rrze.ksys.wnschh
                 
                             $output .= '<meta itemprop="jobStartDate" content="' . $job->start . '" />'
-                                .'<meta itemprop="workHours" content="' . $job->wstunden . '" />'
-                                .'<meta itemprop="employmentType" content="' . $job->type2 . '" />' // $job->type2 : teil, voll    und    $job->type1 : bef, unbef
-                                .'<meta itemprop="title" content="' . htmlentities( $job->title ) . '" />'
-                                .'<meta itemprop="educationRequirements" content="' . htmlentities( $job->desc2 ) . '" />'
-                                .'<meta itemprop="experienceRequirements" content="' . htmlentities( $job->desc3 ) . '" />'
-                                .'<meta itemprop="description" content="' . htmlentities( $job->desc1 ) . '" />'
-                                .'<meta itemprop="jobBenefits" content="' . htmlentities( $job->desc4 ) . '" />'
-                                .'<meta itemprop="occupationalCategory" content="' . $job->group . '" />'
-                                .'<meta itemprop="estimatedSalary" content="' . $job->bisbesold . '" />'
-                                .'<meta itemprop="employmentUnit" content="' . implode('<br>', $job->orgunits->orgunit) . '" />' // oder doch einfach nur $job->orgname und das ist das gleiche wie $job->orgunits->orgunit[2]
-                                .'<meta itemprop="validThrough" content="' . $job->befristet . '" />' // ist validThrough das richtige Feld? $job->enddate ist das Endedatum der Bewerbungsfrist und $job->befristet ist das Datum, an dem eine befristete Stelle zuende ist
+                                . (isset($job->wstunden) ? '<meta itemprop="workHours" content="' . $job->wstunden . '" />': '')
+                                .(isset($job->type2) ? '<meta itemprop="employmentType" content="' . $job->type2 . '" />': '') // $job->type2 : teil, voll    und    $job->type1 : bef, unbef
+                                .(isset($job->title) ? '<meta itemprop="title" content="' . htmlentities( $job->title ) . '" />': '')
+                                .(isset($job->desc2) ? '<meta itemprop="educationRequirements" content="' . htmlentities( $job->desc2 ) . '" />': '')
+                                .(isset($job->desc3) ? '<meta itemprop="experienceRequirements" content="' . htmlentities( $job->desc3 ) . '" />': '')
+                                .(isset($job->desc1) ? '<meta itemprop="description" content="' . htmlentities( $job->desc1 ) . '" />': '')
+                                .(isset($job->desc4) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $job->desc4 ) . '" />': '')
+                                .(isset($job->group) ? '<meta itemprop="occupationalCategory" content="' . $job->group . '" />': '')
+                                .(isset($job->bisbesold) ? '<meta itemprop="estimatedSalary" content="' . $job->bisbesold . '" />': '')
+                                .(isset($job->orgunits->orgunit) ? '<meta itemprop="employmentUnit" content="' . implode('<br>', $job->orgunits->orgunit) . '" />':'') // oder doch einfach nur $job->orgname und das ist das gleiche wie $job->orgunits->orgunit[2]
+                                // .'<meta itemprop="validThrough" content="' . $job->befristet . '" />' // ist validThrough das richtige Feld? $job->enddate ist das Endedatum der Bewerbungsfrist und $job->befristet ist das Datum, an dem eine befristete Stelle zuende ist
                                 . '</span>'
                                 . '</li>';
-                        }
-                    }
+                        // }
+                    // }
                 }
                 break;
         }  
