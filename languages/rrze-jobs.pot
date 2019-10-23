@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-22 15:26+0000\n"
+"POT-Creation-Date: 2019-10-22 14:36+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam <webmaster@rrze.fau.de>\n"
@@ -21,64 +21,157 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .."
 
-#: rrze-jobs.php:74
+#: rrze-jobs.php:82
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-jobs.php:77
+#: rrze-jobs.php:85
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
 msgstr ""
 
-#: includes/Settings.php:53
-msgid "Settings"
+#: config/config.php:24
+msgid "Jobs"
 msgstr ""
 
-#: includes/Settings.php:61
+#: config/config.php:25
 msgid "RRZE Jobs"
 msgstr ""
 
-#: includes/Settings.php:72
-msgid "Settings &rsaquo; RRZE Jobs"
+#: config/config.php:28
+msgid "Jobs Settings"
 msgstr ""
 
-#: includes/Settings.php:91
-msgid "Field 1"
+#: config/config.php:41
+msgid ""
+"This plugin will automatically add an icon or a preview image next to links "
+"of the activated file types. If you like, you can also let the plugin add "
+"the file size of the linked file to the page."
 msgstr ""
 
-#: includes/Settings.php:122
-msgid "Here comes the Context Help content."
+#: config/config.php:42
+msgid ""
+"On this settings page you can choose to show an icon or a preview image will "
+"be shown and specify the icon size, icon type (white matte gif or "
+"transparent png) and the icon alignment. Click on tab \"File Types "
+"Settings\" to select the file types for which this plugin will be enabled. "
+"\"Additional Settings\" allow you to specify exceptions, format the file "
+"size and set caching options."
 msgstr ""
 
-#: includes/Settings.php:128
-msgid "Overview"
-msgstr ""
-
-#: includes/Settings.php:132
+#: config/config.php:45
 msgid "For more information"
 msgstr ""
 
-#: includes/Settings.php:132
+#: config/config.php:45
 msgid "RRZE Webteam on Github"
 msgstr ""
 
-#: includes/Shortcode.php:48
-#, php-format
-msgid ""
-" Please specify the job portal in the shortcode attribute %sprovider=\"\"%s"
+#: config/config.php:59
+msgid "interamt"
 msgstr ""
 
-#: includes/Shortcode.php:51
+#: config/config.php:63
+msgid "univIS"
+msgstr ""
+
+#: config/config.php:78 config/config.php:101
+msgid "orgID"
+msgstr ""
+
+#: config/config.php:79 config/config.php:102
+msgid "Enter the ID of your organization"
+msgstr ""
+
+#: config/config.php:85 config/config.php:108
+msgid "URL to listings"
+msgstr ""
+
+#: config/config.php:86 config/config.php:109
+msgid "Enter the link to all the job's listings"
+msgstr ""
+
+#: config/config.php:92 config/config.php:115
+msgid "URL to details"
+msgstr ""
+
+#: config/config.php:93 config/config.php:116
+msgid "Enter the link to the detailed job's listing"
+msgstr ""
+
+#: includes/Shortcode.php:101
+msgid ""
+"Please specify the correct job portal in the shortcode attributes <code>"
+"interamt=\"\"</code> and/or <code>univis=\"\"</code>"
+msgstr ""
+
+#: includes/Shortcode.php:108
 msgid "Please provide an organisation or job ID!"
 msgstr ""
 
-#: includes/Shortcode.php:67 includes/Shortcode.php:93
-msgid "back to list"
+#: includes/Shortcode.php:271
+msgid "Bewerbungsschluss"
+msgstr ""
+
+#: includes/Shortcode.php:274
+msgid "Referenz"
+msgstr ""
+
+#: includes/Shortcode.php:277
+msgid "Bewerbung"
+msgstr ""
+
+#: includes/Shortcode.php:290
+msgid "Details"
+msgstr ""
+
+#: includes/Shortcode.php:291
+msgid "Stellenbezeichnung"
+msgstr ""
+
+#: includes/Shortcode.php:293
+msgid "Besetzung zum"
+msgstr ""
+
+#: includes/Shortcode.php:296
+msgid "Einsatzort"
+msgstr ""
+
+#: includes/Shortcode.php:315
+msgid "Entgelt"
+msgstr ""
+
+#: includes/Shortcode.php:318
+msgid "Teilzeit / Vollzeit"
+msgstr ""
+
+#: includes/Shortcode.php:321
+msgid "Wochenarbeitszeit"
+msgstr ""
+
+#: includes/Shortcode.php:324
+msgid "Befristung (Monate)"
+msgstr ""
+
+#: includes/Shortcode.php:329
+msgid "Ansprechpartner für weitere Informationen"
+msgstr ""
+
+#: includes/Shortcode.php:332
+msgid "Telefon"
+msgstr ""
+
+#: includes/Shortcode.php:335
+msgid "Mobil"
+msgstr ""
+
+#: includes/Shortcode.php:338
+msgid "E-Mail"
 msgstr ""
 
 #. Description of the plugin
