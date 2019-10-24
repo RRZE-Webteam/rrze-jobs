@@ -45,6 +45,17 @@ class Shortcode {
         }
     }
 
+    private function get_providers() {
+        $providers = array();
+        $options = get_option('rrze-jobs');
+        if (!empty( $options )) {
+            foreach ( $options as $key => $value ) {
+                $parts = explode('_', $key);
+                $providers[$parts[0]][$parts[1]] = $value;
+            }
+          }
+        return $providers;
+    }
 
     public function jobsHandler( $atts ) {
         $atts = shortcode_atts([
@@ -78,17 +89,6 @@ class Shortcode {
         return $output;
     }
     
-    private function get_providers() {
-        $providers = array();
-        $options = get_option('rrze-jobs');
-        if (!empty( $options )) {
-            foreach ( $options as $key => $value ) {
-                $parts = explode('_', $key);
-                $providers[$parts[0]][$parts[1]] = $value;
-            }
-          }
-        return $providers;
-    }
 
     public function jobs_shortcode( $atts ) {
         $providers = $this->get_providers();
@@ -108,7 +108,7 @@ class Shortcode {
 		    $output .= '<p class="rrze-jobs-closelink-container"><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
         }
         if ( $jobid != '' ) {
-            $output .= $this->get_single_job( $this->provider . '_' . $jobid );
+            $output .= $this->get_single_job( $this->provider, $jobid );
         }
 
         wp_enqueue_style('rrze-elements');
@@ -119,7 +119,10 @@ class Shortcode {
     }
 
     public function rrze_jobs_ajax_function() {
-        $responseData = $this->get_single_job( $_POST['jobid'] );
+        $jobid = sanitize_text_field( $_POST['jobid'] );
+        $parts = explode('_', $jobid);
+        $responseData = $this->get_single_job( $parts[0], $parts[1] );
+        echo json_encode($responseData);
         wp_die();
     }
 
@@ -138,7 +141,7 @@ class Shortcode {
                 $custom_logo_id = get_theme_mod('custom_logo');
                 $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
                 foreach ($obj->Stellenangebote as $job) {
-                    $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=interamt&jobid=' . $job->Id . '" data-provider="interamt" data-jobid="interamt_' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a>';
+                    $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=interamt&jobid=' . $job->Id . '" data-jobid="interamt_' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a>';
                     if (isset($job->Bezahlung->Entgelt) && $job->Bezahlung->Entgelt != '') {
                         $output .= ' (' . $job->Bezahlung->Entgelt . ')';
                     }
@@ -164,11 +167,7 @@ class Shortcode {
 
                     // if ( $job->intern != 'intern' ) {
                         // if ( !$atts['jobtype'] || $job->group == $atts['jobtype'] ){
-                            $output .= '<li itemscope itemtype="https://schema.org/JobPosting">';
-                            $output .= '<a href="?provider=univis&jobid="" data-jobid="" class="joblink">';
-                            $output .= '<span itemprop="title">' . htmlentities( $job->title ) . '</span>';
-                            $output .= '</a>';
-                
+                            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=univis&jobid=1234" data-jobid="univis_1234" class="joblink"><span itemprop="title">' . htmlentities( $job->title ) . '</span></a>';
                             // unklare Felder, die UnivIS ausgibt
                             // intern ja/nein
                             // desc5    "Das Regionale Rechenzentrum der Universität Erlangen-Nürnberg sucht für die Abteilung Kommunikationssysteme zwei technische Mitarbeiter(innen) für "
@@ -201,20 +200,17 @@ class Shortcode {
         return $output;
     }
 
-    private function get_single_job( $jobid ) {
+    public function get_single_job( $provider, $jobid ) {
         $providers = $this->get_providers();
-
-        $parts = explode( '_', $jobid );
-        $api_url = sprintf( $providers[$parts[0]]['urlsingle'] . "%s", $parts[1] );
-
+        $api_url = $providers[$provider]['urlsingle'] . $jobid;
         $json_job = file_get_contents($api_url);
         $json_job = utf8_encode($json_job);
         $obj_job = json_decode($json_job);
 
-        switch ($parts[0]) {
+        switch ($provider) {
             case 'interamt': 
-                $custom_logo_id = get_theme_mod('custom_logo');
-                $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
+            $custom_logo_id = get_theme_mod('custom_logo');
+                $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '' );
                 $azubi = (strpos($obj_job->Stellenbezeichnung, 'Auszubildende') !== false) ? true : false;
                 if ($obj_job->TarifEbeneVon == $obj_job->TarifEbeneBis) {
                     $salary = ($obj_job->TarifEbeneVon != '') ? $obj_job->TarifEbeneVon : $obj_job->TarifEbeneBis;
@@ -253,7 +249,6 @@ class Shortcode {
                     $obj_job->Beschreibung = str_replace( $kennung_old, $obj_job->Kennung, $obj_job->Beschreibung );
                 }
                 $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $obj_job->Beschreibung . '</div>';
-
                 $sidebar = '';
                 if ($azubi) {
                     $sidebar .= do_shortcode( '<div>[button link="https://azb.rrze.fau.de/" width="full"]Jetzt bewerben![/button]</div>' );
@@ -347,9 +342,12 @@ class Shortcode {
                 $output .= '</div>';
                 break;
             case 'univis':
-                echo 'servusla! LIefert UnivIS mittlerweile die ID für die Detailansicht?';
-                return;
-                break;
+                $description = 'Die UnivIS liefert noch keine ID';
+                $sidebar = '';
+                $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+                $output .= $description;
+                $output .= '</div>';
+            break;
         }
 
         return $output;
