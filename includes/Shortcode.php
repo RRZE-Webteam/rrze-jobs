@@ -203,9 +203,11 @@ class Shortcode {
     public function get_single_job( $provider, $jobid ) {
         $providers = $this->get_providers();
         $api_url = $providers[$provider]['urlsingle'] . $jobid;
-        $json_job = file_get_contents($api_url);
-        $json_job = utf8_encode($json_job);
-        $obj_job = json_decode($json_job);
+        if ($provider != 'univis') {
+            $json_job = file_get_contents($api_url);
+            $json_job = utf8_encode($json_job);
+            $obj_job = json_decode($json_job);
+        }
 
         switch ($provider) {
             case 'interamt': 
@@ -344,7 +346,7 @@ class Shortcode {
             case 'univis':
                 $description = 'Die UnivIS liefert noch keine ID';
                 $sidebar = '';
-                $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+                $output = '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
                 $output .= $description;
                 $output .= '</div>';
             break;
