@@ -123,3 +123,142 @@ function getFields() {
   return $ret;
 }
 
+function getMap(&$provider){
+  $map = [
+    'job_type' => [
+      'interamt' => 'Kennung', 
+      'univis'=> 'type2'
+    ], 
+    // 'job_employmenttype' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    'job_title' => [
+      'interamt' => 'StellenBezeichnung', 
+      'univis'=> 'title'
+    ],
+    'job_description' => [
+      'interamt' => 'Beschreibung', 
+      'univis'=> 'desc1'
+    ],
+    // 'job_qualifications' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'job_education' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'desc2'
+    // ],
+    // 'job_experience' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'desc3'
+    // ],
+    // 'job_benefits' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'desc4'
+    // ],
+    // 'job_category' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'group'
+    // ],
+    // 'job_salary' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'bisbesold'
+    // ],
+    // 'job_unit' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'job_label' =>  => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'job_workhours' => [
+    //   'interamt' => '', 
+    //   'univis'=> 'wstunden'
+    // ],
+    // 'job_start' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'job_end' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'job_limitation' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'application_start' => [
+    //   'interamt' => 'datePosted', 
+    //   'univis'=> ''
+    // ],
+    // 'application_end' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'application_link' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    'employer_organization' => [
+      'interamt' => 'Behoerde', 
+      'univis'=> 'StellenangebotBehoerde'
+    ],
+    // 'employer_street' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'employer_postalcode' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'employer_city' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'employer_district' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_title' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_firstname' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_lastname' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_tel' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_mobile' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_email' => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ],
+    // 'contact_link'  => [
+    //   'interamt' => '', 
+    //   'univis'=> ''
+    // ]
+  ];
+
+  $provider_map = array();
+  // $i=1;
+  foreach ($map as $key => $val) {
+    // echo "<script>console.log('" . $i . " " . $key . " = " . $val[$provider] . "');</script>";
+    // $i++;
+    $provider_map[$key] = $val[$provider]; 
+  }
+  
+  return $provider_map;
+}
+

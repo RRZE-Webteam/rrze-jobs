@@ -3,6 +3,7 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
+use function RRZE\Jobs\Config\getMap;
 
 class Shortcode {
     private $groups = array(
@@ -126,7 +127,35 @@ class Shortcode {
         wp_die();
     }
 
-    private function get_job_list( $api_url ) {
+    public function store_job( &$provider, &$job ) {
+        $post_id = wp_insert_post(
+            array(
+                'post_title'		=>	htmlentities( $job->StellenBezeichnung ) ,
+                'post_name'		=>	$provider . '-' . $job->Id,
+                'post_type'		=>	'post', // custom post type anlegen
+                'post_author'	=>	1, // author -> admin?
+                'comment_status'	=>	'closed',
+                'ping_status'		=>	'closed',
+                'post_status'		=>	'publish'
+            )
+        );
+
+        $map = getMap( $provider );
+
+        // print_r($job);
+        foreach( $map as $key => $val ) {
+            $map[$key] = $job->$val;
+            $val = ( $job->$val ? htmlentities( $job->$val ) : '');
+            update_post_meta( $post_id, $key, $val );
+        // echo "<script>console.log('" . $key . "=" . $map[$key] . "');</script>";
+        }
+
+
+        // array_walk( $map, [$this, 'store_jobdetails'], $post_id, $job ) ;
+    }
+
+
+private function get_job_list( $api_url ) {
         $json = file_get_contents($api_url);
         if (!$json)
         	return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
@@ -211,6 +240,7 @@ class Shortcode {
 
         switch ($provider) {
             case 'interamt': 
+            $this->store_job( $provider, $obj_job );
             $custom_logo_id = get_theme_mod('custom_logo');
                 $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '' );
                 $azubi = (strpos($obj_job->Stellenbezeichnung, 'Auszubildende') !== false) ? true : false;
