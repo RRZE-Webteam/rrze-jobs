@@ -56,11 +56,11 @@ function getSections() {
     return [
       [
         'id'    => 'interamt',
-        'title' => __('interamt', 'rrze-jobs')
+        'title' => __('Interamt', 'rrze-jobs')
       ],
       [
         'id'    => 'univis',
-        'title' => __('univIS', 'rrze-jobs')
+        'title' => __('UnivIS', 'rrze-jobs')
       ]
     ];
 }
@@ -71,7 +71,7 @@ function getSections() {
  */
 function getFields() {
   
-  $ret = [
+  return [
     'interamt' => [
       [
         'name'    => 'orgid',
@@ -80,7 +80,7 @@ function getFields() {
         'type'    => 'text',
         'default' => '2217'
       ],
-      [
+      /*[
         'name'    => 'urllist',
         'label'   => __('URL to listings', 'rrze-jobs'),
         'desc'    => __("Enter the link to all the job's listings", 'rrze-jobs'),
@@ -93,7 +93,7 @@ function getFields() {
         'desc'    => __("Enter the link to the detailed job's listing", 'rrze-jobs'),
         'type'    => 'text',
         'default' => 'https://www.interamt.de/koop/app/webservice_v2?id='
-      ]
+      ]*/
     ],
     'univis' => [
       [
@@ -103,44 +103,63 @@ function getFields() {
         'type'    => 'text',
         'default' => '420100'
       ],
-      [
-        'name'    => 'urllist',
-        'label'   => __('URL to listings', 'rrze-jobs'),
-        'desc'    => __("Enter the link to all the job's listings", 'rrze-jobs'),
-        'type'    => 'text',
-        'default' => 'http://univis.uni-erlangen.de/prg?search=positions&department='
-      ],
-      [
-        'name'    => 'urlsingle',
-        'label'   => __("URL to details", 'rrze-jobs'),
-        'desc'    => __("Enter the link to the detailed job's listing", 'rrze-jobs'),
-        'type'    => 'text',
-        'default' => 'this one is to be defined'
-      ]
+	    /*[
+		  'name'    => 'urllist',
+		  'label'   => __('URL to listings', 'rrze-jobs'),
+		  'desc'    => __("Enter the link to all the job's listings", 'rrze-jobs'),
+		  'type'    => 'text',
+		  'default' => 'http://univis.uni-erlangen.de/prg?search=positions&department='
+		],
+		[
+		  'name'    => 'urlsingle',
+		  'label'   => __("URL to details", 'rrze-jobs'),
+		  'desc'    => __("Enter the link to the detailed job's listing", 'rrze-jobs'),
+		  'type'    => 'text',
+		  'default' => 'this one is to be defined'
+		]*/
     ],
   ];
-  
-  return $ret;
+}
+
+/**
+ * Gibt die API-URLs zurück.
+ * @return array
+ */
+function getURLs() {
+	return [
+		'interamt' => [
+			'urllist' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
+			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id='
+		],
+		'univis' => [
+			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&department=',
+			'urlsingle' => ''
+		]
+	];
 }
 
 function getMap(&$provider){
   $map = [
-    'job_type' => [
-      'interamt' => 'Kennung', 
-      'univis'=> 'type2'
-    ], 
-    // 'job_employmenttype' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    // 'job_identifier' => [
+	// 'interamt' => 'Kennung',
+    //  'univis'=> '',            // nicht vorhanden
+	//  'label' => 'Referenz'
     // ],
-    'job_title' => [
-      'interamt' => 'StellenBezeichnung', 
-      'univis'=> 'title'
-    ],
-    'job_description' => [
-      'interamt' => 'Beschreibung', 
-      'univis'=> 'desc1'
-    ],
+    // 'job_employmenttype' => [
+    //   'interamt' => 'Teilzeit',
+    //   'univis'=> 'type2',
+	//   'label' => 'Vollzeit / Teilzeit'
+    // ],
+    // 'job_title' => [
+    //  'interamt' => 'StellenBezeichnung',
+    //  'univis'=> 'title',
+	//  'label' => 'Stellenbezeichnung'
+    // ],
+    // 'job_description' => [
+    //  'interamt' => 'Beschreibung',
+    //  'univis'=> 'desc1',
+	//  'label' => 'Beschreibung'
+    // ],
     // 'job_qualifications' => [
     //   'interamt' => '', 
     //   'univis'=> ''
@@ -157,13 +176,20 @@ function getMap(&$provider){
     //   'interamt' => '', 
     //   'univis'=> 'desc4'
     // ],
-    // 'job_category' => [
-    //   'interamt' => '', 
-    //   'univis'=> 'group'
+	// 'job_category' => [
+	//   'interamt' => 'FachrichtungCluster', //ggf. auch 'Fachrichtung' ??
+    //   'univis'=> 'group',
+	//   'label' => 'Berufsgruppe'
     // ],
-    // 'job_salary' => [
-    //   'interamt' => '', 
-    //   'univis'=> 'bisbesold'
+    // 'job_salary_from' => [
+    //   'interamt' => 'TarifEbeneVon',
+    //   'univis'=> 'vonbesold',
+	//   'label' => 'Tarifebene von'
+    // ],
+    // 'job_salary_to' => [
+    //  'interamt' => 'TarifEbeneBis',
+    //  'univis'=> 'bisbesold',
+    //  'label' => 'Tarifebene bis'
     // ],
     // 'job_unit' => [
     //   'interamt' => '', 
@@ -174,56 +200,71 @@ function getMap(&$provider){
     //   'univis'=> ''
     // ],
     // 'job_workhours' => [
-    //   'interamt' => '', 
-    //   'univis'=> 'wstunden'
+    //  'interamt' => 'WochenarbeitszeitArbeitnehmer',
+    //  'univis'=> 'wstunden',
+	//  'label' => 'Wochenarbeitszeit'
     // ],
     // 'job_start' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    //  'interamt' => 'DatumBesetzungZum',
+    //  'univis'=> 'start',
+	//  'label' => 'Besetzung zum'
     // ],
     // 'job_end' => [
     //   'interamt' => '', 
     //   'univis'=> ''
     // ],
-    // 'job_limitation' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    // 'job_limitation' => [       // Befristung ja/nein
+    //   'interamt' => 'BeschaeftigungDauer',
+    //   'univis'=> 'type1',
+	//   'label' => 'Befristung'
+    // ],
+    //'job_limitation_duration' => [      // Befristung Dauer
+	//    'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
+	//    'univis'=> 'befristet',         // Enddatum !!!
+	//    'label' => 'Dauer der Befristung'
     // ],
     // 'application_start' => [
     //   'interamt' => 'datePosted', 
     //   'univis'=> ''
     // ],
     // 'application_end' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'interamt' => 'DatumBewerbungsfrist',
+    //   'univis' => 'enddate',
+    //   'label' => 'Bewerbungsschluss'
     // ],
     // 'application_link' => [
     //   'interamt' => '', 
     //   'univis'=> ''
     // ],
-    'employer_organization' => [
-      'interamt' => 'Behoerde', 
-      'univis'=> 'StellenangebotBehoerde'
-    ],
+    // 'employer_organization' => [
+    //  'interamt' => 'StellenangebotBehoerde',
+    //  'univis' => 'orgunits/orgunit',   // Verschachtelt strukturiert !!!
+	//  'label' => 'Organisationseinheit'
+    // ],
     // 'employer_street' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'interamt' => 'EinsatzortStrasse',
+    //  'univis'=> '',
+	//  'label' => 'Straße'
     // ],
     // 'employer_postalcode' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'interamt' => 'EinsatzortPLZ',
+    //   'univis'=> '',
+    //   'label' => 'PLZ'
     // ],
     // 'employer_city' => [
-    //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'interamt' => 'EinsatzortOrt',
+    //   'univis'=> '',
+    //   'label' => 'Ort'
     // ],
     // 'employer_district' => [
     //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'univis'=> '',
+	//	  'label' => ''
     // ],
     // 'contact_title' => [
     //   'interamt' => '', 
-    //   'univis'=> ''
+    //   'univis'=> '',
+	//	  'label' => ''
     // ],
     // 'contact_firstname' => [
     //   'interamt' => '', 
