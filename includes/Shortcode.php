@@ -107,7 +107,7 @@ class Shortcode {
 	        $output = '';
             $output .= $this->get_job_list( sprintf( $providers[$this->provider]['urllist'] . '%s', $orgid) . '&show=json' );
         }
-	    if ( !empty( $_GET['jobid'] ) ) {
+        if ( !empty( $_GET['jobid'] ) ) {
 		    $jobid = $_GET['jobid'];
 		    $output .= '<p class="rrze-jobs-closelink-container"><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
         }
@@ -198,12 +198,17 @@ class Shortcode {
 
     public function get_single_job( $provider, $jobid ) {
         $providers = $this->get_providers();
-        $api_url = $providers[$provider]['urlsingle'] . $jobid;
-        if ($provider != 'univis') {
-            $json_job = file_get_contents($api_url);
-            $json_job = utf8_encode($json_job);
-            $obj_job = json_decode($json_job);
-        }
+	    $orgid = $providers[$this->provider]['orgid'];
+        if ($provider == 'univis') {
+		    $api_url = $providers[$provider]['urllist'] . $orgid . '&show=json';
+	    } else {
+		    $api_url = $providers[$provider]['urlsingle'] . $jobid;
+	    }
+	    $json_job = file_get_contents($api_url);
+	    $json_job = utf8_encode($json_job);
+	    $obj_job = json_decode($json_job);
+
+	    $job = $this->formatSingle($obj_job);
 
         switch ($provider) {
             case 'interamt': 
@@ -416,6 +421,38 @@ class Shortcode {
 	    }
 		return $jobs;
     }
+
+	function formatSingle($obj){
+    	//print "<pre>"; var_dump($obj);print "</pre>";
+		switch ($this->provider) {
+			case 'interamt':
+				$job_raw = $obj;
+				break;
+			case 'univis':
+				$jobs_raw = $obj->Position;
+				// TODO: Filtern nach festzulegenden Parametern (Titel und Startdatum/Abteilung)
+				// $jobs_raw -> $job_raw
+				break;
+		}
+		print "<pre>"; var_dump($job_raw);print "</pre>";
+
+		$job = [];
+		switch ($this->provider) {
+			case 'interamt':
+				$job['title'] = $job_raw->Stellenbezeichnung;
+				$job['description'] = $job_raw->Beschreibung;
+				$job['application_end'] = $job_raw->DatumBewerbungsfrist;
+				$job['job_start'] = $job_raw->DatumBesetzungZum;
+				$job['employer_postalcode'] = $job_raw->Einsatzort->EinsatzortPLZ;
+				$job['employer_city'] = $job_raw->Einsatzort->EinsatzortOrt;
+				break;
+			case 'univis':
+
+				break;
+		}
+		print "<pre>"; var_dump($job);print "</pre>";
+    	return $job;
+	}
 
     public function jobs_block_init() {
         // Skip block registration if Gutenberg is not enabled/merged.
