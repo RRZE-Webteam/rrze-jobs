@@ -3,10 +3,8 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
-
-use function RRZE\Jobs\Config\getConstants;
 use function RRZE\Jobs\Config\getMap;
-use function RRZE\Jobs\Config\getURLs;
+use function RRZE\Jobs\Config\getURL;
 
 class Shortcode {
     private $groups = array(
@@ -52,13 +50,13 @@ class Shortcode {
     private function get_providers() {
         $providers = array();
         $options = get_option('rrze-jobs');
-	    $providers = getURLs();
-		if (!empty($providers)) {
-			foreach ($providers as $key => $value) {
-				$providers[$key]['orgid'] = $options[$key.'_orgid'];
-			}
-		}
-		return $providers;
+        if (!empty( $options )) {
+            foreach ( $options as $key => $value ) {
+                $parts = explode('_', $key);
+                $providers[$parts[0]][$parts[1]] = $value;
+            }
+          }
+        return $providers;
     }
 
     public function jobsHandler( $atts ) {
@@ -105,9 +103,9 @@ class Shortcode {
         $output = '';
         if ( $orgid != '' ) {
 	        $output = '';
-            $output .= $this->get_job_list( sprintf( $providers[$this->provider]['urllist'] . '%s', $orgid) . '&show=json' );
+            $output .= $this->get_job_list( getURL($this->provider, 'urllist') . $orgid . '&show=json' );
         }
-        if ( !empty( $_GET['jobid'] ) ) {
+	    if ( !empty( $_GET['jobid'] ) ) {
 		    $jobid = $_GET['jobid'];
 		    $output .= '<p class="rrze-jobs-closelink-container"><a href="' . get_permalink() . '" class="view-all"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
         }
@@ -149,7 +147,7 @@ class Shortcode {
         foreach( $map as $key => $val ) {
             $map[$key] = $job->$val;
             $val = ( $job->$val ? htmlentities( $job->$val ) : '');
-            update_post_meta( $post_id, $key, $val );
+            // update_post_meta( $post_id, $key, $val );
         // echo "<script>console.log('" . $key . "=" . $map[$key] . "');</script>";
         }
 
@@ -158,57 +156,152 @@ class Shortcode {
     }
 
 
-	private function get_job_list( $api_url ) {
-	    $json = file_get_contents($api_url);
-	    if (!$json)
-	        return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
-	    $json = utf8_encode($json);
-	    $obj = json_decode($json);
-		$custom_logo_id = get_theme_mod('custom_logo');
-		$logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
 
-		$jobs = $this->formatList($obj);
-		//var_dump($jobs);
+private function get_job_list( $api_url ) {
+    $json = file_get_contents($api_url);
+    if (!$json)
+        return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
+    $json = utf8_encode($json);
+    $obj = json_decode($json);
 
-		$output = '';
-        $output .= '<ul class=\'rrze-jobs-list\'>';
+    $output = '';
+    $output .= '<ul class=\'rrze-jobs-list\'>';
 
-        foreach ($jobs as $id => $job) {
-	        $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider='.$this->provider.'&jobid=' . $id . '" data-jobid="'.$this->provider.'_' . $id . '" class="joblink"><span itemprop="title">' . $job['title'] . '</span></a>';
-	        if (isset($job['salary']) && $job['salary'] != '') {
-		        $output .= ' (' . $job['salary'] . ')';
-	        }
-	        $output .= '<meta itemprop="hiringOrganization" content="' . $job['employer_organization'] . '" />'
-	                   . '<meta itemprop="datePosted" content="' . $job['application_start'] . '" />'
-	                   . '<meta itemprop="description" content="' . $job['description'] . '" />'
-	                   . '<meta itemprop="validThrough" content="' . $job['application_end'] . '" />'
-	                   . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-	                   . '<meta itemprop="name" content="' . $job['employer_organization'] . '" />'
-	                   . '<meta itemprop="logo" content="' . $logo_url . '" />'
-	                   . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
-	                   . '<meta itemprop="postalCode" content="' . $job['employer_postalcode'] . '" />'
-	                   . '<meta itemprop="addressLocality" content="' . $job['employer_city'] . '" />'
-	                   . '</span>'
-	                   . '</li>';
-        }
-        $output .= '</ul>';
+    $custom_logo_id = get_theme_mod('custom_logo');
+    $logo_meta = has_custom_logo() ? '<meta itemprop="image" content="' . wp_get_attachment_url($custom_logo_id) . '" />' : '';
 
-        return $output;
+    $map = getMap($this->provider, true);
+    $node = $map['node'];
+    // unset($map['node']); // let's erase this element to walk through array without if-clause in output
+    // print '<pre>' . var_dump($map, true) . '</pre>';
+
+    foreach ($obj->$node as $job) {
+        print '<pre>' . var_dump($job, true) . '</pre>';
+
+        // if (isset($obj->{$map['job_salary_from']}) == $obj->{$map['job_salary_to']}) {
+        //     $salary = ( $obj->{$map['job_salary_from']} != '' ? $obj->{$map['job_salary_from']} : $obj->{$map['job_salary_to']} );
+        // } else {
+        //     $salary = $obj->{$map['job_salary_from']} . ' – ' . $obj->{$map['job_salary_to']};
+        // }
+
+        $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . ( isset( $job->{$map['job_id']}) ? $job->{$map['job_id']} : 'fehlt noch fuer univis' ) . '" data-jobid="' . $this->provider . '_' . $job->{$map['job_id']} . '" class="joblink">'
+            .'<span itemprop="title">' . $job->{$map['job_title']} . '</span></a>'
+        // if (isset($job->Bezahlung->Entgelt) && $job->Bezahlung->Entgelt != '') {
+        //     $output .= ' (' . $job->Bezahlung->Entgelt . ')';
+        // }
+            . $logo_meta 
+            .(isset($job->{$map['application_start']}) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $job->{$map['application_start']} ) . '" />': '')
+            .(isset($job->{$map['job_education']}) ? '<meta itemprop="educationRequirements" content="' . htmlentities( $job->{$map['job_education']} ) . '" />': '')  
+            .(isset($job->{$map['job_type']}) ? '<meta itemprop="employmentType" content="' . ( $job->{$map['job_type']} == 'teil' ? 'Teilzeit' : 'Vollzeit' ) . '" />': '') 
+            .(isset($job->{$map['job_unit']}) ? '<meta itemprop="employmentUnit" content="' . htmlentities( $job->{$map['job_unit']} ) . '" />':'')
+            // .'<meta itemprop="estimatedSalary" content="' . $salary . '" />'
+            .(isset($job->{$map['job_experience']}) ? '<meta itemprop="experienceRequirements" content="' . htmlentities( $job->{$map['job_experience']} ) . '" />': '')
+            .(isset($job->{$map['employer_organization']}) ? '<meta itemprop="hiringOrganization" content="' . htmlentities( $job->{$map['employer_organization']} ) . '" />': '')
+            .(isset($job->{$map['job_benefits']}) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $job->{$map['job_benefits']} ) . '" />': '')
+            .(isset($job->{$map['job_start']}) ? '<meta itemprop="jobStartDate" content="' . $this->transform_date( $job->{$map['job_start']} ) . '" />' : '')
+            .(isset($job->{$map['job_category']}) ? '<meta itemprop="occupationalCategory" content="' . htmlentities( $job->{$map['job_category']} ) . '" />': '')
+            .(isset($job->{$map['job_qualifications']}) ? '<meta itemprop="qualifications" content="' . htmlentities( $job->{$map['job_qualifications']} ) . '" />': '')
+            // skills
+            .(isset($job->{$map['job_title']}) ? '<meta itemprop="title" content="' . htmlentities( $job->{$map['job_title']} ) . '" />': '')
+            .(isset($job->{$map['application_end']}) ? '<meta itemprop="validThrough" content="' . htmlentities( $job->{$map['application_end']} ) . '" />': '') 
+            .(isset($job->{$map['job_workhours']}) ? '<meta itemprop="workHours" content="' . htmlentities( $job->{$map['job_workhours']} ) . '" />': '') 
+            .(isset($job->{$map['application_end']}) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $job->{$map['application_end']} ) . '" />': '')
+            .(isset($job->{$map['job_description']}) ? '<meta itemprop="description" content="' . htmlentities( $job->{$map['job_description']} ) . '" />': '')
+            . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+            . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
+            .(isset($job->{$map['employer_postalcode']}) ? '<meta itemprop="postalCode" content="' . htmlentities( $job->{$map['employer_postalcode']} ) . '" />': '')
+            .(isset($job->{$map['employer_city']}) ? '<meta itemprop="addressLocality" content="' . htmlentities( $job->{$map['employer_city']} ) . '" />': '')
+            . '</span></li>';
+            break;
     }
 
-    public function get_single_job( $provider, $jobid ) {
-        $providers = $this->get_providers();
-	    $orgid = $providers[$this->provider]['orgid'];
-        if ($provider == 'univis') {
-		    $api_url = $providers[$provider]['urllist'] . $orgid . '&show=json';
-	    } else {
-		    $api_url = $providers[$provider]['urlsingle'] . $jobid;
-	    }
-	    $json_job = file_get_contents($api_url);
-	    $json_job = utf8_encode($json_job);
-	    $obj_job = json_decode($json_job);
+    return $output;
+}
 
-	    $job = $this->formatSingle($obj_job);
+
+// private function get_job_list_OLD( $api_url ) {
+//         $json = file_get_contents($api_url);
+//         if (!$json)
+//         	return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
+//         $json = utf8_encode($json);
+//         $obj = json_decode($json);
+
+//         $output = '';
+//         $output .= '<ul class=\'rrze-jobs-list\'>';
+
+//         $custom_logo_id = get_theme_mod('custom_logo');
+//         $logo_url = has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '';
+
+//         switch ($this->provider) {
+//             case 'interamt': 
+//                 foreach ($obj->Stellenangebote as $job) {
+//                     $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=interamt&jobid=' . $job->Id . '" data-jobid="interamt_' . $job->Id . '" class="joblink"><span itemprop="title">' . $job->StellenBezeichnung . '</span></a>';
+//                     if (isset($job->Bezahlung->Entgelt) && $job->Bezahlung->Entgelt != '') {
+//                         $output .= ' (' . $job->Bezahlung->Entgelt . ')';
+//                     }
+//                     $output .= '<meta itemprop="hiringOrganization" content="' . $job->Behoerde . '" />'
+//                         . '<meta itemprop="datePosted" content="' . $this->transform_date($job->Daten->Eingestellt) . '" />'
+//                         . '<meta itemprop="description" content="' . htmlentities( $job->StellenBezeichnung ) . '" />'
+//                         . '<meta itemprop="validThrough" content="' . $this->transform_date($job->Daten->Bewerbungsfrist) . '" />'
+//                         . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+//                         . '<meta itemprop="name" content="' . $job->Behoerde . '" />'
+//                         . '<meta itemprop="logo" content="' . $logo_url . '" />'
+//                         . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
+//                         . '<meta itemprop="postalCode" content="' . $job->Ort->Plz . '" />'
+//                         . '<meta itemprop="addressLocality" content="' . $job->Ort->Stadt . '" />'
+//                         . '</span>'
+//                         . '</li>';
+//                 }
+//                 break;
+//             case 'univis':
+//                 foreach ($obj->Position as $job) {
+//                     // echo "<pre>";
+//                     // var_dump($job, true);
+//                     // echo "</pre>";
+
+//                     // if ( $job->intern != 'intern' ) {
+//                         // if ( !$atts['jobtype'] || $job->group == $atts['jobtype'] ){
+//                             $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=univis&jobid=1234" data-jobid="univis_1234" class="joblink"><span itemprop="title">' . htmlentities( $job->title ) . '</span></a>';
+//                             // unklare Felder, die UnivIS ausgibt
+//                             // intern ja/nein
+//                             // desc5    "Das Regionale Rechenzentrum der Universität Erlangen-Nürnberg sucht für die Abteilung Kommunikationssysteme zwei technische Mitarbeiter(innen) für "
+//                             // type4 nachv 
+//                             // contact
+//                             //      UnivISRef
+//                             //          key : Person.zwiss.rrze.ksys.wnschh
+                
+//                             $output .= '<meta itemprop="jobStartDate" content="' . $job->start . '" />'
+//                                 . (isset($job->wstunden) ? '<meta itemprop="workHours" content="' . $job->wstunden . '" />': '')
+//                                 .(isset($job->type2) ? '<meta itemprop="employmentType" content="' . $job->type2 . '" />': '') // $job->type2 : teil, voll    und    $job->type1 : bef, unbef
+//                                 .(isset($job->title) ? '<meta itemprop="title" content="' . htmlentities( $job->title ) . '" />': '')
+//                                 .(isset($job->desc2) ? '<meta itemprop="educationRequirements" content="' . htmlentities( $job->desc2 ) . '" />': '')
+//                                 . '<meta itemprop="logo" content="' . $logo_url . '" />'
+//                                 .(isset($job->desc3) ? '<meta itemprop="experienceRequirements" content="' . htmlentities( $job->desc3 ) . '" />': '')
+//                                 .(isset($job->desc1) ? '<meta itemprop="description" content="' . htmlentities( $job->desc1 ) . '" />': '')
+//                                 .(isset($job->desc4) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $job->desc4 ) . '" />': '')
+//                                 .(isset($job->group) ? '<meta itemprop="occupationalCategory" content="' . $job->group . '" />': '')
+//                                 .(isset($job->bisbesold) ? '<meta itemprop="estimatedSalary" content="' . $job->bisbesold . '" />': '')
+//                                 .(isset($job->orgunits->orgunit) ? '<meta itemprop="employmentUnit" content="' . implode('<br>', $job->orgunits->orgunit) . '" />':'') // oder doch einfach nur $job->orgname und das ist das gleiche wie $job->orgunits->orgunit[2]
+//                                 // .'<meta itemprop="validThrough" content="' . $job->befristet . '" />' // ist validThrough das richtige Feld? $job->enddate ist das Endedatum der Bewerbungsfrist und $job->befristet ist das Datum, an dem eine befristete Stelle zuende ist
+//                                 . '</span>'
+//                                 . '</li>';
+//                         // }
+//                     // }
+//                 }
+//                 break;
+//         }  
+//         $output .= '</ul>';
+
+//         return $output;
+//     }
+
+    public function get_single_job( $provider, $jobid ) {
+        $api_url = getURL($provider, 'urlsingle') . $jobid;
+        if ($provider != 'univis') {
+            $json_job = file_get_contents($api_url);
+            $json_job = utf8_encode($json_job);
+            $obj_job = json_decode($json_job);
+        }
 
         switch ($provider) {
             case 'interamt': 
@@ -365,94 +458,6 @@ class Shortcode {
             return $date_parts[2] . '-' . $date_parts[1] . '-' . $date_parts[0];
         }
     }
-
-    function formatList($obj){
-	    switch ($this->provider) {
-		    case 'interamt':
-			    $jobs_raw = $obj->Stellenangebote;
-			    break;
-		    case 'univis':
-			    $jobs_raw = $obj->Position;
-			    break;
-	    }
-
-	    $jobs = [];
-	    foreach ($jobs_raw as $k => $v) {
-	    	//print "<pre>"; var_dump($jobs_raw); print "</pre>";
-		    switch ($this->provider) {
-			    case 'interamt':
-			    	$jobs[$v->Id]['title'] = $v->StellenBezeichnung;
-				    $jobs[$v->Id]['salary'] = $v->Bezahlung->Entgelt;
-				    $jobs[$v->Id]['employer_organization'] = $v->Behoerde;
-				    $jobs[$v->Id]['application_start'] = $this->transform_date($v->Daten->Eingestellt);
-				    $jobs[$v->Id]['application_end'] = $this->transform_date($v->Daten->Bewerbungsfrist);
-				    $jobs[$v->Id]['description'] = $v->StellenBezeichnung; // keine Beschreibung in Listen-API mitgeliefert
-				    $jobs[$v->Id]['employer_postalcode'] = $v->Ort->Plz;
-				    $jobs[$v->Id]['employer_city'] = $v->Ort->Stadt;
-				    break;
-			    case 'univis':
-				    // skip internal job offers
-				    if (isset($v->intern) && $v->intern == "ja")
-			    		continue 2;
-			    	// skip expired job offers
-				    if (isset($v->enddate) && (date('Y-m-d') > $v->enddate))
-					    continue 2;
-				    //print "<pre>"; var_dump($v); print "</pre>";
-					$jobs[$k]['title'] = $v->title;
-					if (isset($v->vonbesold) && isset($v->bisbesold)) {
-						if ($v->vonbesold == $v->bisbesold) {
-							$jobs[$k]['salary'] = $v->vonbesold;
-						} else {
-							$jobs[$k]['salary'] = $v->vonbesold . ' - ' . $v->bisbesold;
-						}
-					} else if (!isset($v->vonbesold) && !isset($v->bisbesold)) {
-						$jobs[$k]['salary'] = '';
-					} else {
-						$jobs[$k]['salary'] = $v->vonbesold . $v->bisbesold;
-					}
-				    $jobs[$k]['employer_organization'] = $v->orgunits->orgunit[1];
-				    $jobs[$k]['application_start'] = '';
-				    $jobs[$k]['application_end'] = $v->enddate;
-				    $jobs[$k]['description'] = $v->desc5 . ' ' . $v->title . '. Das Aufgabengebiet umfasst u.a.: ' . $v->desc1 . '. Notwendige Qualifikation: ' . $v->desc2 . '. Wünschenswerte Qualifikation: ' . $v->desc3;
-				    $jobs[$k]['employer_postalcode'] = '';
-				    $jobs[$k]['employer_city'] = '';
-				    break;
-		    }
-	    }
-		return $jobs;
-    }
-
-	function formatSingle($obj){
-    	//print "<pre>"; var_dump($obj);print "</pre>";
-		switch ($this->provider) {
-			case 'interamt':
-				$job_raw = $obj;
-				break;
-			case 'univis':
-				$jobs_raw = $obj->Position;
-				// TODO: Filtern nach festzulegenden Parametern (Titel und Startdatum/Abteilung)
-				// $jobs_raw -> $job_raw
-				break;
-		}
-		print "<pre>"; var_dump($job_raw);print "</pre>";
-
-		$job = [];
-		switch ($this->provider) {
-			case 'interamt':
-				$job['title'] = $job_raw->Stellenbezeichnung;
-				$job['description'] = $job_raw->Beschreibung;
-				$job['application_end'] = $job_raw->DatumBewerbungsfrist;
-				$job['job_start'] = $job_raw->DatumBesetzungZum;
-				$job['employer_postalcode'] = $job_raw->Einsatzort->EinsatzortPLZ;
-				$job['employer_city'] = $job_raw->Einsatzort->EinsatzortOrt;
-				break;
-			case 'univis':
-
-				break;
-		}
-		print "<pre>"; var_dump($job);print "</pre>";
-    	return $job;
-	}
 
     public function jobs_block_init() {
         // Skip block registration if Gutenberg is not enabled/merged.
