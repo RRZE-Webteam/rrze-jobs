@@ -101,7 +101,7 @@ function getURL(&$provider, $urltype) {
 	$ret = [
 		'interamt' => [
 			'urllist' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
-			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id='
+			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id=' 
 		],
 		'univis' => [
 			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&department=',
@@ -120,8 +120,330 @@ function getURL(&$provider, $urltype) {
  * 'univis'=>  Feld der Schnittstelle zu UnivIS
  * 'label => so wird das Feld in der Anwendung angezeigt
  */
-function getMap(&$provider, $isList){
-  $map = [
+function getMap( &$provider, $type ){
+  // $map = [
+  //   'node' => [
+  //     'interamt' => 'Stellenangebote', 
+  //     'univis'=> 'Position',
+  //     'label' => 'Knotenpunkt' // Knotenpunkt im JSON ab dem Jobs aufgelistet werden
+  //   ], 
+  //   'job_id' => [
+  //     'interamt' => 'Id', 
+  //     'univis'=> '',
+  //     'label' => 'Job ID'
+  //   ], 
+  //   'job_type' => [
+  //     'interamt' => 'Kennung', 
+  //     'univis'=> 'type2',
+  //     'label' => 'Job Typ'
+  //   ], 
+  //   'job_employmenttype' => [
+  //     'interamt' => 'Teilzeit', 
+  //     'univis'=> 'type2',
+  //     'label' => 'Vollzeit / Teilzeit'
+  //     ],
+  //   'job_title' => [
+  //     'interamt' => 'StellenBezeichnung', 
+  //     'univis'=> 'title',
+	//     'label' => 'Stellenbezeichnung'
+  //   ],
+  //   'job_description' => [
+  //     'interamt' => 'Beschreibung', 
+  //     'univis'=> 'desc1',
+  //     'label' => 'Beschreibung'
+  //   ],
+  //   'job_qualifications' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Qualifikationen'
+  //   ],
+  //   'job_education' => [
+  //     'interamt' => '', 
+  //     'univis'=> 'desc2',
+  //     'label' => 'Ausbildung'
+  //   ],
+  //   'job_experience' => [
+  //     'interamt' => '', 
+  //     'univis'=> 'desc3',
+  //     'label' => 'Berufserfahrung'
+  //   ],
+  //   'job_benefits' => [
+  //     'interamt' => '', 
+  //     'univis'=> 'desc4',
+  //     'label' => 'Benefits'
+  //   ],
+  //   'job_category' => [
+  //     'interamt' => 'FachrichtungCluster', //ggf. auch 'Fachrichtung' ?? 
+  //     'univis'=> 'group',
+  //     'label' => 'Berufsgruppe'
+  //   ],
+  //   'job_salary_from' => [
+  //     'interamt' => array('Bezahlung', 'Entgelt'), // 'Bezahlung->{Entgelt}'
+  //     'univis'=> 'vonbesold',
+	//     'label' => 'Tarifebene von'
+  //   ],
+  //   'job_salary_to' => [
+  //     'interamt' => '',
+  //     'univis'=> 'bisbesold',
+  //     'label' => 'Tarifebene bis'
+  //   ],
+  //   'job_unit' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Unit'
+  //   ],
+  //   'job_label' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Job Label'
+  //   ],
+  //   'job_workhours' => [
+  //     'interamt' => 'WochenarbeitszeitArbeitnehmer', 
+  //     'univis'=> 'wstunden',
+	//     'label' => 'Wochenarbeitszeit'
+  //   ],
+  //   'job_start' => [
+  //     'interamt' => 'DatumBesetzungZum', 
+  //     'univis'=> 'start',
+  //   	'label' => 'Besetzung zum'
+  //   ],
+  //   'job_end' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Job Ende'
+  //   ],
+  //   'job_limitation' => [
+  //     'interamt' => 'BeschaeftigungDauer', 
+  //     'univis'=> 'type1',
+ 	//     'label' => 'Befristung'
+  //  ],
+  //   'job_limitation_duration' => [      // Befristung Dauer
+	//     'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
+	//     'univis'=> 'befristet',         // Enddatum !!!
+	//     'label' => 'Dauer der Befristung'
+  //   ],
+  //   'application_start' => [
+  //     'interamt' => 'datePosted', 
+  //     'univis'=> '',
+  //     'label' => 'Bewerbungsstart'
+  //   ],
+  //   'application_end' => [
+  //     'interamt' => 'DatumBewerbungsfrist', 
+  //     'univis'=> 'enddate',
+  //     'label' => 'Bewerbungsschluss'
+  //   ],
+  //   'application_link' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Link zur Bewerbung'
+  //   ],
+  //   'employer_organization' => [
+  //     'interamt' => 'StellenangebotBehoerde', 
+  //     'univis' => '',   // orgunits/orgunit Verschachtelt strukturiert !
+  //     'label' => 'Organisationseinheit',
+  //   ],
+  //   'employer_street' => [
+  //     'interamt' => 'EinsatzortStrasse', 
+  //     'univis'=> '',
+	//     'label' => 'Straße'
+  //   ],
+  //   'employer_postalcode' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'PLZ'
+  //   ],
+  //   'employer_city' => [
+  //     'interamt' => 'EinsatzortOrt', 
+  //     'univis'=> '',
+  //     'label' => 'Ort'
+  //   ],
+  //   'employer_district' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+	// 	  'label' => 'Bezirk'
+  //   ],
+  //   'contact_title' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Ansprechpartner Titel'
+  //   ],
+  //   'contact_firstname' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //   	'label' => 'Ansprechpartner Vorname'
+  //   ],
+  //   'contact_lastname' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //     'label' => 'Ansprechpartner Nachname'
+  //   ],
+  //   'contact_tel' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //   	'label' => 'Ansprechpartner Telefonnummer'
+  //   ],
+  //   'contact_mobile' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //   	'label' => 'Ansprechpartner Mobilnummer'
+  //   ],
+  //   'contact_email' => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //   	'label' => 'Ansprechpartner E-Mail'
+  //   ],
+  //   'contact_link'  => [
+  //     'interamt' => '', 
+  //     'univis'=> '',
+  //   	'label' => 'Ansprechpartner Link'
+  //   ]
+  // ];
+
+  $map_single = [
+    'job_id' => [
+      'interamt' => 'Id', 
+      'univis'=> '',
+      'label' => 'Job ID'
+    ], 
+    'job_type' => [
+      'interamt' => 'Kennung', 
+      'univis'=> '',
+      'label' => 'Job Typ'
+    ], 
+    'job_title' => [
+      'interamt' => 'Stellenbezeichnung', 
+      'univis'=> '',
+	    'label' => 'Stellenbezeichnung'
+    ],
+    'employer_organization' => [
+      'interamt' => 'StellenangebotBehoerde', 
+      'univis'=> '',
+      'label' => 'Organisationseinheit',
+    ],
+    'contact_link'  => [
+      'interamt' => 'HomepageBehoerde', 
+      'univis'=> '',
+    	'label' => 'Ansprechpartner Link'
+    ],
+    'employer_street' => [
+      'interamt' => array('Einsatzort', 'EinsatzortStrasse'), 
+      'univis'=> '',
+	    'label' => 'Straße'
+    ],
+    'employer_postalcode' => [
+      'interamt' => array('Einsatzort', 'EinsatzortPLZ'), 
+      'univis'=> '',
+      'label' => 'PLZ'
+    ],
+    'employer_city' => [
+      'interamt' => array('Einsatzort', 'EinsatzortOrt'), 
+      'univis'=> '',
+      'label' => 'Ort'
+    ],
+    'employer_district' => [
+      'interamt' => 'BeschaeftigungBereichBundesland', 
+      'univis'=> '',
+		  'label' => 'Bezirk'
+    ],
+    'job_salary_from' => [
+      'interamt' => 'TarifEbeneVon',
+      'univis'=> '',
+	    'label' => 'Tarifebene von'
+    ],
+    'job_salary_to' => [
+      'interamt' => 'TarifEbeneBis',
+      'univis'=> '',
+      'label' => 'Tarifebene bis'
+    ],
+    'job_qualifications' => [
+      'interamt' => 'Qualifikation', 
+      'univis'=> '',
+      'label' => 'Qualifikationen'
+    ],
+    'job_education' => [
+      'interamt' => 'Ausbildung', 
+      'univis'=> 'desc2',
+      'label' => 'Ausbildung'
+    ],
+    'job_employmenttype' => [
+      'interamt' => 'Teilzeit', 
+      'univis'=> '',
+      'label' => 'Vollzeit / Teilzeit'
+      ],
+      'job_workhours' => [
+        'interamt' => 'WochenarbeitszeitArbeitnehmer', 
+        'univis'=> '',
+        'label' => 'Wochenarbeitszeit'
+      ],
+      'job_limitation' => [
+        'interamt' => 'BeschaeftigungDauer', 
+        'univis'=> '',
+        'label' => 'Befristung'
+     ],
+     'job_limitation_duration' => [      // Befristung Dauer
+	    'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
+      'univis'=> '',
+	    'label' => 'Dauer der Befristung'
+    ],
+    'application_start' => [
+      'interamt' => 'DatumOeffentlichAusschreiben', 
+      'univis'=> '',
+      'label' => 'Bewerbungsstart'
+    ],
+    'application_end' => [
+      'interamt' => 'DatumBewerbungsfrist', 
+      'univis'=> '',
+      'label' => 'Bewerbungsschluss'
+    ],
+    'job_start' => [
+      'interamt' => 'DatumBesetzungZum', 
+      'univis'=> '',
+    	'label' => 'Besetzung zum'
+    ],
+    'contact_title' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
+      'univis'=> '',
+      'label' => 'Ansprechpartner Titel'
+    ],
+    'contact_firstname' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
+      'univis'=> '',
+    	'label' => 'Ansprechpartner Vorname'
+    ],
+    'contact_lastname' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'), 
+      'univis'=> '',
+      'label' => 'Ansprechpartner Nachname'
+    ],
+    'contact_tel' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
+      'univis'=> '',
+    	'label' => 'Ansprechpartner Telefonnummer'
+    ],
+    'contact_mobile' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'), 
+      'univis'=> '',
+    	'label' => 'Ansprechpartner Mobilnummer'
+    ],
+    'contact_email' => [
+      'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'), 
+      'univis'=> '',
+    	'label' => 'Ansprechpartner E-Mail'
+    ],
+    'job_description' => [
+      'interamt' => 'Beschreibung', 
+      'univis'=> '',
+      'label' => 'Beschreibung'
+    ],
+    'application_link' => [
+      'interamt' => 'BewerbungUrl', 
+      'univis'=> '',
+      'label' => 'Link zur Bewerbung'
+    ]
+  ];
+
+
+  $map_list = [
     'node' => [
       'interamt' => 'Stellenangebote', 
       'univis'=> 'Position',
@@ -133,177 +455,80 @@ function getMap(&$provider, $isList){
       'label' => 'Job ID'
     ], 
     'job_type' => [
-      'interamt' => 'Kennung', 
+      'interamt' => '', 
       'univis'=> 'type2',
       'label' => 'Job Typ'
     ], 
-    'job_employmenttype' => [
-      'interamt' => 'Teilzeit', 
-      'univis'=> 'type2',
-      'label' => 'Vollzeit / Teilzeit'
-      ],
+    'employer_organization' => [
+      'interamt' => 'Behoerde', 
+      'univis'=> 'orgname',
+      'label' => 'Organisationseinheit',
+    ],
     'job_title' => [
       'interamt' => 'StellenBezeichnung', 
       'univis'=> 'title',
 	    'label' => 'Stellenbezeichnung'
     ],
+    'job_salary_from' => [
+      'interamt' => array('Bezahlung', 'Entgelt'),
+      'univis'=> 'vonbesold',
+	    'label' => 'Tarifebene von'
+    ],
+    'job_salary_to' => [
+      'interamt' => '',
+      'univis'=> 'bisbesold',
+	    'label' => 'Tarifebene von'
+    ],
+    'employer_postalcode' => [
+      'interamt' => array('Ort', 'Plz'), 
+      'univis'=> '',
+      'label' => 'PLZ'
+    ],
+    'employer_city' => [
+      'interamt' => array('Ort', 'Stadt'), 
+      'univis'=> '',
+      'label' => 'Ort'
+    ],
+    'job_limitation' => [
+      'interamt' => '', 
+      'univis'=> 'type1',
+ 	    'label' => 'Befristung'
+   ],
+  'application_start' => [
+      'interamt' => array('Daten', 'Eingestellt'), 
+      'univis'=> 'start',
+      'label' => 'Bewerbungsstart'
+    ],
     'job_description' => [
-      'interamt' => 'Beschreibung', 
+      'interamt' => '', 
       'univis'=> 'desc1',
       'label' => 'Beschreibung'
     ],
-    'job_qualifications' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Qualifikationen'
+    'application_end' => [
+      'interamt' => array('Daten', 'Bewerbungsfrist'), 
+      'univis'=> 'enddate',
+      'label' => 'Bewerbungsschluss'
     ],
-    'job_education' => [
-      'interamt' => '', 
-      'univis'=> 'desc2',
-      'label' => 'Ausbildung'
+    'job_category' => [
+      'interamt' => '',
+      'univis'=> 'group',
+      'label' => 'Berufsgruppe'
     ],
     'job_experience' => [
       'interamt' => '', 
-      'univis'=> 'desc3',
+      'univis'=> 'desc2',
       'label' => 'Berufserfahrung'
     ],
     'job_benefits' => [
       'interamt' => '', 
       'univis'=> 'desc4',
       'label' => 'Benefits'
-    ],
-    'job_category' => [
-      'interamt' => 'FachrichtungCluster', //ggf. auch 'Fachrichtung' ?? 
-      'univis'=> 'group',
-      'label' => 'Berufsgruppe'
-    ],
-    'job_salary_from' => [
-      'interamt' => 'TarifEbeneVon',
-      'univis'=> 'vonbesold',
-	    'label' => 'Tarifebene von'
-    ],
-    'job_salary_to' => [
-      'interamt' => 'TarifEbeneBis',
-      'univis'=> 'bisbesold',
-      'label' => 'Tarifebene bis'
-    ],
-    'job_unit' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Unit'
-    ],
-    'job_label' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Job Label'
-    ],
-    'job_workhours' => [
-      'interamt' => 'WochenarbeitszeitArbeitnehmer', 
-      'univis'=> 'wstunden',
-	    'label' => 'Wochenarbeitszeit'
-    ],
-    'job_start' => [
-      'interamt' => 'DatumBesetzungZum', 
-      'univis'=> 'start',
-    	'label' => 'Besetzung zum'
-    ],
-    'job_end' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Job Ende'
-    ],
-    'job_limitation' => [
-      'interamt' => 'BeschaeftigungDauer', 
-      'univis'=> 'type1',
- 	    'label' => 'Befristung',
-       'isSingle' => false,
-       'isList' => false
-   ],
-    'job_limitation_duration' => [      // Befristung Dauer
-	    'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
-	    'univis'=> 'befristet',         // Enddatum !!!
-	    'label' => 'Dauer der Befristung'
-    ],
-    'application_start' => [
-      'interamt' => 'datePosted', 
-      'univis'=> '',
-      'label' => 'Bewerbungsstart'
-    ],
-    'application_end' => [
-      'interamt' => 'DatumBewerbungsfrist', 
-      'univis'=> 'enddate',
-      'label' => 'Bewerbungsschluss'
-    ],
-    'application_link' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Link zur Bewerbung'
-    ],
-    'employer_organization' => [
-      'interamt' => 'Behoerde', 
-      'univis' => '',   // orgunits/orgunit Verschachtelt strukturiert !
-      'label' => 'Organisationseinheit',
-      'isSingle' => false,
-      'isList' => true
-    ],
-    'employer_street' => [
-      'interamt' => 'EinsatzortStrasse', 
-      'univis'=> '',
-	    'label' => 'Straße'
-    ],
-    'employer_postalcode' => [
-      'interamt' => 'EinsatzortPLZ', 
-      'univis'=> '',
-      'label' => 'PLZ'
-    ],
-    'employer_city' => [
-      'interamt' => 'EinsatzortOrt', 
-      'univis'=> '',
-      'label' => 'Ort'
-    ],
-    'employer_district' => [
-      'interamt' => '', 
-      'univis'=> '',
-		  'label' => 'Bezirk'
-    ],
-    'contact_title' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Ansprechpartner Titel'
-    ],
-    'contact_firstname' => [
-      'interamt' => '', 
-      'univis'=> '',
-    	'label' => 'Ansprechpartner Vorname'
-    ],
-    'contact_lastname' => [
-      'interamt' => '', 
-      'univis'=> '',
-      'label' => 'Ansprechpartner Nachname'
-    ],
-    'contact_tel' => [
-      'interamt' => '', 
-      'univis'=> '',
-    	'label' => 'Ansprechpartner Telefonnummer'
-    ],
-    'contact_mobile' => [
-      'interamt' => '', 
-      'univis'=> '',
-    	'label' => 'Ansprechpartner Mobilnummer'
-    ],
-    'contact_email' => [
-      'interamt' => '', 
-      'univis'=> '',
-    	'label' => 'Ansprechpartner E-Mail'
-    ],
-    'contact_link'  => [
-      'interamt' => '', 
-      'univis'=> '',
-    	'label' => 'Ansprechpartner Link'
     ]
   ];
 
+
   $provider_map = array();
+  $map = ( $type == 'list' ? $map_list : $map_single );
   foreach ($map as $key => $val) {
     $provider_map[$key] = $val[$provider]; 
   }
