@@ -70,7 +70,6 @@ function getSections() {
  * @return array [description]
  */
 function getFields() {
-  
   return [
     'interamt' => [
       [
