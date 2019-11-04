@@ -76,17 +76,10 @@ class Shortcode {
         $isUnivis = ( ( $provider == 'univis' ) || ( $provider == 'all' ) ? TRUE : FALSE );
         $output = '';
 
-        if ( $isInteramt ) {
-            $atts['provider'] = 'interamt';
+        if ( isset( $provider ) && ( $provider != '' ) ){
             $this->provider = $atts['provider']; 
             $output = $this->jobs_shortcode( $atts );
-        } 
-        if ( $isUnivis ) {
-            $atts['provider'] = 'univis';
-            $this->provider = $atts['provider']; 
-            $output .= $this->jobs_shortcode( $atts );
-        } 
-        if ( !$isInteramt && !$isUnivis ){
+        }else{
             return '<p>' . __('Please specify the correct job portal in the shortcode attribute <code>provider=""</code>.', 'rrze-jobs') . '</p>';
         }
 
