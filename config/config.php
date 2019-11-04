@@ -308,6 +308,11 @@ function getMap( &$provider, $type ){
       'univis'=> 'id',
       'label' => 'Job ID'
     ], 
+    'job_intern' => [
+      'interamt' => '', 
+      'univis'=> 'intern',
+      'label' => 'Intern'
+    ],
     'job_type' => [
       'interamt' => '', 
       'univis'=> 'type2',
