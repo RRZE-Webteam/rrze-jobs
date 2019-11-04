@@ -103,12 +103,29 @@ function getURL(&$provider, $urltype) {
 			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id=' 
 		],
 		'univis' => [
-			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&department=',
+			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&department=',
 			'urlsingle' => ''
 		]
   ];
   
   return $ret[$provider][$urltype];
+}
+
+
+/**
+ * Füllt die Map mit Werten aus der Schnittstelle
+ * @return array
+ */
+function  fillMap( &$map, &$job ) {
+  $map_ret = array();
+  foreach ($map as $k => $val){
+      if ( is_array($val) && isset( $job->{$val[0]}->{$val[1]} ) ) {
+          $map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]} );   
+      }elseif ( isset( $job->{$val} ) ) {
+          $map_ret[$k] =  htmlentities( $job->{$val} );   
+      }
+  }
+  return $map_ret;
 }
 
 

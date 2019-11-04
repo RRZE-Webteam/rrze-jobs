@@ -6,6 +6,7 @@ defined('ABSPATH') || exit;
 use function RRZE\Jobs\Config\getMap;
 use function RRZE\Jobs\Config\getURL;
 use function RRZE\Jobs\Config\getFields;
+use function RRZE\Jobs\Config\fillMap;
 
 class Shortcode {
     private $groups = array(
@@ -152,19 +153,6 @@ class Shortcode {
     //     }
     // }
 
-
-    private function  fillMap( &$map, &$job ) {
-        $map_ret = array();
-        foreach ($map as $k => $val){
-            if ( is_array($val) && isset( $job->{$val[0]}->{$val[1]} ) ) {
-                $map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]} );   
-            }elseif ( isset( $job->{$val} ) ) {
-                $map_ret[$k] =  htmlentities( $job->{$val} );   
-            }
-        }
-        return $map_ret;
-    }
-
     private function getSalary( &$map ){
         $salary = '';
         if ( isset( $map['job_salary_to'] ) ) {
@@ -200,7 +188,7 @@ class Shortcode {
             return '<p>' . __('API does not return any data. Link is ', 'rrze-jobs') . '<a href="' . $api_url . '" target="_blank">' . $api_url . '</a></p>';
         } else {
             foreach ($obj->$node as $job) {
-                $map = $this->fillMap( $map_template, $job );
+                $map = fillMap( $map_template, $job );
                 $salary = $this->getSalary( $map );
 
                 $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch fuer univis' ) . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
@@ -246,7 +234,7 @@ class Shortcode {
 
         $map_template = getMap( $provider, 'single' );
         unset( $map_template['node'] );
-        $map = $this->fillMap( $map_template, $job );
+        $map = fillMap( $map_template, $job );
 
         $azubi = ( strpos( $map['job_title'], 'Auszubildende' ) !== false ? true : false ); 
         $salary = $this->getSalary( $map );
