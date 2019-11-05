@@ -156,7 +156,7 @@ function getMap( &$provider, $type ){
     ], 
     'job_type' => [
       'interamt' => 'Kennung', 
-      'univis'=> array('Position', 'type2'),
+      'univis'=> '',
       'label' => 'Job Typ'
     ], 
     'job_title' => [
@@ -208,6 +208,11 @@ function getMap( &$provider, $type ){
       'interamt' => 'Qualifikation', 
       'univis'=> array('Position', 'desc2'),
       'label' => 'Qualifikationen'
+    ],
+    'job_qualifications_nth' => [
+      'interamt' => '',
+      'univis'=>  array('Position', 'desc3'),
+      'label' => 'Wünschenswerte Qualifikationen'
     ],
     'job_education' => [
       'interamt' => 'Ausbildung', 
@@ -284,6 +289,21 @@ function getMap( &$provider, $type ){
       'univis'=> array('Position', 'desc1'),
       'label' => 'Beschreibung'
     ],
+    'job_description_introduction' => [
+      'interamt' => '',
+      'univis'=> array('Position', 'desc5'),
+      'label' => 'Beschreibung - Einleitung'
+    ],
+    'job_experience' => [
+      'interamt' => '',
+      'univis'=>  array('Position', 'desc2'),
+      'label' => 'Berufserfahrung'
+    ],
+    'job_benefits' => [
+      'interamt' => '',
+      'univis'=>  array('Position', 'desc4'),
+      'label' => 'Benefits'
+    ],
     'application_link' => [
       'interamt' => 'BewerbungUrl', 
       'univis'=> array('Position', 'desc6'),
@@ -293,7 +313,7 @@ function getMap( &$provider, $type ){
       'interamt' => '',
       'univis'=> array('Position', 'group'),
       'label' => 'Berufsgruppe'
-    ]
+    ],
   ];
 
 
