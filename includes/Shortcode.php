@@ -64,6 +64,7 @@ class Shortcode {
     public function jobsHandler( $atts ) {
         $atts = shortcode_atts([
             'provider' => '',
+            'orgids' => '',
             'department' => '',
             'jobtype' => '',
             'jobid' => '',
@@ -72,8 +73,6 @@ class Shortcode {
         ], $atts, 'jobs');
 
         $provider = strtolower(sanitize_text_field($atts['provider']));
-        $isInteramt = ( ( $provider == 'interamt' ) || ( $provider == 'all' ) ? TRUE : FALSE );
-        $isUnivis = ( ( $provider == 'univis' ) || ( $provider == 'all' ) ? TRUE : FALSE );
         $output = '';
 
         if ( isset( $provider ) && ( $provider != '' ) ){
@@ -89,7 +88,11 @@ class Shortcode {
 
     public function jobs_shortcode( $atts ) {
         $providers = $this->get_providers();
-        $orgids = explode( ',', $providers[$this->provider]['orgid'] );
+        if ( isset($atts['orgids']) && $atts['orgids'] != '' ){
+            $orgids = explode( ',', sanitize_text_field( $atts['orgids'] ) );
+        }else {
+            $orgids = explode( ',', $providers[$this->provider]['orgid'] );
+        }
         $jobid = sanitize_text_field( $atts['jobid'] );
 
         if ( $orgids[0] == '' && $jobid == '' ) {
@@ -159,7 +162,11 @@ class Shortcode {
     }
 
     private function transform_date( $mydate ) {
-        return (new \DateTime( $mydate ))->format('Y-m-d');
+        if (\DateTime::createFromFormat( 'Y-m-d H:i:s', $mydate ) !== FALSE) {
+            return (new \DateTime( $mydate ))->format('Y-m-d');
+        }else{
+            return '';
+        }
     }
 
     private function get_job_list( $api_url ) {
