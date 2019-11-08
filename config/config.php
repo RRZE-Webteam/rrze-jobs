@@ -12,9 +12,13 @@ defined('ABSPATH') || exit;
  * @return array [description]
  */
 function getOptionName() {
-  // return 'rrze-jobs';
-  return 'fau-jobportal';
-}
+  include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+  if ( is_plugin_active('fau-jobportal/fau-jobportal.php') ){
+    return 'fau-jobportal';
+  } else {
+    return 'rrze-jobs';
+  }
+ }
 
 /**
  * Gibt die Einstellungen des Menus zurück.
