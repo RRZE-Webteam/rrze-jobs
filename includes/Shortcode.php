@@ -7,6 +7,7 @@ use function RRZE\Jobs\Config\getMap;
 use function RRZE\Jobs\Config\getURL;
 use function RRZE\Jobs\Config\getFields;
 use function RRZE\Jobs\Config\fillMap;
+use function RRZE\Jobs\Config\getOptionName;
 
 class Shortcode {
     private $groups = array(
@@ -52,8 +53,12 @@ class Shortcode {
     }
 
     private function get_providers() {
+
+
+        error_log('getOptionName() -> '. getOptionName());
+
         $providers = array();
-        $options = get_option('rrze-jobs');
+        $options = get_option( getOptionName() );
         if (!empty( $options )) {
             foreach ( $options as $key => $value ) {
                 $parts = explode('_', $key);

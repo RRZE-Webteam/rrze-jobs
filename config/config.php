@@ -12,7 +12,8 @@ defined('ABSPATH') || exit;
  * @return array [description]
  */
 function getOptionName() {
-    return 'rrze-jobs';
+  // return 'rrze-jobs';
+  return 'fau-jobportal';
 }
 
 /**
@@ -27,24 +28,6 @@ function getMenuSettings() {
         'menu_slug'     => 'rrze-jobs',
         'title'         => __('Jobs Settings', 'rrze-jobs'),
     ];
-}
-
-/**
- * Gibt die Einstellungen der Inhaltshilfe zurück.
- * @return array [description]
- */
-function getHelpTab() {
-  return [
-      [
-          'id'        => 'rrze-jobs',
-          'content'   => ['<p>' .
-                    sprintf( __( 'This plugin will automatically add an icon or a preview image next to links of the activated file types. If you like, you can also let the plugin add the file size of the linked file to the page.', 'rrze-jobs' ), 'http://wordpress.org/plugins/mimetypes-link-icons/" target="_blank" class="ext-link' ) . '</p>
-                    <p>' . esc_html__( 'On this settings page you can choose to show an icon or a preview image will be shown and specify the icon size, icon type (white matte gif or transparent png) and the icon alignment. Click on tab "File Types Settings" to select the file types for which this plugin will be enabled. "Additional Settings" allow you to specify exceptions, format the file size and set caching options.', 'rrze-jobs' ) . '</p>'
-          ],
-          'title'     => __('Overview', 'jobs'),
-          'sidebar'   => sprintf('<p><strong>%1$s:</strong></p><p><a href="https://blogs.fau.de/webworking">RRZE Webworking</a></p><p><a href="https://github.com/RRZE Webteam">%2$s</a></p>', __('For more information', 'rrze-jobs'), __('RRZE Webteam on Github', 'rrze-jobs'))
-      ]
-  ];
 }
 
 
@@ -91,6 +74,27 @@ function getFields() {
     ],
   ];
 }
+
+
+/**
+ * Gibt die Einstellungen der Inhaltshilfe zurück.
+ * @return array [description]
+ */
+function getHelpTab() {
+  return [
+      [
+          'id'        => 'rrze-jobs',
+          'content'   => ['<p>' .
+                    sprintf( __( 'This plugin will automatically add an icon or a preview image next to links of the activated file types. If you like, you can also let the plugin add the file size of the linked file to the page.', 'rrze-jobs' ), 'http://wordpress.org/plugins/mimetypes-link-icons/" target="_blank" class="ext-link' ) . '</p>
+                    <p>' . esc_html__( 'On this settings page you can choose to show an icon or a preview image will be shown and specify the icon size, icon type (white matte gif or transparent png) and the icon alignment. Click on tab "File Types Settings" to select the file types for which this plugin will be enabled. "Additional Settings" allow you to specify exceptions, format the file size and set caching options.', 'rrze-jobs' ) . '</p>'
+          ],
+          'title'     => __('Overview', 'jobs'),
+          'sidebar'   => sprintf('<p><strong>%1$s:</strong></p><p><a href="https://blogs.fau.de/webworking">RRZE Webworking</a></p><p><a href="https://github.com/RRZE Webteam">%2$s</a></p>', __('For more information', 'rrze-jobs'), __('RRZE Webteam on Github', 'rrze-jobs'))
+      ]
+  ];
+}
+
+
 
 /**
  * Gibt die API-URL zurück.
