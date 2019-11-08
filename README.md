@@ -15,7 +15,7 @@ GNU General Public License (GPL) Version 2
 Parameter:
 provider -> Zahl, obligatorisch
 orgids -> Zahl(en), obligatorisch (mindestens eine Zahl, mehrere durch Komma getrennt)
-limit -> Zahl, optional (maximale Anzahl an Ergebnissen - bei mehreren OrgIDs: insgesamt)
+limit -> Zahl, optional (maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden )
 
 [jobs provider="Interamt" jobid="123456"]
 [jobs provider="UnivIS" jobid="123456"]

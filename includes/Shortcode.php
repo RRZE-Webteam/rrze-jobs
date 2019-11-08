@@ -22,6 +22,8 @@ class Shortcode {
 
     private $provider = '';
 
+    private $count = 0;
+
 
     /**
      * Shortcode-Klasse wird instanziiert.
@@ -193,9 +195,8 @@ class Shortcode {
             return '<p>' . __('API does not return any data. Link is ', 'rrze-jobs') . '<a href="' . $api_url . '" target="_blank">' . $api_url . '</a></p>';
         } else {
             $today = $this->transform_date( 'now' );
-            $count = 0;
             foreach ($obj->$node as $job) {
-                if ( ( $limit > 0 ) && ( $count >= $limit ) )  {
+                if ( ( $limit > 0 ) && ( $this->count >= $limit ) )  {
                     break 1;
                 }
                 $map = fillMap( $map_template, $job );
@@ -226,7 +227,7 @@ class Shortcode {
                         .(isset($map['employer_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />': '')
                         .(isset($map['employer_city']) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />': '')
                         . '</span></li>';
-                        $count++;
+                        $this->count++;
                 }
             }
         }
