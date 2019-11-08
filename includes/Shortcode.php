@@ -65,6 +65,7 @@ class Shortcode {
         $atts = shortcode_atts([
             'provider' => '',
             'orgids' => '',
+            'limit' => '',
             'department' => '',
             'jobtype' => '',
             'jobid' => '',
@@ -107,8 +108,9 @@ class Shortcode {
             $output .= $this->get_single_job( $this->provider, $jobid );
         }elseif ( $orgids[0] != '' ) {
             $output = '';
+            // $limit = ( isset( $atts['limit'] ) ? $atts['limit'] : -1 );
             foreach ( $orgids as $orgid ){
-                $output .= $this->get_job_list( getURL($this->provider, 'urllist') . trim( $orgid ) );
+                $output .= $this->get_job_list( getURL($this->provider, 'urllist') . trim( $orgid ), $atts['limit'] );
             }
         }
 
@@ -169,7 +171,7 @@ class Shortcode {
         }
     }
 
-    private function get_job_list( $api_url ) {
+    private function get_job_list( $api_url, $limit = '' ) {
         $json = file_get_contents($api_url);
         if (!$json) {
             return '<p>' . __('Cannot connect to API at the moment. Link is ', 'rrze-jobs') . '<a href="' . $api_url . '" target="_blank">' . $api_url . '</a></p>';
@@ -191,11 +193,14 @@ class Shortcode {
             return '<p>' . __('API does not return any data. Link is ', 'rrze-jobs') . '<a href="' . $api_url . '" target="_blank">' . $api_url . '</a></p>';
         } else {
             $today = $this->transform_date( 'now' );
+            $count = 0;
             foreach ($obj->$node as $job) {
+                if ( ( $limit > 0 ) && ( $count >= $limit ) )  {
+                    break 1;
+                }
                 $map = fillMap( $map_template, $job );
                 if ( ( isset( $map['application_end'] ) )  && ( $this->transform_date( $map['application_end'] ) >= $today ) ){
-                        $salary = $this->getSalary( $map );
-
+                    $salary = $this->getSalary( $map );
                     $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . $map['job_id']  . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
                         .'<span itemprop="title">' . $map['job_title'] . ( $salary != '' ? ' (' . $salary . ')' : '' ) . '</span></a>';
                         $output .= $logo_meta 
@@ -221,6 +226,7 @@ class Shortcode {
                         .(isset($map['employer_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />': '')
                         .(isset($map['employer_city']) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />': '')
                         . '</span></li>';
+                        $count++;
                 }
             }
         }
