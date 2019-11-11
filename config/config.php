@@ -328,6 +328,21 @@ function getMap( &$provider, $type ){
       'univis'=> array('Person', 'locations', 'location', 'email'),
     	'label' => 'Ansprechpartner E-Mail'
     ],
+    'contact_street' => [
+        'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
+        'univis'=> array('Person', 'locations', 'location', 'street'),
+        'label' => 'Straße'
+    ],
+    'contact_postalcode' => [
+        'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
+        'univis'=> array('Person', 'locations', 'location', 'ort'),
+        'label' => 'PLZ'
+    ],
+    'contact_city' => [
+        'interamt' => array('Einsatzort', 'EinsatzortOrt'),
+        'univis'=> array('Person', 'locations', 'location', 'ort'),
+        'label' => 'Ort'
+    ],
     'job_description' => [
       'interamt' => 'Beschreibung', 
       'univis'=> array('Position', 'desc1'),
