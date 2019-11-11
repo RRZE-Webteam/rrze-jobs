@@ -170,7 +170,16 @@ function  fillMap( &$map, &$job ) {
               $map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]} );   
             }
             break;
-          case 4:
+	        case 3:
+	        	if ( isset( $job->{$val[0]}->{$val[1]}->{$val[2]} ) ){
+		        	if (is_array($job->{$val[0]}->{$val[1]}->{$val[2]})) {
+				        $map_ret[ $k ] = htmlentities( implode(PHP_EOL, $job->{$val[0]}->{$val[1]}->{$val[2]} ));
+			        } else {
+				        $map_ret[ $k ] = htmlentities( $job->{$val[0]}->{$val[1]}->{$val[2]} );
+			        }
+		        }
+		        break;
+	        case 4:
             if ( isset( $job->{$val[0]}->{$val[1]}->{$val[2]}->{$val[3]} ) ){
               $map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]}->{$val[2]}->{$val[3]} );   
             }
@@ -210,7 +219,7 @@ function getMap( &$provider, $type ){
     ],
     'employer_organization' => [
       'interamt' => 'StellenangebotBehoerde', 
-      'univis'=> array('Person', 'orgname'),
+      'univis'=> array('Position', 'orgunits', 'orgunit'),
       'label' => 'Organisationseinheit'
     ],
     'contact_link'  => [ 
@@ -344,7 +353,7 @@ function getMap( &$provider, $type ){
         'label' => 'Ort'
     ],
     'job_description' => [
-      'interamt' => 'Beschreibung', 
+      'interamt' => 'Beschreibung',
       'univis'=> array('Position', 'desc1'),
       'label' => 'Beschreibung'
     ],
