@@ -53,16 +53,14 @@ class Shortcode {
     }
 
     private function get_providers() {
-
-
-        error_log('getOptionName() -> '. getOptionName());
-
         $providers = array();
         $options = get_option( getOptionName() );
         if (!empty( $options )) {
             foreach ( $options as $key => $value ) {
+                // error_log('get_providers() '. $key . ' -> ' . $value);
                 $parts = explode('_', $key);
-                $providers[$parts[0]][$parts[1]] = $value;
+                $providers[$parts[1]][$parts[2]] = $value;
+                error_log('get_providers() $parts[1] = '.$parts[1] . ' $parts[2] = ' . $parts[2] . ' $value = ' . $value);
             }
           }
         return $providers;

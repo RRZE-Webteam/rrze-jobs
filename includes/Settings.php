@@ -522,6 +522,31 @@ class Settings {
         echo $html;
     }
 
+
+    /**
+     * Zeigt ein Textfeld für ein Einstellungsfeld an.
+     * @param array   $args Argumente des Einstellungsfelds
+     */
+    public function callbackTextarea($args)
+    {
+        $value = esc_textarea($this->getOption($args['section'], $args['id'], $args['default']));
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+
+        $html = sprintf(
+            '<textarea rows="5" cols="55" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]"%5$s>%6$s</textarea>',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $placeholder,
+            $value
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
     /**
      * Zeigt einen Auswahlknopf (Radio-Button) für ein Einstellungsfeld an.
      * @param array   $args Argumente des Einstellungsfelds

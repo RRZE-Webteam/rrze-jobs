@@ -40,17 +40,24 @@ function getMenuSettings() {
  * @return array [description]
  */
 function getSections() {
-    return [
-      [
-        'id'    => 'interamt',
-        'title' => __('interamt', 'rrze-jobs')
-      ],
-      [
-        'id'    => 'univis',
-        'title' => __('univIS', 'rrze-jobs')
-      ]
-    ];
-}
+  return [
+    [
+      'id'    => 'basic',
+      'title' => __('General Settings', 'fau-jobportal')
+    ]
+  ];
+  }
+    // return [
+    //   [
+    //     'id'    => 'interamt',
+    //     'title' => __('interamt', 'rrze-jobs')
+    //   ],
+    //   [
+    //     'id'    => 'univis',
+    //     'title' => __('univIS', 'rrze-jobs')
+    //   ]
+    // ];
+// }
 
 /**
  * Gibt die Einstellungen der Optionsfelder zurück.
@@ -58,25 +65,54 @@ function getSections() {
  */
 function getFields() {
   return [
-    'interamt' => [
+    'basic' => [
       [
-        'name'    => 'orgid',
-        'label'   => __("orgID", 'rrze-jobs'),
-        'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
+        'name'    => 'interamt_orgid',
+        'label'   => __("orgIDs Interamt", 'rrze-jobs'),
+        'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
         'type'    => 'text',
         'default' => '2217'
-      ]
-    ],
-    'univis' => [
+      ],    
       [
-        'name'    => 'orgid',
-        'label'   => __("orgID", 'rrze-jobs'),
-        'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
+        'name'    => 'univis_orgid',
+        'label'   => __("orgIDs UnivIS", 'rrze-jobs'),
+        'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
         'type'    => 'text',
         'default' => '420100'
-      ]
-    ],
+      ],    
+      [
+        'name'    => 'notice',
+        'label'   => __("Notice", 'rrze-jobs'),
+        'desc'    => __('This notice will be dispayed below each job offer.', 'rrze-jobs'),
+        'type'    => 'textarea',
+        'default' => 'Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.
+        Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".
+        Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.
+        Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.'
+      ]    
+    ]
   ];
+
+  // return [
+  //   'interamt' => [
+  //     [
+  //       'name'    => 'orgid',
+  //       'label'   => __("orgID", 'rrze-jobs'),
+  //       'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
+  //       'type'    => 'text',
+  //       'default' => '2217'
+  //     ]
+  //   ],
+  //   'univis' => [
+  //     [
+  //       'name'    => 'orgid',
+  //       'label'   => __("orgID", 'rrze-jobs'),
+  //       'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
+  //       'type'    => 'text',
+  //       'default' => '420100'
+  //     ]
+  //   ],
+  // ];
 }
 
 
