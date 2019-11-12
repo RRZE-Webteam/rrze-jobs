@@ -46,18 +46,7 @@ function getSections() {
       'title' => __('General Settings', 'fau-jobportal')
     ]
   ];
-  }
-    // return [
-    //   [
-    //     'id'    => 'interamt',
-    //     'title' => __('interamt', 'rrze-jobs')
-    //   ],
-    //   [
-    //     'id'    => 'univis',
-    //     'title' => __('univIS', 'rrze-jobs')
-    //   ]
-    // ];
-// }
+}
 
 /**
  * Gibt die Einstellungen der Optionsfelder zurück.
@@ -81,38 +70,18 @@ function getFields() {
         'default' => '420100'
       ],    
       [
-        'name'    => 'notice',
+        'name'    => 'job_notice',
         'label'   => __("Notice", 'rrze-jobs'),
         'desc'    => __('This notice will be dispayed below each job offer.', 'rrze-jobs'),
         'type'    => 'textarea',
-        'default' => 'Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.
-        Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".
-        Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.
-        Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.'
+	    'size'    => 'large',
+        'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
+<p>Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".</p>
+<p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
+<p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>'
       ]    
     ]
   ];
-
-  // return [
-  //   'interamt' => [
-  //     [
-  //       'name'    => 'orgid',
-  //       'label'   => __("orgID", 'rrze-jobs'),
-  //       'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
-  //       'type'    => 'text',
-  //       'default' => '2217'
-  //     ]
-  //   ],
-  //   'univis' => [
-  //     [
-  //       'name'    => 'orgid',
-  //       'label'   => __("orgID", 'rrze-jobs'),
-  //       'desc'    => __('Enter the ID of your organization', 'rrze-jobs'),
-  //       'type'    => 'text',
-  //       'default' => '420100'
-  //     ]
-  //   ],
-  // ];
 }
 
 
