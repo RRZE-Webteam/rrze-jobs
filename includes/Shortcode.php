@@ -31,10 +31,12 @@ class Shortcode {
      */
     public function __construct() {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_shortcode('jobs', [$this, 'jobsHandler'], 10, 2);
         add_action('wp_ajax_nopriv_rrze_jobs_ajax_function', [$this, 'rrze_jobs_ajax_function']);
         add_action('wp_ajax_rrze_jobs_ajax_function', [$this, 'rrze_jobs_ajax_function']);
         add_action( 'init',  [$this, 'jobs_block_init'] );
+	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
+		    add_shortcode( 'jobs', [ $this, 'jobsHandler' ], 10, 2 );
+	    }
     }
 
     /**
