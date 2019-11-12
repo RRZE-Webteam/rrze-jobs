@@ -57,10 +57,10 @@ class Shortcode {
         $options = get_option( getOptionName() );
         if (!empty( $options )) {
             foreach ( $options as $key => $value ) {
-                // error_log('get_providers() '. $key . ' -> ' . $value);
                 $parts = explode('_', $key);
-                $providers[$parts[1]][$parts[2]] = $value;
-                error_log('get_providers() $parts[1] = '.$parts[1] . ' $parts[2] = ' . $parts[2] . ' $value = ' . $value);
+                if ( count( $parts ) == 3 ) {
+                    $providers[$parts[1]][$parts[2]] = $value;
+                }
             }
           }
         return $providers;
@@ -176,6 +176,7 @@ class Shortcode {
         }
     }
 
+
     private function get_job_list( $api_url, $limit = '' ) {
         $json = file_get_contents($api_url);
         if (!$json) {
@@ -203,6 +204,12 @@ class Shortcode {
                     break 1;
                 }
                 $map = fillMap( $map_template, $job );
+// echo '<pre>';
+//                 // var_dump($map);
+//                 echo $map['job_id'];
+//                 sort($map)
+//                 echo '</pre>';
+
                 if ( ( isset( $map['application_end'] ) )  && ( $this->transform_date( $map['application_end'] ) >= $today ) ){
                     $salary = $this->getSalary( $map );
                     $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . $map['job_id']  . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
