@@ -171,7 +171,14 @@ class Shortcode {
 
         $orgids = explode( ',', $orgids );
         foreach ( $orgids as $orgid ){
-            $myurl = $api_url . trim( $orgid);
+
+            $orgid = trim( $orgid );
+            // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: UnivIS delivers their complete database entries if orgid contains characters
+            if ( strval($orgid) !== strval(intval($orgid)) ) {
+                continue;
+            }
+
+            $myurl = $api_url . trim( $orgid );
 
             $json = file_get_contents( $myurl );
             if ( !$json ) {
