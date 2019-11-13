@@ -20,7 +20,7 @@ function getOptionName() {
   }
  }
 
- 
+
  /**
  * Prüft, ob interne Jobs synchronisiert bzw angezeigt werden dürfen
  * @return boolean
