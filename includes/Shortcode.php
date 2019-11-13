@@ -166,20 +166,21 @@ class Shortcode {
     private function get_job_list( $api_url, $orgids, $limit = '', $orderby, $order, $internal) {
         $output = '';
         $output .= '<ul class=\'rrze-jobs-list\'>';
+        $custom_logo_id = get_theme_mod('custom_logo');
+        $logo_meta = has_custom_logo() ? '<meta itemprop="image" content="' . wp_get_attachment_url($custom_logo_id) . '" />' : '';
 
         $maps = array();
-
         $orgids = explode( ',', $orgids );
-        foreach ( $orgids as $orgid ){
 
+        foreach ( $orgids as $orgid ){
             $orgid = trim( $orgid );
+
             // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: UnivIS delivers their complete database entries if orgid contains characters
             if ( strval($orgid) !== strval(intval($orgid)) ) {
                 continue;
             }
 
             $myurl = $api_url . trim( $orgid );
-
             $json = file_get_contents( $myurl );
             if ( !$json ) {
                 return '<p>' . __('Cannot connect to API at the moment. Link is ', 'rrze-jobs') . '<a href="' . $myurl . '" target="_blank">' . $myurl . '</a></p>';
@@ -187,14 +188,10 @@ class Shortcode {
             $json = utf8_encode($json);
             $obj = json_decode($json);
         
-            $custom_logo_id = get_theme_mod('custom_logo');
-            $logo_meta = has_custom_logo() ? '<meta itemprop="image" content="' . wp_get_attachment_url($custom_logo_id) . '" />' : '';
-        
             $map_template = getMap( $this->provider, 'list' );
             $node = $map_template['node'];
             unset( $map_template['node'] );
         
-                // return '<p>' . __('API does not return any data. Link is ', 'rrze-jobs') . ' TEST <a href="' . $api_url . '" target="_blank">' . $api_url . '</a></p>';
             if ( !is_null( $obj ) ){
                 $today = $this->transform_date( 'now' );
 
