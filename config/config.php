@@ -20,6 +20,16 @@ function getOptionName() {
   }
  }
 
+ 
+ /**
+ * Prüft, ob interne Jobs synchronisiert bzw angezeigt werden dürfen
+ * @return boolean
+ */
+function isInternAllowed() {
+  return TRUE;
+}
+
+
 /**
  * Gibt die Einstellungen des Menus zurück.
  * @return array [description]
@@ -116,8 +126,10 @@ function getURL(&$provider, $urltype) {
 			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id=' 
 		],
 		'univis' => [
-			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&department=',
-			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id='
+			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&department=',
+			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
+			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id='
+			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
 		]
   ];
   
@@ -169,13 +181,18 @@ function  fillMap( &$map, &$job ) {
  * 'univis'=>  Feld der Schnittstelle zu UnivIS
  * 'label => so wird das Feld in der Anwendung angezeigt
  */
-function getMap( &$provider, $type ){
+function getMap( $provider, $type ){
   $map_single = [
     'job_id' => [
       'interamt' => 'Id', 
       'univis'=> array('Position', 'id'),
       'label' => 'Job ID'
     ], 
+    'job_intern' => [
+      'interamt' => '', 
+      'univis'=> array('Position', 'intern'),
+      'label' => 'Intern'
+    ],
     'job_type' => [
       'interamt' => 'Kennung', 
       'univis'=> '',
