@@ -70,6 +70,26 @@ class Shortcode {
         return $providers;
     }
 
+    private function formatUnivIS( $txt ){
+        $search = array(
+            '/\-+\s+(.*)?/mi',
+            '/(\<\/ul\>\n(.*)\<ul\>*)+/',
+            '/(\<br \/\>*)/mi',
+            '/\*(.*)\*/',
+            '/\|(.*)\|/',
+        );
+        $replace = array(
+            '<ul><li>$1</li></ul>',
+            '',
+            '',
+            '<strong>$1</strong>',
+            '<em>$1</em>',
+        );
+        
+        return preg_replace($search, $replace, $txt);
+    }
+
+
     public function jobsHandler( $atts ) {
         $atts = shortcode_atts([
             'provider' => '',
@@ -430,7 +450,7 @@ class Shortcode {
 
             $output = '';
             $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-            $output .= do_shortcode('[three_columns_two]' . $description .'[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
+            $output .= do_shortcode('[three_columns_two]' . ($provider == 'univis' ? $this->formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
             $output .= '</div>';
         }
         return $output;
