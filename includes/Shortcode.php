@@ -230,6 +230,9 @@ class Shortcode {
                             continue 2;
                         }
                         break;
+                    default: 
+						continue 2;
+						break;
                 }
 
                 // If parameter "limit" is reached stop output
