@@ -21,7 +21,7 @@ internal -> Zeichenkette, optional, default = "exclude" :
         "only" => ausschliesslich interne Stellenanzeigen ausgeben
         "include" => interne und nicht-interne Stellenanzeigen ausgeben
         "exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben 
-    - bei "only" und "include" wird die Berechtigung des Users geprüft
+    - bei "only" und "include" wird überprüft, ob der Visitor sich im erlaubten Netzwerk befindet
 
 [jobs provider="Interamt" jobid="123456"]
 [jobs provider="UnivIS" jobid="123456"]
