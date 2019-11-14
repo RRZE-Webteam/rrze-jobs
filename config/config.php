@@ -183,7 +183,7 @@ function  fillMap( &$map, &$job ) {
             break;
           }
         }elseif ( isset( $job->{$val} ) ) {
-          $map_ret[$k] =  htmlentities( $job->{$val} );   
+          $map_ret[$k] =  $job->{$val};   
       }
   }
   return $map_ret;
