@@ -26,7 +26,23 @@ function getOptionName() {
  * @return boolean
  */
 function isInternAllowed() {
-  return TRUE;
+  $ret = FALSE;
+  $allowedHosts = array(
+    'uni-erlangen.de'
+  );
+  $remoteAdr = gethostbyaddr( $_SERVER['REMOTE_ADDR'] );
+  if ( $remoteAdr == 'localhost' ){
+    $ret = TRUE;
+  } else {
+    $parts = explode( '.', $remoteAdr );
+    $cnt = count( $parts );
+    if ($cnt >= 3){
+      $domain = $parts[$cnt-2] . '.' . $parts[$cnt-1];
+      $ret = in_array( $domain, $allowedHosts );
+    }
+  }
+
+  return $ret;
 }
 
 
@@ -126,10 +142,10 @@ function getURL(&$provider, $urltype) {
 			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id=' 
 		],
 		'univis' => [
-			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&department=',
-			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
-			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id='
-			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
+			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
+			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=0&department=',
+			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
+			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id='
 		]
   ];
   
