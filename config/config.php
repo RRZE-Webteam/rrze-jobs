@@ -142,10 +142,10 @@ function getURL(&$provider, $urltype) {
 			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id=' 
 		],
 		'univis' => [
-			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
-			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=0&department=',
-			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
-			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id='
+			'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
+			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=0&department=', // liefert eine andere Datenstruktur als mit closed=1 
+			'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
+			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id=' // liefert eine andere Datenstruktur als mit closed=1 
 		]
   ];
   
