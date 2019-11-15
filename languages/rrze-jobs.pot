@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-10-22 14:36+0000\n"
+"POT-Creation-Date: 2019-11-15 11:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam <webmaster@rrze.fau.de>\n"
@@ -21,163 +21,154 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: .."
 
-#: rrze-jobs.php:82
+#: rrze-jobs.php:79
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
 msgstr ""
 
-#: rrze-jobs.php:85
+#: rrze-jobs.php:82
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
 msgstr ""
 
-#: config/config.php:24
+#: config/config.php:55
 msgid "Jobs"
 msgstr ""
 
-#: config/config.php:25
+#: config/config.php:56
 msgid "RRZE Jobs"
 msgstr ""
 
-#: config/config.php:28
+#: config/config.php:59
 msgid "Jobs Settings"
 msgstr ""
 
-#: config/config.php:41
-msgid ""
-"This plugin will automatically add an icon or a preview image next to links "
-"of the activated file types. If you like, you can also let the plugin add "
-"the file size of the linked file to the page."
+#: config/config.php:72
+msgid "General Settings"
 msgstr ""
 
-#: config/config.php:42
-msgid ""
-"On this settings page you can choose to show an icon or a preview image will "
-"be shown and specify the icon size, icon type (white matte gif or "
-"transparent png) and the icon alignment. Click on tab \"File Types "
-"Settings\" to select the file types for which this plugin will be enabled. "
-"\"Additional Settings\" allow you to specify exceptions, format the file "
-"size and set caching options."
+#: config/config.php:86
+msgid "orgIDs Interamt"
 msgstr ""
 
-#: config/config.php:45
+#: config/config.php:87 config/config.php:94
+msgid "Enter the ID(s) of your organization(s)"
+msgstr ""
+
+#: config/config.php:93
+msgid "orgIDs UnivIS"
+msgstr ""
+
+#: config/config.php:100
+msgid "Notice"
+msgstr ""
+
+#: config/config.php:101
+msgid "This notice will be dispayed below each job offer."
+msgstr ""
+
+#: config/config.php:122
+msgid "Find instructions at "
+msgstr ""
+
+#: config/config.php:125
 msgid "For more information"
 msgstr ""
 
-#: config/config.php:45
+#: config/config.php:125
 msgid "RRZE Webteam on Github"
-msgstr ""
-
-#: config/config.php:59
-msgid "interamt"
-msgstr ""
-
-#: config/config.php:63
-msgid "univIS"
-msgstr ""
-
-#: config/config.php:78 config/config.php:101
-msgid "orgID"
-msgstr ""
-
-#: config/config.php:79 config/config.php:102
-msgid "Enter the ID of your organization"
-msgstr ""
-
-#: config/config.php:85 config/config.php:108
-msgid "URL to listings"
-msgstr ""
-
-#: config/config.php:86 config/config.php:109
-msgid "Enter the link to all the job's listings"
-msgstr ""
-
-#: config/config.php:92 config/config.php:115
-msgid "URL to details"
-msgstr ""
-
-#: config/config.php:93 config/config.php:116
-msgid "Enter the link to the detailed job's listing"
 msgstr ""
 
 #: includes/Shortcode.php:101
 msgid ""
-"Please specify the correct job portal in the shortcode attributes <code>"
-"interamt=\"\"</code> and/or <code>univis=\"\"</code>"
+"Please specify the correct job portal in the shortcode attribute <code>"
+"provider=\"\"</code>."
 msgstr ""
 
-#: includes/Shortcode.php:108
+#: includes/Shortcode.php:119
 msgid "Please provide an organisation or job ID!"
 msgstr ""
 
-#: includes/Shortcode.php:271
-msgid "Bewerbungsschluss"
+#: includes/Shortcode.php:196
+msgid "Cannot connect to API at the moment. Link is "
 msgstr ""
 
-#: includes/Shortcode.php:274
-msgid "Referenz"
-msgstr ""
-
-#: includes/Shortcode.php:277
-msgid "Bewerbung"
-msgstr ""
-
-#: includes/Shortcode.php:290
-msgid "Details"
-msgstr ""
-
-#: includes/Shortcode.php:291
-msgid "Stellenbezeichnung"
-msgstr ""
-
-#: includes/Shortcode.php:293
-msgid "Besetzung zum"
+#: includes/Shortcode.php:218
+msgid ""
+"Parameter \"orderby\" is not correct. Please use one of the following values:"
+" "
 msgstr ""
 
 #: includes/Shortcode.php:296
+msgid "API does not return any data."
+msgstr ""
+
+#: includes/Shortcode.php:368
+msgid "Bewerbungsschluss"
+msgstr ""
+
+#: includes/Shortcode.php:372
+msgid "Referenz"
+msgstr ""
+
+#: includes/Shortcode.php:374
+msgid "Bewerbung"
+msgstr ""
+
+#: includes/Shortcode.php:386
+msgid "Details"
+msgstr ""
+
+#: includes/Shortcode.php:387
+msgid "Stellenbezeichnung"
+msgstr ""
+
+#: includes/Shortcode.php:389
+msgid "Besetzung zum"
+msgstr ""
+
+#: includes/Shortcode.php:392
 msgid "Einsatzort"
 msgstr ""
 
-#: includes/Shortcode.php:315
+#: includes/Shortcode.php:415
 msgid "Entgelt"
 msgstr ""
 
-#: includes/Shortcode.php:318
+#: includes/Shortcode.php:418
 msgid "Teilzeit / Vollzeit"
 msgstr ""
 
-#: includes/Shortcode.php:321
+#: includes/Shortcode.php:421
 msgid "Wochenarbeitszeit"
 msgstr ""
 
-#: includes/Shortcode.php:324
+#: includes/Shortcode.php:424
 msgid "Befristung (Monate)"
 msgstr ""
 
-#: includes/Shortcode.php:329
+#: includes/Shortcode.php:428
 msgid "Ansprechpartner für weitere Informationen"
 msgstr ""
 
-#: includes/Shortcode.php:332
+#: includes/Shortcode.php:431
 msgid "Telefon"
 msgstr ""
 
-#: includes/Shortcode.php:335
+#: includes/Shortcode.php:434
 msgid "Mobil"
 msgstr ""
 
-#: includes/Shortcode.php:338
+#: includes/Shortcode.php:437
 msgid "E-Mail"
 msgstr ""
 
 #. Description of the plugin
-msgid ""
-"Embedding job offers from job portal apis via shortcode (only Interamt for "
-"now)"
+msgid "Embedding job offers from job portal apis via shortcode"
 msgstr ""
 
 #. URI of the plugin
@@ -185,7 +176,7 @@ msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 msgstr ""
 
 #. Author of the plugin
-msgid "RRZE-Webteam"
+msgid "RRZE Webteam"
 msgstr ""
 
 #. Author URI of the plugin

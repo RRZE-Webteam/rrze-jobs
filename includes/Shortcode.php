@@ -11,17 +11,6 @@ use function RRZE\Jobs\Config\getOptionName;
 use function RRZE\Jobs\Config\isInternAllowed;
 
 class Shortcode {
-    private $groups = array(
-        'wiss' => 'Wissenschaftliche Stellen (Wissenschaftlicher Dienst und Ärzte)',
-        // 'Nichtwissenschaftliche Stellen (Verwaltungsdienst, Technischer DIenst, Pflege- und Funktionsdienst, Arbeitnehmer/innnen)',
-        'tech' => 'Technischer DIenst',
-        'verw' => 'Verwaltungsdienst',
-        'arb' => 'Arbeitnehmer/innnen',
-        'azubi' => 'Auszubildende',
-        'hiwi' => 'Studentische Hilfskräfte',
-        'other' => '?'
-    ); // $job->group
-
     private $provider = '';
 
     private $count = 0;
