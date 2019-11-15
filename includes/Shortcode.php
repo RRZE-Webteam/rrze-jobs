@@ -55,7 +55,7 @@ class Shortcode {
         }
     }
 
-    private function get_providers() {
+    private function getProviders() {
         $providers = array();
         $options = get_option( getOptionName() );
 
@@ -117,7 +117,7 @@ class Shortcode {
     
 
     public function jobs_shortcode( $atts ) {
-        $providers = $this->get_providers();
+        $providers = $this->getProviders();
 
         if ( isset($atts['orgids']) && $atts['orgids'] != '' ){
             $orgids = sanitize_text_field( $atts['orgids'] );
@@ -189,6 +189,7 @@ class Shortcode {
         $logo_meta = has_custom_logo() ? '<meta itemprop="image" content="' . wp_get_attachment_url($custom_logo_id) . '" />' : '';
 
         $maps = array();
+
         $orgids = explode( ',', $orgids );
 
         foreach ( $orgids as $orgid ){
