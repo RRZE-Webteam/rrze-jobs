@@ -200,7 +200,7 @@ class Shortcode {
             $node = $map_template['node'];
             unset( $map_template['node'] );
         
-            if ( !is_null( $obj ) ){
+            if ( !is_null( $obj ) && isset( $obj->$node )){
                 $today = $this->transform_date( 'now' );
 
                 foreach ($obj->$node as $job) {
@@ -481,25 +481,32 @@ class Shortcode {
             'render_callback'  => [$this, 'jobsHandler'],
             'attributes'         =>   [
                 "provider" => [
-                    'default' => 'univis'
+                    'default' => 'univis',
+                    'type' => 'string'
                 ],
                 "orgids" => [
-                    'default' => ''
+                    'default' => '',
+                    'type' => 'string'
                 ],
                 "jobid" => [
-                    'default' => ''
+                    'default' => '',
+                    'type' => 'string'
                 ],
                 "internal" => [
-                    'default' => 'exclude'
+                    'default' => 'exclude',
+                    'type' => 'string'
                 ],
                 "limit" => [
-                    'default' => ''
+                    'default' => '',
+                    'type' => 'integer'
                 ],
                 "orderby" => [
-                    'default' => 'job_title'
+                    'default' => 'job_title',
+                    'type' => 'string'
                 ],
                 "order" => [
-                    'default' => 'DESC'
+                    'default' => 'DESC',
+                    'type' => 'string'
                 ]
             ]
         ) );
