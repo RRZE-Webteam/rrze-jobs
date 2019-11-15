@@ -72,7 +72,8 @@ class Shortcode {
 
     private function formatUnivIS( $txt ){
         $search = array(
-            '/\-+\s+(.*)?/mi',
+            // '/\-+\s+(.*)?/mi', 
+            '/\-+\s+(?!und)(.*)/mi', // exclude "- und"
             '/(\<\/ul\>\n(.*)\<ul\>*)+/',
             '/(\<br \/\>*)/mi',
             '/\*(.*)\*/',
@@ -96,8 +97,6 @@ class Shortcode {
             'orgids' => '',
             'limit' => '',
             'internal' => 'exclude',
-            'department' => '',
-            'jobtype' => '',
             'jobid' => '',
             'orderby' => 'job_title',
             'order' => 'ASC'
@@ -183,7 +182,7 @@ class Shortcode {
         return $myArray;
     }
 
-    private function get_job_list( $api_url, $orgids, $limit = '', $orderby, $order, $internal) {
+    private function get_job_list( $api_url, $orgids, $limit, $orderby, $order, $internal ) {
         $output = '';
         $output .= '<ul class=\'rrze-jobs-list\'>';
         $custom_logo_id = get_theme_mod('custom_logo');
@@ -202,6 +201,7 @@ class Shortcode {
 
             $myurl = $api_url . trim( $orgid );
             $json = file_get_contents( $myurl );
+
             if ( !$json ) {
                 return '<p>' . __('Cannot connect to API at the moment. Link is ', 'rrze-jobs') . '<a href="' . $myurl . '" target="_blank">' . $myurl . '</a></p>';
             }
@@ -233,6 +233,11 @@ class Shortcode {
 
             foreach ($maps as $map) {
 
+                // If parameter "limit" is reached stop output
+                if ( ( $limit > 0 ) && ( $this->count >= $limit ) )  {
+                    break 1;
+                }
+
                 // Skip internal job offers if necessary
                 switch ( $internal ){
                     case 'only' :  
@@ -255,10 +260,15 @@ class Shortcode {
 						break;
                 }
 
-                // If parameter "limit" is reached stop output
-                if ( ( $limit > 0 ) && ( $this->count >= $limit ) )  {
-                    break 1;
-                }
+                // Skip if parameter jobtype is used and this job does not match with it
+                // if ( ( $employmenttype != '' ) && ( $employmenttype != $map['job_employmenttype'] ) ){
+                //     continue;
+                // }
+
+                // Skip if parameter jobcategory is used and this job does not match with it
+                // if ( ( $jobcategory != '' ) && ( $jobcategory != $map['job_category_grouped'] ) ){
+                //     continue;
+                // }
 
                 if ( ( isset( $map['application_end'] ) )  && ( $this->transform_date( $map['application_end'] ) >= $today ) ){
                     $salary = $this->getSalary( $map );
@@ -477,7 +487,8 @@ class Shortcode {
             ),
             filemtime( "$dir/$index_js" )
         );
-    
+
+       
         register_block_type( 'rrze-jobs/jobs', array(
             'editor_script'  => 'jobsEditor',
             'render_callback'  => array($this, 'jobsHandler'),
@@ -485,10 +496,7 @@ class Shortcode {
                 "provider" => [
                     'default' => ''
                 ],
-                "department" => [
-                    'default' => ''
-                ],
-                "jobtype" => [
+                "employmenttype" => [
                     'default' => ''
                 ],
                 "jobid" => [

@@ -403,11 +403,11 @@ function getMap( $provider, $type ){
       'univis'=> 'intern',
       'label' => 'Intern'
     ],
-    'job_type' => [
+    'job_employmenttype' => [
       'interamt' => '', 
       'univis'=> 'type2',
-      'label' => 'Job Typ'
-    ], 
+      'label' => 'Vollzeit / Teilzeit'
+    ],
     'employer_organization' => [
       'interamt' => 'Behoerde', 
       'univis'=> 'orgname',
