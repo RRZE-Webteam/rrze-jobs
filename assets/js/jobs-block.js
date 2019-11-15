@@ -55,17 +55,19 @@ function dotheblock() {
 
 					for (var y = 0; y < yL; y++) {
 						parts = opt[y].split('|');
-						opts += "{value:'" + parts[0] + "', label: __('" + parts[1] + "', 'rrze-downloads')},";
+						opts += "{value:'" + parts[0] + "', label: __('" + parts[1] + "', 'rrze-jobs')},";
 					}
 					opts = opts.substring(0, opts.length - 1 );
-					ret.push( createElement( SelectControl, { value: eval( 'attributes.' + field ), label: __( fieldlabel, 'rrze-downloads' ), onChange: changeField.bind( field ),  options: eval('[' + opts +']') } ) );
+					ret.push( createElement( SelectControl, { value: eval( 'attributes.' + field ), label: __( fieldlabel, 'rrze-jobs' ), onChange: changeField.bind( field ),  options: eval('[' + opts +']') } ) );
 				}
 				return ret;
 			}
 
-			var providerSelect = createSelects( ['provider|Provider:all|Alle,interamt|Interamt,univis|UnivIS'] );
-			var elementsText = createTexts( ['department|Department(s)', 'jobtype|Job Type', 'jobid|Job ID'] );
-			var elementsSelect = createSelects( ['orderby|Sortierung nach:title|Titel,date|Datum','sort|Sortierreihenfolge:ASC|A-Z,DESC|Z-A'] );
+			var providerSelect = createSelects( ['provider|Provider:interamt|Interamt,univis|UnivIS'] );
+			var elementsText = createTexts( ['orgids|OrgID(s)', 'jobid|Job ID'] );
+			var elementsSelect = createSelects( ['internal|Interne Stellenanzeigen:exclude|nicht ausgeben,include|auch ausgeben,only|nur diese ausgeben'] );
+			var limitText = createTexts( ['limit|Anzahl (leer = unbegrenzt)'] );
+			var orderSelect = createSelects( ['orderby|Sortierung nach:job_title|Titel der Stellenanzeige,application_start|Öffentlicher Ausschreibung,application_end|Bewerbungsschluss,job_start|Beginn der Tätigkeit','order|Sortierreihenfolge:ASC|aufsteigend,DESC|absteigend'] );
 
 			return createElement('div', {}, [
 				createElement( 'div', {}, __( 'Klicken Sie hier, um die Einstellungen auf der rechten Seite vorzunehmen.', 'rrze-jobs') ),
@@ -73,7 +75,9 @@ function dotheblock() {
 					[
 						providerSelect,
 						elementsText,
-						elementsSelect
+						elementsSelect,
+						limitText,
+						orderSelect
 					]
 				)
 			] )

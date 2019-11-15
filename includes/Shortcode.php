@@ -84,9 +84,9 @@ class Shortcode {
         $atts = shortcode_atts([
             'provider' => '',
             'orgids' => '',
-            'limit' => '',
-            'internal' => 'exclude',
             'jobid' => '',
+            'internal' => 'exclude',
+            'limit' => '',
             'orderby' => 'job_title',
             'order' => 'ASC'
         ], $atts, 'jobs');
@@ -96,12 +96,10 @@ class Shortcode {
 
         if ( isset( $provider ) && ( $provider != '' ) ){
             $this->provider = $atts['provider']; 
-            $output = $this->jobs_shortcode( $atts );
+            return $this->jobs_shortcode( $atts );
         }else{
             return '<p>' . __('Please specify the correct job portal in the shortcode attribute <code>provider=""</code>.', 'rrze-jobs') . '</p>';
         }
-
-        return $output;
     }
     
 
@@ -478,25 +476,30 @@ class Shortcode {
             filemtime( "$dir/$index_js" )
         );
 
-       
         register_block_type( 'rrze-jobs/jobs', array(
             'editor_script'  => 'jobsEditor',
-            'render_callback'  => array($this, 'jobsHandler'),
+            'render_callback'  => [$this, 'jobsHandler'],
             'attributes'         =>   [
                 "provider" => [
-                    'default' => ''
+                    'default' => 'univis'
                 ],
-                "employmenttype" => [
+                "orgids" => [
                     'default' => ''
                 ],
                 "jobid" => [
                     'default' => ''
                 ],
-                "orderby" => [
+                "internal" => [
+                    'default' => 'exclude'
+                ],
+                "limit" => [
                     'default' => ''
                 ],
-                "sort" => [
-                    'default' => ''
+                "orderby" => [
+                    'default' => 'job_title'
+                ],
+                "order" => [
+                    'default' => 'DESC'
                 ]
             ]
         ) );
