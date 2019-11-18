@@ -262,7 +262,10 @@ class Shortcode {
                 //     continue;
                 // }
 
-	            // Skip if outdated
+                // Skip if outdated
+                if ( isset( $map['application_end'] ) && (bool)strtotime( $map['application_end'] ) === true) {
+                    $map['application_end'] = (new \DateTime( $map['application_end'] ) )->format('Y-m-d');
+                }
                 if ($map['application_end'] < date('Y-m-d')) {
                     continue;
                 }
