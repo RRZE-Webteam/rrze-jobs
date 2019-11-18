@@ -105,6 +105,7 @@ class Shortcode {
     
 
     public function jobs_shortcode( $atts ) {
+        $this->count = 0;
         $providers = $this->getProviders();
 
         if ( isset( $atts['orgid'] ) ) {
@@ -310,6 +311,8 @@ class Shortcode {
                 $this->count++;
             }
         } 
+
+echo 'count = ' . $this->count;
 
         if ( $this->count == 0 ) {
             return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
