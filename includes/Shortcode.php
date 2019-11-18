@@ -312,8 +312,6 @@ class Shortcode {
             }
         } 
 
-echo 'count = ' . $this->count;
-
         if ( $this->count == 0 ) {
             return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
         }
