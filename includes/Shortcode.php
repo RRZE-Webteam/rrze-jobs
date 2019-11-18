@@ -106,6 +106,10 @@ class Shortcode {
     public function jobs_shortcode( $atts ) {
         $providers = $this->getProviders();
 
+        if ( isset( $atts['orgid'] ) ) {
+            $atts['orgids'] = $atts['orgid'];
+        }
+
         if ( isset($atts['orgids']) && $atts['orgids'] != '' ){
             $orgids = sanitize_text_field( $atts['orgids'] );
         }else {
