@@ -206,8 +206,6 @@ class Shortcode {
             unset( $map_template['node'] );
         
             if ( !is_null( $obj ) && isset( $obj->$node )){
-                $today = $this->transform_date( 'now' );
-
                 foreach ($obj->$node as $job) {
                     $maps[] = fillMap( $map_template, $job );
                 }
@@ -263,35 +261,38 @@ class Shortcode {
                 //     continue;
                 // }
 
-                if ( ( isset( $map['application_end'] ) )  && ( $this->transform_date( $map['application_end'] ) >= $today ) ){
-                    $salary = $this->getSalary( $map );
-                    $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . $map['job_id']  . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
-                        .'<span itemprop="title">' . $map['job_title'] . ( $salary != '' ? ' (' . $salary . ')' : '' ) . '</span></a>';
-                        $output .= $logo_meta 
-                        .(isset($map['application_start']) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $map['application_start'] ) . '" />': '')
-                        .(isset($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . $map['job_education'] . '" />': '')  
-                        .(isset($map['job_type']) ? '<meta itemprop="employmentType" content="' . ( $map['job_type'] == 'teil' ? 'Teilzeit' : 'Vollzeit' ) . '" />': '') 
-                        .(isset($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' .$map['job_unit'] . '" />':'')
-                        .'<meta itemprop="estimatedSalary" content="' . $salary . '" />'
-                        .(isset($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . htmlentities( $map['job_experience'] ) . '" />': '')
-                        .(isset($map['employer_organization']) ? '<meta itemprop="hiringOrganization" content="' . $map['employer_organization'] . '" />': '')
-                        .(isset($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . $map['job_benefits'] . '" />': '')
-                        .(isset($map['job_start']) ? '<meta itemprop="jobStartDate" content="' . $this->transform_date( $map['job_start'] ) . '" />' : '')
-                        .(isset($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />': '')
-                        .(isset($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . $map['job_qualifications'] . '" />': '')
-                        // skills
-                        .(isset($map['job_title']) ? '<meta itemprop="title" content="' . $map['job_title'] . '" />': '')
-                        .(isset($map['application_end']) ? '<meta itemprop="validThrough" content="' . $map['application_end'] . '" />': '') 
-                        .(isset($map['job_workhours']) ? '<meta itemprop="workHours" content="' . $map['job_workhours'] . '" />': '') 
-                        .(isset($map['application_end']) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $map['application_end'] ) . '" />': '')
-                        .(isset($map['job_description']) ? '<meta itemprop="description" content="' . $map['job_description'] . '" />': '')
-                        . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-                        . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
-                        .(isset($map['employer_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />': '')
-                        .(isset($map['employer_city']) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />': '')
-                        . '</span></li>';
-                    $this->count++;
+                // Skip if outdated
+                if ($map['application_end'] < date('Y-m-d')) {
+                    continue;
                 }
+            
+                $salary = $this->getSalary( $map );
+                $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . $map['job_id']  . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
+                    .'<span itemprop="title">' . $map['job_title'] . ( $salary != '' ? ' (' . $salary . ')' : '' ) . '</span></a>';
+                    $output .= $logo_meta 
+                    .(isset($map['application_start']) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $map['application_start'] ) . '" />': '')
+                    .(isset($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . $map['job_education'] . '" />': '')  
+                    .(isset($map['job_type']) ? '<meta itemprop="employmentType" content="' . ( $map['job_type'] == 'teil' ? 'Teilzeit' : 'Vollzeit' ) . '" />': '') 
+                    .(isset($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' .$map['job_unit'] . '" />':'')
+                    .'<meta itemprop="estimatedSalary" content="' . $salary . '" />'
+                    .(isset($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . htmlentities( $map['job_experience'] ) . '" />': '')
+                    .(isset($map['employer_organization']) ? '<meta itemprop="hiringOrganization" content="' . $map['employer_organization'] . '" />': '')
+                    .(isset($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . $map['job_benefits'] . '" />': '')
+                    .(isset($map['job_start']) ? '<meta itemprop="jobStartDate" content="' . $this->transform_date( $map['job_start'] ) . '" />' : '')
+                    .(isset($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />': '')
+                    .(isset($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . $map['job_qualifications'] . '" />': '')
+                    // skills
+                    .(isset($map['job_title']) ? '<meta itemprop="title" content="' . $map['job_title'] . '" />': '')
+                    .(isset($map['application_end']) ? '<meta itemprop="validThrough" content="' . $map['application_end'] . '" />': '') 
+                    .(isset($map['job_workhours']) ? '<meta itemprop="workHours" content="' . $map['job_workhours'] . '" />': '') 
+                    .(isset($map['application_end']) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $map['application_end'] ) . '" />': '')
+                    .(isset($map['job_description']) ? '<meta itemprop="description" content="' . $map['job_description'] . '" />': '')
+                    . '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+                    . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress" >'
+                    .(isset($map['employer_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />': '')
+                    .(isset($map['employer_city']) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />': '')
+                    . '</span></li>';
+                $this->count++;
             }
         } 
         
@@ -315,9 +316,7 @@ class Shortcode {
         $map_template = getMap( $provider, 'single' );
         $map = fillMap( $map_template, $job );
 
-        $today = $this->transform_date( 'now' );
-
-        if ( ( isset( $map['application_end'] ) )  && ( $this->transform_date( $map['application_end'] ) >= $today ) ){
+        if ( ( isset( $map['application_end'] ) )  && ( $map['application_end'] >= date('Y-m-d') ) ) {
             $azubi = false;
             if ( ( isset( $map['job_title'] ) ) && ( strpos( $map['job_title'], 'Auszubildende' ) ) ) {
                 $azubi = true;
