@@ -83,6 +83,7 @@ class Shortcode {
     public function jobsHandler( $atts ) {
         $atts = shortcode_atts([
             'provider' => '',
+            'orgid' => '',
             'orgids' => '',
             'jobid' => '',
             'internal' => 'exclude',
