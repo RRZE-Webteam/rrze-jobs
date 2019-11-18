@@ -30,3 +30,4 @@ internal -> Zeichenkette, optional, default = "exclude" :
 [jobs provider="UnivIS" orgids="123456" limit="12" internal="include"]
 
 ```
+Beispiele und detailierte Informationen zu den Attributen finden Sie unter https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/jobs/
