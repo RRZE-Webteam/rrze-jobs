@@ -15,8 +15,9 @@ jQuery(document).ready(function($) {
             success: function (data, textStatus, XMLHttpRequest) {
                 $close_link = '<p name="link-container" class="rrze-jobs-closelink-container"><a href="#" class="view-all rrze-jobs-closelink"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
                 $('div.rrze-jobs-single, a.rrze-jobs-closelink').remove();
-                $ul.after( $close_link + $.parseJSON(data) );
-            },
+                $ul.hide();
+                $ul.after($close_link + $.parseJSON(data));
+                            },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);
             }
@@ -26,6 +27,7 @@ jQuery(document).ready(function($) {
     $('.content-inline').on('click', 'a.rrze-jobs-closelink', function (e) {
         e.preventDefault();
         $('div.rrze-jobs-single').remove();
+        $(this).parent().prev('ul.rrze-jobs-list').show();
         $(this).remove();
     });
 });
