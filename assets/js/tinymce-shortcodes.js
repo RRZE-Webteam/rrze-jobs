@@ -5,7 +5,7 @@
             text: 'Jobs',
             context: 'insert',
             onclick: function() {
-                editor.insertContent('[jobs provider=""]<br>');
+                editor.insertContent('[jobs]<br>');
             }
         });
     });
