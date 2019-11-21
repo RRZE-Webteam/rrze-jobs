@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-21 10:12+0000\n"
+"POT-Creation-Date: 2019-11-21 11:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam <webmaster@rrze.fau.de>\n"
@@ -48,7 +48,7 @@ msgid "Jobs Settings"
 msgstr ""
 
 #: config/config.php:72
-msgid "General Settings"
+msgid "Einstellungen"
 msgstr ""
 
 #: config/config.php:86
@@ -111,63 +111,67 @@ msgstr ""
 msgid "API does not return any data."
 msgstr ""
 
-#: includes/Shortcode.php:415
+#: includes/Shortcode.php:356
+msgid "This job offer is not available"
+msgstr ""
+
+#: includes/Shortcode.php:422
 msgid "Bewerbungsschluss"
 msgstr ""
 
-#: includes/Shortcode.php:419
+#: includes/Shortcode.php:426
 msgid "Referenz"
 msgstr ""
 
-#: includes/Shortcode.php:421
+#: includes/Shortcode.php:428
 msgid "Bewerbung"
 msgstr ""
 
-#: includes/Shortcode.php:426
+#: includes/Shortcode.php:433
 msgid "Details"
 msgstr ""
 
-#: includes/Shortcode.php:427
+#: includes/Shortcode.php:434
 msgid "Stellenbezeichnung"
 msgstr ""
 
-#: includes/Shortcode.php:429
+#: includes/Shortcode.php:436
 msgid "Besetzung zum"
 msgstr ""
 
-#: includes/Shortcode.php:432
+#: includes/Shortcode.php:439
 msgid "Einsatzort"
 msgstr ""
 
-#: includes/Shortcode.php:455
+#: includes/Shortcode.php:462
 msgid "Entgelt"
 msgstr ""
 
-#: includes/Shortcode.php:458
+#: includes/Shortcode.php:465
 msgid "Teilzeit / Vollzeit"
 msgstr ""
 
-#: includes/Shortcode.php:461
+#: includes/Shortcode.php:468
 msgid "Wochenarbeitszeit"
 msgstr ""
 
-#: includes/Shortcode.php:464
+#: includes/Shortcode.php:471
 msgid "Befristung (Monate)"
 msgstr ""
 
-#: includes/Shortcode.php:468
+#: includes/Shortcode.php:475
 msgid "Ansprechpartner für weitere Informationen"
 msgstr ""
 
-#: includes/Shortcode.php:471
+#: includes/Shortcode.php:478
 msgid "Telefon"
 msgstr ""
 
-#: includes/Shortcode.php:474
+#: includes/Shortcode.php:481
 msgid "Mobil"
 msgstr ""
 
-#: includes/Shortcode.php:477
+#: includes/Shortcode.php:484
 msgid "E-Mail"
 msgstr ""
 
