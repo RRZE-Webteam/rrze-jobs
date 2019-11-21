@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-15 11:20+0000\n"
-"PO-Revision-Date: 2019-11-21 10:13+0000\n"
+"POT-Creation-Date: 2019-11-21 11:19+0000\n"
+"PO-Revision-Date: 2019-11-21 11:20+0000\n"
 "Last-Translator: benjamin <benjamin.klemencic@fau.de>\n"
 "Language-Team: Deutsch (Sie)\n"
 "Language: de_DE_formal\n"
@@ -53,8 +53,8 @@ msgid "Jobs Settings"
 msgstr ""
 
 #: config/config.php:72
-msgid "General Settings"
-msgstr "Einstellungen"
+msgid "Einstellungen"
+msgstr ""
 
 #: config/config.php:86
 msgid "orgIDs Interamt"
@@ -80,6 +80,10 @@ msgstr "Diese Anmerkung wird unter jedes Stellenangebot ausgegeben."
 msgid "Find instructions at "
 msgstr "Eine Anleitung finden Sie unter "
 
+#: config/config.php:124
+msgid "Overview"
+msgstr ""
+
 #: config/config.php:125
 msgid "For more information"
 msgstr "Für mehr Information"
@@ -88,87 +92,91 @@ msgstr "Für mehr Information"
 msgid "RRZE Webteam on Github"
 msgstr "RRZE-Webteam in Github"
 
-#: includes/Shortcode.php:101
+#: includes/Shortcode.php:102
 msgid ""
 "Please specify the correct job portal in the shortcode attribute <code>"
 "provider=\"\"</code>."
 msgstr ""
 
-#: includes/Shortcode.php:119
+#: includes/Shortcode.php:123
 msgid "Please provide an organisation or job ID!"
 msgstr "Bitte Organisations- oder Job-ID angeben!"
 
-#: includes/Shortcode.php:196
+#: includes/Shortcode.php:224
 msgid "Cannot connect to API at the moment. Link is "
 msgstr ""
 
-#: includes/Shortcode.php:218
+#: includes/Shortcode.php:244
 msgid ""
 "Parameter \"orderby\" is not correct. Please use one of the following values:"
 " "
 msgstr ""
 
-#: includes/Shortcode.php:296
+#: includes/Shortcode.php:332
 msgid "API does not return any data."
 msgstr ""
 
-#: includes/Shortcode.php:368
+#: includes/Shortcode.php:356
+msgid "This job offer is not available"
+msgstr "Dieses Stellenangebot steht nicht zur Verfügung."
+
+#: includes/Shortcode.php:422
 msgid "Bewerbungsschluss"
 msgstr ""
 
-#: includes/Shortcode.php:372
+#: includes/Shortcode.php:426
 msgid "Referenz"
 msgstr ""
 
-#: includes/Shortcode.php:374
+#: includes/Shortcode.php:428
 msgid "Bewerbung"
 msgstr ""
 
-#: includes/Shortcode.php:386
+#: includes/Shortcode.php:433
 msgid "Details"
 msgstr ""
 
-#: includes/Shortcode.php:387
+#: includes/Shortcode.php:434
 msgid "Stellenbezeichnung"
 msgstr ""
 
-#: includes/Shortcode.php:389
+#: includes/Shortcode.php:436
 msgid "Besetzung zum"
 msgstr ""
 
-#: includes/Shortcode.php:392
+#: includes/Shortcode.php:439
 msgid "Einsatzort"
 msgstr ""
 
-#: includes/Shortcode.php:415
+#: includes/Shortcode.php:462
 msgid "Entgelt"
 msgstr ""
 
-#: includes/Shortcode.php:418
+#: includes/Shortcode.php:465
 msgid "Teilzeit / Vollzeit"
 msgstr ""
 
-#: includes/Shortcode.php:421
+#: includes/Shortcode.php:468
 msgid "Wochenarbeitszeit"
 msgstr ""
 
-#: includes/Shortcode.php:424
+#: includes/Shortcode.php:471
 msgid "Befristung (Monate)"
 msgstr ""
 
-#: includes/Shortcode.php:428
+#: includes/Shortcode.php:475
 msgid "Ansprechpartner für weitere Informationen"
 msgstr ""
 
-#: includes/Shortcode.php:431
+#: includes/Shortcode.php:478
 msgid "Telefon"
 msgstr ""
 
-#: includes/Shortcode.php:434
+#: includes/Shortcode.php:481
 msgid "Mobil"
 msgstr ""
 
-#: includes/Shortcode.php:437
+#: includes/Shortcode.php:484
 msgid "E-Mail"
 msgstr ""
 
