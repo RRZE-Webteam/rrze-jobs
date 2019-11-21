@@ -17,17 +17,16 @@ jQuery(document).ready(function($) {
                 $('div.rrze-jobs-single, a.rrze-jobs-closelink').remove();
                 $ul.hide();
                 $ul.after($close_link + $.parseJSON(data));
-                            },
+                $('a.rrze-jobs-closelink').on('click', function (e) {
+                    e.preventDefault();
+                    $('div.rrze-jobs-single').remove();
+                    $(this).parent().prev('ul.rrze-jobs-list').show();
+                    $(this).remove();
+                });
+            },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert(errorThrown);
             }
         });
-    });
-    // $('.entry-content').on('click', 'a.rrze-jobs-closelink', function (e) {
-    $('.content-inline').on('click', 'a.rrze-jobs-closelink', function (e) {
-        e.preventDefault();
-        $('div.rrze-jobs-single').remove();
-        $(this).parent().prev('ul.rrze-jobs-list').show();
-        $(this).remove();
     });
 });
