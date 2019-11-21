@@ -349,6 +349,13 @@ class Shortcode {
         $map_template = getMap( $provider, 'single' );
         $map = fillMap( $map_template, $job );
 
+        $intern_allowed = isInternAllowed();
+
+        // Skip internal job offers if necessary
+        if ( !$intern_allowed && isset( $map['job_intern'] ) ) {
+            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        }
+
         if ( ( isset( $map['application_end'] ) )  && ( $map['application_end'] >= date('Y-m-d') ) ) {
             $azubi = false;
             if ( ( isset( $map['job_title'] ) ) && ( strpos( $map['job_title'], 'Auszubildende' ) ) ) {
