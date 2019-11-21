@@ -1,11 +1,11 @@
 <?php
 
 /*
-Plugin Name:     RRZE Jobs
+Plugin Name:  RRZE Jobs
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
-Description:     Embedding job offers from job portal apis via shortcode (only Interamt for now)
-Version:         1.2.2
-Author:          RRZE-Webteam
+Description:     Embedding job offers from job portal apis via shortcode
+Version:         2.1.0
+Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
 License URI:     http://www.gnu.org/licenses/gpl-2.0.html
@@ -14,6 +14,7 @@ Text Domain:     rrze-jobs
 */
 
 namespace RRZE\Jobs;
+
 
 /*
 Die Codezeile defined('ABSPATH') || exit;
@@ -25,8 +26,12 @@ was zu unerwartetem Verhalten führen kann.
 */
 defined('ABSPATH') || exit;
 
-const RRZE_PHP_VERSION = '7.1';
-const RRZE_WP_VERSION = '5.1';
+require_once 'config/config.php';
+
+use RRZE\Jobs\Main;
+
+const RRZE_PHP_VERSION = '7.3';
+const RRZE_WP_VERSION = '5.2';
 
 const RRZE_PLUGIN_FILE = __FILE__;
 
@@ -82,8 +87,7 @@ function system_requirements()
 /**
  * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
  */
-function activation()
-{
+function activation() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -102,21 +106,19 @@ function activation()
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
-function deactivation()
-{
+function deactivation() {
     // Hier können die Funktionen hinzugefügt werden, die
     // bei der Deaktivierung des Plugins aufgerufen werden müssen.
     // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
 
-    delete_option(Options::get_option_name());
+    // delete_option(Options::get_option_name());
 }
 
 /**
  * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
  * und alle Plugins eingebunden wurden.
  */
-function loaded()
-{
+function loaded() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -131,6 +133,7 @@ function loaded()
         });
     } else {
         // Hauptklasse (Main) wird instanziiert.
-        new Main();
+        $main = new Main(__FILE__);
+        $main->onLoaded();
     }
 }

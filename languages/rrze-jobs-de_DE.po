@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-22 15:26+0000\n"
-"PO-Revision-Date: 2019-05-22 15:28+0000\n"
-"Last-Translator: barbara <barbara.bothe@fau.de>\n"
+"POT-Creation-Date: 2019-11-15 11:20+0000\n"
+"PO-Revision-Date: 2019-11-15 11:21+0000\n"
+"Last-Translator: benjamin <benjamin.klemencic@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -19,9 +19,9 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
-"X-Loco-Version: 2.2.2; wp-5.2.1"
+"X-Loco-Version: 2.3.1; wp-5.3"
 
-#: rrze-jobs.php:74
+#: rrze-jobs.php:79
 #, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
@@ -30,7 +30,7 @@ msgstr ""
 "Auf dem Server läuft PHP Version %1$s. Das Plugin benötigt mindestens PHP "
 "Version %2$s."
 
-#: rrze-jobs.php:77
+#: rrze-jobs.php:82
 #, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
@@ -39,69 +39,149 @@ msgstr ""
 "Auf dem Server läuft WordPress Version %1$s. Das Plugin benötigt mindestens "
 "WordPress Version %2$s."
 
-#: includes/Settings.php:53
-msgid "Settings"
-msgstr "Einstellungen"
+#: config/config.php:55
+msgid "Jobs"
+msgstr ""
 
-#: includes/Settings.php:61
+#: config/config.php:56
 msgid "RRZE Jobs"
 msgstr "RRZE-Jobs"
 
-#: includes/Settings.php:72
-msgid "Settings &rsaquo; RRZE Jobs"
-msgstr "Einstellungen &rsaquo; RRZE-Jobs"
+#: config/config.php:59
+msgid "Jobs Settings"
+msgstr ""
 
-#: includes/Settings.php:91
-msgid "Field 1"
-msgstr "Feld 1"
+#: config/config.php:72
+msgid "General Settings"
+msgstr "Einstellungen"
 
-#: includes/Settings.php:122
-msgid "Here comes the Context Help content."
-msgstr "Hier kommt der Inhalt der Kontexthilfe."
+#: config/config.php:86
+msgid "orgIDs Interamt"
+msgstr ""
 
-#: includes/Settings.php:128
-msgid "Overview"
-msgstr "Übersicht"
+#: config/config.php:87 config/config.php:94
+msgid "Enter the ID(s) of your organization(s)"
+msgstr "Geben Sie die ID(s) Ihrer Organisation(en) an"
 
-#: includes/Settings.php:132
+#: config/config.php:93
+msgid "orgIDs UnivIS"
+msgstr ""
+
+#: config/config.php:100
+msgid "Notice"
+msgstr "Anmerkung"
+
+#: config/config.php:101
+msgid "This notice will be dispayed below each job offer."
+msgstr "Diese Anmerkung wird unter jedes Stellenangebot ausgegeben."
+
+#: config/config.php:122
+msgid "Find instructions at "
+msgstr "Eine Anleitung finden Sie unter "
+
+#: config/config.php:125
 msgid "For more information"
 msgstr "Für mehr Information"
 
-#: includes/Settings.php:132
+#: config/config.php:125
 msgid "RRZE Webteam on Github"
 msgstr "RRZE-Webteam in Github"
 
-#: includes/Shortcode.php:48
-#, php-format
+#: includes/Shortcode.php:101
 msgid ""
-" Please specify the job portal in the shortcode attribute %sprovider=\"\"%s"
+"Please specify the correct job portal in the shortcode attribute <code>"
+"provider=\"\"</code>."
 msgstr ""
-"Bitte Anbieter der Jobplattform im Shortcode-Attribut <code>"
-"provider=\"\"</code> angeben!"
 
-#: includes/Shortcode.php:51
+#: includes/Shortcode.php:119
 msgid "Please provide an organisation or job ID!"
 msgstr "Bitte Organisations- oder Job-ID angeben!"
 
-#: includes/Shortcode.php:67 includes/Shortcode.php:93
-msgid "back to list"
-msgstr "zurück zur Liste"
+#: includes/Shortcode.php:196
+msgid "Cannot connect to API at the moment. Link is "
+msgstr ""
+
+#: includes/Shortcode.php:218
+msgid ""
+"Parameter \"orderby\" is not correct. Please use one of the following values:"
+" "
+msgstr ""
+
+#: includes/Shortcode.php:296
+msgid "API does not return any data."
+msgstr ""
+
+#: includes/Shortcode.php:368
+msgid "Bewerbungsschluss"
+msgstr ""
+
+#: includes/Shortcode.php:372
+msgid "Referenz"
+msgstr ""
+
+#: includes/Shortcode.php:374
+msgid "Bewerbung"
+msgstr ""
+
+#: includes/Shortcode.php:386
+msgid "Details"
+msgstr ""
+
+#: includes/Shortcode.php:387
+msgid "Stellenbezeichnung"
+msgstr ""
+
+#: includes/Shortcode.php:389
+msgid "Besetzung zum"
+msgstr ""
+
+#: includes/Shortcode.php:392
+msgid "Einsatzort"
+msgstr ""
+
+#: includes/Shortcode.php:415
+msgid "Entgelt"
+msgstr ""
+
+#: includes/Shortcode.php:418
+msgid "Teilzeit / Vollzeit"
+msgstr ""
+
+#: includes/Shortcode.php:421
+msgid "Wochenarbeitszeit"
+msgstr ""
+
+#: includes/Shortcode.php:424
+msgid "Befristung (Monate)"
+msgstr ""
+
+#: includes/Shortcode.php:428
+msgid "Ansprechpartner für weitere Informationen"
+msgstr ""
+
+#: includes/Shortcode.php:431
+msgid "Telefon"
+msgstr ""
+
+#: includes/Shortcode.php:434
+msgid "Mobil"
+msgstr ""
+
+#: includes/Shortcode.php:437
+msgid "E-Mail"
+msgstr ""
 
 #. Description of the plugin
-msgid ""
-"Embedding job offers from job portal apis via shortcode (only Interamt for "
-"now)"
+msgid "Embedding job offers from job portal apis via shortcode"
 msgstr ""
-"Einbindung von Jobangeboten per Shortcode über Portal-API (zurzeit nur "
-"Interamt)"
 
 #. URI of the plugin
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 msgstr "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 
 #. Author of the plugin
-msgid "RRZE-Webteam"
-msgstr "RRZE-Webteam"
+msgid "RRZE Webteam"
+msgstr ""
 
 #. Author URI of the plugin
 msgid "https://blogs.fau.de/webworking/"
