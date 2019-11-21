@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-11-15 11:20+0000\n"
+"POT-Creation-Date: 2019-11-21 10:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: \n"
 "Language-Team: RRZE-Webteam <webmaster@rrze.fau.de>\n"
@@ -75,6 +75,10 @@ msgstr ""
 msgid "Find instructions at "
 msgstr ""
 
+#: config/config.php:124
+msgid "Overview"
+msgstr ""
+
 #: config/config.php:125
 msgid "For more information"
 msgstr ""
@@ -83,87 +87,87 @@ msgstr ""
 msgid "RRZE Webteam on Github"
 msgstr ""
 
-#: includes/Shortcode.php:101
+#: includes/Shortcode.php:102
 msgid ""
 "Please specify the correct job portal in the shortcode attribute <code>"
 "provider=\"\"</code>."
 msgstr ""
 
-#: includes/Shortcode.php:119
+#: includes/Shortcode.php:123
 msgid "Please provide an organisation or job ID!"
 msgstr ""
 
-#: includes/Shortcode.php:196
+#: includes/Shortcode.php:224
 msgid "Cannot connect to API at the moment. Link is "
 msgstr ""
 
-#: includes/Shortcode.php:218
+#: includes/Shortcode.php:244
 msgid ""
 "Parameter \"orderby\" is not correct. Please use one of the following values:"
 " "
 msgstr ""
 
-#: includes/Shortcode.php:296
+#: includes/Shortcode.php:332
 msgid "API does not return any data."
 msgstr ""
 
-#: includes/Shortcode.php:368
+#: includes/Shortcode.php:415
 msgid "Bewerbungsschluss"
 msgstr ""
 
-#: includes/Shortcode.php:372
+#: includes/Shortcode.php:419
 msgid "Referenz"
 msgstr ""
 
-#: includes/Shortcode.php:374
+#: includes/Shortcode.php:421
 msgid "Bewerbung"
 msgstr ""
 
-#: includes/Shortcode.php:386
+#: includes/Shortcode.php:426
 msgid "Details"
 msgstr ""
 
-#: includes/Shortcode.php:387
+#: includes/Shortcode.php:427
 msgid "Stellenbezeichnung"
 msgstr ""
 
-#: includes/Shortcode.php:389
+#: includes/Shortcode.php:429
 msgid "Besetzung zum"
 msgstr ""
 
-#: includes/Shortcode.php:392
+#: includes/Shortcode.php:432
 msgid "Einsatzort"
 msgstr ""
 
-#: includes/Shortcode.php:415
+#: includes/Shortcode.php:455
 msgid "Entgelt"
 msgstr ""
 
-#: includes/Shortcode.php:418
+#: includes/Shortcode.php:458
 msgid "Teilzeit / Vollzeit"
 msgstr ""
 
-#: includes/Shortcode.php:421
+#: includes/Shortcode.php:461
 msgid "Wochenarbeitszeit"
 msgstr ""
 
-#: includes/Shortcode.php:424
+#: includes/Shortcode.php:464
 msgid "Befristung (Monate)"
 msgstr ""
 
-#: includes/Shortcode.php:428
+#: includes/Shortcode.php:468
 msgid "Ansprechpartner für weitere Informationen"
 msgstr ""
 
-#: includes/Shortcode.php:431
+#: includes/Shortcode.php:471
 msgid "Telefon"
 msgstr ""
 
-#: includes/Shortcode.php:434
+#: includes/Shortcode.php:474
 msgid "Mobil"
 msgstr ""
 
-#: includes/Shortcode.php:437
+#: includes/Shortcode.php:477
 msgid "E-Mail"
 msgstr ""
 

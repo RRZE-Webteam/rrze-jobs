@@ -69,7 +69,7 @@ function getSections() {
 	return [
 		[
 			'id'    => 'basic',
-			'title' => __('General Settings', 'rrze-jobs')
+			'title' => __('Einstellungen', 'rrze-jobs')
 		]
 	];
 }
