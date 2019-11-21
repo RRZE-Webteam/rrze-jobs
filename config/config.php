@@ -86,14 +86,14 @@ function getFields() {
 				'label'   => __("orgIDs Interamt", 'rrze-jobs'),
 				'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
 				'type'    => 'text',
-				'default' => '2217'
+				'default' => ''
 			],
 			[
 				'name'    => 'univis_orgid',
 				'label'   => __("orgIDs UnivIS", 'rrze-jobs'),
 				'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
 				'type'    => 'text',
-				'default' => '420100'
+				'default' => ''
 			],
 			[
 				'name'    => 'job_notice',
