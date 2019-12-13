@@ -89,7 +89,8 @@ class Shortcode {
             'internal' => 'exclude',
             'limit' => '',
             'orderby' => 'job_title',
-            'order' => 'ASC'
+            'order' => 'ASC',
+            'fallback_apply' => ''
         ], $atts, 'jobs');
 
         $provider = strtolower(sanitize_text_field($atts['provider']));
@@ -131,7 +132,7 @@ class Shortcode {
         if ( $jobid != '' ) {
             $output .= $this->get_single_job( $this->provider, $jobid );
         } else {
-            $output = $this->get_job_list( getURL($this->provider, 'urllist'), $orgids, $atts['limit'], $atts['orderby'], $atts['order'], $atts['internal'] );
+            $output = $this->get_job_list( getURL($this->provider, 'urllist'), $orgids, $atts['limit'], $atts['orderby'], $atts['order'], $atts['internal'] , $atts['fallback_apply'] );
         }
 
         wp_enqueue_style('rrze-elements');
@@ -142,10 +143,12 @@ class Shortcode {
     }
 
     public function rrze_jobs_ajax_function() {
+        $provider = sanitize_text_field( $_POST['provider'] );
         $jobid = sanitize_text_field( $_POST['jobid'] );
-        $parts = explode('_', $jobid);
-        $responseData = $this->get_single_job( $parts[0], $parts[1] );
-        echo json_encode($responseData);
+        $fallback_apply = sanitize_text_field( $_POST['fallback_apply'] );
+        $responseData = $this->get_single_job( $provider, $jobid, $fallback_apply );
+        error_log( 'in rrze_jobs_ajax_function ' . $responseData);
+        echo json_encode( $responseData );
         wp_die();
     }
 
@@ -200,7 +203,7 @@ class Shortcode {
         return $myArray;
     }
 
-    private function get_job_list( $api_url, $orgids, $limit, $orderby, $order, $internal ) {
+    private function get_job_list( $api_url, $orgids, $limit, $orderby, $order, $internal, $fallback_apply ) {
         $output = '';
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_meta = has_custom_logo() ? '<meta itemprop="image" content="' . wp_get_attachment_url($custom_logo_id) . '" />' : '';
@@ -277,16 +280,6 @@ class Shortcode {
 						break;
                 }
 
-                // Skip if parameter jobtype is used and this job does not match with it
-                // if ( ( $employmenttype != '' ) && ( $employmenttype != $map['job_employmenttype'] ) ){
-                //     continue;
-                // }
-
-                // Skip if parameter jobcategory is used and this job does not match with it
-                // if ( ( $jobcategory != '' ) && ( $jobcategory != $map['job_category_grouped'] ) ){
-                //     continue;
-                // }
-
                 // Skip if outdated
                 if ( isset( $map['application_end'] ) && (bool)strtotime( $map['application_end'] ) === true) {
                     $map['application_end'] = (new \DateTime( $map['application_end'] ) )->format('Y-m-d');
@@ -299,7 +292,7 @@ class Shortcode {
 	            $description = $this->getDescription($map, $this->provider);
 	            $description = str_replace('"', '', $description);
 
-	            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?provider=' . $this->provider . '&jobid=' . $map['job_id']  . '" data-jobid="' . $this->provider . '_' . ( isset( $map['job_id'] ) ? $map['job_id'] : 'fehlt noch für univis' ) . '" class="joblink">'
+	            $output .= '<li itemscope itemtype="https://schema.org/JobPosting"><a href="?jobid=' . $map['job_id'] . '" data-provider="' . $this->provider . '" data-jobid= "' . $map['job_id'] . '" data-fallback_apply="' . $fallback_apply . '" class="joblink">'
                     .'<span itemprop="title">' . $map['job_title'] . ( $salary != '' ? ' (' . $salary . ')' : '' ) . '</span></a>';
                     $output .= $logo_meta 
                     .(isset($map['application_start']) ? '<meta itemprop="datePosted" content="' . $this->transform_date( $map['application_start'] ) . '" />': '')
@@ -336,7 +329,7 @@ class Shortcode {
     }
     
 
-    public function get_single_job( $provider, $jobid ) {
+    public function get_single_job( $provider, $jobid, $fallback_apply = '' ) {
 	    $output = '';
     	$api_url = getURL($provider, 'urlsingle') . $jobid;
         $json_job = file_get_contents($api_url);
@@ -404,7 +397,6 @@ class Shortcode {
                 $map['job_type'] = NULL;
             }
 
-            $application_mailto = 'mailto:' . $application_email;
             if ( isset( $map['application_end'] ) ){
                 $date = date_create( $map['application_end'] );
                 $date_deadline = date_format($date, 'd.m.Y');
@@ -414,8 +406,19 @@ class Shortcode {
             }
             $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
 
+            // set application_email or application_link or fallback_link
             $sidebar = '';
-            $sidebar .= do_shortcode( '<div>[button link="' . $application_mailto . '" width="full"]Jetzt bewerben![/button]</div>' );
+            if ( $application_email != '' ) {
+                $application_link = 'mailto:' . $application_email;
+            } elseif ( isset( $map['application_link'] ) && $map['application_link'] != '' ) {
+                $application_link = $map['application_link'];
+            } elseif ( $fallback_apply != '' ) {
+                $application_link = $fallback_apply;
+                if ( strpos( $fallback_apply, '@' ) > 0 ){
+                    $application_link = 'mailto:' . $fallback_apply;
+                }
+            } 
+            $sidebar .= do_shortcode( '<div>[button link="' . $application_link . '" width="full"]Jetzt bewerben![/button]</div>' );
 
             $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
             if ( isset( $map['application_end']) ) {
@@ -425,10 +428,9 @@ class Shortcode {
             if ( isset( $map['job_type'] ) ) { 
                 $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
             }
-            $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
-            $sidebar .= '<dd>' . $map['application_link'] . '</dd>';
-            $sidebar .= '</dl></div>';
 
+            $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
+            $sidebar .= '<dd>' . $application_link . '</dd></div>';
             $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
             $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
                 . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';

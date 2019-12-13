@@ -199,47 +199,132 @@ function getMap( $provider, $type ){
 	$map_single = [
 		'job_id' => [
 			'interamt' => 'Id',
-			'univis'=> array('Position', 'id'),
+			'univis'=> array('Position', 'id'), // list
 			'label' => 'Job ID'
+		],
+		'application_start' => [
+			'interamt' => 'DatumOeffentlichAusschreiben',
+			'univis'=> '',  // fehlt
+			'label' => 'Bewerbungsstart'
+		],
+		'application_end' => [
+			'interamt' => 'DatumBewerbungsfrist',
+			'univis'=> array('Position', 'enddate'), // list
+			'label' => 'Bewerbungsschluss'
+		],
+		'application_link' => [
+			'interamt' => 'BewerbungUrl',
+			'univis'=> array('Position', 'desc6'), // list
+			'label' => 'Link zur Bewerbung'
 		],
 		'job_intern' => [
 			'interamt' => '',
-			'univis'=> array('Position', 'intern'),
+			'univis'=> array('Position', 'intern'), // list
 			'label' => 'Intern'
 		],
 		'job_type' => [
 			'interamt' => 'Kennung',
-			'univis'=> '',
+			'univis'=> '', // exisitiert nicht
 			'label' => 'Job Typ'
 		],
 		'job_title' => [
 			'interamt' => 'Stellenbezeichnung',
-			'univis'=> array('Position', 'title'),
+			'univis'=> array('Position', 'title'), // list
 			'label' => 'Stellenbezeichnung'
+		],
+		'job_start' => [
+			'interamt' => 'DatumBesetzungZum',
+			'univis'=> array('Position', 'start'), // list
+			'label' => 'Besetzung zum'
+		],
+		'job_limitation' => [
+			'interamt' => 'BeschaeftigungDauer',
+			'univis'=> array('Position', 'type1'),// existiert nicht, aber job_limitation_duration
+			'label' => 'Befristung'
+		],
+		'job_limitation_duration' => [      // Befristung Dauer
+			'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
+			'univis'=> array('Position', 'befristet'), // list
+			'label' => 'Dauer der Befristung'
+		],
+		'job_salary_from' => [
+			'interamt' => 'TarifEbeneVon',
+			'univis'=> array('Position', 'vonbesold'), // list
+			'label' => 'Tarifebene von'
+		],
+		'job_salary_to' => [
+			'interamt' => 'TarifEbeneBis',
+			'univis'=> array('Position', 'bisbesold'), // list
+			'label' => 'Tarifebene bis'
+		],
+		'job_qualifications' => [
+			'interamt' => 'Qualifikation',
+			'univis'=> array('Position', 'desc2'), // list
+			'label' => 'Qualifikationen'
+		],
+		'job_qualifications_nth' => [
+			'interamt' => '',
+			'univis'=>  array('Position', 'desc3'), // list
+			'label' => 'Wünschenswerte Qualifikationen'
+		],
+		// 'job_education' => [
+		// 	'interamt' => 'Ausbildung', // wird in unserer Ausgabe nicht angezeigt
+		// 	'univis'=> '',// fehlt
+		// 	'label' => 'Ausbildung'
+		// ],
+		'job_employmenttype' => [
+			'interamt' => 'Teilzeit',
+			'univis'=> array('Position', 'type2'), // list
+			'label' => 'Vollzeit / Teilzeit'
+		],
+		'job_workhours' => [
+			'interamt' => 'WochenarbeitszeitArbeitnehmer',
+			'univis'=> array( 'Position', 'wstunden'), // list
+			'label' => 'Wochenarbeitszeit'
+		],
+		'job_category' => [
+			'interamt' => 'FachrichtungCluster',
+			'univis'=> array('Position', 'group'), // list
+			'label' => 'Berufsgruppe'
+		],
+		'job_description' => [
+			'interamt' => 'Beschreibung',
+			'univis'=> array('Position', 'desc1'), // list
+			'label' => 'Beschreibung'
+		],
+		'job_description_introduction' => [
+			'interamt' => '',
+			'univis'=> array('Position', 'desc5'), // list
+			'label' => 'Beschreibung - Einleitung'
+		],
+		'job_experience' => [
+			'interamt' => '',
+			'univis'=>  array('Position', 'desc2'), // list
+			'label' => 'Berufserfahrung'
+		],
+		'job_benefits' => [
+			'interamt' => '',
+			'univis'=>  array('Position', 'desc4'), // list
+			'label' => 'Benefits'
 		],
 		'employer_organization' => [
 			'interamt' => 'StellenangebotBehoerde',
-			'univis'=> array('Position', 'orgunits', 'orgunit'),
+			'univis'=> array('Position', 'orgunits', 'orgunit'), // list
 			'label' => 'Organisationseinheit'
-		],
-		'contact_link'  => [
-			'interamt' => 'HomepageBehoerde',
-			'univis'=> array('Person', 'locations', 'location', 'url'),
-			'label' => 'Ansprechpartner Link'
 		],
 		'employer_street' => [
 			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'),
+			'univis'=> array('Person', 'locations', 'location', 'street'), // list (ohne ignore Person)
 			'label' => 'Straße'
 		],
 		'employer_postalcode' => [
 			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
-			'univis'=> '',
+			'univis'=> '', // existiert nicht bzw aus employer_city extrahieren
 			'label' => 'PLZ'
 		],
 		'employer_city' => [
 			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // list (ohne ignore Person)
 			'label' => 'Ort'
 		],
 		'employer_district' => [
@@ -247,84 +332,29 @@ function getMap( $provider, $type ){
 			'univis'=> '',// existiert nicht
 			'label' => 'Bezirk'
 		],
-		'job_salary_from' => [
-			'interamt' => 'TarifEbeneVon',
-			'univis'=> array('Position', 'vonbesold'),
-			'label' => 'Tarifebene von'
-		],
-		'job_salary_to' => [
-			'interamt' => 'TarifEbeneBis',
-			'univis'=> array('Position', 'bisbesold'),
-			'label' => 'Tarifebene bis'
-		],
-		'job_qualifications' => [
-			'interamt' => 'Qualifikation',
-			'univis'=> array('Position', 'desc2'),
-			'label' => 'Qualifikationen'
-		],
-		'job_qualifications_nth' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc3'),
-			'label' => 'Wünschenswerte Qualifikationen'
-		],
-		'job_education' => [
-			'interamt' => 'Ausbildung',
-			'univis'=> '',// Fehlt noch
-			'label' => 'Ausbildung'
-		],
-		'job_employmenttype' => [
-			'interamt' => 'Teilzeit',
-			'univis'=> array('Position', 'type2'),
-			'label' => 'Vollzeit / Teilzeit'
-		],
-		'job_workhours' => [
-			'interamt' => 'WochenarbeitszeitArbeitnehmer',
-			'univis'=> '',// Fehlt noch
-			'label' => 'Wochenarbeitszeit'
-		],
-		'job_limitation' => [
-			'interamt' => 'BeschaeftigungDauer',
-			'univis'=> '',// Fehlt noch
-			'label' => 'Befristung'
-		],
-		'job_limitation_duration' => [      // Befristung Dauer
-			'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
-			'univis'=> array('Position', 'befristet'),
-			'label' => 'Dauer der Befristung'
-		],
-		'application_start' => [
-			'interamt' => 'DatumOeffentlichAusschreiben',
-			'univis'=> '',// Fehlt noch
-			'label' => 'Bewerbungsstart'
-		],
-		'application_end' => [
-			'interamt' => 'DatumBewerbungsfrist',
-			'univis'=> array('Position', 'enddate'),
-			'label' => 'Bewerbungsschluss'
-		],
-		'job_start' => [
-			'interamt' => 'DatumBesetzungZum',
-			'univis'=> array('Position', 'start'),
-			'label' => 'Besetzung zum'
+		'contact_link'  => [
+			'interamt' => 'HomepageBehoerde',
+			'univis'=> array('Person', 'locations', 'location', 'url'), // list (ohne ignore Person)
+			'label' => 'Ansprechpartner Link'
 		],
 		'contact_title' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
-			'univis'=> array('Person', 'title'),
+			'univis'=> array('Person', 'title'), // list
 			'label' => 'Ansprechpartner Titel'
 		],
 		'contact_firstname' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
-			'univis'=> array('Person', 'firstname'),
+			'univis'=> array('Person', 'firstname'), // list
 			'label' => 'Ansprechpartner Vorname'
 		],
 		'contact_lastname' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'),
-			'univis'=> array('Person', 'lastname'),
+			'univis'=> array('Person', 'lastname'), // list
 			'label' => 'Ansprechpartner Nachname'
 		],
 		'contact_tel' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
-			'univis'=> array('Person', 'locations', 'location', 'tel'),
+			'univis'=> array('Person', 'locations', 'location', 'tel'), // list
 			'label' => 'Ansprechpartner Telefonnummer'
 		],
 		'contact_mobile' => [
@@ -334,53 +364,23 @@ function getMap( $provider, $type ){
 		],
 		'contact_email' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'),
-			'univis'=> array('Person', 'locations', 'location', 'email'),
+			'univis'=> array('Person', 'locations', 'location', 'email'), // list
 			'label' => 'Ansprechpartner E-Mail'
 		],
 		'contact_street' => [
 			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'),
+			'univis'=> array('Person', 'locations', 'location', 'street'), // list
 			'label' => 'Straße'
 		],
 		'contact_postalcode' => [
 			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
 			'label' => 'PLZ'
 		],
 		'contact_city' => [
 			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // list
 			'label' => 'Ort'
-		],
-		'job_description' => [
-			'interamt' => 'Beschreibung',
-			'univis'=> array('Position', 'desc1'),
-			'label' => 'Beschreibung'
-		],
-		'job_description_introduction' => [
-			'interamt' => '',
-			'univis'=> array('Position', 'desc5'),
-			'label' => 'Beschreibung - Einleitung'
-		],
-		'job_experience' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc2'),
-			'label' => 'Berufserfahrung'
-		],
-		'job_benefits' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc4'),
-			'label' => 'Benefits'
-		],
-		'application_link' => [
-			'interamt' => 'BewerbungUrl',
-			'univis'=> array('Position', 'desc6'),
-			'label' => 'Link zur Bewerbung'
-		],
-		'job_category' => [
-			'interamt' => '',
-			'univis'=> array('Position', 'group'),
-			'label' => 'Berufsgruppe'
 		],
 	];
 
@@ -396,28 +396,53 @@ function getMap( $provider, $type ){
 			'univis'=> 'id',
 			'label' => 'Job ID'
 		],
+		'application_start' => [
+			'interamt' => array('Daten', 'Eingestellt'),
+			'univis'=> '',  // fehlt
+			'label' => 'Bewerbungsstart'
+		],
+		'application_end' => [
+			'interamt' => array('Daten', 'Bewerbungsfrist'),
+			'univis'=> 'enddate',
+			'label' => 'Bewerbungsschluss'
+		],
+		'application_link' => [
+			'interamt' => '',
+			'univis'=> 'desc6',
+			'label' => 'Link zur Bewerbung'
+		],
 		'job_intern' => [
 			'interamt' => '',
 			'univis'=> 'intern',
 			'label' => 'Intern'
 		],
-		'job_employmenttype' => [
+		'job_type' => [
 			'interamt' => '',
-			'univis'=> 'type2',
-			'label' => 'Vollzeit / Teilzeit'
-		],
-		'employer_organization' => [
-			'interamt' => 'Behoerde',
-			'univis'=> 'orgname',
-			'label' => 'Organisationseinheit',
+			'univis'=> '', // exisitiert nicht
+			'label' => 'Job Typ'
 		],
 		'job_title' => [
 			'interamt' => 'StellenBezeichnung',
 			'univis'=> 'title',
 			'label' => 'Stellenbezeichnung'
 		],
+		'job_start' => [
+			'interamt' => '',
+			'univis'=> 'start',
+			'label' => 'Besetzung zum'
+		],
+		'job_limitation' => [
+			'interamt' => '',
+			'univis'=> 'type1',
+			'label' => 'Befristung'
+		],
+		'job_limitation_duration' => [      // Befristung Dauer
+			'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
+			'univis'=> 'befristet', 
+			'label' => 'Dauer der Befristung'
+		],
 		'job_salary_from' => [
-			'interamt' => array('Bezahlung', 'Entgelt'),
+			'interamt' => '',
 			'univis'=> 'vonbesold',
 			'label' => 'Tarifebene von'
 		],
@@ -426,40 +451,40 @@ function getMap( $provider, $type ){
 			'univis'=> 'bisbesold',
 			'label' => 'Tarifebene von'
 		],
-		'employer_postalcode' => [
-			'interamt' => array('Ort', 'Plz'),
-			'univis'=> '',
-			'label' => 'PLZ'
-		],
-		'employer_city' => [
-			'interamt' => array('Ort', 'Stadt'),
-			'univis'=> '',
-			'label' => 'Ort'
-		],
-		'job_limitation' => [
+		'job_qualifications' => [
 			'interamt' => '',
-			'univis'=> 'type1',
-			'label' => 'Befristung'
+			'univis'=> 'desc2',
+			'label' => 'Qualifikationen'
 		],
-		'application_start' => [
-			'interamt' => array('Daten', 'Eingestellt'),
-			'univis'=> 'start',
-			'label' => 'Bewerbungsstart'
+		'job_qualifications_nth' => [
+			'interamt' => '',
+			'univis'=>  'desc3',
+			'label' => 'Wünschenswerte Qualifikationen'
+		],
+		'job_employmenttype' => [
+			'interamt' => '',
+			'univis'=> 'type2',
+			'label' => 'Vollzeit / Teilzeit'
+		],
+		'job_workhours' => [
+			'interamt' => '',
+			'univis'=> 'wstunden',
+			'label' => 'Wochenarbeitszeit'
+		],
+		'job_category' => [
+			'interamt' => '',
+			'univis'=> 'group',
+			'label' => 'Berufsgruppe'
 		],
 		'job_description' => [
 			'interamt' => '',
 			'univis'=> 'desc1',
 			'label' => 'Beschreibung'
 		],
-		'application_end' => [
-			'interamt' => array('Daten', 'Bewerbungsfrist'),
-			'univis'=> 'enddate',
-			'label' => 'Bewerbungsschluss'
-		],
-		'job_category' => [
+		'job_description_introduction' => [
 			'interamt' => '',
-			'univis'=> 'group',
-			'label' => 'Berufsgruppe'
+			'univis'=> 'desc5',
+			'label' => 'Beschreibung - Einleitung'
 		],
 		'job_experience' => [
 			'interamt' => '',
@@ -470,7 +495,83 @@ function getMap( $provider, $type ){
 			'interamt' => '',
 			'univis'=> 'desc4',
 			'label' => 'Benefits'
-		]
+		],
+		'employer_organization' => [
+			'interamt' => 'Behoerde',
+			'univis'=> 'orgname',
+			'label' => 'Organisationseinheit',
+		],
+		'employer_street' => [
+			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
+			'univis'=> array('Person', 'locations', 'location', 'street'), // list (ohne ignore Person)
+			'label' => 'Straße'
+		],
+		'employer_postalcode' => [
+			'interamt' => array('Ort', 'Plz'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
+			'label' => 'PLZ'
+		],
+		'employer_city' => [
+			'interamt' => array('Ort', 'Stadt'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // list (ohne ignore Person)
+			'label' => 'Ort'
+		],
+		'employer_district' => [
+			'interamt' => 'BeschaeftigungBereichBundesland',
+			'univis'=> '',// existiert nicht
+			'label' => 'Bezirk'
+		],
+		'contact_link'  => [
+			'interamt' => 'HomepageBehoerde',
+			'univis'=> array('Person', 'locations', 'location', 'url'), // list (ohne ignore Person)
+			'label' => 'Ansprechpartner Link'
+		],
+		'contact_title' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
+			'univis'=> array('Person', 'title'), // list
+			'label' => 'Ansprechpartner Titel'
+		],
+		'contact_firstname' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
+			'univis'=> array('Person', 'firstname'), // list
+			'label' => 'Ansprechpartner Vorname'
+		],
+		'contact_lastname' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'),
+			'univis'=> array('Person', 'lastname'), // list
+			'label' => 'Ansprechpartner Nachname'
+		],
+		'contact_tel' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
+			'univis'=> array('Person', 'locations', 'location', 'tel'), // list
+			'label' => 'Ansprechpartner Telefonnummer'
+		],
+		'contact_mobile' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'),
+			'univis'=> '', // existiert nicht
+			'label' => 'Ansprechpartner Mobilnummer'
+		],
+		'contact_email' => [
+			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'),
+			'univis'=> array('Person', 'locations', 'location', 'email'), // list
+			'label' => 'Ansprechpartner E-Mail'
+		],
+		'contact_street' => [
+			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
+			'univis'=> array('Person', 'locations', 'location', 'street'), // list
+			'label' => 'Straße'
+		],
+		'contact_postalcode' => [
+			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
+			'label' => 'PLZ'
+		],
+		'contact_city' => [
+			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'), // list
+			'label' => 'Ort'
+		],
+
 	];
 
 
