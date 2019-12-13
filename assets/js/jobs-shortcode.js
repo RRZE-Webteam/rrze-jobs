@@ -10,8 +10,11 @@ jQuery(document).ready(function($) {
             url: jobs_sc.ajaxurl,
             data: {
                 action: 'rrze_jobs_ajax_function',
-                jobid: $(this).data('jobid')
+                provider: $(this).data('provider'),
+                jobid: $(this).data('jobid'),
+                fallback_apply: $(this).data('fallback_apply')
             },
+            // dataType: 'json',
             success: function (data, textStatus, XMLHttpRequest) {
                 $close_link = '<p name="link-container" class="rrze-jobs-closelink-container"><a href="#" class="view-all rrze-jobs-closelink"><i class="fa fa-close" aria-hidden="true"></i> schließen</a></p>';
                 $('div.rrze-jobs-single, a.rrze-jobs-closelink').remove();
