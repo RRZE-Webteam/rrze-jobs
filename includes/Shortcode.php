@@ -93,7 +93,7 @@ class Shortcode {
             'fallback_apply' => ''
         ], $atts, 'jobs');
 
-        $provider = strtolower(sanitize_text_field($atts['provider']));
+        $provider = strtolower( sanitize_text_field( $atts['provider'] ) );
         $output = '';
 
         if ( isset( $provider ) && ( $provider != '' ) ){
@@ -109,7 +109,7 @@ class Shortcode {
         $this->count = 0;
         $providers = $this->getProviders();
 
-        if ( isset( $atts['orgid'] ) ) {
+        if ( isset( $atts['orgid'] ) && $atts['orgid'] != '' ) {
             $atts['orgids'] = $atts['orgid'];
         }
 
@@ -132,6 +132,8 @@ class Shortcode {
         if ( $jobid != '' ) {
             $output .= $this->get_single_job( $this->provider, $jobid );
         } else {
+            // $output = 'here we are';
+            // var_dump($atts);
             $output = $this->get_job_list( getURL($this->provider, 'urllist'), $orgids, $atts['limit'], $atts['orderby'], $atts['order'], $atts['internal'] , $atts['fallback_apply'] );
         }
 
@@ -562,8 +564,13 @@ class Shortcode {
                 "order" => [
                     'default' => 'DESC',
                     'type' => 'string'
+                ],
+                "fallback_apply" => [
+                    'default' => '',
+                    'type' => 'string'
+                    ]                    
                 ]
-            ]
-        ) );
+            ) 
+        );
     }
 }
