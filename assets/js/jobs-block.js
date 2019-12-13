@@ -68,6 +68,7 @@ function dotheblock() {
 			var elementsSelect = createSelects( ['internal|Interne Stellenanzeigen:exclude|nicht ausgeben,include|auch ausgeben,only|nur diese ausgeben'] );
 			var limitText = createTexts( ['limit|Anzahl (leer = unbegrenzt)'] );
 			var orderSelect = createSelects( ['orderby|Sortierung nach:job_title|Titel der Stellenanzeige,application_start|Öffentlicher Ausschreibung,application_end|Bewerbungsschluss,job_start|Beginn der Tätigkeit','order|Sortierreihenfolge:ASC|aufsteigend,DESC|absteigend'] );
+			var fallbackText = createTexts( ['fallback_apply|Ersatz Adresse'] );
 
 			return createElement('div', {}, [
 				createElement( 'div', {}, __( 'Klicken Sie hier, um die Einstellungen auf der rechten Seite vorzunehmen.', 'rrze-jobs') ),
@@ -77,7 +78,8 @@ function dotheblock() {
 						elementsText,
 						elementsSelect,
 						limitText,
-						orderSelect
+						orderSelect,
+						fallbackText
 					]
 				)
 			] )
