@@ -501,8 +501,8 @@ class Shortcode {
             $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
 	        $output .= do_shortcode('[three_columns_two]' . ($provider == 'univis' ? $this->formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
 	        $options = get_option(getOptionName());
-	        if (isset($options['basic_job_notice']) && $options['basic_job_notice'] != '') {
-		        $output .= '<hr /><div>' . strip_tags( $options['basic_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
+	        if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
+		        $output .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
 	        }
 	        $output .= '</div>';
         }
