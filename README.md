@@ -1,6 +1,6 @@
 # RRZE Jobs
 Einbindung von Jobangeboten per Shortcode über Portal-API (zurzeit Interamt und UnivIS)
-Version 2.2.1
+Version 2.2.2
 
 ## Download
 GITHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs

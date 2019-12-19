@@ -68,7 +68,7 @@ function getMenuSettings() {
 function getSections() {
 	return [
 		[
-			'id'    => 'basic',
+			'id'    => 'rrze-jobs',
 			'title' => __('Einstellungen', 'rrze-jobs')
 		]
 	];
@@ -80,7 +80,7 @@ function getSections() {
  */
 function getFields() {
 	return [
-		'basic' => [
+		'rrze-jobs' => [
 			[
 				'name'    => 'interamt_orgid',
 				'label'   => __("orgIDs Interamt", 'rrze-jobs'),

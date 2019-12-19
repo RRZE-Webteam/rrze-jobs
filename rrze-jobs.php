@@ -1,10 +1,10 @@
 <?php
 
 /*
-Plugin Name:  RRZE Jobs
+Plugin Name:     RRZE Jobs
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 Description:     Embedding job offers from job portal apis via shortcode
-Version:         2.2.1
+Version:         2.2.2
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v2
