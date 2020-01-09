@@ -303,7 +303,7 @@ class Shortcode {
                     .(isset($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' .$map['job_unit'] . '" />':'')
                     .'<meta itemprop="estimatedSalary" content="' . $salary . '" />'
                     .(isset($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . strip_tags(htmlentities( $map['job_experience'] )) . '" />': '')
-                    .(isset($map['employer_organization']) ? '<span itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="' . $map['employer_organization'] . '" /><meta itemprop="logo" content="' . LOGO . '" /></span>': '')
+                    .(isset($map['employer_organization']) ? '<span itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><meta itemprop="name" content="' . $map['employer_organization'] . '" /><meta itemprop="logo" content="' . RRZE_JOBS_LOGO . '" /></span>': '')
                     .(isset($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $map['job_benefits']) . '" />': '')
                     .(isset($map['job_start']) ? '<meta itemprop="jobStartDate" content="' . $this->transform_date( $map['job_start'] ) . '" />' : '')
                     .(isset($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />': '')
@@ -442,7 +442,7 @@ class Shortcode {
             if ( ( isset( $map['employer_city'] ) ) && ( !empty( $map['employer_city'] ) ) ) {
                 $sidebar .= '<dt>'.__('Einsatzort','rrze-jobs'). '</dt>';
                 if ( isset( $map['employer_organization']) ) {
-                    $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">' . $map['employer_organization'] . '</span><meta itemprop="logo" content="' . LOGO . '" /><br />';
+                    $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">' . $map['employer_organization'] . '</span><meta itemprop="logo" content="' . RRZE_JOBS_LOGO . '" /><br />';
                 }
                 if ( isset( $map['employer_street']) ) {
                     $sidebar .= $map['employer_street'] . '<br />';
@@ -457,7 +457,7 @@ class Shortcode {
                 $sidebar .= ( isset( $map['employer_street'] ) ? '<meta itemprop="streetAddress" content="' .  $map['employer_street'] . '" />' : '' );
                 $sidebar .= ( isset( $map['employer_postalcode'] ) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />' : '' );
                 $sidebar .= ( isset( $map['employer_city'] ) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />' : '' );
-                $sidebar .= ( isset( $map['employer_city'] ) ? '<meta itemprop="addressRegion" content="' . ADDRESS_REGION . '" />' : '' );
+                $sidebar .= ( isset( $map['employer_city'] ) ? '<meta itemprop="addressRegion" content="' . RRZE_JOBS_ADDRESS_REGION . '" />' : '' );
                 $sidebar .= ( isset( $map['contact_link'] ) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '' );
                 $sidebar .= '</span></span></dd>';
             }

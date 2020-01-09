@@ -4,8 +4,8 @@ namespace RRZE\Jobs\Config;
 
 
 defined('ABSPATH') || exit;
-define( 'LOGO', plugins_url( '../fau.gif', __FILE__ ) );
-define( 'ADDRESS_REGION', 'Bayern' );
+define( 'RRZE_JOBS_LOGO', plugins_url( '../fau.gif', __FILE__ ) );
+define( 'RRZE_JOBS_ADDRESS_REGION', 'Bayern' );
 
 /**
  * Gibt der Name der Option zurück.
