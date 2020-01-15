@@ -3,6 +3,7 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
+use function RRZE\Jobs\Config\getShortcodeParams;
 use function RRZE\Jobs\Config\getMap;
 use function RRZE\Jobs\Config\getURL;
 use function RRZE\Jobs\Config\getFields;
@@ -15,12 +16,14 @@ use function RRZE\Jobs\Config\isInternAllowed;
 class Shortcode {
     private $provider = '';
     private $count = 0;
+    private $params = '';
 
 
     /**
      * Shortcode-Klasse wird instanziiert.
      */
     public function __construct() {
+        $this->params = getShortcodeParams();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action( 'init',  [$this, 'jobs_block_init'] );
 	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
@@ -98,17 +101,12 @@ class Shortcode {
     }
 
     public function jobsHandler( $atts ) {
-        $atts = shortcode_atts([
-            'provider' => '',
-            'orgid' => '',
-            'orgids' => '',
-            'jobid' => '',
-            'internal' => 'exclude',
-            'limit' => '',
-            'orderby' => 'job_title',
-            'order' => 'ASC',
-            'fallback_apply' => ''
-        ], $atts, 'jobs');
+        $my_atts = array();
+        foreach( $this->params as $key => $val ){
+            $my_atts[$key] = $val['default'];
+        }
+
+        $atts = shortcode_atts($my_atts, $atts, 'jobs');
 
         $this->provider = strtolower( sanitize_text_field( $atts['provider'] ) );
         $output = '';
@@ -539,44 +537,21 @@ class Shortcode {
             ),
             filemtime( "$dir/$index_js" )
         );
+        $my_atts = array();
+        foreach( $this->params as $key => $val ){
+            $my_atts[$key] = [ 
+                'default' => $val['default'],
+                'type' => $val['type']
+            ];
+        }
+
+        // wp_localize_script( 'jobsEditor', 'js_data', $my_atts );
+
 
         register_block_type( 'rrze-jobs/jobs', array(
-            'editor_script'  => 'jobsEditor',
-            'render_callback'  => [$this, 'jobsHandler'],
-            'attributes'         =>   [
-                "provider" => [
-                    'default' => 'univis',
-                    'type' => 'string'
-                ],
-                "orgids" => [
-                    'default' => '',
-                    'type' => 'string'
-                ],
-                "jobid" => [
-                    'default' => '',
-                    'type' => 'string'
-                ],
-                "internal" => [
-                    'default' => 'exclude',
-                    'type' => 'string'
-                ],
-                "limit" => [
-                    'default' => '',
-                    'type' => 'integer'
-                ],
-                "orderby" => [
-                    'default' => 'job_title',
-                    'type' => 'string'
-                ],
-                "order" => [
-                    'default' => 'DESC',
-                    'type' => 'string'
-                ],
-                "fallback_apply" => [
-                    'default' => '',
-                    'type' => 'string'
-                    ]                    
-                ]
+            'editor_script' => 'jobsEditor',
+            'render_callback' => [$this, 'jobsHandler'],
+            'attributes' =>   $my_atts
             ) 
         );
     }

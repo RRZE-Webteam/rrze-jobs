@@ -10,6 +10,75 @@ define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
 
 
 
+function getShortcodeParams(){
+	return [
+		'provider' => [
+			'values' => [
+				'interamt',
+				'univis'
+			],
+			'default' => 'univis',
+			'field_type' => 'select',
+			'type' => 'string'
+		],
+		'orgids' => [
+			'values' => '',
+			'default' => '',
+			'field_type' => 'text',
+			'type' => 'string'
+		],
+		'jobid' => [
+			'values' => '',
+			'default' => '',
+			'field_type' => 'text',
+			'type' => 'string'
+		],
+		'internal' => [
+			'values' => [
+				'exclude',
+				'include',
+				'only'
+			],
+			'default' => 'exclude',
+			'field_type' => 'select',
+			'type' => 'string'
+		],
+		'limit' => [
+			'values' => '',
+			'default' => '',
+			'field_type' => 'text',
+			'type' => 'integer'
+		],
+		'orderby' => [
+			'values' => [
+				'job_title',
+				'application_start',
+				'application_end',
+				'job_start'
+			],
+			'default' => 'job_title',
+			'field_type' => 'select',
+			'type' => 'string'
+		],
+		'order' => [
+			'values' => [
+				'ASC',
+				'DESC'
+			],
+			'default' => 'DESC',
+			'field_type' => 'select',
+			'type' => 'string'
+		],
+		'fallback_apply' => [
+			'values' => '',
+			'default' => '',
+			'field_type' => 'text',
+			'type' => 'string'
+			]                    
+		];
+}
+
+
 /**
  * Prüft, ob interne Jobs synchronisiert bzw angezeigt werden dürfen
  * @return boolean
