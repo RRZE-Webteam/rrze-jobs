@@ -418,9 +418,9 @@ class Shortcode {
                 }
                 if (isset($map['application_link'])) {
                     $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
-                    $sidebar .= '<dd>' . make_clickable($map['application_link']) . '</dd></div>';
+                    $sidebar .= '<dd>' . make_clickable($map['application_link']) . '</dd>';
                 }
-                $sidebar .= '</dl>';
+                $sidebar .= '</dl></div>';
                 $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
                 $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
                     . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
@@ -459,7 +459,11 @@ class Shortcode {
                     $sidebar .= '<dt>'.__('Teilzeit / Vollzeit','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>';
                 }
                 if ( isset( $map['job_workhours'] ) ) {
-                    $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . floatval( str_replace( ',', '.', $map['job_workhours'] ) ) . ' h</dd>';
+                    $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) );
+                    if (substr(get_locale(), 0, 2) == 'de') {
+                        $map['job_workhours'] = number_format($map['job_workhours'], 1,',', '.');
+                    }
+                    $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . ' h</dd>';
                 }
                 if ( ( isset( $map['job_limitation'] ) ) && ( $map['job_limitation'] == 'befristet' ) ) {
                     $sidebar .= '<dt>'.__('Befristung (Monate)','rrze-jobs') . '</dt><dd>' . $map['job_limitation_duration'] . '</dd>';
