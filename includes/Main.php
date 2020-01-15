@@ -27,13 +27,6 @@ class Main {
         new TinyMCEButtons();
     }
 
-    /**
-     * Enqueue der globale Skripte.
-     */
-    public function enqueue_scripts()  {
-        wp_register_style('rrze-jobs', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
-    }
-
     public function onLoaded() {
         // Settings-Klasse wird instanziiert.
         $settings = new Settings($this->pluginFile);

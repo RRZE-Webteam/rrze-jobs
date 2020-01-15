@@ -4,21 +4,10 @@ namespace RRZE\Jobs\Config;
 
 
 defined('ABSPATH') || exit;
+define( 'RRZE_JOBS_LOGO', plugins_url( 'assets/img/fau.gif', __DIR__ ) );
+define( 'RRZE_JOBS_ADDRESS_REGION', 'Bayern' );
+define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
 
-
-
-/**
- * Gibt der Name der Option zurück.
- * @return array [description]
- */
-function getOptionName() {
-	include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
-	if ( is_plugin_active('fau-jobportal/fau-jobportal.php') ){
-		return 'fau-jobportal';
-	} else {
-		return 'rrze-jobs';
-	}
-}
 
 
 /**
@@ -136,14 +125,12 @@ function getHelpTab() {
 function getURL(&$provider, $urltype) {
 	$ret = [
 		'interamt' => [
-			'urllist' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
-			'urlsingle' => 'https://www.interamt.de/koop/app/webservice_v2?id='
+			'list' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
+			'single' => 'https://www.interamt.de/koop/app/webservice_v2?id='
 		],
 		'univis' => [
-			'urllist' => 'https://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
-			// 'urllist' => 'http://univis.uni-erlangen.de/prg?search=positions&show=json&closed=0&department=', // liefert eine andere Datenstruktur als mit closed=1
-			'urlsingle' => 'https://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
-			// 'urlsingle' => 'http://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id=' // liefert eine andere Datenstruktur als mit closed=1
+			'list' => 'https://univis.uni-erlangen.de/prg?search=positions&show=json&closed=1&department=',
+			'single' => 'https://univis.uni-erlangen.de/prg?search=positions&closed=1&show=json&id='
 		]
 	];
 
@@ -155,51 +142,112 @@ function getURL(&$provider, $urltype) {
  * Füllt die Map mit Werten aus der Schnittstelle
  * @return array
  */
-function  fillMap( &$map, &$job ) {
+function fillMap( &$map, &$job ) {
 	$map_ret = array();
-	foreach ($map as $k => $val){
-		if ( is_array($val) ) {
-			switch ( count( $val ) ) {
-				case 2:
-					if ( isset( $job->{$val[0]}->{$val[1]} ) ){
-						$map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]} );
-					}
-					break;
-				case 3:
-					if ( isset( $job->{$val[0]}->{$val[1]}->{$val[2]} ) ){
-						if (is_array($job->{$val[0]}->{$val[1]}->{$val[2]})) {
-							$map_ret[ $k ] = htmlentities( implode(PHP_EOL, $job->{$val[0]}->{$val[1]}->{$val[2]} ));
-						} else {
-							$map_ret[ $k ] = htmlentities( $job->{$val[0]}->{$val[1]}->{$val[2]} );
-						}
-					}
-					break;
-				case 4:
-					if ( isset( $job->{$val[0]}->{$val[1]}->{$val[2]}->{$val[3]} ) ){
-						$map_ret[$k] =  htmlentities( $job->{$val[0]}->{$val[1]}->{$val[2]}->{$val[3]} );
-					}
-					break;
-			}
-		}elseif ( isset( $job->{$val} ) ) {
-			$map_ret[$k] =  $job->{$val};
+	
+	  foreach ( $map as $k => $val ){
+		  if ( is_array( $val ) ) {
+			  switch ( count( $val ) ) {
+				  case 2:
+					  if ( isset( $job[$val[0]][$val[1]] ) ){
+						  $map_ret[$k] =  htmlentities( $job[$val[0]][$val[1]] );
+					  }
+					  break;
+				  case 3:
+					  if ( isset( $job[$val[0]][$val[1]][$val[2]] ) ){
+						  if ( is_array( $job[$val[0]][$val[1]][$val[2]] ) ) {
+							  $map_ret[ $k ] = htmlentities( implode( PHP_EOL, $job[$val[0]][$val[1]][$val[2]] ) );
+						  } else {
+							  $map_ret[ $k ] = htmlentities( $job[$val[0]][$val[1]][$val[2]] );
+						  }
+					  }
+					  break;
+				  case 4:
+					  if ( isset( $job[$val[0]][$val[1]][$val[2]][$val[3]] ) ){
+						  $map_ret[$k] =  htmlentities( $job[$val[0]][$val[1]][$val[2]][$val[3]] );
+					  }
+					  break;
+			  }
+		  }elseif ( isset( $job[$val] ) ) {
+			  $map_ret[$k] =  $job[$val];
+		  }
+	  }
+	  return $map_ret;
+  }
+  
+
+  function getPersons( $p ) {
+	// if there is only one entry UnivIS returns 'key' as another field instead of the value as key
+	if ( isset( $p['key'] )) {
+		$tmp = array();
+		$tmp[$p['key']] = $p;
+		$p = $tmp;
+	}
+
+  $keys = array_keys( $p );
+  $persons = array();
+ 
+  // Reason for "if field <-> elseif field[0]" : sometimes (I didn't figure out when) entries in locations are surrounded by brackets [], sometimes they are missing. 
+  foreach ( $keys as $key ){
+    if ( isset( $p[$key]['title'] ) ){
+      $persons[$key]['contact_title'] = $p[$key]['title'];
+    } elseif ( isset( $p[$key]['atitle'] ) ){
+		$persons[$key]['contact_title'] = $p[$key]['atitle'];
+	}
+    if ( isset( $p[$key]['firstname'] ) ){
+      $persons[$key]['contact_firstname'] = $p[$key]['firstname'];
+    }
+    if ( isset( $p[$key]['lastname'] ) ){
+      $persons[$key]['contact_lastname'] = $p[$key]['lastname'];
+    }
+    if ( isset( $p[$key]['locations']['location']['tel'] ) ){
+		$persons[$key]['contact_tel'] = $p[$key]['locations']['location']['tel'];
+	} elseif ( isset( $p[$key]['locations']['location'][0]['tel'] ) ){
+		$persons[$key]['contact_tel'] = $p[$key]['locations']['location'][0]['tel'];
+	}
+	if ( isset( $p[$key]['locations']['location']['email'] ) ){
+    	$persons[$key]['contact_email'] = $p[$key]['locations']['location']['email'];
+	} elseif ( isset( $p[$key]['locations']['location'][0]['email'] ) ){
+		$persons[$key]['contact_email'] = $p[$key]['locations']['location'][0]['email'];
+	}
+  	if ( isset( $p[$key]['locations']['location']['street'] ) ){
+		$persons[$key]['contact_street'] = $p[$key]['locations']['location']['street'];
+	} elseif ( isset( $p[$key]['locations']['location'][0]['street'] ) ){
+      	$persons[$key]['contact_street'] = $p[$key]['locations']['location'][0]['street'];
+    }
+    if ( isset( $p[$key]['locations']['location']['url'] ) ){
+		$persons[$key]['contact_link'] = $p[$key]['locations']['location']['url'];
+	} elseif ( isset( $p[$key]['locations']['location'][0]['url'] ) ){
+    	$persons[$key]['contact_link'] = $p[$key]['locations']['location'][0]['url'];
+    }
+    if ( isset( $p[$key]['locations']['location']['ort']) ){
+      $parts = explode( ' ', $p[$key]['locations']['location']['ort'] ); 
+      if ( sizeof( $parts) == 2 ){
+    	$persons[$key]['contact_postalcode'] = $parts[0];
+        $persons[$key]['contact_city'] = $parts[1];
+      } else {
+        $persons[$key]['contact_city'] = $p[$key]['locations']['location']['ort'];
+      }
+    } elseif ( isset( $p[$key]['locations']['location'][0]['ort']) ){
+		$parts = explode( ' ', $p[$key]['locations']['location'][0]['ort'] ); 
+		if ( sizeof( $parts) == 2 ){
+			$persons[$key]['contact_postalcode'] = $parts[0];
+		  	$persons[$key]['contact_city'] = $parts[1];
+		} else {
+		  	$persons[$key]['contact_city'] = $p[$key]['locations']['location'][0]['ort'];
 		}
 	}
-	return $map_ret;
+  }
+
+  return $persons;
 }
 
 
-/**
- * Gibt die Zuordnung "Feld zu Schnittstellenfeld" zurück.
- * @return array
- * 'interamt' => Feld der Schnittstelle zu Interamt
- * 'univis'=>  Feld der Schnittstelle zu UnivIS
- * 'label => so wird das Feld in der Anwendung angezeigt
- */
-function getMap( $provider, $type ){
-	$map_single = [
+function getMap( $provider ){
+	$map = [
 		'job_id' => [
 			'interamt' => 'Id',
-			'univis'=> array('Position', 'id'), // list
+			'univis'=> 'id',
 			'label' => 'Job ID'
 		],
 		'application_start' => [
@@ -209,230 +257,36 @@ function getMap( $provider, $type ){
 		],
 		'application_end' => [
 			'interamt' => 'DatumBewerbungsfrist',
-			'univis'=> array('Position', 'enddate'), // list
-			'label' => 'Bewerbungsschluss'
-		],
-		'application_link' => [
-			'interamt' => 'BewerbungUrl',
-			'univis'=> array('Position', 'desc6'), // list
-			'label' => 'Link zur Bewerbung'
-		],
-		'job_intern' => [
-			'interamt' => '',
-			'univis'=> array('Position', 'intern'), // list
-			'label' => 'Intern'
-		],
-		'job_type' => [
-			'interamt' => 'Kennung',
-			'univis'=> '', // exisitiert nicht
-			'label' => 'Job Typ'
-		],
-		'job_title' => [
-			'interamt' => 'Stellenbezeichnung',
-			'univis'=> array('Position', 'title'), // list
-			'label' => 'Stellenbezeichnung'
-		],
-		'job_start' => [
-			'interamt' => 'DatumBesetzungZum',
-			'univis'=> array('Position', 'start'), // list
-			'label' => 'Besetzung zum'
-		],
-		'job_limitation' => [
-			'interamt' => 'BeschaeftigungDauer',
-			'univis'=> array('Position', 'type1'),// existiert nicht, aber job_limitation_duration
-			'label' => 'Befristung'
-		],
-		'job_limitation_duration' => [      // Befristung Dauer
-			'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
-			'univis'=> array('Position', 'befristet'), // list
-			'label' => 'Dauer der Befristung'
-		],
-		'job_salary_from' => [
-			'interamt' => 'TarifEbeneVon',
-			'univis'=> array('Position', 'vonbesold'), // list
-			'label' => 'Tarifebene von'
-		],
-		'job_salary_to' => [
-			'interamt' => 'TarifEbeneBis',
-			'univis'=> array('Position', 'bisbesold'), // list
-			'label' => 'Tarifebene bis'
-		],
-		'job_qualifications' => [
-			'interamt' => 'Qualifikation',
-			'univis'=> array('Position', 'desc2'), // list
-			'label' => 'Qualifikationen'
-		],
-		'job_qualifications_nth' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc3'), // list
-			'label' => 'Wünschenswerte Qualifikationen'
-		],
-		// 'job_education' => [
-		// 	'interamt' => 'Ausbildung', // wird in unserer Ausgabe nicht angezeigt
-		// 	'univis'=> '',// fehlt
-		// 	'label' => 'Ausbildung'
-		// ],
-		'job_employmenttype' => [
-			'interamt' => 'Teilzeit',
-			'univis'=> array('Position', 'type2'), // list
-			'label' => 'Vollzeit / Teilzeit'
-		],
-		'job_workhours' => [
-			'interamt' => 'WochenarbeitszeitArbeitnehmer',
-			'univis'=> array( 'Position', 'wstunden'), // list
-			'label' => 'Wochenarbeitszeit'
-		],
-		'job_category' => [
-			'interamt' => 'FachrichtungCluster',
-			'univis'=> array('Position', 'group'), // list
-			'label' => 'Berufsgruppe'
-		],
-		'job_description' => [
-			'interamt' => 'Beschreibung',
-			'univis'=> array('Position', 'desc1'), // list
-			'label' => 'Beschreibung'
-		],
-		'job_description_introduction' => [
-			'interamt' => '',
-			'univis'=> array('Position', 'desc5'), // list
-			'label' => 'Beschreibung - Einleitung'
-		],
-		'job_experience' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc2'), // list
-			'label' => 'Berufserfahrung'
-		],
-		'job_benefits' => [
-			'interamt' => '',
-			'univis'=>  array('Position', 'desc4'), // list
-			'label' => 'Benefits'
-		],
-		'employer_organization' => [
-			'interamt' => 'StellenangebotBehoerde',
-			'univis'=> array('Position', 'orgunits', 'orgunit'), // list
-			'label' => 'Organisationseinheit'
-		],
-		'employer_street' => [
-			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'), // list (ohne ignore Person)
-			'label' => 'Straße'
-		],
-		'employer_postalcode' => [
-			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
-			'univis'=> '', // existiert nicht bzw aus employer_city extrahieren
-			'label' => 'PLZ'
-		],
-		'employer_city' => [
-			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // list (ohne ignore Person)
-			'label' => 'Ort'
-		],
-		'employer_district' => [
-			'interamt' => 'BeschaeftigungBereichBundesland',
-			'univis'=> '',// existiert nicht
-			'label' => 'Bezirk'
-		],
-		'contact_link'  => [
-			'interamt' => 'HomepageBehoerde',
-			'univis'=> array('Person', 'locations', 'location', 'url'), // list (ohne ignore Person)
-			'label' => 'Ansprechpartner Link'
-		],
-		'contact_title' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
-			'univis'=> array('Person', 'title'), // list
-			'label' => 'Ansprechpartner Titel'
-		],
-		'contact_firstname' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
-			'univis'=> array('Person', 'firstname'), // list
-			'label' => 'Ansprechpartner Vorname'
-		],
-		'contact_lastname' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'),
-			'univis'=> array('Person', 'lastname'), // list
-			'label' => 'Ansprechpartner Nachname'
-		],
-		'contact_tel' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
-			'univis'=> array('Person', 'locations', 'location', 'tel'), // list
-			'label' => 'Ansprechpartner Telefonnummer'
-		],
-		'contact_mobile' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'),
-			'univis'=> '', // existiert nicht
-			'label' => 'Ansprechpartner Mobilnummer'
-		],
-		'contact_email' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'),
-			'univis'=> array('Person', 'locations', 'location', 'email'), // list
-			'label' => 'Ansprechpartner E-Mail'
-		],
-		'contact_street' => [
-			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'), // list
-			'label' => 'Straße'
-		],
-		'contact_postalcode' => [
-			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
-			'label' => 'PLZ'
-		],
-		'contact_city' => [
-			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // list
-			'label' => 'Ort'
-		],
-	];
-
-
-	$map_list = [
-		'node' => [
-			'interamt' => 'Stellenangebote',
-			'univis'=> 'Position',
-			'label' => 'Knotenpunkt' // Knotenpunkt im JSON ab dem Jobs aufgelistet werden
-		],
-		'job_id' => [
-			'interamt' => 'Id',
-			'univis'=> 'id',
-			'label' => 'Job ID'
-		],
-		'application_start' => [
-			'interamt' => array('Daten', 'Eingestellt'),
-			'univis'=> '',  // fehlt
-			'label' => 'Bewerbungsstart'
-		],
-		'application_end' => [
-			'interamt' => array('Daten', 'Bewerbungsfrist'),
 			'univis'=> 'enddate',
 			'label' => 'Bewerbungsschluss'
 		],
 		'application_link' => [
-			'interamt' => '',
+			'interamt' => 'BewerbungUrl',
 			'univis'=> 'desc6',
 			'label' => 'Link zur Bewerbung'
 		],
 		'job_intern' => [
-			'interamt' => '',
+			'interamt' => '', // fehlt
 			'univis'=> 'intern',
 			'label' => 'Intern'
 		],
 		'job_type' => [
-			'interamt' => '',
-			'univis'=> '', // exisitiert nicht
-			'label' => 'Job Typ'
+			'interamt' => 'Kennung',
+			'univis'=> '', // fehlt
+			'label' => 'Kennung'
 		],
 		'job_title' => [
-			'interamt' => 'StellenBezeichnung',
+			'interamt' => 'Stellenbezeichnung',
 			'univis'=> 'title',
 			'label' => 'Stellenbezeichnung'
 		],
 		'job_start' => [
-			'interamt' => '',
+			'interamt' => 'DatumBesetzungZum',
 			'univis'=> 'start',
 			'label' => 'Besetzung zum'
 		],
 		'job_limitation' => [
-			'interamt' => '',
+			'interamt' => 'BeschaeftigungDauer',
 			'univis'=> 'type1',
 			'label' => 'Befristung'
 		],
@@ -441,146 +295,169 @@ function getMap( $provider, $type ){
 			'univis'=> 'befristet', 
 			'label' => 'Dauer der Befristung'
 		],
+		'job_limitation_reason' => [ 
+			'interamt' => '', 
+			'univis'=> 'type3', 
+			'label' => 'Grund der Befristung'
+		],
 		'job_salary_from' => [
-			'interamt' => '',
+			'interamt' => 'TarifEbeneVon',
 			'univis'=> 'vonbesold',
 			'label' => 'Tarifebene von'
 		],
 		'job_salary_to' => [
-			'interamt' => '',
+			'interamt' => 'TarifEbeneBis',
 			'univis'=> 'bisbesold',
-			'label' => 'Tarifebene von'
+			'label' => 'Tarifebene bis'
 		],
 		'job_qualifications' => [
-			'interamt' => '',
+			'interamt' => 'Qualifikation',
 			'univis'=> 'desc2',
 			'label' => 'Qualifikationen'
 		],
 		'job_qualifications_nth' => [
-			'interamt' => '',
+			'interamt' => '', // fehlt
 			'univis'=>  'desc3',
 			'label' => 'Wünschenswerte Qualifikationen'
 		],
 		'job_employmenttype' => [
-			'interamt' => '',
+			'interamt' => 'Teilzeit',
 			'univis'=> 'type2',
 			'label' => 'Vollzeit / Teilzeit'
 		],
 		'job_workhours' => [
-			'interamt' => '',
+			'interamt' => 'WochenarbeitszeitArbeitnehmer',
 			'univis'=> 'wstunden',
 			'label' => 'Wochenarbeitszeit'
 		],
 		'job_category' => [
-			'interamt' => '',
+			'interamt' => 'FachrichtungCluster',
 			'univis'=> 'group',
 			'label' => 'Berufsgruppe'
 		],
 		'job_description' => [
-			'interamt' => '',
+			'interamt' => 'Beschreibung',
 			'univis'=> 'desc1',
 			'label' => 'Beschreibung'
 		],
 		'job_description_introduction' => [
-			'interamt' => '',
+			'interamt' => '', // fehlt
 			'univis'=> 'desc5',
 			'label' => 'Beschreibung - Einleitung'
 		],
 		'job_experience' => [
-			'interamt' => '',
+			'interamt' => '', // fehlt
 			'univis'=> 'desc2',
 			'label' => 'Berufserfahrung'
 		],
 		'job_benefits' => [
-			'interamt' => '',
+			'interamt' => '', // fehlt
 			'univis'=> 'desc4',
 			'label' => 'Benefits'
 		],
 		'employer_organization' => [
-			'interamt' => 'Behoerde',
+			'interamt' => 'StellenangebotBehoerde',
 			'univis'=> 'orgname',
 			'label' => 'Organisationseinheit',
 		],
 		'employer_street' => [
 			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'), // list (ohne ignore Person)
+			'univis'=> array('Person', 'locations', 'location', 'street'),
 			'label' => 'Straße'
 		],
 		'employer_postalcode' => [
-			'interamt' => array('Ort', 'Plz'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
+			'interamt' =>  array('Einsatzort', 'EinsatzortPLZ'),
+			'univis'=> '', // fehlt
 			'label' => 'PLZ'
 		],
 		'employer_city' => [
-			'interamt' => array('Ort', 'Stadt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // list (ohne ignore Person)
+			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
+			'univis'=> array('Person', 'locations', 'location', 'ort'),
 			'label' => 'Ort'
 		],
 		'employer_district' => [
 			'interamt' => 'BeschaeftigungBereichBundesland',
-			'univis'=> '',// existiert nicht
+			'univis'=> '', // fehlt
 			'label' => 'Bezirk'
 		],
 		'contact_link'  => [
 			'interamt' => 'HomepageBehoerde',
-			'univis'=> array('Person', 'locations', 'location', 'url'), // list (ohne ignore Person)
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Link'
 		],
 		'contact_title' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
-			'univis'=> array('Person', 'title'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Titel'
 		],
 		'contact_firstname' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
-			'univis'=> array('Person', 'firstname'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Vorname'
 		],
 		'contact_lastname' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'),
-			'univis'=> array('Person', 'lastname'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Nachname'
 		],
 		'contact_tel' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
-			'univis'=> array('Person', 'locations', 'location', 'tel'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Telefonnummer'
 		],
 		'contact_mobile' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'),
-			'univis'=> '', // existiert nicht
+			'univis'=> '', // fehlt
 			'label' => 'Ansprechpartner Mobilnummer'
 		],
 		'contact_email' => [
 			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'),
-			'univis'=> array('Person', 'locations', 'location', 'email'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner E-Mail'
 		],
 		'contact_street' => [
 			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Straße'
 		],
 		'contact_postalcode' => [
 			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // extrahieren
+			'univis'=> '', // see fillPersons()
 			'label' => 'PLZ'
 		],
 		'contact_city' => [
 			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'), // list
+			'univis'=> '', // see fillPersons()
 			'label' => 'Ort'
-		],
-
-	];
-
-
-	$provider_map = array();
-	$map = ( $type == 'list' ? $map_list : $map_single );
+		]
+  ];
+  
+  $provider_map = array();
 	foreach ($map as $key => $val) {
 		$provider_map[$key] = $val[$provider];
 	}
 
 	return $provider_map;
+}
+
+function formatUnivIS( $txt ){
+	$subs = array(
+		'/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>',  // list 
+		'/(<\/ul>\n(.*)<ul>*)+/' => '',  // list 
+		// '/(<br \/>*)/mi' => '',  // <br />
+		'/\*{2}/m' => '/\*/', // **
+		'/_{2}/m' => '/_/', // __
+		'/\|(.*)\|/m' => '<i>$1</i>',  // |itallic|
+		'/_(.*)_/m' => '<sub>$1</sub>',  // H_2_O
+		'/\^(.*)\^/m' => '<sup>$1</sup>',  // pi^2^
+		'/\[(.*)\]\s?(<a.*>).*(<\/a>)/mi' => '$2$1$3', // [link text] <a ...>link</a>
+		'/([^">]+)(mailto:)([^"\s>]+)/mi' => '$1<a href="mailto:$3">$3</a>', // find mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
+		'/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
+	);
+	
+	// return nl2br( preg_replace( array_keys( $subs ), array_values( $subs ), $txt ) );
+	$txt = make_clickable( $txt );
+	$txt = nl2br( $txt );
+	return preg_replace( array_keys( $subs ), array_values( $subs ), $txt );
 }
 

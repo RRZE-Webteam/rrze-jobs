@@ -6,7 +6,6 @@ use RRZE\Jobs\Main;
 
 defined('ABSPATH') || exit;
 
-use function RRZE\Jobs\Config\getOptionName;
 use function RRZE\Jobs\Config\getMenuSettings;
 use function RRZE\Jobs\Config\getHelpTab;
 use function RRZE\Jobs\Config\getSections;
@@ -103,7 +102,7 @@ class Settings {
         $this->setFields();
         $this->setTabs();
 
-        $this->optionName = getOptionName();
+        $this->optionName = RRZE_JOBS_TEXTDOMAIN;
         $this->options = $this->getOptions();
 
         add_action('admin_init', [$this, 'adminInit']);
