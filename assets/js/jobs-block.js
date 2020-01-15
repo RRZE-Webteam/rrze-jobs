@@ -63,6 +63,13 @@ function dotheblock() {
 				return ret;
 			}
 
+			// alert(phpConfig.provider['values']); FUNKTIONIERT
+			// alert(phpConfig.provider['field_type']);
+			// for ( var key in phpConfig){
+			// 	alert('key ist ' + key); FUNKTIONIERT
+			// }
+			// FAZIT: besser JSON verwenden
+
 			var providerSelect = createSelects( ['provider|Provider:interamt|Interamt,univis|UnivIS'] );
 			var elementsText = createTexts( ['orgids|OrgID(s)', 'jobid|Job ID'] );
 			var elementsSelect = createSelects( ['internal|Interne Stellenanzeigen:exclude|nicht ausgeben,include|auch ausgeben,only|nur diese ausgeben'] );

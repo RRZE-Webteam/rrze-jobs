@@ -537,21 +537,23 @@ class Shortcode {
             ),
             filemtime( "$dir/$index_js" )
         );
-        $my_atts = array();
-        foreach( $this->params as $key => $val ){
-            $my_atts[$key] = [ 
-                'default' => $val['default'],
-                'type' => $val['type']
-            ];
-        }
+        // $attributes = array();
+        // foreach( $this->params as $key => $val ){
+        //     $attributes[$key] = [ 
+        //         'default' => $val['default'],
+        //         'type' => $val['type'],
+        //         'field_type' => $val['field_type']
+        //     ];
+        // }
 
-        // wp_localize_script( 'jobsEditor', 'js_data', $my_atts );
+        wp_localize_script( 'jobsEditor', 'phpConfig', $this->params );
 
 
         register_block_type( 'rrze-jobs/jobs', array(
             'editor_script' => 'jobsEditor',
             'render_callback' => [$this, 'jobsHandler'],
-            'attributes' =>   $my_atts
+            // 'attributes' =>   $attributes
+            'attributes' =>   $this->params
             ) 
         );
     }
