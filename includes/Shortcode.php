@@ -25,7 +25,7 @@ class Shortcode {
     public function __construct() {
         $this->params = getShortcodeParams();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_action( 'init',  [$this, 'jobs_block_init'] );
+        add_action( 'init',  [$this, 'block_init'] );
 	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
 		    add_shortcode( 'jobs', [ $this, 'jobsHandler' ], 10, 2 );
 	    }
@@ -100,7 +100,7 @@ class Shortcode {
         return $myArray;
     }
 
-    public function jobsHandler( $atts ) {
+    public function shortcodeHandler( $atts ) {
         $my_atts = array();
         foreach( $this->params as $key => $val ){
             if ( isset( $val['default'] ) ){
@@ -115,14 +115,14 @@ class Shortcode {
 
         if ( isset( $this->provider ) && ( $this->provider != '' ) ){
             $this->provider = $atts['provider']; 
-            return $this->jobs_shortcode( $atts );
+            return $this->shortcodeOutput( $atts );
         }else{
             return '<p>' . __('Please specify the correct job portal in the shortcode attribute <code>provider=""</code>.', 'rrze-jobs') . '</p>';
         }
     }
     
 
-    public function jobs_shortcode( $atts ) {
+    public function shortcodeOutput( $atts ) {
         $this->count = 0;
         $this->providers = $this->getProviders();
 
@@ -523,17 +523,16 @@ class Shortcode {
     }
 
 
-    public function jobs_block_init() {
+    public function block_init() {
         // Skip block registration if Gutenberg is not enabled/merged.
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
-        $dir = dirname( __FILE__ );
-        $index_js = '../assets/js/jobs-block.js';
+        $js = '../assets/js/block.js';
         
         wp_register_script(
-            'jobsEditor',
-            plugins_url( $index_js, __FILE__ ),
+            RRZE_JOBS_TEXTDOMAIN . '-editor',
+            plugins_url( $js, __FILE__ ),
             array(
                 'wp-blocks',
                 'wp-i18n',
@@ -541,17 +540,16 @@ class Shortcode {
                 'wp-components',
                 'wp-editor'
             ),
-            filemtime( "$dir/$index_js" )
+            filemtime( dirname( __FILE__ ) . '/' . $js )
         );
 
-        wp_localize_script( 'jobsEditor', 'phpConfig', $this->params );
+        wp_localize_script( RRZE_JOBS_TEXTDOMAIN . '-editor', 'phpConfig', $this->params );
 
 
         register_block_type( 'rrze-jobs/jobs', array(
-            'editor_script' => 'jobsEditor',
-            'render_callback' => [$this, 'jobsHandler'],
-            // 'attributes' =>   $attributes
-            'attributes' =>   $this->params
+            'editor_script' => RRZE_JOBS_TEXTDOMAIN . '-editor',
+            'render_callback' => [$this, 'shortcodeHandler'],
+            'attributes' => $this->params
             ) 
         );
     }

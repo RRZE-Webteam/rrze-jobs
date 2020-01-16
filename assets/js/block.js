@@ -1,10 +1,10 @@
 function createBlock() {
-	const {registerBlockType} = wp.blocks; //Blocks API
-	const {createElement} = wp.element; //React.createElement
-	const {InspectorControls} = wp.editor; //Block inspector wrapper
-	const {TextControl, SelectControl, ToggleControl} = wp.components; //Block inspector wrapper
+	const {registerBlockType} = wp.blocks;
+	const {createElement} = wp.element;
+	const {InspectorControls} = wp.editor;
+	const {TextControl, SelectControl, ToggleControl} = wp.components;
 
-	registerBlockType( 'rrze-jobs/jobs', {
+	registerBlockType( phpConfig.block.name, {
 		title: phpConfig.block.title,
 		category: phpConfig.block.category,
 		icon: phpConfig.block.icon,
@@ -43,7 +43,7 @@ function createBlock() {
 			] )
 		},
 		save(){
-			 return null; //save has to exist. This all we need
+			 return null;
 		}	
 	} );
 }
