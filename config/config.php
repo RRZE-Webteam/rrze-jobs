@@ -12,67 +12,82 @@ define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
 
 function getShortcodeParams(){
 	return [
+		'block' => [
+			'name' => 'rrze-jobs/jobs',
+			'title' => 'RRZE Jobs',
+			'category' => 'widgets',
+			'icon' => 'admin-users',
+			'message' => __( 'Click here for settings on the right side', RRZE_JOBS_TEXTDOMAIN )
+		],
 		'provider' => [
 			'values' => [
-				'interamt',
-				'univis'
+				'interamt' => __( 'Interamt', RRZE_JOBS_TEXTDOMAIN ),
+				'univis' => __( 'UnivIS', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'univis',
 			'field_type' => 'select',
+			'label' => __( 'Provider', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'orgids' => [
 			'values' => '',
 			'default' => '',
 			'field_type' => 'text',
+			'label' => __( 'OrgID(s)', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'jobid' => [
 			'values' => '',
 			'default' => '',
 			'field_type' => 'text',
+			'label' => __( 'Job ID', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'internal' => [
 			'values' => [
-				'exclude',
-				'include',
-				'only'
+				'exclude' => __( 'exclude internal job offers', RRZE_JOBS_TEXTDOMAIN ),
+				'include' => __( 'include internal job offers', RRZE_JOBS_TEXTDOMAIN),
+				'only' => __( 'only internal job offers', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'exclude',
 			'field_type' => 'select',
+			'label' => __( 'Internal job offers', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'limit' => [
 			'values' => '',
 			'default' => '',
 			'field_type' => 'text',
-			'type' => 'integer'
+			'label' => __( 'Number of job offers', RRZE_JOBS_TEXTDOMAIN ),
+			'type' => 'string'
 		],
 		'orderby' => [
 			'values' => [
-				'job_title',
-				'application_start',
-				'application_end',
-				'job_start'
+				'job_title' => __( 'Job title', RRZE_JOBS_TEXTDOMAIN ),
+				'application_start' => __( 'Application start', RRZE_JOBS_TEXTDOMAIN ),
+				'application_end' => __( 'Application end', RRZE_JOBS_TEXTDOMAIN ),
+				'job_start' => __( 'Job start', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'job_title',
 			'field_type' => 'select',
+			'label' => __( 'Order by', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'order' => [
 			'values' => [
-				'ASC',
-				'DESC'
+				'ASC' => __( 'Ascending', RRZE_JOBS_TEXTDOMAIN ),
+				'DESC' => __( 'Descending', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'DESC',
 			'field_type' => 'select',
+			'label' => __( 'Order', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'fallback_apply' => [
 			'values' => '',
 			'default' => '',
 			'field_type' => 'text',
+			'label' => __( 'Default application link', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 			]                    
 		];
@@ -110,11 +125,11 @@ function isInternAllowed() {
  */
 function getMenuSettings() {
 	return [
-		'page_title'    => __('Jobs', 'rrze-jobs'),
-		'menu_title'    => __('RRZE Jobs', 'rrze-jobs'),
+		'page_title'    => __('Jobs', RRZE_JOBS_TEXTDOMAIN),
+		'menu_title'    => __('RRZE Jobs', RRZE_JOBS_TEXTDOMAIN),
 		'capability'    => 'manage_options',
-		'menu_slug'     => 'rrze-jobs',
-		'title'         => __('Jobs Settings', 'rrze-jobs'),
+		'menu_slug'     => RRZE_JOBS_TEXTDOMAIN,
+		'title'         => __('Jobs Settings', RRZE_JOBS_TEXTDOMAIN),
 	];
 }
 
@@ -126,8 +141,8 @@ function getMenuSettings() {
 function getSections() {
 	return [
 		[
-			'id'    => 'rrze-jobs',
-			'title' => __('Einstellungen', 'rrze-jobs')
+			'id'    => RRZE_JOBS_TEXTDOMAIN,
+			'title' => __('Einstellungen', RRZE_JOBS_TEXTDOMAIN)
 		]
 	];
 }
@@ -138,25 +153,25 @@ function getSections() {
  */
 function getFields() {
 	return [
-		'rrze-jobs' => [
+		RRZE_JOBS_TEXTDOMAIN => [
 			[
 				'name'    => 'interamt_orgid',
-				'label'   => __("orgIDs Interamt", 'rrze-jobs'),
-				'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
+				'label'   => __("orgIDs Interamt", RRZE_JOBS_TEXTDOMAIN),
+				'desc'    => __('Enter the ID(s) of your organization(s)', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'text',
 				'default' => ''
 			],
 			[
 				'name'    => 'univis_orgid',
-				'label'   => __("orgIDs UnivIS", 'rrze-jobs'),
-				'desc'    => __('Enter the ID(s) of your organization(s)', 'rrze-jobs'),
+				'label'   => __("orgIDs UnivIS", RRZE_JOBS_TEXTDOMAIN),
+				'desc'    => __('Enter the ID(s) of your organization(s)', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'text',
 				'default' => ''
 			],
 			[
 				'name'    => 'job_notice',
-				'label'   => __("Notice", 'rrze-jobs'),
-				'desc'    => __('This notice will be dispayed below each job offer.', 'rrze-jobs'),
+				'label'   => __("Notice", RRZE_JOBS_TEXTDOMAIN),
+				'desc'    => __('This notice will be dispayed below each job offer.', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'textarea',
 				'size'    => 'large',
 				'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
@@ -175,12 +190,12 @@ function getFields() {
 function getHelpTab() {
 	return [
 		[
-			'id'        => 'rrze-jobs',
+			'id'        => RRZE_JOBS_TEXTDOMAIN,
 			'content' => [
-				'<p>' . __('Find instructions at ', 'rrze-jobs') .  '<a href="https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/jobs" target="_blank">https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/jobs</a></p>'
+				'<p>' . __('Find instructions at ', RRZE_JOBS_TEXTDOMAIN) .  '<a href="https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/jobs" target="_blank">https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/jobs</a></p>'
 			],
-			'title'     => __('Overview', 'rrze-jobs'),
-			'sidebar'   => sprintf('<p><strong>%1$s:</strong></p><p><a href="https://blogs.fau.de/webworking">RRZE Webworking</a></p><p><a href="https://github.com/RRZE Webteam">%2$s</a></p>', __('For more information', 'rrze-jobs'), __('RRZE Webteam on Github', 'rrze-jobs'))
+			'title'     => __('Overview', RRZE_JOBS_TEXTDOMAIN),
+			'sidebar'   => sprintf('<p><strong>%1$s:</strong></p><p><a href="https://blogs.fau.de/webworking">RRZE Webworking</a></p><p><a href="https://github.com/RRZE Webteam">%2$s</a></p>', __('For more information', RRZE_JOBS_TEXTDOMAIN), __('RRZE Webteam on Github', RRZE_JOBS_TEXTDOMAIN))
 		]
 	];
 }

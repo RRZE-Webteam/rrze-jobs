@@ -103,7 +103,9 @@ class Shortcode {
     public function jobsHandler( $atts ) {
         $my_atts = array();
         foreach( $this->params as $key => $val ){
-            $my_atts[$key] = $val['default'];
+            if ( isset( $val['default'] ) ){
+                $my_atts[$key] = $val['default'];
+            }
         }
 
         $atts = shortcode_atts($my_atts, $atts, 'jobs');
@@ -155,8 +157,8 @@ class Shortcode {
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO );
 
         $orgids = explode( ',', $orgids );
+        $maps = [];
         
-
         foreach ( $orgids as $orgid ){
             $orgid = trim( $orgid );
 
@@ -178,6 +180,10 @@ class Shortcode {
             }
 
             $node = ( $this->provider == 'interamt' ? 'Stellenangebote' : 'Position' );
+            if ( !isset( $data[$node] ) ){
+                continue;
+            }
+
             $jobs = $data[$node];
 
             // Loop through jobs
@@ -537,14 +543,6 @@ class Shortcode {
             ),
             filemtime( "$dir/$index_js" )
         );
-        // $attributes = array();
-        // foreach( $this->params as $key => $val ){
-        //     $attributes[$key] = [ 
-        //         'default' => $val['default'],
-        //         'type' => $val['type'],
-        //         'field_type' => $val['field_type']
-        //     ];
-        // }
 
         wp_localize_script( 'jobsEditor', 'phpConfig', $this->params );
 
