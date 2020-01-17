@@ -9,30 +9,28 @@ function createBlock() {
 		category: phpConfig.block.category,
 		icon: phpConfig.block.icon,
 		edit(props){
-			const attributes =  props.attributes;
-			const setAttributes =  props.setAttributes;
+			const att = props.attributes;
+			const setAtts = props.setAttributes;
 
-			function changeField(val){
-				setAttributes({[this]: val});
+			function changeField( val ){
+				setAtts( {[this]: val} );
 			}	
 
 			var ret = [];
 			for ( var key in phpConfig){
-				switch( eval( 'phpConfig.' + key + '[\'field_type\']') ){
+				switch( this.phpConfig[key]['field_type'] ){
 					case 'text': 
-						ret.push( createElement( TextControl, { value: eval( 'attributes.' + key ), label: eval( 'phpConfig.' + key + '[\'label\']'), type: 'text', onChange: changeField.bind( key ) } ) );
+						ret.push( createElement( TextControl, { value: att[key], label: this.phpConfig[key]['label'], type: 'text', onChange: changeField.bind( key ) } ) );
 						break;
 					case 'select': 
-						var opts = '';
-						var options = eval( 'phpConfig.' + key + '.values');
-						for ( var det in options ){
-							opts += "{value:'" + det + "', label: '" + eval( 'phpConfig.' + key + '.values.' + det ) + "'},";
+						var opts = [];
+						for ( var v in this.phpConfig[key]['values'] ){
+							opts.push( JSON.parse( '{"value":"' + v + '", "label":"' + this.phpConfig[key]['values'][v] + '"}' ) );
 						}
-						opts = '[' + opts.substring(0, opts.length - 1 ) + ']';
-						ret.push( createElement( SelectControl, { value: eval( 'attributes.' + key ), label: eval( 'phpConfig.' + key + '[\'label\']'), type: 'text', onChange: changeField.bind( key ), options: eval( opts ) } ) );
+						ret.push( createElement( SelectControl, { value: att[key], label: this.phpConfig[key]['label'], type: 'text', onChange: changeField.bind( key ), options: opts } ) );
 						break;
 					case 'toggle': 
-						ret.push( createElement( ToggleControl, { checked: eval( 'attributes.' + key ), label: eval( 'phpConfig.' + key + '[\'label\']'), type: 'text', onChange: changeField.bind( key ) } ) );
+						ret.push( createElement( ToggleControl, { checked: att[key], label: this.phpConfig[key]['label'], type: 'text', onChange: changeField.bind( key ) } ) );
 						break;
 				}
 			}
