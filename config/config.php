@@ -17,7 +17,7 @@ function getShortcodeParams(){
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
-			'message' => __( 'Click here for settings on the right side', RRZE_JOBS_TEXTDOMAIN )
+			'message' => __( 'Find the settings on the right side', RRZE_JOBS_TEXTDOMAIN )
 		],
 		'provider' => [
 			'values' => [
