@@ -25,9 +25,9 @@ class Shortcode {
     public function __construct() {
         $this->params = getShortcodeParams();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
-        add_action( 'init',  [$this, 'block_init'] );
+        add_action( 'init',  [$this, 'gutenberg_init'] );
 	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
-		    add_shortcode( 'jobs', [ $this, 'jobsHandler' ], 10, 2 );
+		    add_shortcode( 'jobs', [ $this, 'shortcodeHandler' ], 10, 2 );
 	    }
     }
 
@@ -501,7 +501,6 @@ class Shortcode {
                 $sidebar .= '</div>';
 
                 $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-                //$shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
                 $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
                 $options = get_option(RRZE_JOBS_TEXTDOMAIN);
                 if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
@@ -523,12 +522,12 @@ class Shortcode {
     }
 
 
-    public function block_init() {
+    public function gutenberg_init() {
         // Skip block registration if Gutenberg is not enabled/merged.
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
-        $js = '../assets/js/block.js';
+        $js = '../assets/js/gutenberg.js';
         
         wp_register_script(
             RRZE_JOBS_TEXTDOMAIN . '-editor',
