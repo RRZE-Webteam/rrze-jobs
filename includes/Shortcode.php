@@ -132,7 +132,6 @@ class Shortcode {
         $order = ( isset( $atts['order'] ) ? $atts['order'] : $this->settings['order']['default']);
         $fallback_apply = ( isset( $atts['fallback_apply'] ) ? $atts['fallback_apply'] : $this->settings['fallback_apply']['default']);
 
-        error_log($jobid . ' ' . $orgids . ' ' . $limit . ' ' . $orderby . ' ' . $order . ' ' . $internal . ' ' . $fallback_apply);
         $output = $this->get_jobs( $jobid, $orgids, $limit, $orderby, $order, $internal, $fallback_apply );
 
         wp_enqueue_style('rrze-elements');
