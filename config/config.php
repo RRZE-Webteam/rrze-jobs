@@ -24,24 +24,25 @@ function getShortcodeParams(){
 				'interamt' => __( 'Interamt', RRZE_JOBS_TEXTDOMAIN ),
 				'univis' => __( 'UnivIS', RRZE_JOBS_TEXTDOMAIN )
 			],
-			'default' => 'univis',
-			'field_type' => 'select',
+			'default' => ['univis'],
+			'field_type' => 'multi_select',
 			'label' => __( 'Provider', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'string'
+			'type' => 'array',
+			'items'   => [
+				'type' => 'string',
+			]
 		],
 		'orgids' => [
-			'values' => '',
-			'default' => '',
+			'default' => 0,
 			'field_type' => 'text',
 			'label' => __( 'OrgID(s)', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'string'
+			'type' => 'number'
 		],
 		'jobid' => [
-			'values' => '',
-			'default' => '',
+			'default' => 0,
 			'field_type' => 'text',
 			'label' => __( 'Job ID', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'string'
+			'type' => 'number'
 		],
 		'internal' => [
 			'values' => [
@@ -59,7 +60,7 @@ function getShortcodeParams(){
 			'default' => '',
 			'field_type' => 'text',
 			'label' => __( 'Number of job offers', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'string'
+			'type' => 'number'
 		],
 		'orderby' => [
 			'values' => [
@@ -78,10 +79,16 @@ function getShortcodeParams(){
 				'ASC' => __( 'Ascending', RRZE_JOBS_TEXTDOMAIN ),
 				'DESC' => __( 'Descending', RRZE_JOBS_TEXTDOMAIN )
 			],
-			'default' => 'DESC',
-			'field_type' => 'select',
+			'selected' => 'DESC',
+			'field_type' => 'radio',
 			'label' => __( 'Order', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
+		],
+		'checkboxtest' => [
+			'field_type' => 'checkbox',
+			'label' => __( 'Checkbox Test', RRZE_JOBS_TEXTDOMAIN ),
+			'type' => 'boolean',
+			'checked'   => true
 		],
 		'fallback_apply' => [
 			'values' => '',
@@ -266,6 +273,10 @@ function fillMap( &$map, &$job ) {
 		$tmp = array();
 		$tmp[$p['key']] = $p;
 		$p = $tmp;
+	}
+
+	if ( !isset($p) ){
+		return;
 	}
 
   $keys = array_keys( $p );
