@@ -123,6 +123,11 @@ class Shortcode {
         }
 
         if ( !$orgids && !$jobid ) {
+            $options = get_option( RRZE_JOBS_TEXTDOMAIN );
+            $orgids = $options[RRZE_JOBS_TEXTDOMAIN . '_' . $this->provider . '_orgid'];
+        }
+
+        if ( !$orgids ){
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
         }
 
