@@ -3,7 +3,7 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
-use function RRZE\Jobs\Config\getShortcodeParams;
+use function RRZE\Jobs\Config\getShortcodeSettings;
 use function RRZE\Jobs\Config\getMap;
 use function RRZE\Jobs\Config\getURL;
 use function RRZE\Jobs\Config\getFields;
@@ -16,14 +16,14 @@ use function RRZE\Jobs\Config\isInternAllowed;
 class Shortcode {
     private $provider = '';
     private $count = 0;
-    private $params = '';
+    private $settings = '';
 
 
     /**
      * Shortcode-Klasse wird instanziiert.
      */
     public function __construct() {
-        $this->params = getShortcodeParams();
+        $this->settings = getShortcodeSettings();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action( 'init',  [$this, 'gutenberg_init'] );
 	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
@@ -101,47 +101,39 @@ class Shortcode {
     }
 
     public function shortcodeHandler( $atts ) {
-        $my_atts = array();
-        foreach( $this->params as $key => $val ){
-            if ( isset( $val['default'] ) ){
-                $my_atts[$key] = $val['default'];
-            }
-        }
-
-        $atts = shortcode_atts($my_atts, $atts, 'jobs');
-
-        $this->provider = strtolower( sanitize_text_field( $atts['provider'] ) );
-        $output = '';
-
-        if ( isset( $this->provider ) && ( $this->provider != '' ) ){
-            $this->provider = $atts['provider']; 
-            return $this->shortcodeOutput( $atts );
-        }else{
-            return '<p>' . __('Please specify the correct job portal in the shortcode attribute <code>provider=""</code>.', 'rrze-jobs') . '</p>';
-        }
+        return $this->shortcodeOutput( $atts );
     }
     
 
     public function shortcodeOutput( $atts ) {
         $this->count = 0;
         $this->providers = $this->getProviders();
+        $this->provider = ( isset( $atts['provider'] ) ? $atts['provider'] : $this->settings['provider']['default']);
+        $orgids = 0;
+        $jobid = 0;
 
-        if ( isset( $atts['orgid'] ) && $atts['orgid'] != '' ) {
-            $atts['orgids'] = $atts['orgid'];
-        }
-
-        if ( isset($atts['orgids']) && $atts['orgids'] != '' ) {
-            $orgids = sanitize_text_field( $atts['orgids'] );
+        if ( isset( $atts['jobid'] ) ) {
+            $jobid = sanitize_text_field( $atts['jobid'] );
         } else {
-            $orgids = $this->providers[$this->provider]['orgid'];
+            if ( isset( $atts['orgids_' . $this->provider] ) ) {
+                $orgids = sanitize_text_field( $atts['orgids_'.$this->provider] );
+            } else {
+                $orgids = $this->settings['orgids_' . $this->provider]['default'];
+            }
         }
-        $jobid = sanitize_text_field( $atts['jobid'] );
 
-        if ( $orgids == '' && $jobid == '' ) {
+        if ( !$orgids && !$jobid ) {
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
         }
 
-        $output = $this->get_jobs( $jobid, $orgids, $atts['limit'], $atts['orderby'], $atts['order'], $atts['internal'] , $atts['fallback_apply'] );
+        $limit = ( isset( $atts['limit'] ) ? $atts['limit'] : $this->settings['limit']['default']);
+        $internal = ( isset( $atts['internal'] ) ? $atts['internal'] : $this->settings['internal']['default']);
+        $orderby = ( isset( $atts['orderby'] ) ? $atts['orderby'] : $this->settings['orderby']['default']);
+        $order = ( isset( $atts['order'] ) ? $atts['order'] : $this->settings['order']['default']);
+        $fallback_apply = ( isset( $atts['fallback_apply'] ) ? $atts['fallback_apply'] : $this->settings['fallback_apply']['default']);
+
+        error_log($jobid . ' ' . $orgids . ' ' . $limit . ' ' . $orderby . ' ' . $order . ' ' . $internal . ' ' . $fallback_apply);
+        $output = $this->get_jobs( $jobid, $orgids, $limit, $orderby, $order, $internal, $fallback_apply );
 
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('jobs-shortcode');
@@ -162,7 +154,7 @@ class Shortcode {
         foreach ( $orgids as $orgid ){
             $orgid = trim( $orgid );
 
-            // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: UnivIS delivers their complete database entries if orgid contains characters
+            // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: Interamt delivers their complete database entries if orgid contains characters
             if ( strval($orgid) !== strval(intval($orgid)) ) {
                 continue;
             }
@@ -542,13 +534,13 @@ class Shortcode {
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
 
-        wp_localize_script( RRZE_JOBS_TEXTDOMAIN . '-editor', 'phpConfig', $this->params );
+        wp_localize_script( RRZE_JOBS_TEXTDOMAIN . '-editor', 'phpConfig', $this->settings );
 
 
         register_block_type( 'rrze-jobs/jobs', array(
             'editor_script' => RRZE_JOBS_TEXTDOMAIN . '-editor',
             'render_callback' => [$this, 'shortcodeHandler'],
-            'attributes' => $this->params
+            'attributes' => $this->settings
             ) 
         );
     }

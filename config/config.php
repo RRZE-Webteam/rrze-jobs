@@ -10,7 +10,7 @@ define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
 
 
 
-function getShortcodeParams(){
+function getShortcodeSettings(){
 	return [
 		'block' => [
 			'name' => 'rrze-jobs/jobs',
@@ -20,49 +20,53 @@ function getShortcodeParams(){
 			'message' => __( 'Find the settings on the right side', RRZE_JOBS_TEXTDOMAIN )
 		],
 		'provider' => [
+			'field_type' => 'select',
 			'values' => [
 				'interamt' => __( 'Interamt', RRZE_JOBS_TEXTDOMAIN ),
 				'univis' => __( 'UnivIS', RRZE_JOBS_TEXTDOMAIN )
 			],
-			'default' => ['univis'],
-			'field_type' => 'multi_select',
+			'default' => 'univis',
 			'label' => __( 'Provider', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'array',
-			'items'   => [
-				'type' => 'string',
-			]
+			'type' => 'string'
 		],
-		'orgids' => [
-			'default' => 0,
+		'orgids_interamt' => [
 			'field_type' => 'text',
-			'label' => __( 'OrgID(s)', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'number'
+			'default' => '',
+			'label' => __( 'OrgID(s) Interamt', RRZE_JOBS_TEXTDOMAIN ),
+			'type' => 'string'
+		],
+		'orgids_univis' => [
+			'field_type' => 'text',
+			'default' => '',
+			'label' => __( 'OrgID(s) UnivIS', RRZE_JOBS_TEXTDOMAIN ),
+			'type' => 'string'
 		],
 		'jobid' => [
-			'default' => 0,
 			'field_type' => 'text',
+			'default' => null,
 			'label' => __( 'Job ID', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'number'
 		],
 		'internal' => [
+			'field_type' => 'select',
 			'values' => [
 				'exclude' => __( 'exclude internal job offers', RRZE_JOBS_TEXTDOMAIN ),
 				'include' => __( 'include internal job offers', RRZE_JOBS_TEXTDOMAIN),
 				'only' => __( 'only internal job offers', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'exclude',
-			'field_type' => 'select',
 			'label' => __( 'Internal job offers', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'limit' => [
-			'values' => '',
-			'default' => '',
 			'field_type' => 'text',
+			'values' => '',
+			'default' => 0,
 			'label' => __( 'Number of job offers', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'number'
 		],
 		'orderby' => [
+			'field_type' => 'select',
 			'values' => [
 				'job_title' => __( 'Job title', RRZE_JOBS_TEXTDOMAIN ),
 				'application_start' => __( 'Application start', RRZE_JOBS_TEXTDOMAIN ),
@@ -70,30 +74,24 @@ function getShortcodeParams(){
 				'job_start' => __( 'Job start', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'default' => 'job_title',
-			'field_type' => 'select',
 			'label' => __( 'Order by', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'order' => [
+			'field_type' => 'radio',
 			'values' => [
 				'ASC' => __( 'Ascending', RRZE_JOBS_TEXTDOMAIN ),
 				'DESC' => __( 'Descending', RRZE_JOBS_TEXTDOMAIN )
 			],
 			'selected' => 'DESC',
-			'field_type' => 'radio',
+			'default' => 'DESC',
 			'label' => __( 'Order', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
-		'checkboxtest' => [
-			'field_type' => 'checkbox',
-			'label' => __( 'Checkbox Test', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'boolean',
-			'checked'   => true
-		],
 		'fallback_apply' => [
+			'field_type' => 'text',
 			'values' => '',
 			'default' => '',
-			'field_type' => 'text',
 			'label' => __( 'Default application link', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 			]                    

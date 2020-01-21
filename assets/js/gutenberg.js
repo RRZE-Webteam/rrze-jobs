@@ -2,7 +2,7 @@ function createBlock() {
 	const { registerBlockType } = wp.blocks;
 	const { createElement } = wp.element;
 	const { InspectorControls }  = wp.blockEditor;
-	const { CheckboxControl, RadioControl, SelectControl, TextControl, ToggleControl } = wp.components;
+	const { CheckboxControl, RadioControl, SelectControl, TextControl, TextareaControl, ToggleControl } = wp.components;
 
 	registerBlockType( phpConfig.block.name, {
 		title: phpConfig.block.title,
@@ -43,7 +43,10 @@ function createBlock() {
 						ret.push( createElement( SelectControl, { multiple: ( config[fieldname]['field_type'] == 'multi_select' ? 1 : 0 ), value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ), options: opts } ) );
 						break;
 					case 'text': 
-						ret.push( createElement( TextControl, { value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ), required:'required' } ) );
+						ret.push( createElement( TextControl, { value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
+						break;
+					case 'textarea': 
+						ret.push( createElement( TextareaControl, { value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 						break;
 					case 'toggle': 
 						ret.push( createElement( ToggleControl, { checked: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
