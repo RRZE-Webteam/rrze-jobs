@@ -6,7 +6,6 @@ defined('ABSPATH') || exit;
 use function RRZE\Jobs\Config\getShortcodeSettings;
 use function RRZE\Jobs\Config\getMap;
 use function RRZE\Jobs\Config\getURL;
-use function RRZE\Jobs\Config\getFields;
 use function RRZE\Jobs\Config\fillMap;
 use function RRZE\Jobs\Config\getPersons;
 use function RRZE\Jobs\Config\formatUnivIS;
@@ -108,26 +107,26 @@ class Shortcode {
     public function shortcodeOutput( $atts ) {
         $this->count = 0;
         $this->providers = $this->getProviders();
-        $this->provider = ( isset( $atts['provider'] ) ? $atts['provider'] : $this->settings['provider']['default']);
+        $this->provider = ( isset( $atts['provider'] ) ? $atts['provider'] : $this->settings['provider']['default'] );
         $orgids = 0;
         $jobid = 0;
 
         if ( isset( $atts['jobid'] ) ) {
             $jobid = sanitize_text_field( $atts['jobid'] );
         } else {
-            if ( isset( $atts['orgids_' . $this->provider] ) ) {
-                $orgids = sanitize_text_field( $atts['orgids_'.$this->provider] );
-            } else {
-                $orgids = $this->settings['orgids_' . $this->provider]['default'];
+            // 1. shortcode param orgids
+            if ( isset( $atts['orgids'] ) && $atts['orgids'] != '' ){
+                $orgids = sanitize_text_field( $atts['orgids'] );
+            }else{
+                // 2. plugin settings page orgids_<provider>
+                $options = get_option( RRZE_JOBS_TEXTDOMAIN );
+                if ( isset( $options[RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider] ) ){
+                    $orgids = $options[RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider];
+                }            
             }
         }
 
         if ( !$orgids && !$jobid ) {
-            $options = get_option( RRZE_JOBS_TEXTDOMAIN );
-            $orgids = $options[RRZE_JOBS_TEXTDOMAIN . '_' . $this->provider . '_orgid'];
-        }
-
-        if ( !$orgids ){
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
         }
 

@@ -29,16 +29,10 @@ function getShortcodeSettings(){
 			'label' => __( 'Provider', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
-		'orgids_interamt' => [
+		'orgids' => [
 			'field_type' => 'text',
 			'default' => '',
-			'label' => __( 'OrgID(s) Interamt', RRZE_JOBS_TEXTDOMAIN ),
-			'type' => 'string'
-		],
-		'orgids_univis' => [
-			'field_type' => 'text',
-			'default' => '',
-			'label' => __( 'OrgID(s) UnivIS', RRZE_JOBS_TEXTDOMAIN ),
+			'label' => __( 'OrgID(s)', RRZE_JOBS_TEXTDOMAIN ),
 			'type' => 'string'
 		],
 		'jobid' => [
@@ -158,16 +152,16 @@ function getSections() {
  */
 function getFields() {
 	return [
-		RRZE_JOBS_TEXTDOMAIN => [
+		'rrze-jobs' => [
 			[
-				'name'    => 'interamt_orgid',
+				'name'    => 'orgids_interamt',
 				'label'   => __("orgIDs Interamt", RRZE_JOBS_TEXTDOMAIN),
 				'desc'    => __('Enter the ID(s) of your organization(s)', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'text',
-				'default' => ''
+				'default' => '2217'
 			],
 			[
-				'name'    => 'univis_orgid',
+				'name'    => 'orgids_univis',
 				'label'   => __("orgIDs UnivIS", RRZE_JOBS_TEXTDOMAIN),
 				'desc'    => __('Enter the ID(s) of your organization(s)', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'text',
@@ -179,7 +173,7 @@ function getFields() {
 				'desc'    => __('This notice will be dispayed below each job offer.', RRZE_JOBS_TEXTDOMAIN),
 				'type'    => 'textarea',
 				'size'    => 'large',
-				'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
+				'default' => '<p>TESTFür alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
 <p>Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".</p>
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>'
