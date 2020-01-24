@@ -99,21 +99,12 @@ function getShortcodeSettings(){
  */
 function isInternAllowed() {
 	$ret = FALSE;
-	$allowedHosts = array(
-		'uni-erlangen.de'
-	);
+	$allowedHost = 'uni-erlangen.de';
 	$remoteAdr = gethostbyaddr( $_SERVER['REMOTE_ADDR'] );
-	if ( $remoteAdr == 'localhost' ){
-		$ret = TRUE;
-	} else {
-		$parts = explode( '.', $remoteAdr );
-		$cnt = count( $parts );
-		if ($cnt >= 3){
-			$domain = $parts[$cnt-2] . '.' . $parts[$cnt-1];
-			$ret = in_array( $domain, $allowedHosts );
-		}
-	}
 
+	if ( ( strpos( $remoteAdr, $allowedHost ) !== FALSE ) || ( is_admin() ) ) {
+		$ret = TRUE;
+	}
 	return $ret;
 }
 
