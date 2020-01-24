@@ -150,6 +150,145 @@ class Shortcode {
     }
 
 
+    private function get_sidebar( &$map, &$logo_url ){
+        $sidebar = '';
+        $application_link = '';
+
+        if ( isset($map['application_email']) ) {
+            $application_link = $map['application_email'];
+            $mailto = 'mailto:';
+        } elseif (isset($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
+            $application_link = $map['application_link'];
+            $mailto = '';
+        }
+
+        if (!isset( $map['employer_district'] ) || $map['employer_district'] == '') {
+            $map['employer_district'] = RRZE_JOBS_ADDRESS_REGION;
+        }
+
+        if ($application_link != '') {
+            $sidebar .= do_shortcode( '<div>[button link="' . $mailto . $application_link . '" width="full"]Jetzt bewerben![/button]</div>' );
+        }
+
+        $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
+        if ( isset( $map['application_end']) ) {
+            $sidebar .= '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
+                . '<dd itemprop="validThrough" content="' . $map['application_end'] . '">' . date('d.m.Y', strtotime($map['application_end'])) . '</dd>';
+        }
+        if ( isset( $map['job_type'] ) ) {
+            $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
+        }
+        if (isset($map['application_link'])) {
+            $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
+            $sidebar .= '<dd>' . make_clickable($map['application_link']) . '</dd>';
+        }
+        $sidebar .= '</dl></div>';
+        $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
+        $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
+            . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
+        if ( ( isset( $map['job_start']) ) && ( $map['job_start'] != '' ) ) {
+            $sidebar .= '<dt>'. __('Besetzung zum','rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . date('d.m.Y', strtotime($map['job_start'])) . '</dd>';
+        }
+        $sidebar .= '<dt>'.__('Einsatzort','rrze-jobs'). '</dt>';
+        if ( isset( $map['employer_organization']) ) {
+            $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">' . $map['employer_organization'] . '<br />';
+        }
+        if ( isset( $map['employer_street']) ) {
+            $sidebar .= $map['employer_street'] . '<br />';
+        }
+        if ( isset( $map['employer_postalcode']) ) {
+            $sidebar .=  $map['employer_postalcode'] . ' ';
+        }
+        $sidebar .= '<meta itemprop="name" content="' . $map['employer_organization'] . '" />
+            <meta itemprop="logo" content="' . $logo_url . '" />';
+        $sidebar .= '</dd>';
+        $sidebar .=  '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
+            . '<meta itemprop="logo" content="' . $logo_url . '" />'
+            . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
+            . '<meta itemprop="name" content="' . $map['employer_organization'] . '" />';
+        $sidebar .= ( isset( $map['contact_street'] ) ? '<meta itemprop="streetAddress" content="' .  $map['contact_street'] . '" />' : '' );
+        $sidebar .= ( isset( $map['contact_postalcode'] ) ? '<meta itemprop="postalCode" content="' . $map['contact_postalcode'] . '" />' : '' );
+        $sidebar .= ( isset( $map['contact_city'] ) ? '<meta itemprop="addressLocality" content="' . $map['contact_city'] . '" />' : '' );
+        $sidebar .= ( isset( $map['employer_district'] ) ? '<meta itemprop="addressRegion" content="' . $map['employer_district'] . '" />' : '' );
+        $sidebar .= ( isset( $map['contact_link'] ) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '' );
+        $sidebar .= '</span></span>';
+
+        $salary = $this->getSalary( $map );
+
+        if ( $salary != '' ) {
+            $sidebar .= '<dt>'.__('Entgelt','rrze-jobs') . '</dt><dd itemprop="estimatedSalary">' . $salary . '</dd>';
+        }
+        if ( isset( $map['job_employmenttype'] ) ) {
+            $sidebar .= '<dt>'.__('Teilzeit / Vollzeit','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>';
+        }
+        if ( isset( $map['job_workhours'] ) ) {
+            $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) );
+            if (substr(get_locale(), 0, 2) == 'de') {
+                $map['job_workhours'] = number_format($map['job_workhours'], 1,',', '.');
+            }
+            $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . ' h</dd>';
+        }
+
+        if ( ( isset( $map['job_limitation'] ) && $map['job_limitation'] == 'befristet' )  || ( isset( $map['job_limitation_duration'] ) ) ) {
+            $map['job_limitation_duration'] .= ( is_numeric( $map['job_limitation_duration'] ) ? ' ' .  __('Monate', 'rrze-jobs' ) : '' );
+            $sidebar .= '<dt>' . __( 'Befristung', 'rrze-jobs' ) . '</dt><dd>' . $map['job_limitation_duration'] . '</dd>';
+            if ( isset( $map['job_limitation_reason'] ) ) {
+                switch ( $map['job_limitation_reason'] ){
+                    case 'vertr':
+                        $map['job_limitation_reason'] = 'Vertretung';
+                        break;
+                    case 'schwanger':
+                        $map['job_limitation_reason'] = 'Mutterschutzvertretung';
+                        break;
+                    case 'eltern':
+                        $map['job_limitation_reason'] = 'Mutterschutz- / Elternzeitvertretung';
+                        break;
+                    case 'krankh':
+                        $map['job_limitation_reason'] = 'Krankheitsvertretung';
+                        break;
+                    case 'forsch':
+                        $map['job_limitation_reason'] = 'befristetes Forschungsvorhaben';
+                        break;
+                    case 'zeitb':
+                        $map['job_limitation_reason'] = 'Beamtenschaft auf Zeit';
+                        break;
+                }
+                $sidebar .= '<dt>' . __( 'Befristungsgrund', 'rrze-jobs' ) . '</dt><dd>' . $map['job_limitation_reason'] . '</dd>';
+            }
+        }
+
+        if ( ( isset( $map['contact_lastname'] ) ) && ( $map['contact_lastname'] != '' ) ) {
+            $sidebar .= '<dt>'.__('Ansprechpartner für weitere Informationen','rrze-jobs') . '</dt>'
+                . '<dd>' . ( isset( $map['contact_title'] ) ? $map['contact_title'] . ' ' : '' ) . ( isset( $map['contact_firstname'] ) ? $map['contact_firstname'] . ' ' : '' ) . ( isset( $map['contact_lastname'] ) ? $map['contact_lastname'] : '' );
+            if ( ( isset( $map['contact_tel'] ) ) && ( $map['contact_tel'] != '' ) ) {
+                $sidebar.= '<br />' . __('Telefon', 'rrze-jobs') . ': ' . $map['contact_tel'];
+            }
+            if ( ( isset( $map['contact_mobile'] ) ) && ( $map['contact_mobile'] != '' ) ) {
+                $sidebar.= '<br />' . __('Mobil', 'rrze-jobs') . ': ' . $map['contact_mobile'];
+            }
+            if ( ( isset( $map['contact_email'] ) ) && ( $map['contact_email'] != '' ) ) {
+                $sidebar.= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $map['contact_email'] . '">' . $map['contact_email'] . '</a>';
+            }
+            $sidebar .= '</dd>';
+        }
+        $sidebar .= '</dl>';
+
+        $datePosted = ( isset($map['application_start']) ? $this->transform_date( $map['application_start'] ) : date('Y-m-d') );
+
+        $sidebar .= '<div><meta itemprop="datePosted" content="' . $datePosted . '" />'
+            . (isset($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . strip_tags(htmlentities( $map['job_education'])) . '" />': '')
+            . (isset($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . $map['job_unit'] . '" />':'')
+            . (isset($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . strip_tags(htmlentities( $map['job_experience'] )) . '" />': '')
+            . (isset($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $map['job_benefits']) . '" />': '')
+            . (isset($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />': '')
+            . '<meta itemprop="qualifications" content="' . ( isset ($map['job_qualifications'] ) ? $map['job_qualifications'] : '' ) . '" />'
+            . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id']. '" />'
+            . '</div>';
+        $sidebar .= '</div>';
+
+        return $sidebar;
+    }
+
     private function get_jobs( $jobid = '', $orgids = '', $limit, $orderby, $order, $internal, $fallback_apply ) {
         $output = '';
         $custom_logo_id = get_theme_mod('custom_logo');
@@ -248,35 +387,9 @@ class Shortcode {
                     } 
 
                     if ( $this->provider == 'univis') {
-                        if ( isset( $job['job_limitation_reason'] ) ) {
-                            switch ( $job['job_limitation_reason'] ){
-                                case 'vertr':
-                                    $job['job_limitation_reason'] = 'Vertretung';
-                                    break;
-                                case 'schwanger':
-                                    $job['job_limitation_reason'] = 'Mutterschutzvertretung';
-                                    break;
-                                case 'eltern':
-                                    $job['job_limitation_reason'] = 'Mutterschutz- / Elternzeitvertretung';
-                                    break;
-                                case 'krankh':
-                                    $job['job_limitation_reason'] = 'Krankheitsvertretung';
-                                    break;
-                                case 'forsch':
-                                    $job['job_limitation_reason'] = 'befristetes Forschungsvorhaben';
-                                    break;
-                                case 'zeitb':
-                                    $job['job_limitation_reason'] = 'Beamtenschaft auf Zeit';
-                                    break;
-                            }
-                        }
-
                         if ( isset( $job['job_employmenttype'] ) ) {
                             $job['job_employmenttype'] = ucfirst( $job['job_employmenttype'] ) . 'zeit';
                         }
-
-                        // $job['job_category'] = $URLs[$url];
-                        // $job['job_category_grouped'] = $URLs[$url];
 
                         $person = $persons[$jobData['acontact']['UnivISRef']['key']];
                         foreach ( $person as $key => $val ){
@@ -385,130 +498,20 @@ class Shortcode {
                     continue;
                 }
 
-                if (!isset( $map['employer_district'] ) || $map['employer_district'] == '') {
-                    $map['employer_district'] = RRZE_JOBS_ADDRESS_REGION;
-                }
-
-                $salary = $this->getSalary( $map );
 	            $description = $this->getDescription($map);
                 $description = str_replace('"', '', $description);
-
                 $datePosted = ( isset($map['application_start']) ? $this->transform_date( $map['application_start'] ) : date('Y-m-d') );
-
-                $this->count++;
-
-                $application_link = '';
-                if ( isset($map['application_email']) ) {
-                    $application_link = $map['application_email'];
-                    $mailto = 'mailto:';
-                } elseif (isset($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
-                    $application_link = $map['application_link'];
-                    $mailto = '';
-                }
-
-                $sidebar = '';
-                if ($application_link != '') {
-                    $sidebar .= do_shortcode( '<div>[button link="' . $mailto . $application_link . '" width="full"]Jetzt bewerben![/button]</div>' );
-                }
-
-                $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
-                if ( isset( $map['application_end']) ) {
-                    $sidebar .= '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
-                        . '<dd itemprop="validThrough" content="' . $map['application_end'] . '">' . date('d.m.Y', strtotime($map['application_end'])) . '</dd>';
-                }
-                if ( isset( $map['job_type'] ) ) {
-                    $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
-                }
-                if (isset($map['application_link'])) {
-                    $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
-                    $sidebar .= '<dd>' . make_clickable($map['application_link']) . '</dd>';
-                }
-                $sidebar .= '</dl></div>';
-                $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
-                $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
-                    . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
-                if ( ( isset( $map['job_start']) ) && ( $map['job_start'] != '' ) ) {
-                    $sidebar .= '<dt>'. __('Besetzung zum','rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . date('d.m.Y', strtotime($map['job_start'])) . '</dd>';
-                }
-                $sidebar .= '<dt>'.__('Einsatzort','rrze-jobs'). '</dt>';
-                if ( isset( $map['employer_organization']) ) {
-                    $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">' . $map['employer_organization'] . '<br />';
-                }
-                if ( isset( $map['employer_street']) ) {
-                    $sidebar .= $map['employer_street'] . '<br />';
-                }
-                if ( isset( $map['employer_postalcode']) ) {
-                    $sidebar .=  $map['employer_postalcode'] . ' ';
-                }
-                $sidebar .= '<meta itemprop="name" content="' . $map['employer_organization'] . '" />
-                    <meta itemprop="logo" content="' . $logo_url . '" />';
-                $sidebar .= '</dd>';
-                $sidebar .=  '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-                    . '<meta itemprop="logo" content="' . $logo_url . '" />'
-                    . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
-                    . '<meta itemprop="name" content="' . $map['employer_organization'] . '" />';
-                $sidebar .= ( isset( $map['contact_street'] ) ? '<meta itemprop="streetAddress" content="' .  $map['contact_street'] . '" />' : '' );
-                $sidebar .= ( isset( $map['contact_postalcode'] ) ? '<meta itemprop="postalCode" content="' . $map['contact_postalcode'] . '" />' : '' );
-                $sidebar .= ( isset( $map['contact_city'] ) ? '<meta itemprop="addressLocality" content="' . $map['contact_city'] . '" />' : '' );
-                $sidebar .= ( isset( $map['employer_district'] ) ? '<meta itemprop="addressRegion" content="' . $map['employer_district'] . '" />' : '' );
-                $sidebar .= ( isset( $map['contact_link'] ) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '' );
-                $sidebar .= '</span></span>';
-
-
-                if ( $salary != '' ) {
-                    $sidebar .= '<dt>'.__('Entgelt','rrze-jobs') . '</dt><dd itemprop="estimatedSalary">' . $salary . '</dd>';
-                }
-                if ( isset( $map['job_employmenttype'] ) ) {
-                    $sidebar .= '<dt>'.__('Teilzeit / Vollzeit','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>';
-                }
-                if ( isset( $map['job_workhours'] ) ) {
-                    $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) );
-                    if (substr(get_locale(), 0, 2) == 'de') {
-                        $map['job_workhours'] = number_format($map['job_workhours'], 1,',', '.');
-                    }
-                    $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . ' h</dd>';
-                }
-                if ( ( isset( $map['job_limitation'] ) ) && ( $map['job_limitation'] == 'befristet' ) ) {
-                    $sidebar .= '<dt>'.__('Befristung (Monate)','rrze-jobs') . '</dt><dd>' . $map['job_limitation_duration'] . '</dd>';
-                }
-
-                if ( ( isset( $map['contact_lastname'] ) ) && ( $map['contact_lastname'] != '' ) ) {
-                    $sidebar .= '<dt>'.__('Ansprechpartner für weitere Informationen','rrze-jobs') . '</dt>'
-                        . '<dd>' . ( isset( $map['contact_title'] ) ? $map['contact_title'] . ' ' : '' ) . ( isset( $map['contact_firstname'] ) ? $map['contact_firstname'] . ' ' : '' ) . ( isset( $map['contact_lastname'] ) ? $map['contact_lastname'] : '' );
-                    if ( ( isset( $map['contact_tel'] ) ) && ( $map['contact_tel'] != '' ) ) {
-                        $sidebar.= '<br />' . __('Telefon', 'rrze-jobs') . ': ' . $map['contact_tel'];
-                    }
-                    if ( ( isset( $map['contact_mobile'] ) ) && ( $map['contact_mobile'] != '' ) ) {
-                        $sidebar.= '<br />' . __('Mobil', 'rrze-jobs') . ': ' . $map['contact_mobile'];
-                    }
-                    if ( ( isset( $map['contact_email'] ) ) && ( $map['contact_email'] != '' ) ) {
-                        $sidebar.= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $map['contact_email'] . '">' . $map['contact_email'] . '</a>';
-                    }
-                    $sidebar .= '</dd>';
-                }
-                $sidebar .= '</dl>';
-
-                $sidebar .= '<div><meta itemprop="datePosted" content="' . $datePosted . '" />'
-                    . (isset($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . strip_tags(htmlentities( $map['job_education'])) . '" />': '')
-                    . (isset($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . $map['job_unit'] . '" />':'')
-                    . (isset($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . strip_tags(htmlentities( $map['job_experience'] )) . '" />': '')
-                    . (isset($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . htmlentities( $map['job_benefits']) . '" />': '')
-                    . (isset($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />': '')
-                    . '<meta itemprop="qualifications" content="' . ( isset ($map['job_qualifications'] ) ? $map['job_qualifications'] : '' ) . '" />'
-                    . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id']. '" />'
-                    . '</div>';
-                $sidebar .= '</div>';
-
                 $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-                $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
+                $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
                 $options = get_option(RRZE_JOBS_TEXTDOMAIN);
+
                 if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
                     $shortcode_item_inner .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
                 }
+
                 $shortcode_item_inner .= '</div>';
-
-
-                $shortcode_items .= do_shortcode('[collapse title="' . $map['job_title'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                $shortcode_items .= do_shortcode('[collapse title="' . $map['job_title'] . ' ' . $map['job_id'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                $this->count++;
             }
 
         }
@@ -532,12 +535,15 @@ class Shortcode {
             $persons = getPersons( $persons );
         }
 
-        $node = ( $this->provider == 'interamt' ? 'Stellenangebote' : 'Position' );
-        if ( !isset( $data[$node] ) ){
-            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        if ( $this->provider == 'univis' ){
+            $job = $data['Position'];
+        } else {
+            $job = $data;
         }
 
-        $job = $data[$node];
+        if ( !isset( $job ) || empty( $job ) ){
+            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        }
 
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '' );
@@ -545,6 +551,13 @@ class Shortcode {
         $map_template = getMap( $this->provider );
         $map = fillMap( $map_template, $job );
         $intern_allowed = isInternAllowed();
+
+        if ( $this->provider == 'univis' ){
+            $person = $persons[$job['acontact']['UnivISRef']['key']];
+            foreach ( $person as $key => $val ){
+                $map[$key] = $val;
+            }
+        }
 
         // Skip internal job offers if necessary
         if ( !$intern_allowed && isset( $map['job_intern'] ) ) {
@@ -608,104 +621,9 @@ class Shortcode {
             }
             $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
 
-            // set application_email or application_link or fallback_link
-            $sidebar = '';
-            if ( $application_email != '' ) {
-                $application_link = 'mailto:' . $application_email;
-            } elseif ( isset( $map['application_link'] ) && $map['application_link'] != '' ) {
-                $application_link = $map['application_link'];
-            } elseif ( $fallback_apply != '' ) {
-                $application_link = $fallback_apply;
-                if ( strpos( $fallback_apply, '@' ) > 0 ){
-                    $application_link = 'mailto:' . $fallback_apply;
-                }
-            } 
-            $sidebar .= do_shortcode( '<div>[button link="' . $application_link . '" width="full"]Jetzt bewerben![/button]</div>' );
-
-            $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
-            if ( isset( $map['application_end']) ) {
-                $sidebar .= '<dt>' . __('Bewerbungsschluss', 'rrze-jobs') . '</dt>'
-                . '<dd itemprop="validThrough" content="' . $map['application_end'] . '">' . $date_deadline . '</dd>';
-            }
-            if ( isset( $map['job_type'] ) ) { 
-                $sidebar .= '<dt>' . __( 'Referenz', 'rrze-jobs' ) . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
-            }
-
-            $sidebar .= '<dt>' . __( 'Bewerbung', 'rrze-jobs' ) . '</dt>';
-            $sidebar .= '<dd>' . $application_link . '</dd></div>';
-            $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
-            $sidebar .= '<h3>' . __('Details','rrze-jobs') . '</h3>'
-                . '<dt>'.__('Stellenbezeichnung','rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
-            if ( ( isset( $map['job_start']) ) && ( $map['job_start'] != '' ) ) {
-                $sidebar .= '<dt>'. __('Besetzung zum','rrze-jobs') . '</dt><dd>' . $map['job_start'] . '</dd>'; 
-            }
-            if ( ( isset( $map['employer_city'] ) ) && ( !empty( $map['employer_city'] ) ) ) {
-                $sidebar .= '<dt>'.__('Einsatzort','rrze-jobs'). '</dt>';
-                if ( isset( $map['employer_organization']) ) {
-                    $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization"><span itemprop="name">' . $map['employer_organization'] . '</span><meta itemprop="logo" content="' . LOGO . '" /><br />';
-                }
-                if ( isset( $map['employer_street']) ) {
-                    $sidebar .= $map['employer_street'] . '<br />';
-                }
-                if ( isset( $map['employer_postalcode']) ) {
-                    $sidebar .=  $map['employer_postalcode'] . ' ';
-                }
-                $sidebar .=  '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-                    . '<meta itemprop="logo" content="' . $logo_url . '" />'
-                    . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">'
-                    . '<meta itemprop="name" content="' . $map['employer_organization'] . '" />';
-                $sidebar .= ( isset( $map['employer_street'] ) ? '<meta itemprop="streetAddress" content="' .  $map['employer_street'] . '" />' : '' );
-                $sidebar .= ( isset( $map['employer_postalcode'] ) ? '<meta itemprop="postalCode" content="' . $map['employer_postalcode'] . '" />' : '' );
-                $sidebar .= ( isset( $map['employer_city'] ) ? '<meta itemprop="addressLocality" content="' . $map['employer_city'] . '" />' : '' );
-                $sidebar .= ( isset( $map['employer_city'] ) ? '<meta itemprop="addressRegion" content="' . ADDRESS_REGION . '" />' : '' );
-                $sidebar .= ( isset( $map['contact_link'] ) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '' );
-                $sidebar .= '</span></span></dd>';
-            }
-
-            if ( $salary != '' ) {
-                $sidebar .= '<dt>'.__('Entgelt','rrze-jobs') . '</dt><dd>' . $salary . '</dd>';
-            }
-            if ( isset( $map['job_employmenttype'] ) ) {
-                $sidebar .= '<dt>'.__('Teilzeit / Vollzeit','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>'; 
-            }
-            if ( isset( $map['job_workhours'] ) ) { 
-
-                $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) );
-                if (substr(get_locale(), 0, 2) == 'de') {
-                    $map['job_workhours'] = number_format($map['job_workhours'], 1,',', '.');
-                }
-
-                $sidebar .= '<dt>'.__('Wochenarbeitszeit','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . ' h</dd>';
-            }
-            if ( ( isset( $map['job_limitation'] ) ) && ( $map['job_limitation'] == 'befristet' ) ) {
-                $sidebar .= '<dt>'.__('Befristung (Monate)','rrze-jobs') . '</dt><dd>' . $map['job_limitation_duration'] . '</dd>';
-            }
-
-            if ( ( isset( $map['contact_lastname'] ) ) && ( $map['contact_lastname'] != '' ) ) {
-                $sidebar .= '<dt>'.__('Ansprechpartner für weitere Informationen','rrze-jobs') . '</dt>'
-                    . '<dd>' . ( isset( $map['contact_title'] ) ? $map['contact_title'] . ' ' : '' ) . ( isset( $map['contact_firstname'] ) ? $map['contact_firstname'] . ' ' : '' ) . ( isset( $map['contact_lastname'] ) ? $map['contact_lastname'] : '' );
-                if ( ( isset( $map['contact_tel'] ) ) && ( $map['contact_tel'] != '' ) ) {
-                    $sidebar.= '<br />' . __('Telefon', 'rrze-jobs') . ': ' . $map['contact_tel'];
-                }
-                if ( ( isset( $map['contact_mobile'] ) ) && ( $map['contact_mobile'] != '' ) ) {
-                    $sidebar.= '<br />' . __('Mobil', 'rrze-jobs') . ': ' . $map['contact_mobile'];
-                }
-                if ( ( isset( $map['contact_email'] ) ) && ( $map['contact_email'] != '' ) ) {
-                    $sidebar.= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $map['contact_email'] . '">' . $map['contact_email'] . '</a>';
-                }
-                $sidebar .= '</dd>';
-            }
-            $sidebar .= '</dl>';
-
-            $sidebar .= '<div><meta itemprop="datePosted" content="' . ( isset( $map['application_start'] ) ? $map['application_start'] : '' ) . '" />'
-                . '<meta itemprop="qualifications" content="' . ( isset ($map['job_qualifications'] ) ? $map['job_qualifications'] : '' ) . '" />'
-                . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id']. '" />' 
-                . '</div>';
-            $sidebar .= '</div>';
-
             $output = '';
             $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-	        $output .= do_shortcode('[three_columns_two]' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $sidebar . '[/three_columns_one_last][divider]');
+	        $output .= do_shortcode('[three_columns_two]' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
 	        $options = get_option( RRZE_JOBS_TEXTDOMAIN );
 	        if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
 		        $output .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
