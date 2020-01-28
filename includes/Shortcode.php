@@ -111,21 +111,26 @@ class Shortcode {
         $orgids = 0;
         $jobid = 0;
 
-        if ( isset( $atts['jobid'] ) ) {
-            $jobid = sanitize_text_field( $atts['jobid'] );
+        if ( isset( $_GET['provider']) && isset($_GET['jobid'])) {
+            $jobid = sanitize_text_field( $_GET[ 'jobid' ] );
+            $this->provider = ( isset( $_GET['provider'] ) ? sanitize_text_field($_GET['provider']) : $this->settings['provider']['default'] );
         } else {
+            if ( isset( $atts[ 'jobid' ] ) ) {
+                $jobid = sanitize_text_field( $atts[ 'jobid' ] );
+            } else {
                 // 1. shortcode param orgids
-            if ( isset( $atts['orgids'] ) && $atts['orgids'] != '' ){
-                $orgids = sanitize_text_field( $atts['orgids'] );
-            }elseif ( isset( $atts['orgid'] ) && $atts['orgid'] != '' ){
-                // 2. shortcode param orgid
-                $orgids = sanitize_text_field( $atts['orgid'] );
-            }else{
-                // 3. plugin settings page orgids_<provider>
-                $options = get_option( RRZE_JOBS_TEXTDOMAIN );
-                if ( isset( $options[RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider] ) ){
-                    $orgids = $options[RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider];
-                }            
+                if ( isset( $atts[ 'orgids' ] ) && $atts[ 'orgids' ] != '' ) {
+                    $orgids = sanitize_text_field( $atts[ 'orgids' ] );
+                } elseif ( isset( $atts[ 'orgid' ] ) && $atts[ 'orgid' ] != '' ) {
+                    // 2. shortcode param orgid
+                    $orgids = sanitize_text_field( $atts[ 'orgid' ] );
+                } else {
+                    // 3. plugin settings page orgids_<provider>
+                    $options = get_option( RRZE_JOBS_TEXTDOMAIN );
+                    if ( isset( $options[ RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider ] ) ) {
+                        $orgids = $options[ RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider ];
+                    }
+                }
             }
         }
 
