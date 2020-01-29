@@ -49,7 +49,7 @@ function createBlock() {
 						ret.push( createElement( TextareaControl, { value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 						break;
 					case 'toggle': 
-						ret.push( createElement( ToggleControl, { checked: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
+						ret.push( createElement( ToggleControl, { selected: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : config[fieldname]['selected'] ), label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 						break;
 				}
 			}
