@@ -22,6 +22,8 @@ function createBlock() {
 			}	
 
 			var ret = [];
+			ret.push( createElement( 'div', { className: 'components-placeholder__label' }, createElement( 'span', { className: 'editor-block-icon block-editor-block-icon dashicons-before dashicons-' + config.block.icon }, null ), config.block.title ) );
+
 			for ( var fieldname in phpConfig ){
 				switch( config[fieldname]['field_type'] ){
 					case 'checkbox': 
@@ -49,15 +51,19 @@ function createBlock() {
 						ret.push( createElement( TextareaControl, { value: att[fieldname], label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 						break;
 					case 'toggle': 
-						ret.push( createElement( ToggleControl, { selected: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : config[fieldname]['selected'] ), label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
+						ret.push( createElement( ToggleControl, { checked: ( typeof att[fieldname] !== 'undefined' ? att[fieldname] : config[fieldname]['checked'] ), label: config[fieldname]['label'], type: config[fieldname]['type'], onChange: changeField.bind( fieldname ) } ) );
 						break;
 				}
 			}
 
-			return createElement('div', {}, [
-				createElement( 'div', {}, phpConfig.block.message ),
-				createElement( InspectorControls, {}, ret )
-			] )
+			if ( config.block.show_block == 'right'){
+				return createElement('div', {}, [
+					createElement( 'div', {}, phpConfig.block.message ),
+					createElement( InspectorControls, {}, ret )
+				] )
+			}else{
+				return createElement('div', { className: "components-placeholder" }, ret )
+			}
 		},
 		save(){
 			 return null;

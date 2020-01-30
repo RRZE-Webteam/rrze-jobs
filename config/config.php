@@ -17,6 +17,7 @@ function getShortcodeSettings(){
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
+			'show_block' => 'content', // 'right' or 'content' 
 			'message' => __( 'Find the settings on the right side', 'rrze-jobs' )
 		],
 		'provider' => [
