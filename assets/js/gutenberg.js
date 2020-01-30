@@ -22,7 +22,7 @@ function createBlock() {
 			}	
 
 			var ret = [];
-			ret.push( createElement( 'div', { className: 'components-placeholder__label' }, createElement( 'span', { className: 'editor-block-icon block-editor-block-icon dashicons-before dashicons-' + config.block.icon }, null ), config.block.title ) );
+			ret.push( createElement( 'div', { className: 'components-placeholder__label' }, [ createElement( 'span', { className: 'editor-block-icon block-editor-block-icon dashicons-before dashicons-' + config.block.icon }, null ), config.block.title ] ) );
 
 			for ( var fieldname in phpConfig ){
 				switch( config[fieldname]['field_type'] ){
