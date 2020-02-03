@@ -108,6 +108,7 @@ class Shortcode {
         $this->count = 0;
         $this->providers = $this->getProviders();
         $this->provider = ( isset( $atts['provider'] ) ? $atts['provider'] : $this->settings['provider']['default'] );
+
         $orgids = 0;
         $jobid = 0;
 

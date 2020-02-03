@@ -38,7 +38,7 @@ function getShortcodeSettings(){
 		],
 		'jobid' => [
 			'field_type' => 'text',
-			'default' => null,
+			'default' => NULL,
 			'label' => __( 'Job ID', 'rrze-jobs' ),
 			'type' => 'number'
 		],
