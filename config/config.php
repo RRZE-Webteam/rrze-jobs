@@ -17,6 +17,7 @@ function getShortcodeSettings(){
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
+			'show_block' => 'content', // 'right' or 'content' 
 			'message' => __( 'Find the settings on the right side', 'rrze-jobs' )
 		],
 		'provider' => [
@@ -37,7 +38,7 @@ function getShortcodeSettings(){
 		],
 		'jobid' => [
 			'field_type' => 'text',
-			'default' => null,
+			'default' => NULL,
 			'label' => __( 'Job ID', 'rrze-jobs' ),
 			'type' => 'number'
 		],

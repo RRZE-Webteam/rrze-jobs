@@ -8,3 +8,4 @@ languages/rrze-jobs-backup-201911211119560.pot~
 languages/rrze-jobs-de_DE-backup-201911211120280.po~
 languages/rrze-jobs-de_DE_formal-backup-201911211120500.po~
 *.pot~
+.vscode/sftp.json
