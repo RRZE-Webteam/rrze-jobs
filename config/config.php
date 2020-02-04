@@ -169,7 +169,14 @@ function getFields() {
 <p>Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".</p>
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>'
-			]
+			],
+            [
+                'name'    => 'no_jobs_message',
+                'label'   => __("No Jobs Message", 'rrze-jobs'),
+                'desc'    => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
+                'type'    => 'textarea',
+                'default' => __('No job offers found.', 'rrze-jobs')
+            ],
 		]
 	];
 }

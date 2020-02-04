@@ -526,7 +526,11 @@ class Shortcode {
         }
 
         if ( $this->count == 0 ) {
-            return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+            if (isset($options['rrze-jobs_no_jobs_message'])) {
+                return '<p>' . $options['rrze-jobs_no_jobs_message'] . '</a></p>';
+            } else {
+                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+            }
         }
     
         return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;

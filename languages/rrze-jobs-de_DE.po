@@ -2,9 +2,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-24 14:09+0000\n"
-"PO-Revision-Date: 2020-01-24 14:13+0000\n"
-"Last-Translator: benjamin <benjamin.klemencic@fau.de>\n"
+"POT-Creation-Date: 2020-02-04 16:35+0000\n"
+"PO-Revision-Date: 2020-02-04 16:37+0000\n"
+"Last-Translator: barbara <barbara.bothe@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
@@ -21,223 +21,249 @@ msgstr ""
 "X-Poedit-SearchPath-1: ..\n"
 "X-Loco-Version: 2.3.1; wp-5.3.2"
 
-#: config/config.php:20
+#: config/config.php:21
 msgid "Find the settings on the right side"
-msgstr ""
-
-#: config/config.php:25
-msgid "Interamt"
-msgstr ""
+msgstr "Nehmen Sie die Einstellungen auf der rechten Seite vor"
 
 #: config/config.php:26
+msgid "Interamt"
+msgstr "Interamt"
+
+#: config/config.php:27
 msgid "UnivIS"
-msgstr ""
+msgstr "UnivIS"
 
-#: config/config.php:29
+#: config/config.php:30
 msgid "Provider"
-msgstr ""
+msgstr "Provider"
 
-#: config/config.php:35
+#: config/config.php:36
 msgid "OrgID(s)"
-msgstr ""
+msgstr "OrgID(s)"
 
-#: config/config.php:41
+#: config/config.php:42
 msgid "Job ID"
-msgstr ""
-
-#: config/config.php:47
-msgid "exclude internal job offers"
-msgstr ""
+msgstr "Job-ID"
 
 #: config/config.php:48
-msgid "include internal job offers"
-msgstr ""
+msgid "exclude internal job offers"
+msgstr "Interne Stellenangebote ausschließen"
 
 #: config/config.php:49
+msgid "include internal job offers"
+msgstr "Interne Stellenanzeigen miteinbeziehen"
+
+#: config/config.php:50
 msgid "only internal job offers"
-msgstr ""
+msgstr "Nur interne Stellenanzeigen anzeigen"
 
-#: config/config.php:52
+#: config/config.php:53
 msgid "Internal job offers"
-msgstr ""
+msgstr "Interne Stellenanzeigen"
 
-#: config/config.php:59
+#: config/config.php:60
 msgid "Number of job offers"
-msgstr ""
+msgstr "Anzahl an Stellenanzeigen"
 
-#: config/config.php:65 includes/Shortcode.php:191
+#: config/config.php:66 includes/Shortcode.php:197
 msgid "Job title"
-msgstr ""
-
-#: config/config.php:66
-msgid "Application start"
-msgstr ""
+msgstr "Titel der Stellenanzeige"
 
 #: config/config.php:67
+msgid "Application start"
+msgstr "Bewerbungsbeginn"
+
+#: config/config.php:68
 msgid "Application end"
-msgstr ""
+msgstr "Bewerbungsende"
 
-#: config/config.php:68 includes/Shortcode.php:193
+#: config/config.php:69 includes/Shortcode.php:199 includes/Shortcode.php:695
 msgid "Job start"
-msgstr ""
+msgstr "Besetzung zum"
 
-#: config/config.php:71
+#: config/config.php:72
 msgid "Order by"
-msgstr ""
-
-#: config/config.php:77
-msgid "Ascending"
-msgstr ""
+msgstr "Sortieren nach"
 
 #: config/config.php:78
+msgid "Ascending"
+msgstr "aufsteigend"
+
+#: config/config.php:79
 msgid "Descending"
-msgstr ""
+msgstr "absteigend"
 
-#: config/config.php:82
+#: config/config.php:83
 msgid "Order"
-msgstr ""
+msgstr "Sortierung"
 
-#: config/config.php:89
+#: config/config.php:90
 msgid "Default application link"
-msgstr ""
-
-#: config/config.php:118
-msgid "Jobs"
-msgstr ""
+msgstr "Voreingestellter Bewerbungslink"
 
 #: config/config.php:119
+msgid "Jobs"
+msgstr "Jobs"
+
+#: config/config.php:120
 msgid "RRZE Jobs"
-msgstr "RRZE-Jobs"
+msgstr "RRZE Jobs"
 
-#: config/config.php:122
+#: config/config.php:123
 msgid "Jobs Settings"
-msgstr ""
+msgstr "Jobs Einstellungen"
 
-#: config/config.php:135
+#: config/config.php:136
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
-#: config/config.php:149
+#: config/config.php:150
 msgid "orgIDs Interamt"
-msgstr ""
+msgstr "orgIDs Interamt"
 
-#: config/config.php:150 config/config.php:157
+#: config/config.php:151 config/config.php:158
 msgid "Enter the ID(s) of your organization(s)"
 msgstr "Geben Sie die ID(s) Ihrer Organisation(en) an"
 
-#: config/config.php:156
+#: config/config.php:157
 msgid "orgIDs UnivIS"
-msgstr ""
+msgstr "orgIDs UnivIS"
 
-#: config/config.php:163
+#: config/config.php:164
 msgid "Notice"
 msgstr "Anmerkung"
 
-#: config/config.php:164
+#: config/config.php:165
 msgid "This notice will be dispayed below each job offer."
 msgstr "Diese Anmerkung wird unter jedes Stellenangebot ausgegeben."
 
-#: config/config.php:185
+#: config/config.php:175
+msgid "No Jobs Message"
+msgstr "Nchricht \"Keine Stellenausschreibungen\""
+
+#: config/config.php:176
+msgid "This message will be displayed if the API does not return any data."
+msgstr "Dieser Text wird angezeigt, wenn die API keine Daten liefert."
+
+#: config/config.php:178
+msgid "No job offers found."
+msgstr "Keine Stellenausschreibungen gefunden."
+
+#: config/config.php:182
+msgid "Jobs Page"
+msgstr "Jobs-Seite"
+
+#: config/config.php:183
+msgid "Link target, used on Public Displays only."
+msgstr "Nur bei Public Displays: Zielseite für den QR-Code."
+
+#: config/config.php:200
 msgid "Find instructions at "
 msgstr "Eine Anleitung finden Sie unter "
 
-#: config/config.php:187
+#: config/config.php:202
 msgid "Overview"
-msgstr ""
+msgstr "Übersicht"
 
-#: config/config.php:188
+#: config/config.php:203
 msgid "For more information"
 msgstr "Für mehr Information"
 
-#: config/config.php:188
+#: config/config.php:203
 msgid "RRZE Webteam on Github"
 msgstr "RRZE-Webteam in Github"
 
-#: includes/Shortcode.php:133
+#: includes/Shortcode.php:139
 msgid "Please provide an organisation or job ID!"
 msgstr "Bitte Organisations- oder Job-ID angeben!"
 
-#: includes/Shortcode.php:178
+#: includes/Shortcode.php:184 includes/Shortcode.php:698
 msgid "Application deadline"
-msgstr ""
+msgstr "Bewerbungsschluss"
 
-#: includes/Shortcode.php:182
+#: includes/Shortcode.php:188
 msgid "Reference"
-msgstr ""
+msgstr "Referenz"
 
-#: includes/Shortcode.php:185
+#: includes/Shortcode.php:191
 msgid "Application"
-msgstr ""
+msgstr "Bewerbung"
 
-#: includes/Shortcode.php:190
+#: includes/Shortcode.php:196
 msgid "Details"
-msgstr ""
+msgstr "Details"
 
-#: includes/Shortcode.php:195
+#: includes/Shortcode.php:201
 msgid "Deployment location"
-msgstr ""
+msgstr "Einsatzort"
 
-#: includes/Shortcode.php:222
+#: includes/Shortcode.php:228 includes/Shortcode.php:705
 msgid "Payment"
-msgstr ""
+msgstr "Entgelt"
 
-#: includes/Shortcode.php:225
+#: includes/Shortcode.php:231 includes/Shortcode.php:701
 msgid "Part-time / full-time"
-msgstr ""
+msgstr "Teilzeit / Vollzeit"
 
-#: includes/Shortcode.php:232
+#: includes/Shortcode.php:238
 msgid "Weekly working hours"
-msgstr ""
+msgstr "Wochenarbeitszeit"
 
-#: includes/Shortcode.php:236
+#: includes/Shortcode.php:242
 msgid "Months"
-msgstr ""
+msgstr "Monate"
 
-#: includes/Shortcode.php:237
+#: includes/Shortcode.php:243
 msgid "Limitation"
-msgstr ""
+msgstr "Befristung"
 
-#: includes/Shortcode.php:259
+#: includes/Shortcode.php:265
 msgid "Reason for the limitation"
-msgstr ""
-
-#: includes/Shortcode.php:264
-msgid "Contact for further information"
-msgstr ""
-
-#: includes/Shortcode.php:267
-msgid "Phone"
-msgstr ""
+msgstr "Befristungsgrund"
 
 #: includes/Shortcode.php:270
-msgid "Mobile"
-msgstr ""
+msgid "Contact for further information"
+msgstr "Ansprechpartner für weitere Informationen"
 
 #: includes/Shortcode.php:273
+msgid "Phone"
+msgstr "Telefon"
+
+#: includes/Shortcode.php:276
+msgid "Mobile"
+msgstr "Mobil"
+
+#: includes/Shortcode.php:279
 msgid "E-Mail"
-msgstr ""
+msgstr "E-Mail"
 
-#: includes/Shortcode.php:314
+#: includes/Shortcode.php:321
 msgid "Cannot connect to API at the moment."
-msgstr ""
+msgstr "Schnittstelle ist zur Zeit nicht erreichbar."
 
-#: includes/Shortcode.php:460
+#: includes/Shortcode.php:486
 msgid ""
 "Parameter \"orderby\" is not correct. Please use one of the following values:"
 " "
 msgstr ""
+"Parameter \"orderby\" ist nicht korrekt. Bitte benutzen Sie einen der "
+"folgenden Werte:"
 
-#: includes/Shortcode.php:523
+#: includes/Shortcode.php:559
 msgid "API does not return any data."
-msgstr ""
+msgstr "Schnittstelle liefert keine Daten."
 
-#: includes/Shortcode.php:548 includes/Shortcode.php:567
+#: includes/Shortcode.php:585 includes/Shortcode.php:604
 msgid "This job offer is not available"
 msgstr "Dieses Stellenangebot steht nicht zur Verfügung."
 
+#: includes/Shortcode.php:689
+msgid "Tasks"
+msgstr "Augfabengebiet (u.a.)"
+
 #. Description of the plugin
 msgid "Embedding job offers from job portal apis via shortcode"
-msgstr ""
+msgstr "Stellenanzeigen aus einem Job-Portal per Shortcode einbinden"
 
 #. URI of the plugin
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
@@ -245,7 +271,7 @@ msgstr "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 
 #. Author of the plugin
 msgid "RRZE Webteam"
-msgstr ""
+msgstr "RRZE Webteam"
 
 #. Author URI of the plugin
 msgid "https://blogs.fau.de/webworking/"
