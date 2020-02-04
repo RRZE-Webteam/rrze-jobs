@@ -177,6 +177,13 @@ function getFields() {
                 'type'    => 'textarea',
                 'default' => __('No job offers found.', 'rrze-jobs')
             ],
+            [
+                'name'    => 'jobs_page',
+                'label'   => __('Jobs Page', 'rrze-jobs'),
+                'desc'    => __('Link target, used on Public Displays only.', 'rrze-jobs'),
+                'type'    => 'selectPage',
+                'default' => ''
+            ]
 		]
 	];
 }
