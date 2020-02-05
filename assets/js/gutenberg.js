@@ -7,7 +7,7 @@ function createBlock() {
 	const { CheckboxControl, RadioControl, SelectControl, TextControl, TextareaControl, ToggleControl, ServerSideRender } = wp.components;
 	const { serverSideRender } = wp;
 
-	registerBlockType( phpConfig.block.name, {
+	registerBlockType( phpConfig.block.type, {
 		title: phpConfig.block.title,
 		category: phpConfig.block.category,
 		icon: phpConfig.block.icon,
