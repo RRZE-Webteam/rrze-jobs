@@ -636,4 +636,25 @@ class Settings {
 
         echo $html;
     }
+
+    /**
+     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an.
+     * @param array   $args Argumente des Einstellungsfelds
+     */
+    public function callbackSelectPage($args) {
+        $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
+        $size  = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $select_args = [
+            'selected'  => $value,
+            'echo'      => 0,
+            'name'      => $this->optionName.'['.$args['section'].'_'.$args['id'].']',
+            'id'        => $args['section'].'-'.$args['id'],
+            'class'     => $size
+        ];
+
+        $html = wp_dropdown_pages($select_args);
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
 }

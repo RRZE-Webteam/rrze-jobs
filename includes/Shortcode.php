@@ -25,9 +25,9 @@ class Shortcode {
         $this->settings = getShortcodeSettings();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action( 'init',  [$this, 'gutenberg_init'] );
-	    if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
-		    add_shortcode( 'jobs', [ $this, 'shortcodeHandler' ], 10, 2 );
-	    }
+        if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
+            add_shortcode( 'jobs', [ $this, 'shortcodeHandler' ], 10, 2 );
+        }
     }
 
     /**
@@ -35,9 +35,8 @@ class Shortcode {
      */
     public function enqueue_scripts() {
         wp_register_style('jobs-shortcode', plugins_url('assets/css/jobs-shortcode.css', plugin_basename(RRZE_PLUGIN_FILE)));
-
         if (file_exists(WP_PLUGIN_DIR.'/rrze-elements/assets/css/rrze-elements.min.css')) {
-	        wp_register_style( 'rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css' );
+            wp_register_style( 'rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css' );
         }
     }
 
@@ -52,7 +51,7 @@ class Shortcode {
                     $this->providers[$parts[1]][$parts[2]] = $value;
                 }
             }
-          }
+        }
         return $this->providers;
     }
 
@@ -61,32 +60,34 @@ class Shortcode {
         if ( isset( $map['job_salary_to'] ) ) {
             if ( isset( $map['job_salary_from'] ) && ( $map['job_salary_from'] != $map['job_salary_to'] ) ){
                 $salary = $map['job_salary_from'] . ' - ' . $map['job_salary_to'];
+            } else {
+                $salary = $map['job_salary_to'];
             }
-        }elseif ( isset( $map['job_salary_from'] ) ) {
+        } elseif ( isset( $map['job_salary_from'] ) ) {
             $salary = $map['job_salary_from'];
         }
         return $salary;
     }
 
-	private function getDescription( &$map ){
-    	$description = '';
-    	switch ($this->provider) {
-    		case 'univis';
-			    $description =
-				    (isset($map['job_description_introduction']) ? '<p>'.formatUnivIS($map['job_description_introduction']).'</p>' : '')
-				    . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
-				    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.formatUnivIS($map['job_description']).'</p>' : '')
-				    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications']).'</p>' : '')
-				    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
-				    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.formatUnivIS($map['job_benefits']).'</p>' : '')
-				    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.formatUnivIS($map['application_link']).'</p>' : '');
-    		    break;
-		    case 'interamt':
-			    $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
-		    	break;
-	    }
-	    return $description;
-	}
+    private function getDescription( &$map ){
+        $description = '';
+        switch ($this->provider) {
+            case 'univis';
+                $description =
+                    (isset($map['job_description_introduction']) ? '<p>'.formatUnivIS($map['job_description_introduction']).'</p>' : '')
+                    . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
+                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.formatUnivIS($map['job_description']).'</p>' : '')
+                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications']).'</p>' : '')
+                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
+                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.formatUnivIS($map['job_benefits']).'</p>' : '')
+                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.formatUnivIS($map['application_link']).'</p>' : '');
+                break;
+            case 'interamt':
+                $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
+                break;
+        }
+        return $description;
+    }
 
     private function transform_date( $mydate ) {
         return date( 'Y-m-d', strtotime( $mydate ) );
@@ -102,13 +103,12 @@ class Shortcode {
     public function shortcodeHandler( $atts ) {
         return $this->shortcodeOutput( $atts );
     }
-    
+
 
     public function shortcodeOutput( $atts ) {
         $this->count = 0;
         $this->providers = $this->getProviders();
         $this->provider = ( isset( $atts['provider'] ) ? $atts['provider'] : $this->settings['provider']['default'] );
-
         $orgids = 0;
         $jobid = 0;
 
@@ -135,7 +135,7 @@ class Shortcode {
             }
         }
 
-        if ( !$orgids && !$jobid ) {
+        if ( !$orgids && !$jobid) {
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
         }
 
@@ -147,7 +147,7 @@ class Shortcode {
 
         if ( $orgids ){
             $output = $this->get_jobs( $jobid, $orgids, $limit, $orderby, $order, $internal, $fallback_apply );
-        }else{
+        } else {
             $output = $this->get_single_job( $jobid, $internal, $fallback_apply );
         }
 
@@ -299,13 +299,14 @@ class Shortcode {
     }
 
     private function get_jobs( $jobid = '', $orgids = '', $limit, $orderby, $order, $internal, $fallback_apply ) {
+        $options = get_option( RRZE_JOBS_TEXTDOMAIN );
         $output = '';
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO );
 
         $orgids = explode( ',', $orgids );
         $maps = [];
-        
+
         foreach ( $orgids as $orgid ){
             $orgid = trim( $orgid );
 
@@ -383,17 +384,17 @@ class Shortcode {
                             $job['job_start_sort'] = $parts[0];
                         } elseif ( preg_match( "/(\d{2}).(\d{2}).(\d{4})/", $job['job_start'], $parts ) ) {
                             $job['job_start_sort'] = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-                         } else {
+                        } else {
                             // field contains only a string - check if it is ASAP
                             $val = strtolower( $job['job_start'] );
-                            if ( strpos( $val, 'sofort' ) !== FALSE || strpos( $val, 'bald' ) !== FALSE || strpos( $val, 'glich' ) !== FALSE  || strpos( $val, 'asap' ) !== FALSE  || strpos( $val, 'a.s.a.p.' ) !== FALSE  ) { 
+                            if ( strpos( $val, 'sofort' ) !== FALSE || strpos( $val, 'bald' ) !== FALSE || strpos( $val, 'glich' ) !== FALSE  || strpos( $val, 'asap' ) !== FALSE  || strpos( $val, 'a.s.a.p.' ) !== FALSE  ) {
                                 // sofort, ab sofort, baldmöglich, baldmöglichst, zum nächstmöglichen Zeitpunkt, nächstmöglich, frühst möglich, frühestmöglich, asap, a.s.a.p.
-                                $job['job_start_sort'] = '0'; 
+                                $job['job_start_sort'] = '0';
                             } else {
                                 $job['job_start_sort'] = $job[$field];
                             }
                         }
-                    } 
+                    }
 
                     if ( $this->provider == 'univis') {
                         if ( isset( $job['job_employmenttype'] ) ) {
@@ -411,8 +412,8 @@ class Shortcode {
                             } else {
                                 $job['job_category_grouped'] = 'n-wiss';
                             }
-                        } 
-                        
+                        }
+
                         if ( strpos($job['job_title'], 'Auszubildende' ) !== FALSE) {
                             $job['job_category_grouped'] = 'azubi';
                         } elseif ( strpos( $job['job_title'], 'Wissenschaftliche Hilfs' ) !== FALSE) {
@@ -459,6 +460,25 @@ class Shortcode {
             }
         }
 
+        /*
+         * Ausgabe für Public Displays
+         */
+        if (isset($_GET['format']) && $_GET['format'] == 'embedded' && isset($_GET['job'])) {
+            $jobnr = (int)$_GET[ 'job' ] - 1;
+            usort( $maps, function ( $a, $b ) {
+                return strcmp( $a[ 'job_id' ], $b[ 'job_id' ] );
+            } );
+            if ( ( count( $maps ) > 0 ) && ( isset( $maps[ $jobnr ][ 'job_id' ] ) ) ) {
+                return $this->get_single_job( $maps[ $jobnr ][ 'job_id' ] );
+            } else {
+                return "nix!";
+            }
+            return;
+        }
+
+        /*
+         * Normale Ausgabe
+         */
         if ( count( $maps ) > 0 ){
             // check if $orderby is a field we know
             if ( !array_key_exists( $orderby, $map) ){
@@ -479,24 +499,24 @@ class Shortcode {
 
                 // Skip internal job offers if necessary
                 switch ( $internal ){
-                    case 'only' :  
+                    case 'only' :
                         if ( ( !$intern_allowed ) || ( $intern_allowed && !isset( $map['job_intern'] ) ) ){
                             continue 2;
                         }
                         break;
-                    case 'exclude' :  
+                    case 'exclude' :
                         if ( isset( $map['job_intern'] ) ){
                             continue 2;
                         }
                         break;
-                    case 'include' :  
+                    case 'include' :
                         if ( !$intern_allowed && isset( $map['job_intern'] ) ) {
                             continue 2;
                         }
                         break;
-                    default: 
-						continue 2;
-						break;
+                    default:
+                        continue 2;
+                        break;
                 }
 
                 // Skip if outdated
@@ -507,34 +527,45 @@ class Shortcode {
                     continue;
                 }
 
-	            $description = $this->getDescription($map);
+                $description = $this->getDescription($map);
                 $description = str_replace('"', '', $description);
                 $datePosted = ( isset($map['application_start']) ? $this->transform_date( $map['application_start'] ) : date('Y-m-d') );
                 $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
                 $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
-                $options = get_option(RRZE_JOBS_TEXTDOMAIN);
 
                 if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
                     $shortcode_item_inner .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
                 }
 
                 $shortcode_item_inner .= '</div>';
-                $shortcode_items .= do_shortcode('[collapse title="' . $map['job_title'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                $shortcode_items .= do_shortcode('[collapse title="' . $map['job_title'] . '" name="' . substr($this->provider,0,1) . $map['job_id'] . '"]' . $shortcode_item_inner . '[/collapse]');
                 $this->count++;
             }
 
         }
 
-        if ( $this->count == 0 ) {
-            return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+        if (isset($_GET['format']) && $_GET['format'] == 'embedded') {
+            if ( count( $maps ) > 0 ) {
+                return $this->getPublicDisplayList( $maps );
+            } else {
+                return "nix!";
+            }
         }
-    
+
+        if ( $this->count == 0 ) {
+            if (isset($options['rrze-jobs_no_jobs_message'])) {
+                return '<p>' . $options['rrze-jobs_no_jobs_message'] . '</a></p>';
+            } else {
+                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+            }
+        }
+
         return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
     }
 
 
     public function get_single_job( $jobid, $fallback_apply = '' ) {
-	    $output = '';
+        $output = '';
         $api_url = getURL( $this->provider, 'single') . $jobid;
         $data = file_get_contents($api_url);
         $data = json_decode( utf8_encode( $data ), true);
@@ -582,27 +613,27 @@ class Shortcode {
             $description = $this->getDescription( $map, $this->provider );
 
             if ( isset($map['job_employmenttype'] ) ) {
-		        if ($map['job_employmenttype'] == 'voll') {
-			        $map['job_employmenttype'] = 'Vollzeit';
-		        } elseif ($map['job_employmenttype'] == 'teil') {
-			        $map['job_employmenttype'] = 'Teilzeit';
-		        }
-	        }
-	        if ( $this->provider == 'interamt' ) {
-		        $start_application_string = strpos($map['job_description'], 'Bitte bewerben Sie sich');
-		        if ($start_application_string !== false && $start_application_string > 100) {
-			        $application_string = substr($map['job_description'], $start_application_string);
-			        $map['application_link'] = strip_tags(html_entity_decode($application_string), '<a><br><br /><b><strong><i><em>');
-		        }
-	        }
-	        $application_email = '';
-	        if ( isset($map['application_link'] ) ) {
-		        preg_match_all( "/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+[a-zA-Z]+/i", $map['application_link'], $matches );
-		        if (!empty( $matches[0] ) ) {
-			        $application_email = $matches[0][0];
-			        $map['application_email'] = $application_email;
-		        }
-	        }
+                if ($map['job_employmenttype'] == 'voll') {
+                    $map['job_employmenttype'] = 'Vollzeit';
+                } elseif ($map['job_employmenttype'] == 'teil') {
+                    $map['job_employmenttype'] = 'Teilzeit';
+                }
+            }
+            if ( $this->provider == 'interamt' ) {
+                $start_application_string = strpos($map['job_description'], 'Bitte bewerben Sie sich');
+                if ($start_application_string !== false && $start_application_string > 100) {
+                    $application_string = substr($map['job_description'], $start_application_string);
+                    $map['application_link'] = strip_tags(html_entity_decode($application_string), '<a><br><br /><b><strong><i><em>');
+                }
+            }
+            $application_email = '';
+            if ( isset($map['application_link'] ) ) {
+                preg_match_all( "/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+[a-zA-Z]+/i", $map['application_link'], $matches );
+                if (!empty( $matches[0] ) ) {
+                    $application_email = $matches[0][0];
+                    $map['application_email'] = $application_email;
+                }
+            }
 
             if ( ( isset( $map['job_type'] ) ) && ( $map['job_type'] != 'keine' ) ) {
                 $kennung_old = $map['job_type'];
@@ -632,17 +663,78 @@ class Shortcode {
 
             $output = '';
             $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-	        $output .= do_shortcode('[three_columns_two]' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
-	        $options = get_option( 'rrze-jobs' );
-	        if (isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
-		        $output .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
-	        }
+            $output .= do_shortcode('[three_columns_two]' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
+            $options = get_option( 'rrze-jobs' );
+            if (!isset($_GET['format']) && isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
+                $output .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
+            }
             $output .= '</div>';
         }
 
         return $output;
     }
 
+    private function getPublicDisplayList($maps = []) {
+        $output = '';
+        $last = '';
+        $options = get_option( 'rrze-jobs' );
+        $jobs_page_url = get_permalink($options['rrze-jobs_jobs_page']);
+
+        foreach ($maps as $k =>$map) {
+            if ($k > 2) {
+                return $output;
+            }
+            $result = [];
+            preg_match('/<ul\>(.*?)<\/ul\>/m', $map["job_description"], $result);
+            if (!empty($result)) {
+                $teaser = '<h3>' . __( 'Tasks', 'rrze-jobs' ) . ':</h3><ul class="job-tasks">' . $result[ 1 ] . '</ul>';
+            } else {
+                preg_match('/<p\>(.*?)<\/p\>/m', $map["job_description"], $result);
+                if (!empty($result)) {
+                    $teaser = '<h3>' . __( 'Tasks', 'rrze-jobs' ) . ':</h3><p class="job-tasks">' . $result[ 1 ] . '</p>';
+                } else {
+                    $teaser = $map["job_description"];
+                }
+            }
+
+            $job_item = "<h2>" . $map['job_title'] . "</h2>";
+            $job_item .= $teaser;
+            $job_item .= '<p>';
+            if ( isset( $map['job_start']) ) {
+                $job_item .= '<span class="label">' . __('Job start', 'rrze-jobs') . ':</span> ' . $map['job_start'];
+            }
+            if ( isset( $map['application_end']) ) {
+                $job_item .= '<br /><span class="label">' . __('Application deadline', 'rrze-jobs') . ':</span> ' . date('d.m.Y', strtotime($map['application_end']));
+            }
+            if ( isset( $map['job_employmenttype']) ) {
+                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype'];
+            }
+            $salary = $this->getSalary( $map );
+            if ( $salary != '' ) {
+                $job_item .= '<br /><span class="label">'.__('Payment','rrze-jobs') . '</span>: ' . $salary;
+            }
+
+            //$job_item .= '<p><a href="' . $jobs_page_url . '#' . substr($this->provider,0,1) . $map['job_id'] . '">Link</a>';
+
+            $job_item .= '<p><img src="'. plugin_dir_url(__FILE__ ) .'qrcode.php?url=' . $jobs_page_url . '&collapse=' . substr($this->provider,0,1) . $map['job_id'] . '"></p>';
+
+            if ($k == (count($maps)-1) || $k > 1) {
+                $last = '_last';
+            }
+            switch (count($maps)) {
+                case 1:
+                    $output .= $job_item;
+                    break;
+                case 2:
+                    $output .= do_shortcode('[two_columns_one'.$last.']' . $job_item . '[/two_columns_one'.$last.']');
+                    break;
+                default:
+                    $output .= do_shortcode('[three_columns_one'.$last.']' . $job_item . '[/three_columns_one'.$last.']');
+                    break;
+            }
+        }
+        return $output;
+    }
 
 
     public function gutenberg_init() {
@@ -651,7 +743,7 @@ class Shortcode {
             return;
         }
         $js = '../assets/js/gutenberg.js';
-        
+
         wp_register_script(
             RRZE_JOBS_TEXTDOMAIN . '-editor',
             plugins_url( $js, __FILE__ ),
@@ -669,10 +761,10 @@ class Shortcode {
 
 
         register_block_type( 'rrze-jobs/jobs', array(
-            'editor_script' => RRZE_JOBS_TEXTDOMAIN . '-editor',
-            'render_callback' => [$this, 'shortcodeHandler'],
-            'attributes' => $this->settings
-            ) 
+                'editor_script' => RRZE_JOBS_TEXTDOMAIN . '-editor',
+                'render_callback' => [$this, 'shortcodeHandler'],
+                'attributes' => $this->settings
+            )
         );
     }
 }
