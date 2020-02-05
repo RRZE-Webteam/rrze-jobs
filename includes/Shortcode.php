@@ -752,7 +752,7 @@ class Shortcode {
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
 
-        wp_localize_script( RRZE_JOBS_TEXTDOMAIN . '-editor', 'phpConfig', $this->settings );
+        wp_localize_script( 'rrze-jobs-editor', 'phpConfig', $this->settings );
 
 
         register_block_type( $this->settings['block']['type'], array(
