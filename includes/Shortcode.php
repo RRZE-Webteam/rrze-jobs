@@ -686,7 +686,16 @@ class Shortcode {
             }
             $result = [];
             preg_match('/<ul\>(.*?)<\/ul\>/m', $map["job_description"], $result);
-            $teaser = (!empty($result)) ? '<h3>' . __('Tasks','rrze-jobs') .':</h3><ul class="job-tasks">' . $result[1] . '</ul>': '';
+            if (!empty($result)) {
+                $teaser = '<h3>' . __( 'Tasks', 'rrze-jobs' ) . ':</h3><ul class="job-tasks">' . $result[ 1 ] . '</ul>';
+            } else {
+                preg_match('/<p\>(.*?)<\/p\>/m', $map["job_description"], $result);
+                if (!empty($result)) {
+                    $teaser = '<h3>' . __( 'Tasks', 'rrze-jobs' ) . ':</h3><p class="job-tasks">' . $result[ 1 ] . '</p>';
+                } else {
+                    $teaser = $map["job_description"];
+                }
+            }
 
             $job_item = "<h2>" . $map['job_title'] . "</h2>";
             $job_item .= $teaser;
@@ -709,7 +718,7 @@ class Shortcode {
 
             $job_item .= '<p><img src="'. plugin_dir_url(__FILE__ ) .'qrcode.php?url=' . $jobs_page_url . '&collapse=' . substr($this->provider,0,1) . $map['job_id'] . '"></p>';
 
-            if ($k == (count($maps)-1) || $k == 3) {
+            if ($k == (count($maps)-1) || $k > 1) {
                 $last = '_last';
             }
             switch (count($maps)) {
@@ -720,7 +729,7 @@ class Shortcode {
                     $output .= do_shortcode('[two_columns_one'.$last.']' . $job_item . '[/two_columns_one'.$last.']');
                     break;
                 default:
-                    $output .= do_shortcode('[three_columns_one'.$last.']' . $job_item . '[/two_columns_one'.$last.']');
+                    $output .= do_shortcode('[three_columns_one'.$last.']' . $job_item . '[/three_columns_one'.$last.']');
                     break;
             }
         }

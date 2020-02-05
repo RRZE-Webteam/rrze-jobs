@@ -50,3 +50,76 @@ Shortcode Style
     padding-right: 16px;
     margin-bottom: .2em;
 }
+.embedded-job {
+    width: 1820px;
+    height: 590px;
+    //border: 1px solid red;
+    //margin: 50px !important;
+}
+.embedded-job #page,
+.embedded-job .site, #primary {
+    width: 1820px;
+    max-width: 1820px;
+    height: 590px;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+.embedded-job h2 {
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+}
+.embedded-job h2:before {
+     content: " ";
+     width: 100%;
+     height: 100%;
+     position: absolute;
+     z-index: -1;
+     top: 0;
+     left: 0;
+     background: rgb(255,255,255);
+     background: -moz-linear-gradient(top,  rgba(0,0,0,0) 100px, rgba(255,255,255,1) 100%);
+     background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 100px,rgba(255,255,255,1) 100%);
+     background: linear-gradient(to bottom,  rgba(0,0,0,0) 100px,rgba(255,255,255,1) 100%);
+     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ffffff',GradientType=0 );
+     z-index: 1;
+}
+.embedded-job h3 {
+    font-size: 16px;
+    line-height: 22.4px;
+    font-size: 1rem;
+    line-height: 1.4rem;
+    margin-bottom: 5px;
+    color: #393944;
+}
+.embedded-job .label {
+    font-weight: bold;
+}
+.embedded-job p:last-child {
+    margin-bottom: 0;
+}
+.embedded-job .job-tasks {
+    max-height: 200px;
+    overflow-y: hidden;
+    margin-left: 0;
+    padding-left: 1.3333em;
+    position: relative;
+}
+.embedded-job .job-tasks :before {
+     content: " ";
+     width: 100%;
+     height: 100%;
+     position: absolute;
+     z-index: -1;
+     top: 0;
+     left: 0;
+     background: rgb(255,255,255);
+     background: -moz-linear-gradient(top,  rgba(0,0,0,0) 180px, rgba(255,255,255,1) 100%);
+     background: -webkit-linear-gradient(top,  rgba(0,0,0,0) 180px,rgba(255,255,255,1) 100%);
+     background: linear-gradient(to bottom,  rgba(0,0,0,0) 180px,rgba(255,255,255,1) 100%);
+     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#ffffff',GradientType=0 );
+     z-index: 1;
+}
+.embedded-job .job-tasks li {
+    overflow: visible;
+}
