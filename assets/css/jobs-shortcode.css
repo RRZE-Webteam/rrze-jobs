@@ -123,3 +123,8 @@ Shortcode Style
 .embedded-job .job-tasks li {
     overflow: visible;
 }
+
+.embedded-job img.default-image {
+    display: block;
+    margin: 185px auto 0;
+}

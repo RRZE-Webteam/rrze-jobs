@@ -471,7 +471,7 @@ class Shortcode {
             if ( ( count( $maps ) > 0 ) && ( isset( $maps[ $jobnr ][ 'job_id' ] ) ) ) {
                 return $this->get_single_job( $maps[ $jobnr ][ 'job_id' ] );
             } else {
-                return "nix!";
+                return '<img src="' . plugin_dir_url(__DIR__ ) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
             }
             return;
         }
@@ -548,7 +548,7 @@ class Shortcode {
             if ( count( $maps ) > 0 ) {
                 return $this->getPublicDisplayList( $maps );
             } else {
-                return "nix!";
+                return '<img src="' . plugin_dir_url(__DIR__ ) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
             }
         }
 
