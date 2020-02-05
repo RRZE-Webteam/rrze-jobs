@@ -26,7 +26,7 @@ class Shortcode {
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
         add_action( 'init',  [$this, 'gutenberg_init'] );
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
-            add_shortcode( 'jobs', [ $this, 'shortcodeHandler' ], 10, 2 );
+            add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
         }
     }
 
@@ -99,11 +99,6 @@ class Shortcode {
         });
         return $myArray;
     }
-
-    public function shortcodeHandler( $atts ) {
-        return $this->shortcodeOutput( $atts );
-    }
-
 
     public function shortcodeOutput( $atts ) {
         $this->count = 0;
@@ -471,7 +466,7 @@ class Shortcode {
             if ( ( count( $maps ) > 0 ) && ( isset( $maps[ $jobnr ][ 'job_id' ] ) ) ) {
                 return $this->get_single_job( $maps[ $jobnr ][ 'job_id' ] );
             } else {
-                return "nix!";
+                return '<img src="' . plugin_dir_url(__DIR__ ) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
             }
             return;
         }
@@ -548,7 +543,7 @@ class Shortcode {
             if ( count( $maps ) > 0 ) {
                 return $this->getPublicDisplayList( $maps );
             } else {
-                return "nix!";
+                return '<img src="' . plugin_dir_url(__DIR__ ) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
             }
         }
 
@@ -745,7 +740,7 @@ class Shortcode {
         $js = '../assets/js/gutenberg.js';
 
         wp_register_script(
-            RRZE_JOBS_TEXTDOMAIN . '-editor',
+            'rrze-jobs-editor',
             plugins_url( $js, __FILE__ ),
             array(
                 'wp-blocks',
@@ -757,12 +752,12 @@ class Shortcode {
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
 
-        wp_localize_script( RRZE_JOBS_TEXTDOMAIN . '-editor', 'phpConfig', $this->settings );
+        wp_localize_script( 'rrze-jobs-editor', 'phpConfig', $this->settings );
 
 
-        register_block_type( 'rrze-jobs/jobs', array(
-                'editor_script' => RRZE_JOBS_TEXTDOMAIN . '-editor',
-                'render_callback' => [$this, 'shortcodeHandler'],
+        register_block_type( $this->settings['block']['blocktype'], array(
+                'editor_script' => 'rrze-jobs-editor',
+                'render_callback' => [$this, 'shortcodeOutput'],
                 'attributes' => $this->settings
             )
         );
