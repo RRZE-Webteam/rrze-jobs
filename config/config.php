@@ -13,7 +13,7 @@ define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
 function getShortcodeSettings(){
 	return [
 		'block' => [
-			'type' => 'rrze-jobs/jobs',
+			'blocktype' => 'rrze-jobs/jobs',
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',

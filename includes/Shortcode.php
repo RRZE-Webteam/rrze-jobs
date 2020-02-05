@@ -755,7 +755,7 @@ class Shortcode {
         wp_localize_script( 'rrze-jobs-editor', 'phpConfig', $this->settings );
 
 
-        register_block_type( $this->settings['block']['type'], array(
+        register_block_type( $this->settings['block']['blocktype'], array(
                 'editor_script' => 'rrze-jobs-editor',
                 'render_callback' => [$this, 'shortcodeOutput'],
                 'attributes' => $this->settings

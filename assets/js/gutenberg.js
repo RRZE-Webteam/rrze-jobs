@@ -7,7 +7,7 @@ function createBlock() {
 	const { CheckboxControl, RadioControl, SelectControl, TextControl, TextareaControl, ToggleControl, ServerSideRender } = wp.components;
 	const { serverSideRender } = wp;
 
-	registerBlockType( phpConfig.block.type, {
+	registerBlockType( phpConfig.block.blocktype, {
 		title: phpConfig.block.title,
 		category: phpConfig.block.category,
 		icon: phpConfig.block.icon,
@@ -37,7 +37,7 @@ function createBlock() {
 
 			if ( ( props['isSelected'] === false ) && ( edited === true ) ){
 				clean( att );
-				return createElement( serverSideRender, { block: config.block.name, attributes: att });
+				return createElement( serverSideRender, { block: config.block.blocktype, attributes: att });
 			} else {
 				var ret = [];
 				ret.push( createElement( 'div', { className: 'components-placeholder__label' }, [ createElement( 'span', { className: 'editor-block-icon block-editor-block-icon dashicons-before dashicons-' + config.block.icon }, null ), config.block.title ] ) );
