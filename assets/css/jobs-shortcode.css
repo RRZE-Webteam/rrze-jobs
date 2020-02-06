@@ -57,7 +57,8 @@ Shortcode Style
     //margin: 50px !important;
 }
 .embedded-job #page,
-.embedded-job .site, #primary {
+.embedded-job .site,
+.embedded-job #primary {
     width: 1820px;
     max-width: 1820px;
     height: 590px;
