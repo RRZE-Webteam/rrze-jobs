@@ -42,7 +42,7 @@ class Shortcode {
 
     private function getProviders() {
         $this->providers = array();
-        $options = get_option( RRZE_JOBS_TEXTDOMAIN );
+        $options = get_option( 'rrze-jobs' );
 
         if (!empty( $options )) {
             foreach ( $options as $key => $value ) {
@@ -122,9 +122,9 @@ class Shortcode {
                     $orgids = sanitize_text_field( $atts[ 'orgid' ] );
                 } else {
                     // 3. plugin settings page orgids_<provider>
-                    $options = get_option( RRZE_JOBS_TEXTDOMAIN );
-                    if ( isset( $options[ RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider ] ) ) {
-                        $orgids = $options[ RRZE_JOBS_TEXTDOMAIN . '_orgids_' . $this->provider ];
+                    $options = get_option( 'rrze-jobs' );
+                    if ( isset( $options[ 'rrze-jobs' . '_orgids_' . $this->provider ] ) ) {
+                        $orgids = $options[ 'rrze-jobs' . '_orgids_' . $this->provider ];
                     }
                 }
             }
@@ -294,7 +294,7 @@ class Shortcode {
     }
 
     private function get_jobs( $jobid = '', $orgids = '', $limit, $orderby, $order, $internal, $fallback_apply ) {
-        $options = get_option( RRZE_JOBS_TEXTDOMAIN );
+        $options = get_option( 'rrze-jobs' );
         $output = '';
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO );
@@ -737,10 +737,12 @@ class Shortcode {
         if ( ! function_exists( 'register_block_type' ) ) {
             return;
         }
+
         $js = '../assets/js/gutenberg.js';
+        $editor_script = $this->settings['block']['blockname'] . '-blockJS';
 
         wp_register_script(
-            'rrze-jobs-editor',
+            $editor_script,
             plugins_url( $js, __FILE__ ),
             array(
                 'wp-blocks',
@@ -752,14 +754,16 @@ class Shortcode {
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
 
-        wp_localize_script( 'rrze-jobs-editor', 'phpConfig', $this->settings );
-
+        wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
         register_block_type( $this->settings['block']['blocktype'], array(
-                'editor_script' => 'rrze-jobs-editor',
-                'render_callback' => [$this, 'shortcodeOutput'],
-                'attributes' => $this->settings
-            )
+            'editor_script' => $editor_script,
+            'render_callback' => [$this, 'shortcodeOutput'],
+            'attributes' => $this->settings
+            ) 
         );
+
+        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
     }
+
 }

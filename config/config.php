@@ -6,14 +6,13 @@ namespace RRZE\Jobs\Config;
 defined('ABSPATH') || exit;
 define( 'RRZE_JOBS_LOGO', plugins_url( 'assets/img/fau.gif', __DIR__ ) );
 define( 'RRZE_JOBS_ADDRESS_REGION', 'Bayern' );
-define( 'RRZE_JOBS_TEXTDOMAIN', 'rrze-jobs' );
-
 
 
 function getShortcodeSettings(){
 	return [
 		'block' => [
-			'blocktype' => 'rrze-jobs/jobs',
+			'blocktype' => 'rrze-jobs/jobs', 
+			'blockname' => 'jobs',
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
