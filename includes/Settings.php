@@ -102,7 +102,7 @@ class Settings {
         $this->setFields();
         $this->setTabs();
 
-        $this->optionName = RRZE_JOBS_TEXTDOMAIN;
+        $this->optionName = 'rrze-jobs';
         $this->options = $this->getOptions();
 
         add_action('admin_init', [$this, 'adminInit']);
