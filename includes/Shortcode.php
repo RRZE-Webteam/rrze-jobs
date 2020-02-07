@@ -156,22 +156,25 @@ class Shortcode {
 
     private function get_sidebar( &$map, &$logo_url ){
         $sidebar = '';
-        $application_link = '';
+        $application_button_link = '';
+        $mailto = '';
 
-        if ( isset($map['application_email']) ) {
-            $application_link = $map['application_email'];
+        if ( isset( $map['application_email'] ) ) {
+            $application_button_link = $map['application_email'];
             $mailto = 'mailto:';
-        } elseif (isset($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
-            $application_link = $map['application_link'];
-            $mailto = '';
+        } elseif ( isset( $map['application_link'] ) && strpos( $map['application_link'], 'http' ) !== false) {
+            preg_match('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $map['application_link'], $match);
+            if ( isset( $match[0] ) ){
+                $application_button_link = $match[0]; 
+            }
         }
 
-        if (!isset( $map['employer_district'] ) || $map['employer_district'] == '') {
+        if ( !isset( $map['employer_district'] ) || $map['employer_district'] == '' ) {
             $map['employer_district'] = RRZE_JOBS_ADDRESS_REGION;
         }
 
-        if ($application_link != '') {
-            $sidebar .= do_shortcode( '<div>[button link="' . $mailto . $application_link . '" width="full"]Jetzt bewerben![/button]</div>' );
+        if ( $application_button_link != '' ) {
+            $sidebar .= do_shortcode( '<div>[button link="' . $mailto. $application_button_link . '" width="full"]Jetzt bewerben![/button]</div>' );
         }
 
         $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
