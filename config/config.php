@@ -281,6 +281,7 @@ function fillMap( &$map, &$job ) {
  
   // Reason for "if field <-> elseif field[0]" : sometimes (I didn't figure out when) entries in locations are surrounded by brackets [], sometimes they are missing. 
   foreach ( $keys as $key ){
+	$postalTmp = '';	  
     if ( isset( $p[$key]['title'] ) ){
       $persons[$key]['contact_title'] = $p[$key]['title'];
     } elseif ( isset( $p[$key]['atitle'] ) ){
@@ -311,24 +312,25 @@ function fillMap( &$map, &$job ) {
 		$persons[$key]['contact_link'] = $p[$key]['locations']['location']['url'];
 	} elseif ( isset( $p[$key]['locations']['location'][0]['url'] ) ){
     	$persons[$key]['contact_link'] = $p[$key]['locations']['location'][0]['url'];
-    }
-    if ( isset( $p[$key]['locations']['location']['ort']) ){
-      $parts = explode( ' ', $p[$key]['locations']['location']['ort'] ); 
-      if ( sizeof( $parts) == 2 ){
-    	$persons[$key]['contact_postalcode'] = $parts[0];
-        $persons[$key]['contact_city'] = $parts[1];
-      } else {
-        $persons[$key]['contact_city'] = $p[$key]['locations']['location']['ort'];
-      }
-    } elseif ( isset( $p[$key]['locations']['location'][0]['ort']) ){
-		$parts = explode( ' ', $p[$key]['locations']['location'][0]['ort'] ); 
-		if ( sizeof( $parts) == 2 ){
-			$persons[$key]['contact_postalcode'] = $parts[0];
-		  	$persons[$key]['contact_city'] = $parts[1];
-		} else {
-		  	$persons[$key]['contact_city'] = $p[$key]['locations']['location'][0]['ort'];
-		}
 	}
+    if ( isset( $p[$key]['locations']['location']['ort']) ){
+        $postalTmp = $p[$key]['locations']['location']['ort'];
+    } elseif ( isset( $p[$key]['locations']['location'][0]['ort']) ){
+        $postalTmp = $p[$key]['locations']['location'][0]['ort'];
+    } elseif ( isset( $p[$key]['locations']['location'][1]['ort']) ){
+        $postalTmp = $p[$key]['locations']['location'][1]['ort'];
+    }
+    if ( $postalTmp != '' ){
+        $postalTmp = preg_replace('/\s+/', ' ', $postalTmp);
+        $parts = explode( ' ', $postalTmp ); 
+        if ( sizeof( $parts) == 2 ){
+          $persons[$key]['contact_postalcode'] = $parts[0];
+          $persons[$key]['contact_city'] = $parts[1];
+        } else {
+          $persons[$key]['contact_city'] = $postalTmp;
+        }
+
+    }   
   }
 
   return $persons;
