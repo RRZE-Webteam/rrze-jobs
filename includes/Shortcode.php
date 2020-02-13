@@ -495,20 +495,22 @@ class Shortcode {
                     break 1;
                 }
 
+                $job_intern = ( isset( $map['job_intern'] ) && $map['job_intern'] == 'ja' ? 1 : 0 );
+
                 // Skip internal job offers if necessary
                 switch ( $internal ){
                     case 'only' :
-                        if ( ( !$intern_allowed ) || ( $intern_allowed && !isset( $map['job_intern'] ) ) ){
+                        if ( ( !$intern_allowed ) || ( $intern_allowed && $job_intern ) ){
                             continue 2;
                         }
                         break;
                     case 'exclude' :
-                        if ( isset( $map['job_intern'] ) ){
+                        if ( $job_intern ){
                             continue 2;
                         }
                         break;
                     case 'include' :
-                        if ( !$intern_allowed && isset( $map['job_intern'] ) ) {
+                        if ( !$intern_allowed && $job_intern ) {
                             continue 2;
                         }
                         break;
@@ -598,7 +600,9 @@ class Shortcode {
         }
 
         // Skip internal job offers if necessary
-        if ( !$intern_allowed && isset( $map['job_intern'] ) ) {
+        $job_intern = ( isset( $map['job_intern'] ) && $map['job_intern'] == 'ja' ? 1 : 0 );
+
+        if ( !$intern_allowed && $job_intern ) {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
         }
 
