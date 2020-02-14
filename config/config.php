@@ -264,78 +264,73 @@ function fillMap( &$map, &$job ) {
   }
   
 
-  function getPersons( $p ) {
-	// if there is only one entry UnivIS returns 'key' as another field instead of the value as key
-	if ( isset( $p['key'] )) {
-		$tmp = array();
-		$tmp[$p['key']] = $p;
-		$p = $tmp;
+function getPersons( $personsData ) {
+	$persons = array();
+
+	if ( !$personsData ){
+		return $persons;
 	}
 
-	if ( !isset($p) ){
-		return;
+	foreach ( $personsData as $person ){
+	  $postalTmp = '';	  
+	  $key = $person['key'];
+  
+	  if ( isset( $person['title'] ) ){
+		$persons[$key]['contact_title'] = $person['title'];
+	  } elseif ( isset( $person['atitle'] ) ){
+		  $persons[$key]['contact_title'] = $person['atitle'];
+	  }
+	  if ( isset( $person['firstname'] ) ){
+		$persons[$key]['contact_firstname'] = $person['firstname'];
+	  }
+	  if ( isset( $person['lastname'] ) ){
+		$persons[$key]['contact_lastname'] = $person['lastname'];
+	  }
+	  if ( isset( $person['locations']['location']['tel'] ) ){
+		  $persons[$key]['contact_tel'] = $person['locations']['location']['tel'];
+	  } elseif ( isset( $person['locations']['location'][0]['tel'] ) ){
+		  $persons[$key]['contact_tel'] = $person['locations']['location'][0]['tel'];
+	  }
+	  if ( isset( $person['locations']['location']['email'] ) ){
+		  $persons[$key]['contact_email'] = $person['locations']['location']['email'];
+	  } elseif ( isset( $person['locations']['location'][0]['email'] ) ){
+		  $persons[$key]['contact_email'] = $person['locations']['location'][0]['email'];
+	  }
+		if ( isset( $person['locations']['location']['street'] ) ){
+		  $persons[$key]['contact_street'] = $person['locations']['location']['street'];
+	  } elseif ( isset( $person['locations']['location'][0]['street'] ) ){
+		  $persons[$key]['contact_street'] = $person['locations']['location'][0]['street'];
+	  } elseif ( isset( $person['locations']['location'][1]['street'] ) ){
+		  $persons[$key]['contact_street'] = $person['locations']['location'][1]['street'];
+	  }
+	  if ( isset( $person['locations']['location']['url'] ) ){
+		  $persons[$key]['contact_link'] = $person['locations']['location']['url'];
+	  } elseif ( isset( $person['locations']['location'][0]['url'] ) ){
+		  $persons[$key]['contact_link'] = $person['locations']['location'][0]['url'];
+	  }
+	  if ( isset( $person['locations']['location']['ort']) ){
+		  $postalTmp = $person['locations']['location']['ort'];
+	  } elseif ( isset( $person['locations']['location'][0]['ort']) ){
+		  $postalTmp = $person['locations']['location'][0]['ort'];
+	  } elseif ( isset( $person['locations']['location'][1]['ort']) ){
+		  $postalTmp = $person['locations']['location'][1]['ort'];
+	  }
+	  if ( $postalTmp != '' ){
+		  $postalTmp = preg_replace('/\s+/', ' ', $postalTmp);
+		  $parts = explode( ' ', $postalTmp ); 
+		  if ( sizeof( $parts) == 2 ){
+			$persons[$key]['contact_postalcode'] = $parts[0];
+			$persons[$key]['contact_city'] = $parts[1];
+		  } else {
+			$persons[$key]['contact_city'] = $postalTmp;
+		  }
+  
+	  }   
 	}
-
-  $keys = array_keys( $p );
-  $persons = array();
- 
-  // Reason for "if field <-> elseif field[0]" : sometimes (I didn't figure out when) entries in locations are surrounded by brackets [], sometimes they are missing. 
-  foreach ( $keys as $key ){
-	$postalTmp = '';	  
-    if ( isset( $p[$key]['title'] ) ){
-      $persons[$key]['contact_title'] = $p[$key]['title'];
-    } elseif ( isset( $p[$key]['atitle'] ) ){
-		$persons[$key]['contact_title'] = $p[$key]['atitle'];
-	}
-    if ( isset( $p[$key]['firstname'] ) ){
-      $persons[$key]['contact_firstname'] = $p[$key]['firstname'];
-    }
-    if ( isset( $p[$key]['lastname'] ) ){
-      $persons[$key]['contact_lastname'] = $p[$key]['lastname'];
-    }
-    if ( isset( $p[$key]['locations']['location']['tel'] ) ){
-		$persons[$key]['contact_tel'] = $p[$key]['locations']['location']['tel'];
-	} elseif ( isset( $p[$key]['locations']['location'][0]['tel'] ) ){
-		$persons[$key]['contact_tel'] = $p[$key]['locations']['location'][0]['tel'];
-	}
-	if ( isset( $p[$key]['locations']['location']['email'] ) ){
-    	$persons[$key]['contact_email'] = $p[$key]['locations']['location']['email'];
-	} elseif ( isset( $p[$key]['locations']['location'][0]['email'] ) ){
-		$persons[$key]['contact_email'] = $p[$key]['locations']['location'][0]['email'];
-	}
-  	if ( isset( $p[$key]['locations']['location']['street'] ) ){
-		$persons[$key]['contact_street'] = $p[$key]['locations']['location']['street'];
-	} elseif ( isset( $p[$key]['locations']['location'][0]['street'] ) ){
-      	$persons[$key]['contact_street'] = $p[$key]['locations']['location'][0]['street'];
-    }
-    if ( isset( $p[$key]['locations']['location']['url'] ) ){
-		$persons[$key]['contact_link'] = $p[$key]['locations']['location']['url'];
-	} elseif ( isset( $p[$key]['locations']['location'][0]['url'] ) ){
-    	$persons[$key]['contact_link'] = $p[$key]['locations']['location'][0]['url'];
-	}
-    if ( isset( $p[$key]['locations']['location']['ort']) ){
-        $postalTmp = $p[$key]['locations']['location']['ort'];
-    } elseif ( isset( $p[$key]['locations']['location'][0]['ort']) ){
-        $postalTmp = $p[$key]['locations']['location'][0]['ort'];
-    } elseif ( isset( $p[$key]['locations']['location'][1]['ort']) ){
-        $postalTmp = $p[$key]['locations']['location'][1]['ort'];
-    }
-    if ( $postalTmp != '' ){
-        $postalTmp = preg_replace('/\s+/', ' ', $postalTmp);
-        $parts = explode( ' ', $postalTmp ); 
-        if ( sizeof( $parts) == 2 ){
-          $persons[$key]['contact_postalcode'] = $parts[0];
-          $persons[$key]['contact_city'] = $parts[1];
-        } else {
-          $persons[$key]['contact_city'] = $postalTmp;
-        }
-
-    }   
+  
+	return $persons;
   }
-
-  return $persons;
-}
-
+  
 
 function getMap( $provider ){
 	$map = [
