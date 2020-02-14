@@ -314,11 +314,15 @@ class Shortcode {
             }
             $api_url = getURL( $this->provider, 'list') . trim( $orgid );
             $data = file_get_contents( $api_url );
-
+            
             if ( !$data ) {
                 return '<p>' . __('Cannot connect to API at the moment.', 'rrze-jobs') . '</p>';
             }
-            $data = json_decode( utf8_encode( $data ), true);
+
+            if ( $this->provider == 'interamt' ){
+                $data = utf8_encode( $data );
+            }
+            $data = json_decode( $data, true);
 
             if ( $this->provider == 'univis' ){
                 $persons = $data['Person'];
@@ -342,10 +346,12 @@ class Shortcode {
                     $map = getMap( $this->provider );
                     if ( $this->provider == 'interamt' ){
                         $date = date_create_from_format('d.m.Y', $jobData['Daten']['Bewerbungsfrist']);
+
                         if ( date_format($date, 'Y-m-d') < date('Y-m-d') ){
                             continue 2;
                         }
                         $id = $jobData['Id'];
+
                         $urlSingle = getURL( $this->provider, 'single') . $id;
                         $data = file_get_contents( $urlSingle );
 
@@ -399,7 +405,7 @@ class Shortcode {
                             $job['job_employmenttype'] = ucfirst( $job['job_employmenttype'] ) . 'zeit';
                         }
 
-                        $person = $persons[$jobData['acontact']['UnivISRef']['key']];
+                        $person = $persons[$jobData['acontact']];
                         foreach ( $person as $key => $val ){
                             $job[$key] = $val;
                         }
@@ -568,7 +574,11 @@ class Shortcode {
         $output = '';
         $api_url = getURL( $this->provider, 'single') . $jobid;
         $data = file_get_contents($api_url);
-        $data = json_decode( utf8_encode( $data ), true);
+
+        if ( $this->provider == 'interamt'){
+            $data = utf8_encode( $data );
+        }
+        $data = json_decode( $data, true);
 
         if ( $this->provider == 'univis' ){
             $persons = $data['Person'];
@@ -576,7 +586,7 @@ class Shortcode {
         }
 
         if ( $this->provider == 'univis' ){
-            $job = $data['Position'];
+            $job = $data['Position'][0];
         } else {
             $job = $data;
         }
@@ -593,7 +603,7 @@ class Shortcode {
         $intern_allowed = isInternAllowed();
 
         if ( $this->provider == 'univis' ){
-            $person = $persons[$job['acontact']['UnivISRef']['key']];
+            $person = $persons[$job['acontact']];
             foreach ( $person as $key => $val ){
                 $map[$key] = $val;
             }
