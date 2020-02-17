@@ -266,71 +266,49 @@ function fillMap( &$map, &$job ) {
 
 function getPersons( $personsData ) {
 	$persons = array();
-
-	if ( !$personsData ){
-		return $persons;
-	}
-
 	foreach ( $personsData as $person ){
-	  $postalTmp = '';	  
-	  $key = $person['key'];
-  
-	  if ( isset( $person['title'] ) ){
-		$persons[$key]['contact_title'] = $person['title'];
-	  } elseif ( isset( $person['atitle'] ) ){
-		  $persons[$key]['contact_title'] = $person['atitle'];
-	  }
-	  if ( isset( $person['firstname'] ) ){
-		$persons[$key]['contact_firstname'] = $person['firstname'];
-	  }
-	  if ( isset( $person['lastname'] ) ){
-		$persons[$key]['contact_lastname'] = $person['lastname'];
-	  }
-	  if ( isset( $person['locations']['location']['tel'] ) ){
-		  $persons[$key]['contact_tel'] = $person['locations']['location']['tel'];
-	  } elseif ( isset( $person['locations']['location'][0]['tel'] ) ){
-		  $persons[$key]['contact_tel'] = $person['locations']['location'][0]['tel'];
-	  }
-	  if ( isset( $person['locations']['location']['email'] ) ){
-		  $persons[$key]['contact_email'] = $person['locations']['location']['email'];
-	  } elseif ( isset( $person['locations']['location'][0]['email'] ) ){
-		  $persons[$key]['contact_email'] = $person['locations']['location'][0]['email'];
-	  }
-		if ( isset( $person['locations']['location']['street'] ) ){
-		  $persons[$key]['contact_street'] = $person['locations']['location']['street'];
-	  } elseif ( isset( $person['locations']['location'][0]['street'] ) ){
-		  $persons[$key]['contact_street'] = $person['locations']['location'][0]['street'];
-	  } elseif ( isset( $person['locations']['location'][1]['street'] ) ){
-		  $persons[$key]['contact_street'] = $person['locations']['location'][1]['street'];
-	  }
-	  if ( isset( $person['locations']['location']['url'] ) ){
-		  $persons[$key]['contact_link'] = $person['locations']['location']['url'];
-	  } elseif ( isset( $person['locations']['location'][0]['url'] ) ){
-		  $persons[$key]['contact_link'] = $person['locations']['location'][0]['url'];
-	  }
-	  if ( isset( $person['locations']['location']['ort']) ){
-		  $postalTmp = $person['locations']['location']['ort'];
-	  } elseif ( isset( $person['locations']['location'][0]['ort']) ){
-		  $postalTmp = $person['locations']['location'][0]['ort'];
-	  } elseif ( isset( $person['locations']['location'][1]['ort']) ){
-		  $postalTmp = $person['locations']['location'][1]['ort'];
-	  }
-	  if ( $postalTmp != '' ){
-		  $postalTmp = preg_replace('/\s+/', ' ', $postalTmp);
-		  $parts = explode( ' ', $postalTmp ); 
-		  if ( sizeof( $parts) == 2 ){
-			$persons[$key]['contact_postalcode'] = $parts[0];
-			$persons[$key]['contact_city'] = $parts[1];
-		  } else {
-			$persons[$key]['contact_city'] = $postalTmp;
-		  }
-  
-	  }   
+		$postalTmp = '';
+		$key = $person['key'];
+		if ( isset( $person['title'] ) ){
+			$persons[$key]['contact_title'] = $person['title'];
+		} elseif ( isset( $person['atitle'] ) ){
+			$persons[$key]['contact_title'] = $person['atitle'];
+		}
+		if ( isset( $person['firstname'] ) ){
+			$persons[$key]['contact_firstname'] = $person['firstname'];
+		}
+		if ( isset( $person['lastname'] ) ){
+			$persons[$key]['contact_lastname'] = $person['lastname'];
+		}
+		if ( isset( $person['location'][0]['tel'] ) ){
+			$persons[$key]['contact_tel'] = $person['location'][0]['tel'];
+		}
+		if ( isset( $person['location'][0]['email'] ) ){
+			$persons[$key]['contact_email'] = $person['location'][0]['email'];
+		}
+		  if ( isset( $person['location'][0]['street'] ) ){
+			$persons[$key]['contact_street'] = $person['location'][0]['street'];
+		}
+		if ( isset( $person['location'][0]['url'] ) ){
+			$persons[$key]['contact_link'] = $person['location'][0]['url'];
+		}
+		if ( isset( $person['location'][0]['ort']) ){
+			$postalTmp = $person['location'][0]['ort'];
+		}
+		if ( $postalTmp != '' ){
+			$postalTmp = preg_replace('/\s+/', ' ', $postalTmp);
+			$parts = explode( ' ', $postalTmp ); 
+			if ( sizeof( $parts) == 2 ){
+				$persons[$key]['contact_postalcode'] = $parts[0];
+				$persons[$key]['contact_city'] = $parts[1];
+			} else {
+				$persons[$key]['contact_city'] = $postalTmp;
+			}
+		}   
 	}
-  
 	return $persons;
-  }
-  
+}
+	
 
 function getMap( $provider ){
 	$map = [
