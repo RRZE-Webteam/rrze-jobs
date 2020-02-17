@@ -228,12 +228,12 @@ class Shortcode {
         if ( isset( $map['job_employmenttype'] ) ) {
             $sidebar .= '<dt>'.__('Part-time / full-time','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>';
         }
-        if ( isset( $map['job_workhours'] ) ) {
-            $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) );
-            if (substr(get_locale(), 0, 2) == 'de') {
-                $map['job_workhours'] = number_format($map['job_workhours'], 1,',', '.');
+
+        if ( isset( $map['job_workhours'] ) ){
+            if ( is_string( $map['job_workhours'] ) === FALSE ){
+                $map['job_workhours'] = floatval( str_replace( ',', '.', $map['job_workhours'] ) ) . ' h';
             }
-            $sidebar .= '<dt>'.__('Weekly working hours','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . ' h</dd>';
+            $sidebar .= '<dt>'.__('Weekly working hours','rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . '</dd>';
         }
 
         if ( ( isset( $map['job_limitation'] ) && $map['job_limitation'] == 'befristet' )  || ( isset( $map['job_limitation_duration'] ) ) ) {
