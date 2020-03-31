@@ -23,6 +23,7 @@ class Shortcode {
      * Shortcode-Klasse wird instanziiert.
      */
     public function __construct() {
+        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
         // wp_enqueue_scripts
         add_action('init', [$this, 'enqueue_scripts']);
@@ -332,6 +333,13 @@ class Shortcode {
             $data = json_decode( $data, true);
 
             if ( $this->provider == 'univis' ){
+                if ( !isset( $data['Person'] ) ){
+                    if (isset($options['rrze-jobs_no_jobs_message'])) {
+                        return '<p>' . $options['rrze-jobs_no_jobs_message'] . '</a></p>';
+                    } else {
+                        return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+                    }        
+                }
                 $persons = $data['Person'];
                 $persons = getPersons( $persons );
             }
