@@ -77,7 +77,6 @@ function getShortcodeSettings(){
 				'ASC' => __( 'Ascending', 'rrze-jobs' ),
 				'DESC' => __( 'Descending', 'rrze-jobs' )
 			],
-			'selected' => 'DESC',
 			'default' => 'DESC',
 			'label' => __( 'Order', 'rrze-jobs' ),
 			'type' => 'string'

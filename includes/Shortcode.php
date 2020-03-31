@@ -11,6 +11,7 @@ use function RRZE\Jobs\Config\getPersons;
 use function RRZE\Jobs\Config\formatUnivIS;
 use function RRZE\Jobs\Config\isInternAllowed;
 
+include_once(ABSPATH.'wp-admin/includes/plugin.php');
 
 class Shortcode {
     private $provider = '';
@@ -22,13 +23,17 @@ class Shortcode {
      * Shortcode-Klasse wird instanziiert.
      */
     public function __construct() {
+        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts']);
+        // wp_enqueue_scripts
+        add_action('init', [$this, 'enqueue_scripts']);
         add_action( 'init',  [$this, 'gutenberg_init'] );
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
             add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
         }
     }
+
+
 
     /**
      * Enqueue der Skripte.
@@ -38,6 +43,9 @@ class Shortcode {
         if (file_exists(WP_PLUGIN_DIR.'/rrze-elements/assets/css/rrze-elements.min.css')) {
             wp_register_style( 'rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css' );
         }
+        // wp_register_style( 'theme-css', get_stylesheet_directory_uri() . "/style.css", false, '1.0', 'all' );
+        // wp_enqueue_style( 'theme-css' );
+
     }
 
     private function getProviders() {
@@ -325,6 +333,13 @@ class Shortcode {
             $data = json_decode( $data, true);
 
             if ( $this->provider == 'univis' ){
+                if ( !isset( $data['Person'] ) ){
+                    if (isset($options['rrze-jobs_no_jobs_message'])) {
+                        return '<p>' . $options['rrze-jobs_no_jobs_message'] . '</a></p>';
+                    } else {
+                        return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+                    }        
+                }
                 $persons = $data['Person'];
                 $persons = getPersons( $persons );
             }
@@ -726,8 +741,6 @@ class Shortcode {
                 $job_item .= '<br /><span class="label">'.__('Payment','rrze-jobs') . '</span>: ' . $salary;
             }
 
-            //$job_item .= '<p><a href="' . $jobs_page_url . '#' . substr($this->provider,0,1) . $map['job_id'] . '">Link</a>';
-
             $job_item .= '<p><img src="'. plugin_dir_url(__FILE__ ) .'qrcode.php?url=' . $jobs_page_url . '&collapse=' . substr($this->provider,0,1) . $map['job_id'] . '"></p>';
 
             if ($k == (count($maps)-1) || $k > 1) {
@@ -773,8 +786,13 @@ class Shortcode {
 
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
+        $css = '../assets/css/gutenberg.css'; 
+        $editor_style = 'gutenberg-css';
+        wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
+
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
+            'editor_style' => $editor_style, 
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 
