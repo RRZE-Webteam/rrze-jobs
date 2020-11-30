@@ -517,7 +517,7 @@ function formatUnivIS( $txt ){
 		'/_(.*)_/m' => '<sub>$1</sub>',  // H_2_O
 		'/\^(.*)\^/m' => '<sup>$1</sup>',  // pi^2^
 		'/\[(.*)\]\s?(<a.*>).*(<\/a>)/mi' => '$2$1$3', // [link text] <a ...>link</a>
-		'/([^">]+)(mailto:)([^"\s>]+)/mi' => '$1<a href="mailto:$3">$3</a>', // find mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
+		'/([^">]+)(mailto:)([^")\s>]+)/mi' => '$1<a href="mailto:$3">$3</a>', // find mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
 		'/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
 	);
 	
