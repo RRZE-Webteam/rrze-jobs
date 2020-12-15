@@ -25,9 +25,8 @@ class Shortcode {
     public function __construct() {
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
-        // wp_enqueue_scripts
         add_action('init', [$this, 'enqueue_scripts']);
-        add_action( 'init',  [$this, 'gutenberg_init'] );
+        add_action( 'init', [$this, 'initGutenberg'] );
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
             add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
         }
@@ -39,13 +38,10 @@ class Shortcode {
      * Enqueue der Skripte.
      */
     public function enqueue_scripts() {
-        wp_register_style('jobs-shortcode', plugins_url('assets/css/jobs-shortcode.css', plugin_basename(RRZE_PLUGIN_FILE)));
+        wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
         if (file_exists(WP_PLUGIN_DIR.'/rrze-elements/assets/css/rrze-elements.min.css')) {
             wp_register_style( 'rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css' );
         }
-        // wp_register_style( 'theme-css', get_stylesheet_directory_uri() . "/style.css", false, '1.0', 'all' );
-        // wp_enqueue_style( 'theme-css' );
-
     }
 
     private function getProviders() {
@@ -115,6 +111,10 @@ class Shortcode {
         $orgids = 0;
         $jobid = 0;
 
+        if (isset($atts['jobid']) && $atts['jobid'] == 0){
+            unset($atts['jobid']);
+        }
+
         if ( isset( $_GET['provider']) && isset($_GET['jobid'])) {
             $jobid = sanitize_text_field( $_GET[ 'jobid' ] );
             $this->provider = ( isset( $_GET['provider'] ) ? sanitize_text_field($_GET['provider']) : $this->settings['provider']['default'] );
@@ -155,8 +155,7 @@ class Shortcode {
         }
 
         wp_enqueue_style('rrze-elements');
-        wp_enqueue_style('jobs-shortcode');
-        wp_enqueue_script('jobs-shortcode');
+        wp_enqueue_style('rrze-jobs-css');
 
         return $output;
     }
@@ -761,11 +760,18 @@ class Shortcode {
         return $output;
     }
 
-
-    public function gutenberg_init() {
-        // Skip block registration if Gutenberg is not enabled/merged.
+    public function initGutenberg() {
         if ( ! function_exists( 'register_block_type' ) ) {
-            return;
+            return;        
+        }
+
+        // check if RRZE-Settings if classic editor is enabled
+        $rrze_settings = (array) get_option( 'rrze_settings' );
+        if ( isset( $rrze_settings['writing'] ) ) {
+            $rrze_settings = (array) $rrze_settings['writing'];
+            if ( isset( $rrze_settings['enable_classic_editor'] ) && $rrze_settings['enable_classic_editor'] ) {
+                return;
+            }
         }
 
         $js = '../assets/js/gutenberg.js';
@@ -783,18 +789,20 @@ class Shortcode {
             ),
             filemtime( dirname( __FILE__ ) . '/' . $js )
         );
-
         wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
-        $css = '../assets/css/gutenberg.css'; 
-        $editor_style = 'gutenberg-css';
-        wp_register_style( $editor_style, plugins_url( $css, __FILE__ ) );
+        $theme_style = 'theme-css';
+        wp_register_style($theme_style, get_template_directory_uri() . '/style.css', array('wp-editor'), null);
+
+        $editor_style = 'plugin-css';
+        wp_register_style($editor_style, plugins_url('../assets/css/gutenberg.css', __FILE__ ));
 
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'editor_style' => $editor_style, 
+            'editor_style' => $editor_style,
+            'style' => $theme_style,
             'render_callback' => [$this, 'shortcodeOutput'],
-            'attributes' => $this->settings
+            'attributes' => $this->settings,
             ) 
         );
 
