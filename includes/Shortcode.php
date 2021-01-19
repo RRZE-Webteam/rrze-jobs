@@ -774,12 +774,10 @@ class Shortcode {
             }
         }
 
-        $js = '../assets/js/gutenberg.js';
-        $editor_script = $this->settings['block']['blockname'] . '-blockJS';
-
-        wp_register_script(
-            $editor_script,
-            plugins_url( $js, __FILE__ ),
+        // include gutenberg lib
+        wp_enqueue_script(
+            'RRZE-Gutenberg',
+            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
             array(
                 'wp-blocks',
                 'wp-i18n',
@@ -787,26 +785,40 @@ class Shortcode {
                 'wp-components',
                 'wp-editor'
             ),
-            filemtime( dirname( __FILE__ ) . '/' . $js )
+            NULL
         );
-        wp_localize_script( $editor_script, 'blockname', $this->settings['block']['blockname'] );
 
+        // get prefills for dropdowns
+        // $this->settings = $this->fillGutenbergOptions();
+
+        // register js-script to inject php config to call gutenberg lib
+        $editor_script = $this->settings['block']['blockname'] . '-block';        
+        $js = '../assets/js/' . $editor_script . '.js';
+
+        wp_register_script(
+            $editor_script,
+            plugins_url( $js, __FILE__ ),
+            array(
+                'RRZE-Gutenberg',
+            ),
+            NULL
+        );
+        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
+
+        // register styles
+        $editor_style = 'gutenberg-css';
+        wp_register_style( $editor_style, plugins_url( '../assets/css/gutenberg.css', __FILE__ ) );
         $theme_style = 'theme-css';
         wp_register_style($theme_style, get_template_directory_uri() . '/style.css', array('wp-editor'), null);
 
-        $editor_style = 'plugin-css';
-        wp_register_style($editor_style, plugins_url('../assets/css/gutenberg.css', __FILE__ ));
-
+        // register block
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
             'editor_style' => $editor_style,
             'style' => $theme_style,
             'render_callback' => [$this, 'shortcodeOutput'],
-            'attributes' => $this->settings,
+            'attributes' => $this->settings
             ) 
         );
-
-        wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
     }
-
 }
