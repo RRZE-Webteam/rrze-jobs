@@ -26,6 +26,7 @@ class Shortcode {
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
         add_action('init', [$this, 'enqueue_scripts']);
+        add_action( 'admin_enqueue_scripts', [$this, 'enqueueGutenberg'] );
         add_action( 'init', [$this, 'initGutenberg'] );
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
             add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
@@ -774,20 +775,6 @@ class Shortcode {
             }
         }
 
-        // include gutenberg lib
-        wp_enqueue_script(
-            'RRZE-Gutenberg',
-            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
-            array(
-                'wp-blocks',
-                'wp-i18n',
-                'wp-element',
-                'wp-components',
-                'wp-editor'
-            ),
-            NULL
-        );
-
         // get prefills for dropdowns
         // $this->settings = $this->fillGutenbergOptions();
 
@@ -819,6 +806,26 @@ class Shortcode {
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 
+        );
+    }
+
+    public function enqueueGutenberg(){
+        if ( ! function_exists( 'register_block_type' ) ) {
+            return;        
+        }
+
+        // include gutenberg lib
+        wp_enqueue_script(
+            'RRZE-Gutenberg',
+            plugins_url( '../assets/js/gutenberg.js', __FILE__ ),
+            array(
+                'wp-blocks',
+                'wp-i18n',
+                'wp-element',
+                'wp-components',
+                'wp-editor'
+            ),
+            NULL
         );
     }
 }
