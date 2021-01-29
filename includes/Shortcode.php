@@ -761,9 +761,9 @@ class Shortcode {
         return $output;
     }
 
-    public function initGutenberg() {
+    public function isGutenberg(){
         if ( ! function_exists( 'register_block_type' ) ) {
-            return;        
+            return false;        
         }
 
         // check if RRZE-Settings if classic editor is enabled
@@ -771,12 +771,17 @@ class Shortcode {
         if ( isset( $rrze_settings['writing'] ) ) {
             $rrze_settings = (array) $rrze_settings['writing'];
             if ( isset( $rrze_settings['enable_classic_editor'] ) && $rrze_settings['enable_classic_editor'] ) {
-                return;
+                return false;        
             }
         }
 
-        // get prefills for dropdowns
-        // $this->settings = $this->fillGutenbergOptions();
+        return true;        
+    }
+
+    public function initGutenberg() {
+        if (! $this->isGutenberg()){
+            return;
+        }
 
         // register js-script to inject php config to call gutenberg lib
         $editor_script = $this->settings['block']['blockname'] . '-block';        
@@ -792,17 +797,9 @@ class Shortcode {
         );
         wp_localize_script( $editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings );
 
-        // register styles
-        $editor_style = 'gutenberg-css';
-        wp_register_style( $editor_style, plugins_url( '../assets/css/gutenberg.css', __FILE__ ) );
-        $theme_style = 'theme-css';
-        wp_register_style($theme_style, get_template_directory_uri() . '/style.css', array('wp-editor'), null);
-
         // register block
         register_block_type( $this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'editor_style' => $editor_style,
-            'style' => $theme_style,
             'render_callback' => [$this, 'shortcodeOutput'],
             'attributes' => $this->settings
             ) 
@@ -810,8 +807,8 @@ class Shortcode {
     }
 
     public function enqueueGutenberg(){
-        if ( ! function_exists( 'register_block_type' ) ) {
-            return;        
+        if (! $this->isGutenberg()){
+            return;
         }
 
         // include gutenberg lib
