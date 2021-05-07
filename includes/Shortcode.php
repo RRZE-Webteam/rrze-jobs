@@ -234,7 +234,7 @@ class Shortcode {
             $sidebar .= '<dt>'.__('Payment','rrze-jobs') . '</dt><dd itemprop="estimatedSalary">' . $salary . '</dd>';
         }
         if ( isset( $map['job_employmenttype'] ) ) {
-            $sidebar .= '<dt>'.__('Part-time / full-time','rrze-jobs') . '</dt><dd itemprop="employmentType">' . $map['job_employmenttype'] . '</dd>';
+            $sidebar .= '<dt>'.__('Part-time / full-time','rrze-jobs') . '</dt><dd>' . $map['job_employmenttype'] . '</dd><meta itemprop="employmentType" content="' . ($map['job_employmenttype'] == 'Vollzeit' ? 'FULL' : 'PART') . '_TIME' . (isset($map['job_limitation']) && $map['job_limitation'] == 'unbef' ? '' : ' TEMPORARY') . '" /></dd>';
         }
 
         if ( isset( $map['job_workhours'] ) ){
@@ -593,7 +593,12 @@ class Shortcode {
         if ( $this->provider == 'interamt'){
             $data = utf8_encode( $data );
         }
+        
         $data = json_decode( $data, true);
+
+        if (!$data) {
+            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        }
 
         if ( $this->provider == 'univis' ){
             $persons = $data['Person'];
