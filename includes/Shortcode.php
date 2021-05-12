@@ -17,6 +17,7 @@ class Shortcode {
     private $provider = '';
     private $count = 0;
     private $settings = '';
+    private $pluginname = '';
 
 
     /**
@@ -26,11 +27,15 @@ class Shortcode {
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
         add_action('init', [$this, 'enqueue_scripts']);
-        add_action( 'admin_enqueue_scripts', [$this, 'enqueueGutenberg'] );
-        add_action( 'init', [$this, 'initGutenberg'] );
+        add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
+        add_action('init', [$this, 'initGutenberg']);
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
             add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
         }
+        $this->pluginname = $this->settings['block']['blockname'];
+
+        add_action('admin_head', [$this, 'setMCEConfig']);
+        add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
 
 
@@ -821,5 +826,32 @@ class Shortcode {
             ),
             NULL
         );
+    }
+
+    public function setMCEConfig(){
+        $shortcode = '';
+        foreach($this->settings as $att => $details){
+            if ($att != 'block'){
+                $shortcode .= ' ' . $att . '=""';
+            }
+        }
+        $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
+        ?>
+        <script type='text/javascript'>
+            var phpvar = {
+                'name': <?php echo json_encode($this->pluginname); ?>,
+                'title': <?php echo json_encode($this->settings['block']['title']); ?>,
+                'icon': <?php echo json_encode($this->settings['block']['tinymce_icon']); ?>,
+                'shortcode': <?php echo json_encode($shortcode); ?>,
+            };
+        </script> 
+        <?php        
+    }
+
+    public function addMCEButtons($pluginArray){
+        if (current_user_can('edit_posts') &&  current_user_can('edit_pages')) {
+            $pluginArray['shortcode_' . $this->pluginname] = plugins_url('../assets/js/tinymce-shortcodes.js', plugin_basename(__FILE__));
+        }
+        return $pluginArray;
     }
 }
