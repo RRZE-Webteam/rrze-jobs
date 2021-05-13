@@ -26,14 +26,13 @@ class Shortcode {
     public function __construct() {
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
+        $this->pluginname = $this->settings['block']['blockname'];
         add_action('init', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
         add_action('init', [$this, 'initGutenberg']);
         if ( !is_plugin_active('fau-jobportal/fau-jobportal.php') ) {
             add_shortcode( 'jobs', [ $this, 'shortcodeOutput' ], 10, 2 );
         }
-        $this->pluginname = $this->settings['block']['blockname'];
-
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
@@ -838,19 +837,20 @@ class Shortcode {
         $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
         ?>
         <script type='text/javascript'>
-            var phpvar = {
+            tmp = [{
                 'name': <?php echo json_encode($this->pluginname); ?>,
                 'title': <?php echo json_encode($this->settings['block']['title']); ?>,
                 'icon': <?php echo json_encode($this->settings['block']['tinymce_icon']); ?>,
                 'shortcode': <?php echo json_encode($shortcode); ?>,
-            };
+            }];
+            phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp)); 
         </script> 
         <?php        
     }
 
     public function addMCEButtons($pluginArray){
         if (current_user_can('edit_posts') &&  current_user_can('edit_pages')) {
-            $pluginArray['shortcode_' . $this->pluginname] = plugins_url('../assets/js/tinymce-shortcodes.js', plugin_basename(__FILE__));
+            $pluginArray['rrze_shortcode'] = plugins_url('../assets/js/tinymce-shortcodes.js', plugin_basename(__FILE__));
         }
         return $pluginArray;
     }

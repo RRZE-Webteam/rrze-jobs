@@ -16,7 +16,7 @@ function getShortcodeSettings(){
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
-            'tinymce_icon' => 'user', // https://www.tiny.cloud/docs/advanced/editor-icon-identifiers/
+            'tinymce_icon' => 'sharpen',
 		],
 		'provider' => [
 			'field_type' => 'select',
