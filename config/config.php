@@ -16,7 +16,7 @@ function getShortcodeSettings(){
 			'title' => 'RRZE Jobs',
 			'category' => 'widgets',
 			'icon' => 'admin-users',
-			'show_block' => 'content', // 'right' or 'content' 
+            'tinymce_icon' => 'sharpen',
 		],
 		'provider' => [
 			'field_type' => 'select',

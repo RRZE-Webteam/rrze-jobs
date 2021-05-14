@@ -5,7 +5,6 @@ namespace RRZE\Jobs;
 defined('ABSPATH') || exit;
 
 use RRZE\Jobs\Settings;
-use RRZE\Jobs\TinyMCEButtons;
 
 
 class Main {
@@ -24,7 +23,6 @@ class Main {
         remove_filter('the_content', 'wpautop');
         add_filter('the_content', 'wpautop', 12);
 
-        new TinyMCEButtons();
     }
 
     public function onLoaded() {
@@ -33,10 +31,9 @@ class Main {
         $settings->onLoaded();
   
         // Shortcode wird eingebunden.
-        include 'Shortcode.php';
-
+        // include 'Shortcode.php';
         $shortcode = new Shortcode();
-        
+
       }
 
 }
