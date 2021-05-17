@@ -509,19 +509,16 @@ function formatUnivIS( $txt ){
 	$subs = array(
 		'/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>',  // list 
 		'/(<\/ul>\n(.*)<ul>*)+/' => '',  // list 
-		// '/(<br \/>*)/mi' => '',  // <br />
 		'/\*{2}/m' => '/\*/', // **
 		'/_{2}/m' => '/_/', // __
 		'/\|(.*)\|/m' => '<i>$1</i>',  // |itallic|
 		'/_(.*)_/m' => '<sub>$1</sub>',  // H_2_O
 		'/\^(.*)\^/m' => '<sup>$1</sup>',  // pi^2^
-		'/\[(.*)\]\s?(<a.*>).*(<\/a>)/mi' => '$2$1$3', // [link text] <a ...>link</a>
+        '/\[([^\]]*)\]\s{1}(\S*)/mi' => '<a href="$2">$1</a>', // [link text] http...
 		'/([^">]+)(mailto:)([^")\s>]+)/mi' => '$1<a href="mailto:$3">$3</a>', // find mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
 		'/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
 	);
 	
-	// return nl2br( preg_replace( array_keys( $subs ), array_values( $subs ), $txt ) );
-	$txt = make_clickable( $txt );
 	$txt = nl2br( $txt );
 	return preg_replace( array_keys( $subs ), array_values( $subs ), $txt );
 }
