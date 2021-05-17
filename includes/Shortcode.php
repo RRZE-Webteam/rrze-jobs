@@ -81,7 +81,7 @@ class Shortcode {
     private function getDescription( &$map ){
         $description = '';
         switch ($this->provider) {
-            case 'univis';
+            case 'univis':
                 $description =
                     (isset($map['job_description_introduction']) ? '<p>'.formatUnivIS($map['job_description_introduction']).'</p>' : '')
                     . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
@@ -699,7 +699,7 @@ class Shortcode {
 
             $output = '';
             $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-            $output .= do_shortcode('[three_columns_two]' . ($this->provider == 'univis' ? formatUnivIS( $description ) : $description ) .'[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
+            $output .= do_shortcode('[three_columns_two]' . $description . '[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
             $options = get_option( 'rrze-jobs' );
             if (!isset($_GET['format']) && isset($options['rrze-jobs_job_notice']) && $options['rrze-jobs_job_notice'] != '') {
                 $output .= '<hr /><div>' . strip_tags( $options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
