@@ -520,6 +520,8 @@ function formatUnivIS( $txt ){
 	);
 	
 	$txt = nl2br( $txt );
-	return preg_replace( array_keys( $subs ), array_values( $subs ), $txt );
+    $txt = preg_replace( array_keys( $subs ), array_values( $subs ), $txt );
+    $txt = make_clickable( $txt );
+	return $txt;
 }
 
