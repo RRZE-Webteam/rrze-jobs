@@ -90,13 +90,13 @@ function getShortcodeSettings(){
 		];
 }
 
-// function isIPinRange($fromIP, $toIP, $myIP){
-// 	   $min    = ip2long($fromIP);
-//     $max    = ip2long($toIP);
-//     $needle = ip2long($myIP);            
+function isIPinRange($fromIP, $toIP, $myIP){
+	$min    = ip2long($fromIP);
+    $max    = ip2long($toIP);
+    $needle = ip2long($myIP);            
 
-// 	return (($needle >= $min) AND ($needle <= $max));
-// }    
+	return (($needle >= $min) AND ($needle <= $max));
+}    
 
 /**
  * Prüft, ob interne Jobs synchronisiert bzw angezeigt werden dürfen
@@ -108,11 +108,8 @@ function isInternAllowed() {
 	$remoteIP = $_SERVER['REMOTE_ADDR'];
 	$remoteAdr = gethostbyaddr($remoteIP);
 
-	// isIPinRange() funktioniert nicht bei den Public Displays (wg Proxy?)
-	// darum Prüfung auf $_GET['publicdisplay']
-	// if (!isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) && !isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)){ 
-    if (isset($_GET['publicdisplay']) && $_GET['publicdisplay']) {
-        return FALSE;
+	if (isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) || isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)){ 
+		return FALSE;
     }
 
 	if (is_user_logged_in() || (strpos($remoteAdr, $allowedHost) !== FALSE )) {
