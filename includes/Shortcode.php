@@ -714,9 +714,18 @@ class Shortcode {
         $output = '';
         $last = '';
         $options = get_option( 'rrze-jobs' );
+
         $jobs_page_url = get_permalink($options['rrze-jobs_jobs_page']);
 
+        $intern_allowed = isInternAllowed();
+
         foreach ($maps as $k =>$map) {
+            $job_intern = ( isset( $map['job_intern'] ) && $map['job_intern'] == 'ja' ? 1 : 0 );
+
+            if ( !$intern_allowed && $job_intern ) {
+                return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+            }
+    
             if ($k > 2) {
                 return $output;
             }
