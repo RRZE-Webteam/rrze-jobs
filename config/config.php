@@ -90,20 +90,36 @@ function getShortcodeSettings(){
 		];
 }
 
+// function isIPinRange($fromIP, $toIP, $myIP){
+// 	   $min    = ip2long($fromIP);
+//     $max    = ip2long($toIP);
+//     $needle = ip2long($myIP);            
+
+// 	return (($needle >= $min) AND ($needle <= $max));
+// }    
 
 /**
  * Prüft, ob interne Jobs synchronisiert bzw angezeigt werden dürfen
+ * IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24 
  * @return boolean
  */
 function isInternAllowed() {
-	$ret = FALSE;
 	$allowedHost = 'uni-erlangen.de';
-	$remoteAdr = gethostbyaddr( $_SERVER['REMOTE_ADDR'] );
+	$remoteIP = $_SERVER['REMOTE_ADDR'];
+	$remoteAdr = gethostbyaddr($remoteIP);
 
-	if ( ( strpos( $remoteAdr, $allowedHost ) !== FALSE ) || ( is_admin() ) ) {
-		$ret = TRUE;
+	// isIPinRange() funktioniert nicht bei den Public Displays (wg Proxy?)
+	// darum Prüfung auf $_GET['publicdisplay']
+	// if (!isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) && !isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)){ 
+    if (isset($_GET['publicdisplay']) && $_GET['publicdisplay']) {
+        return FALSE;
+    }
+
+	if (is_user_logged_in() || (strpos($remoteAdr, $allowedHost) !== FALSE )) {
+		return TRUE;
 	}
-	return $ret;
+
+	return FALSE;
 }
 
 
