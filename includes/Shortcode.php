@@ -129,7 +129,7 @@ class Shortcode {
         $fallback_apply = ( isset( $atts['fallback_apply'] ) ? $atts['fallback_apply'] : $this->settings['fallback_apply']['default']);
 
         if ( $orgids ){
-            $output = $this->get_jobs( $limit, $orderby, $order, $internal, $fallback_apply );
+            $output = $this->get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply );
         } else {
             $output = $this->get_single_job( $internal, $fallback_apply );
         }
@@ -329,8 +329,9 @@ class Shortcode {
         return $aRet;
     }
 
-    private function get_jobs( $limit, $orderby, $order, $internal, $fallback_apply ) {
+    private function get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply ) {
         $output = '';
+        $aResponse = [];
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO );
 
@@ -341,23 +342,23 @@ class Shortcode {
 
             // 2DO: improve response code check => call list and if not valid then try to auth
             // 1. authorize
-            $aData = $this->getResponse('auth');
-            if (!$aData['valid']){
-                return $aData['content'];
+            $aResponse = $this->getResponse('auth');
+            if (!$aResponse['valid']){
+                return $aResponse['content'];
             }
 
             // 2. get JobsIDs
-            $aData = $this->getResponse('list');
-            if (!$aData['valid']){
-                return $aData['content'];
+            $aResponse = $this->getResponse('list');
+            if (!$aResponse['valid']){
+                return $aResponse['content'];
             }
-            foreach($aData['data']['entries'] as $entry){
-                $aData = $this->getResponse('single') . $entry['id'];
-                if (!$aData['valid']){
+            foreach($aResponse['data']['entries'] as $entry){
+                $aResponse = $this->getResponse('single') . $entry['id'];
+                if (!$aResponse['valid']){
                     // let's skip this entry, there might be valid ones
                     continue;
                 }
-                return $aData['content']['description'];
+                return $aResponse['content']['description'];
                 // var_dump($aData);
                 // see: https://api.b-ite.io/docs/#/jobpostings/get_jobpostings__jID_
             }
@@ -371,44 +372,49 @@ class Shortcode {
             if ( strval($orgid) !== strval(intval($orgid)) ) {
                 continue;
             }
-            $api_url = getURL( $this->provider, 'list') . trim( $orgid );
-            $data = file_get_contents( $api_url );
-            
-            if ( !$data ) {
-                return '<p>' . __('Cannot connect to API at the moment.', 'rrze-jobs') . '</p>';
-            }
+            $aResponse = $this->getResponse('list', $orgid);
 
-            if ( $this->provider == 'interamt' ){
-                $data = utf8_encode( $data );
+            if ( !$aResponse['valid'] ) {
+                return $aResponse['content'];
             }
-            $data = json_decode( $data, true);
 
             if ( $this->provider == 'univis' ){
-                if ( !isset( $data['Person'] ) ){
+                if ( !isset( $aResponse['content']['Person'] ) ){
                     if (isset($this->options['rrze-jobs_no_jobs_message'])) {
                         return '<p>' . $this->options['rrze-jobs_no_jobs_message'] . '</a></p>';
                     } else {
                         return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
                     }        
                 }
-                $persons = $data['Person'];
-                $persons = getPersons( $persons );
+                $persons = getPersons($aResponse['content']['Person']);
             }
 
-            $node = ( $this->provider == 'interamt' ? 'Stellenangebote' : 'Position' );
-            if ( !isset( $data[$node] ) ){
-                continue;
+            $aJobs = [];
+            switch($this->provider){
+                case 'interamt':
+                    $node = 'Stellenangebote';
+                    if ( empty( $aResponse['content'][$node] ) ){
+                        continue;
+                    }
+                    $aJobs = $aResponse['content'];
+                    break;
+                case 'univis':
+                    $node = 'Position';
+                    if ( empty($aResponse['content'][$node]) || empty($aResponse['content'][$node]['id']) ){
+                        continue;
+                    }
+                    $aJobs = $aResponse['content'][$node];
+                    break;
+                case 'bite':
+                    $aJobs = $aResponse['content'];
+                    break;
             }
 
-            $jobs = $data[$node];
 
             // Loop through jobs
-            if ( isset( $jobs ) ) {
-                if ( $this->provider == 'univis' && isset( $data[$node]['id'] ) ) {
-                    $jobs = array( $data[$node] );
-                }
+            if ( !empty( $aJobs ) ) {
 
-                foreach ( $jobs as $jobData ) {
+                foreach ( $aJobs as $jobData ) {
                     $map = getMap( $this->provider );
                     if ( $this->provider == 'interamt' ){
                         $date = date_create_from_format('d.m.Y', $jobData['Daten']['Bewerbungsfrist']);
@@ -416,17 +422,14 @@ class Shortcode {
                         if ( date_format($date, 'Y-m-d') < date('Y-m-d') ){
                             continue 2;
                         }
-                        $id = $jobData['Id'];
 
-                        $urlSingle = getURL( $this->provider, 'single') . $id;
-                        $data = file_get_contents( $urlSingle );
+                        $aResponse = $this->getResponse('single', $jobData['Id']);
 
-                        if ( !$data ) {
-                            return '<p>Die Schnittstelle ist momentan nicht erreichbar.</p>';
+                        if (!$aResponse['valid']){
+                            return $aResponse['content'];
                         }
 
-                        $data = json_decode( utf8_encode( $data ), true );
-                        $job = fillMap( $map, $data );
+                        $job = fillMap( $map, $aResponse['content'] );
                     } else {
                         $job = fillMap( $map, $jobData );
                     }
@@ -631,6 +634,11 @@ class Shortcode {
             } else {
                 return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
             }
+        }
+
+        // for testing
+        if ($this->provider == 'bite'){
+            return $aJobs;
         }
 
         return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
