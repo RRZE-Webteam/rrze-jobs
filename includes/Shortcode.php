@@ -283,33 +283,53 @@ class Shortcode {
         return $sidebar;
     }
 
-    private function getResponse($sType){
+    private function getResponse($sType, $sParam = NULL){
         $aRet = [
             'valid' => FALSE, 
-            $data = ''
+            'content' => ''
         ];
-        $api_url = getURL( 'bite', $sType);
-        $content = json_decode( file_get_contents( $api_url ), TRUE);
+        $api_url = getURL($this->provider, $sType) . $sParam;
 
-        switch($content['code']){
-            case '200':
-                $aRet = [
-                    'valid' => TRUE, 
-                    'data' => $content
-                ];
-                break;
-            default:
+        $content = file_get_contents( $api_url );
+
+        if ( $this->provider == 'interamt'){
+            $content = utf8_encode($content);
+        }        
+
+        $content = json_decode($content, TRUE);
+
+        if ($this->provider == 'bite'){
+            switch($content['code']){
+                case '200':
+                    $aRet = [
+                        'valid' => TRUE, 
+                        'content' => $content
+                    ];
+                    break;
+                default:
+                    $aRet = [
+                        'valid' => FALSE, 
+                        'content' => '<p>' . _('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['message'] . '</p>'
+                    ];
+            }
+        }else{
+            if (!$content) {
                 $aRet = [
                     'valid' => FALSE, 
-                    'data' => '<p>' . _('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['message'] . '</p>'
+                    'content' => '<p>' . ($sType == 'single' ? __('This job offer is not available', 'rrze-jobs') : __('Cannot connect to API at the moment.', 'rrze-jobs'))  . '</p>'
+                ];    
+            }else{
+                $aRet = [
+                    'valid' => TRUE, 
+                    'content' => $content
                 ];
+            }
         }
 
         return $aRet;
     }
 
     private function get_jobs( $limit, $orderby, $order, $internal, $fallback_apply ) {
-        // $this->options = get_option( 'rrze-jobs' );
         $output = '';
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = ( has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO );
@@ -323,13 +343,13 @@ class Shortcode {
             // 1. authorize
             $aData = $this->getResponse('auth');
             if (!$aData['valid']){
-                return $aData['data'];
+                return $aData['content'];
             }
 
             // 2. get JobsIDs
             $aData = $this->getResponse('list');
             if (!$aData['valid']){
-                return $aData['data'];
+                return $aData['content'];
             }
             foreach($aData['data']['entries'] as $entry){
                 $aData = $this->getResponse('single') . $entry['id'];
@@ -337,7 +357,7 @@ class Shortcode {
                     // let's skip this entry, there might be valid ones
                     continue;
                 }
-                return $aData['description'];
+                return $aData['content']['description'];
                 // var_dump($aData);
                 // see: https://api.b-ite.io/docs/#/jobpostings/get_jobpostings__jID_
             }
@@ -619,43 +639,28 @@ class Shortcode {
 
     public function get_single_job( $fallback_apply = '' ) {
 
-        if ($this->provider == 'bite'){
-            $aData = $this->getResponse('single') . $entry['id'];
-            if (!$aData['valid']) {
-                return $aData['data'];
-            }else{
-                // test html output
-                return $aData['data']['content']['html'];
-            }
-        }
-
-
         $output = '';
-        $api_url = getURL( $this->provider, 'single') . $this->jobid;
-        $data = file_get_contents($api_url);
+        $aResponse = $this->getResponse('single', $this->jobid);
 
-        if ( $this->provider == 'interamt'){
-            $data = utf8_encode( $data );
-        }
-        
-        $data = json_decode( $data, true);
-
-        if (!$data) {
-            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        if (!$aResponse['valid']){
+            return $aResponse['content'];
         }
 
-        if ( $this->provider == 'univis' ){
-            $persons = $data['Person'];
-            $persons = getPersons( $persons );
+        switch($this->provider){
+            case 'univis':
+                $job = $aResponse['content']['Position'][0];
+                $aPersons = getPersons($aResponse['content']['Person']);
+                $aPersons = $aPersons[$job['acontact']];
+                break;
+            case 'interamt':
+                $job = $aResponse['content'];
+                break;
+            case 'bite':
+                $job = $aResponse['content'];
+                break;
         }
 
-        if ( $this->provider == 'univis' ){
-            $job = $data['Position'][0];
-        } else {
-            $job = $data;
-        }
-
-        if ( !isset( $job ) || empty( $job ) ){
+        if (empty($job)){
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
         }
 
@@ -667,8 +672,7 @@ class Shortcode {
         $intern_allowed = isInternAllowed();
 
         if ( $this->provider == 'univis' ){
-            $person = $persons[$job['acontact']];
-            foreach ( $person as $key => $val ){
+            foreach ( $aPersons as $key => $val ){
                 $map[$key] = $val;
             }
         }
@@ -745,6 +749,11 @@ class Shortcode {
                 $output .= '<hr /><div>' . strip_tags( $this->options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
             }
             $output .= '</div>';
+        }
+
+        // for testing
+        if ( $this->provider == 'bite' ){
+            $output = $job;
         }
 
         return $output;
