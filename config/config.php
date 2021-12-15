@@ -21,6 +21,7 @@ function getShortcodeSettings(){
 		'provider' => [
 			'field_type' => 'select',
 			'values' => [
+				'bite' => __( 'BITE', 'rrze-jobs' ),
 				'interamt' => __( 'Interamt', 'rrze-jobs' ),
 				'univis' => __( 'UnivIS', 'rrze-jobs' )
 			],
@@ -170,6 +171,13 @@ function getFields() {
 				'default' => ''
 			],
 			[
+				'name'    => 'apiKey',
+				'label'   => __("apiKey", 'rrze-jobs'),
+				'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
+				'type'    => 'text',
+				'default' => ''
+			],
+			[
 				'name'    => 'job_notice',
 				'label'   => __("Notice", 'rrze-jobs'),
 				'desc'    => __('This notice will be dispayed below each job offer.', 'rrze-jobs'),
@@ -223,6 +231,11 @@ function getHelpTab() {
  */
 function getURL(&$provider, $urltype) {
 	$ret = [
+		'bite' => [
+			'auth' => 'https://api.b-ite.io/', // 2DO
+			'list' => 'https://api.b-ite.io/jobpostings', // provides list of IDs
+			'single' => 'https://api.b-ite.io/v1/jobpostings/' // add jobID 
+		],
 		'interamt' => [
 			'list' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
 			'single' => 'https://www.interamt.de/koop/app/webservice_v2?id='
