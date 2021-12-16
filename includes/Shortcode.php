@@ -117,8 +117,7 @@ class Shortcode {
         }
         $this->aOrgIDs = explode( ',', $orgids);
 
-
-        if ( $this->provider != 'bite' && empty($this->aOrgIds) && !$this->jobid) {
+        if ( $this->provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
         }
 
@@ -365,7 +364,7 @@ class Shortcode {
         }
 
 
-        foreach ( $this->aOrgIds as $orgid ){
+        foreach ( $this->aOrgIDs as $orgid ){
             $orgid = trim( $orgid );
 
             // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: Interamt delivers their complete database entries if orgid contains characters
@@ -394,14 +393,14 @@ class Shortcode {
                 case 'interamt':
                     $node = 'Stellenangebote';
                     if ( empty( $aResponse['content'][$node] ) ){
-                        continue;
+                        continue 2; // continue the foreach loop
                     }
                     $aJobs = $aResponse['content'];
                     break;
                 case 'univis':
                     $node = 'Position';
-                    if ( empty($aResponse['content'][$node]) || empty($aResponse['content'][$node]['id']) ){
-                        continue;
+                    if ( empty($aResponse['content'][$node])){
+                        continue 2; // continue the foreach loop
                     }
                     $aJobs = $aResponse['content'][$node];
                     break;
@@ -409,7 +408,6 @@ class Shortcode {
                     $aJobs = $aResponse['content'];
                     break;
             }
-
 
             // Loop through jobs
             if ( !empty( $aJobs ) ) {
