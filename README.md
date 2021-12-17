@@ -19,12 +19,14 @@ Parameter:
 
 |Parameter|UnivIS|Interamt|BITE|Wert|Default|Beispiele|
 |---------|------|--------|----|----|-------|---------|
-|**provider**|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|kann in den Plugin-Einstellungen festgelegt werden|provider="univis"|
-|orgids|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
-|jobid|optional|optional|optional|Zahl||jobid="123"|
-|internal|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
-|limit|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
-|fallback_apply|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="bewerbung@domain.tld"<br />fallback_apply="https://domain.tld/bewerbungsformular"|
+|**provider**|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|univis|provider="bite"|
+|**orgids**|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
+|**jobid**|optional|optional|optional|Zahl||jobid="123"|
+|**internal**|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
+|**limit**|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
+|**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsbeginn, -ende oder Arbeitsbeginn|job_title|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
+|**order**|optional|optional|optional|Auf- oder absteigende Sortierung|DESC|order="ASC" (aufsteigend)<br />order="DESC" (absteigend)|
+|**fallback_apply**|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="bewerbung@domain.tld"<br />fallback_apply="https://domain.tld/bewerbungsformular"|
 
 
 Beispiele:
