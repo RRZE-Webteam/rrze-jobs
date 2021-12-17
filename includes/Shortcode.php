@@ -127,7 +127,7 @@ class Shortcode {
         $order = ( isset( $atts['order'] ) ? $atts['order'] : $this->settings['order']['default']);
         $fallback_apply = ( isset( $atts['fallback_apply'] ) ? $atts['fallback_apply'] : $this->settings['fallback_apply']['default']);
 
-        if ( $orgids ){
+        if ( $orgids && !$this->jobid ){
             $output = $this->get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply );
         } else {
             $output = $this->get_single_job( $internal, $fallback_apply );
@@ -371,6 +371,7 @@ class Shortcode {
             if ( strval($orgid) !== strval(intval($orgid)) ) {
                 continue;
             }
+
             $aResponse = $this->getResponse('list', $orgid);
 
             if ( !$aResponse['valid'] ) {
@@ -432,7 +433,7 @@ class Shortcode {
                         $job = fillMap( $map, $jobData );
                     }
 
-                    // Skip if outdated
+                    // Skip if expired
                     if ( $job['application_end'] < date('Y-m-d' ) ) {
                         continue;
                     }
@@ -533,12 +534,17 @@ class Shortcode {
 
         /*
          * Ausgabe für Public Displays
+         * 
+         * $_GET['job] defines, which job in the list is to be shown, f.e. ?format=embedded&job=2 shows the second job, if there is one otherwise an image
          */
+
         if (isset($_GET['format']) && $_GET['format'] == 'embedded' && isset($_GET['job'])) {
-            $jobnr = (int)$_GET[ 'job' ] - 1;
+            $jobnr = (int)$_GET['job'] - 1;
+
             usort( $maps, function ( $a, $b ) {
                 return strcmp( $a[ 'job_id' ], $b[ 'job_id' ] );
             } );
+
             if ( ( count( $maps ) > 0 ) && ( isset( $maps[ $jobnr ][ 'job_id' ] ) ) ) {
                 $this->jobid = $maps[ $jobnr ][ 'job_id' ];
                 return $this->get_single_job();
@@ -593,7 +599,7 @@ class Shortcode {
                         break;
                 }
 
-                // Skip if outdated
+                // Skip if expired
                 if ( isset( $map['application_end'] ) && (bool)strtotime( $map['application_end'] ) === true) {
                     $map['application_end'] = (new \DateTime( $map['application_end'] ) )->format('Y-m-d');
                 }
@@ -686,76 +692,78 @@ class Shortcode {
         // Skip internal job offers if necessary
         $job_intern = ( isset( $map['job_intern'] ) && $map['job_intern'] == 'ja' ? 1 : 0 );
 
-        if ( !$intern_allowed && $job_intern ) {
+        // job is intern but internals jobs are not allowed OR application_end is given but is expired
+        if ( (!$intern_allowed && $job_intern) || (isset($map['application_end']) && ($map['application_end'] < date('Y-m-d'))) ) {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
         }
 
-        if ( ( isset( $map['application_end'] ) )  && ( $map['application_end'] >= date('Y-m-d') ) ) {
-            $azubi = false;
-            if ( ( isset( $map['job_title'] ) ) && ( strpos( $map['job_title'], 'Auszubildende' ) ) ) {
-                $azubi = true;
-            }
-            $salary = $this->getSalary( $map );
-            $description = $this->getDescription( $map, $this->provider );
-
-            if ( isset($map['job_employmenttype'] ) ) {
-                if ($map['job_employmenttype'] == 'voll') {
-                    $map['job_employmenttype'] = 'Vollzeit';
-                } elseif ($map['job_employmenttype'] == 'teil') {
-                    $map['job_employmenttype'] = 'Teilzeit';
-                }
-            }
-            if ( $this->provider == 'interamt' ) {
-                $start_application_string = strpos($map['job_description'], 'Bitte bewerben Sie sich');
-                if ($start_application_string !== false && $start_application_string > 100) {
-                    $application_string = substr($map['job_description'], $start_application_string);
-                    $map['application_link'] = strip_tags(html_entity_decode($application_string), '<a><br><br /><b><strong><i><em>');
-                }
-            }
-            $application_email = '';
-            if ( isset($map['application_link'] ) ) {
-                preg_match_all( "/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+[a-zA-Z]+/i", $map['application_link'], $matches );
-                if (!empty( $matches[0] ) ) {
-                    $application_email = $matches[0][0];
-                    $map['application_email'] = $application_email;
-                }
-            }
-
-            if ( ( isset( $map['job_type'] ) ) && ( $map['job_type'] != 'keine' ) ) {
-                $kennung_old = $map['job_type'];
-                switch ( mb_substr( $map['job_type'], - 2 ) ) {
-                    case '-I':
-                        $map['job_type'] = preg_replace( '/-I$/', '-W', $map['job_type'] );
-                        break;
-                    case '-U':
-                        $map['job_type'] = preg_replace( '/-U$/', '-W', $map['job_type'] );
-                        break;
-                    default:
-                        $map['job_type'] = $map['job_type'] . '-W';
-                }
-                $map['job_type'] = str_replace( [ "[", "]" ], [ "&#91;", "&#93;" ], $map['job_type'] );
-            } else {
-                $map['job_type'] = NULL;
-            }
-
-            if ( isset( $map['application_end'] ) ){
-                $date = date_create( $map['application_end'] );
-                $date_deadline = date_format($date, 'd.m.Y');
-            }
-            if ( isset( $kennung_old ) && isset( $map['job_type'] ) && isset( $map['job_description'] ) ) {
-                $map['job_description'] = str_replace( $kennung_old, $map['job_type'], $map['job_description'] );
-            }
-            $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
-
-            $output = '';
-            $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-            $output .= do_shortcode('[three_columns_two]' . $description . '[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
-            $this->options = get_option( 'rrze-jobs' );
-            if (!isset($_GET['format']) && isset($this->options['rrze-jobs_job_notice']) && $this->options['rrze-jobs_job_notice'] != '') {
-                $output .= '<hr /><div>' . strip_tags( $this->options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
-            }
-            $output .= '</div>';
+        $azubi = false;
+        if ( ( isset( $map['job_title'] ) ) && ( strpos( $map['job_title'], 'Auszubildende' ) ) ) {
+            $azubi = true;
         }
+        $salary = $this->getSalary( $map );
+        $description = $this->getDescription( $map, $this->provider );
+
+        if ( isset($map['job_employmenttype'] ) ) {
+            if ($map['job_employmenttype'] == 'voll') {
+                $map['job_employmenttype'] = 'Vollzeit';
+            } elseif ($map['job_employmenttype'] == 'teil') {
+                $map['job_employmenttype'] = 'Teilzeit';
+            }
+        }
+        if ( $this->provider == 'interamt' ) {
+            $start_application_string = strpos($map['job_description'], 'Bitte bewerben Sie sich');
+            if ($start_application_string !== false && $start_application_string > 100) {
+                $application_string = substr($map['job_description'], $start_application_string);
+                $map['application_link'] = strip_tags(html_entity_decode($application_string), '<a><br><br /><b><strong><i><em>');
+            }
+        }
+        $application_email = '';
+        if ( isset($map['application_link'] ) ) {
+            preg_match_all( "/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+[a-zA-Z]+/i", $map['application_link'], $matches );
+            if (!empty( $matches[0] ) ) {
+                $application_email = $matches[0][0];
+                $map['application_email'] = $application_email;
+            }
+        }
+
+        if ( ( isset( $map['job_type'] ) ) && ( $map['job_type'] != 'keine' ) ) {
+            $kennung_old = $map['job_type'];
+            switch ( mb_substr( $map['job_type'], - 2 ) ) {
+                case '-I':
+                    $map['job_type'] = preg_replace( '/-I$/', '-W', $map['job_type'] );
+                    break;
+                case '-U':
+                    $map['job_type'] = preg_replace( '/-U$/', '-W', $map['job_type'] );
+                    break;
+                default:
+                    $map['job_type'] = $map['job_type'] . '-W';
+            }
+            $map['job_type'] = str_replace( [ "[", "]" ], [ "&#91;", "&#93;" ], $map['job_type'] );
+        } else {
+            $map['job_type'] = NULL;
+        }
+
+        if ( isset( $map['application_end'] ) ){
+            $date = date_create( $map['application_end'] );
+            $date_deadline = date_format($date, 'd.m.Y');
+        }
+
+        // BK 2021-12-17: why does this exist? $map['job_description'] is not used 
+        // if ( isset( $kennung_old ) && isset( $map['job_type'] ) && isset( $map['job_description'] ) ) {
+        //     $map['job_description'] = str_replace( $kennung_old, $map['job_type'], $map['job_description'] );
+        // }
+
+        $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
+
+        $output = '';
+        $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+        $output .= do_shortcode('[three_columns_two]' . $description . '[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
+        // $this->options = get_option( 'rrze-jobs' );
+        if (!isset($_GET['format']) && isset($this->options['rrze-jobs_job_notice']) && $this->options['rrze-jobs_job_notice'] != '') {
+            $output .= '<hr /><div>' . strip_tags( $this->options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
+        }
+        $output .= '</div>';
 
         // for testing
         if ( $this->provider == 'bite' ){
@@ -765,10 +773,17 @@ class Shortcode {
         return $output;
     }
 
+
+
+    /*
+     * getPublicDisplayList
+     *      returns '' if there is no job or more than 3
+     *      2 jobs in 2 column HTML
+     *      3 jobs in 3 column HTML
+    */
     private function getPublicDisplayList($maps = []) {
         $output = '';
         $last = '';
-        $this->options = get_option( 'rrze-jobs' );
 
         $jobs_page_url = get_permalink($this->options['rrze-jobs_jobs_page']);
 
@@ -780,7 +795,8 @@ class Shortcode {
             if ( !$intern_allowed && $job_intern ) {
                 return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
             }
-    
+
+            // if there are more than 3 jobs return ''
             if ($k > 2) {
                 return $output;
             }
@@ -831,6 +847,7 @@ class Shortcode {
                     break;
             }
         }
+
         return $output;
     }
 
