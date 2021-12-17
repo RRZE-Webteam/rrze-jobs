@@ -21,16 +21,14 @@ Parameter:
 |---------|------|--------|----|----|-------|---------|
 |provider|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|kann in den Plugin-Einstellungen festgelegt werden|provider="univis"|
 |orgids|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
+|jobid|optional|optional|optional|Zahl||jobid="123"|
 |internal|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
 |limit|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
-|fallback_apply|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="mein_bewerbungseingang@meine_domain.de"<br />fallback_apply="https://meine_domain.de/bewerbungsformular.html"|
+|fallback_apply|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="bewerbung@domain.tld"<br />fallback_apply="https://domain.tld/bewerbungsformular"|
 
 
 Beispiele:
 ```html
-
-
-
 
 [jobs provider="interamt" jobid="123456"]
 [jobs provider="UnivIS" jobid="123456"]
