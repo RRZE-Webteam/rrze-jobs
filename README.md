@@ -20,15 +20,10 @@ Parameter:
 |Parameter|UnivIS|Interamt|BITE|Wert|Default|Beispiele|
 |---------|------|--------|----|----|-------|---------|
 |provider|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|kann in den Plugin-Einstellungen festgelegt werden|provider="univis"|
-|orgids|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"
-orgids="4711"|
-|internal|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben
-"include" => interne und nicht-interne Stellenanzeigen ausgeben
-"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"
-internal="only"|
+|orgids|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
+|internal|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
 |limit|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
-|fallback_apply|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="mein_bewerbungseingang@meine_domain.de"
-fallback_apply="https://meine_domain.de/bewerbungsformular.html"|
+|fallback_apply|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="mein_bewerbungseingang@meine_domain.de"<br />fallback_apply="https://meine_domain.de/bewerbungsformular.html"|
 
 
 Beispiele:
