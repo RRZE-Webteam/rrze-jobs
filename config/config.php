@@ -233,7 +233,7 @@ function getURL(&$provider, $urltype) {
 	$ret = [
 		'bite' => [
 			'auth' => 'https://api.b-ite.io/', // 2DO
-			'list' => 'https://api.b-ite.io/jobpostings', // provides list of IDs
+			'list' => 'https://api.b-ite.io/v1/jobpostings', // provides list of IDs
 			'single' => 'https://api.b-ite.io/v1/jobpostings/' // add jobID 
 		],
 		'interamt' => [
