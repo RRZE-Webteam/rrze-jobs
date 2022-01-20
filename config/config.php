@@ -21,7 +21,7 @@ function getShortcodeSettings(){
 		'provider' => [
 			'field_type' => 'select',
 			'values' => [
-				'bite' => __( 'BITE', 'rrze-jobs' ),
+				// 'bite' => __( 'BITE', 'rrze-jobs' ),
 				'interamt' => __( 'Interamt', 'rrze-jobs' ),
 				'univis' => __( 'UnivIS', 'rrze-jobs' )
 			],
@@ -232,7 +232,6 @@ function getHelpTab() {
 function getURL(&$provider, $urltype) {
 	$ret = [
 		'bite' => [
-			'auth' => 'https://api.b-ite.io/', // 2DO
 			'list' => 'https://api.b-ite.io/v1/jobpostings', // provides list of IDs
 			'single' => 'https://api.b-ite.io/v1/jobpostings/' // add jobID 
 		],
@@ -422,7 +421,7 @@ function getMap( $provider ){
 			'label' => 'Wochenarbeitszeit'
 		],
 		'job_category' => [
-			'interamt' => 'FachrichtungCluster',
+			'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
 			'univis'=> 'group',
 			'label' => 'Berufsgruppe'
 		],

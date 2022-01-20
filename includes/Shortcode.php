@@ -115,7 +115,10 @@ class Shortcode {
                 $orgids = $this->options[ 'rrze-jobs' . '_orgids_' . $this->provider ];
             }
         }
-        $this->aOrgIDs = explode( ',', $orgids);
+
+        if (!empty($orgids)){
+            $this->aOrgIDs = explode( ',', $orgids);
+        }
 
         if ( $this->provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
