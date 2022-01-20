@@ -170,13 +170,13 @@ function getFields() {
 				'type'    => 'text',
 				'default' => ''
 			],
-			// [
-			// 	'name'    => 'apiKey',
-			// 	'label'   => __("apiKey", 'rrze-jobs'),
-			// 	'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
-			// 	'type'    => 'text',
-			// 	'default' => ''
-			// ],
+			[
+				'name'    => 'apiKey',
+				'label'   => __("apiKey", 'rrze-jobs'),
+				'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
+				'type'    => 'text',
+				'default' => ''
+			],
 			[
 				'name'    => 'job_notice',
 				'label'   => __("Notice", 'rrze-jobs'),
