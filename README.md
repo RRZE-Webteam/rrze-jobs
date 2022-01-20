@@ -1,5 +1,8 @@
 # RRZE Jobs
-Einbindung von Jobangeboten per Shortcode über Portal-API (zurzeit Interamt und UnivIS)
+Einbindung von Jobangeboten per Shortcode über API (zurzeit Interamt, UnivIS, BITE)
+
+**Anbindung an BITE ist in Entwicklung**
+
 
 ## Download
 GITHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
@@ -11,19 +14,23 @@ RRZE-Webteam , http://www.rrze.fau.de
 GNU General Public License (GPL) Version 2
 
 ## Verwendung
-```html
-Parameter:
-provider -> Zeichenkette, obligatorisch
-orgids -> Zahl(en), obligatorisch (mindestens eine Zahl, mehrere durch Komma getrennt)
-limit -> Zahl, optional (maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden )
-internal -> Zeichenkette, optional, default = "exclude" : 
-    mögliche Werte: 
-        "only" => ausschliesslich interne Stellenanzeigen ausgeben
-        "include" => interne und nicht-interne Stellenanzeigen ausgeben
-        "exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben 
-    - bei "only" und "include" wird überprüft, ob der Visitor sich im erlaubten Netzwerk befindet
-fallback_apply -> optional : hier kann eine eMail-Adresse oder ein Link eingeben werden, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist 
 
+Parameter:
+
+|Parameter|UnivIS|Interamt|BITE|Wert|Default|Beispiele|
+|---------|------|--------|----|----|-------|---------|
+|**provider**|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|univis|provider="bite"|
+|**orgids**|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
+|**jobid**|optional|optional|optional|Zahl||jobid="123"|
+|**internal**|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
+|**limit**|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
+|**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsbeginn, -ende oder Arbeitsbeginn|job_title|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
+|**order**|optional|optional|optional|Auf- oder absteigende Sortierung|DESC|order="ASC" (aufsteigend)<br />order="DESC" (absteigend)|
+|**fallback_apply**|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="bewerbung@domain.tld"<br />fallback_apply="https://domain.tld/bewerbungsformular"|
+
+
+Beispiele:
+```html
 
 [jobs provider="interamt" jobid="123456"]
 [jobs provider="UnivIS" jobid="123456"]

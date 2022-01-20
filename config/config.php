@@ -21,6 +21,7 @@ function getShortcodeSettings(){
 		'provider' => [
 			'field_type' => 'select',
 			'values' => [
+				// 'bite' => __( 'BITE', 'rrze-jobs' ),
 				'interamt' => __( 'Interamt', 'rrze-jobs' ),
 				'univis' => __( 'UnivIS', 'rrze-jobs' )
 			],
@@ -169,6 +170,13 @@ function getFields() {
 				'type'    => 'text',
 				'default' => ''
 			],
+			// [
+			// 	'name'    => 'apiKey',
+			// 	'label'   => __("apiKey", 'rrze-jobs'),
+			// 	'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
+			// 	'type'    => 'text',
+			// 	'default' => ''
+			// ],
 			[
 				'name'    => 'job_notice',
 				'label'   => __("Notice", 'rrze-jobs'),
@@ -223,6 +231,10 @@ function getHelpTab() {
  */
 function getURL(&$provider, $urltype) {
 	$ret = [
+		'bite' => [
+			'list' => 'https://api.b-ite.io/v1/jobpostings', // provides list of IDs
+			'single' => 'https://api.b-ite.io/v1/jobpostings/' // add jobID 
+		],
 		'interamt' => [
 			'list' => 'https://www.interamt.de/koop/app/webservice_v2?partner=',
 			'single' => 'https://www.interamt.de/koop/app/webservice_v2?id='
@@ -409,7 +421,7 @@ function getMap( $provider ){
 			'label' => 'Wochenarbeitszeit'
 		],
 		'job_category' => [
-			'interamt' => 'FachrichtungCluster',
+			'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
 			'univis'=> 'group',
 			'label' => 'Berufsgruppe'
 		],
