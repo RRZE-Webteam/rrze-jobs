@@ -115,7 +115,10 @@ class Shortcode {
                 $orgids = $this->options[ 'rrze-jobs' . '_orgids_' . $this->provider ];
             }
         }
-        $this->aOrgIDs = explode( ',', $orgids);
+
+        if (!empty($orgids)){
+            $this->aOrgIDs = explode( ',', $orgids);
+        }
 
         if ( $this->provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
             return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
@@ -404,17 +407,17 @@ class Shortcode {
             }
 
             $aJobs = [];
+
+            if ($this->provider == 'interamt'){
+                $node = 'Stellenangebote';
+            }elseif($this->provider = 'univis'){
+                $node = 'Position';
+            }
+
             switch($this->provider){
                 case 'interamt':
-                    $node = 'Stellenangebote';
-                    if ( empty( $aResponse['content'][$node] ) ){
-                        continue 2; // continue the foreach loop
-                    }
-                    $aJobs = $aResponse['content'];
-                    break;
                 case 'univis':
-                    $node = 'Position';
-                    if ( empty($aResponse['content'][$node])){
+                    if ( empty( $aResponse['content'][$node] ) ){
                         continue 2; // continue the foreach loop
                     }
                     $aJobs = $aResponse['content'][$node];
