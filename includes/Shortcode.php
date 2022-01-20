@@ -40,7 +40,7 @@ class Shortcode {
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
     }
-
+    
 
 
     /**
