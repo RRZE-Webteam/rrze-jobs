@@ -21,7 +21,7 @@ function getShortcodeSettings(){
 		'provider' => [
 			'field_type' => 'select',
 			'values' => [
-				// 'bite' => __( 'BITE', 'rrze-jobs' ),
+				'bite' => __( 'BITE', 'rrze-jobs' ),
 				'interamt' => __( 'Interamt', 'rrze-jobs' ),
 				'univis' => __( 'UnivIS', 'rrze-jobs' )
 			],
