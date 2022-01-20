@@ -407,17 +407,17 @@ class Shortcode {
             }
 
             $aJobs = [];
+
+            if ($this->provider == 'interamt'){
+                $node = 'Stellenangebote';
+            }elseif($this->provider = 'univis'){
+                $node = 'Position';
+            }
+
             switch($this->provider){
                 case 'interamt':
-                    $node = 'Stellenangebote';
-                    if ( empty( $aResponse['content'][$node] ) ){
-                        continue 2; // continue the foreach loop
-                    }
-                    $aJobs = $aResponse['content'];
-                    break;
                 case 'univis':
-                    $node = 'Position';
-                    if ( empty($aResponse['content'][$node])){
+                    if ( empty( $aResponse['content'][$node] ) ){
                         continue 2; // continue the foreach loop
                     }
                     $aJobs = $aResponse['content'][$node];
