@@ -681,9 +681,9 @@ class Shortcode {
                 break;
             case 'bite':
 
-                echo '<pre>';
-                var_dump($aResponse);
-                exit;
+                // echo '<pre>';
+                // var_dump($aResponse);
+                // exit;
 
 
                 $job = $aResponse['content']['content']['html'];
