@@ -305,6 +305,9 @@ class Shortcode {
         $api_url = getURL($this->provider, $sType) . $sParam;
 
         $content = wp_remote_get($api_url, $aGetArgs);
+
+
+
         $content = $content["body"];
         $content = json_decode($content, true);
 
@@ -314,6 +317,18 @@ class Shortcode {
                     'valid' => FALSE, 
                     'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['type'] . ' - ' . $content['message'] . '</p>'
                 ];
+            }elseif (isset($content['active'])){
+                if (!$content['active']) {
+                    $aRet = [
+                        'valid' => false,
+                        'content' => '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>'
+                    ];
+                }else{
+                    $aRet = [
+                        'valid' => TRUE, 
+                        'content' => $content
+                    ];
+                }
             }else{
                 $aRet = [
                     'valid' => TRUE, 
