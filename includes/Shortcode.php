@@ -352,6 +352,10 @@ class Shortcode {
         return $aRet;
     }
 
+    private function makeLink(&$item, $key){
+        $item =  '<li class=".rrze-jobs-bite-li"><a class=".rrze-jobs-bite-link" href="' . $item . '">' . $key . '</a></li>';
+    }
+
     private function get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply ) {
         $output = '';
         $aResponse = [];
@@ -360,19 +364,52 @@ class Shortcode {
 
         $maps = [];
 
-        // BITE
+        // // BITE
+        // if ($this->provider == 'bite'){
+        //     $shortcode_items = '';
+        //     $shortcode_item_inner = '';
+
+        //     $aJobIds = [];
+
+        //     // 1. get JobsIDs
+        //     $aResponse = $this->getResponse('list');
+
+        //     if (!$aResponse['valid']){
+        //         return $aResponse['content'];
+        //     }
+
+        //     foreach($aResponse['content']['entries'] as $entry){
+        //         $aResponse = $this->getResponse('single', $entry['id']);
+        //         if (!$aResponse['valid']){
+        //             // let's skip this entry, there might be valid ones
+        //             continue;
+        //         }
+
+        //         $job_title = $aResponse['content']['title']; // does not deliver JOB-TITLE but title for the template
+        //         $description = $aResponse['content']['content']['html'];
+
+
+        //         $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+        //         $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last] SIDEBAR in Entwicklung [/three_columns_one_last][divider]');
+
+        //         $shortcode_item_inner .= '</div>';
+        //         $shortcode_items .= do_shortcode('[collapse title="' . $job_title . '" name="' . substr($this->provider,0,1) . $entry['id'] . '"]' . $shortcode_item_inner . '[/collapse]');
+        //     }
+        //     return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
+        // }
+
+
+
+        // BITE - just as a list of links to jobpostings
         if ($this->provider == 'bite'){
-            $shortcode_items = '';
-            $shortcode_item_inner = '';
-
-            $aJobIds = [];
-
             // 1. get JobsIDs
             $aResponse = $this->getResponse('list');
 
             if (!$aResponse['valid']){
                 return $aResponse['content'];
             }
+
+            $aLink = [];
 
             foreach($aResponse['content']['entries'] as $entry){
                 $aResponse = $this->getResponse('single', $entry['id']);
@@ -381,18 +418,21 @@ class Shortcode {
                     continue;
                 }
 
-                $job_title = $aResponse['content']['title']; // does not deliver JOB-TITLE but title for the template
-                $description = $aResponse['content']['content']['html'];
-
-
-                $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-                $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last] SIDEBAR in Entwicklung [/three_columns_one_last][divider]');
-
-                $shortcode_item_inner .= '</div>';
-                $shortcode_items .= do_shortcode('[collapse title="' . $job_title . '" name="' . substr($this->provider,0,1) . $entry['id'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                $job_title = $aResponse['content']['title'];
+                $link = $aResponse['content']['channels']['channel0']['route']['posting'];
+                $aLink[$job_title] = $link;
             }
-            return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
+
+            if (!empty($aLink)){
+                array_walk($aLink, [$this, 'makeLink']);
+                return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
+            }else{
+                if (isset($this->options['rrze-jobs_no_jobs_message'])) {
+                    return '<p>' . $this->options['rrze-jobs_no_jobs_message'] . '</a></p>';
+                }
+            }
         }
+
 
 
         // Interamt + UnivIS
