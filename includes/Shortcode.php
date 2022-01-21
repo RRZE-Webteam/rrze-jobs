@@ -293,7 +293,7 @@ class Shortcode {
 
         $aGetArgs = [];
 
-        if ($this->provider == 'bite') {
+        if (($this->provider == 'bite') && (!empty($this->options['rrze-jobs_apiKey']))) {
             $aGetArgs = [
                 'headers' => [
                     'Content-Type' => 'application/json',
@@ -680,6 +680,12 @@ class Shortcode {
                 $job = $aResponse['content'];
                 break;
             case 'bite':
+
+                echo '<pre>';
+                var_dump($aResponse);
+                exit;
+
+
                 $job = $aResponse['content']['content']['html'];
                 break;
         }
