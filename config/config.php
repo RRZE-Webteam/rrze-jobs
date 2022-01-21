@@ -21,7 +21,7 @@ function getShortcodeSettings(){
 		'provider' => [
 			'field_type' => 'select',
 			'values' => [
-				// 'bite' => __( 'BITE', 'rrze-jobs' ),
+				'bite' => __( 'BITE', 'rrze-jobs' ),
 				'interamt' => __( 'Interamt', 'rrze-jobs' ),
 				'univis' => __( 'UnivIS', 'rrze-jobs' )
 			],
@@ -170,13 +170,13 @@ function getFields() {
 				'type'    => 'text',
 				'default' => ''
 			],
-			// [
-			// 	'name'    => 'apiKey',
-			// 	'label'   => __("apiKey", 'rrze-jobs'),
-			// 	'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
-			// 	'type'    => 'text',
-			// 	'default' => ''
-			// ],
+			[
+				'name'    => 'apiKey',
+				'label'   => __("apiKey", 'rrze-jobs'),
+				'desc'    => __('Enter the apiKey for BITE', 'rrze-jobs'),
+				'type'    => 'text',
+				'default' => ''
+			],
 			[
 				'name'    => 'job_notice',
 				'label'   => __("Notice", 'rrze-jobs'),
