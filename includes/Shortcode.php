@@ -285,6 +285,35 @@ class Shortcode {
         return $sidebar;
     }
 
+
+    private static function checkDates(&$content){
+        if (!isset($content['channels']['channel0']['from']) || !isset($content['channels']['channel0']['to'])){
+            return TRUE;
+        }
+        $now = date("Y-m-d H:i:s");
+        $from = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['from'])); // 2022-01-19T23:01:00+00:00
+        $to = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['to'])); // 2022-01-21T23:01:00+00:00
+
+        if (($from <= $now) && ($to >= $now)){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+
+    private static function isValid(&$content){
+
+        if (isset($content['active'])){
+            if ($content['active']){
+                return self::checkDates($content);
+            }else{
+                return FALSE;
+            }
+        }else{
+            return self::checkDates($content);
+        }
+    }
+
     private function getResponse($sType, $sParam = NULL){
         $aRet = [
             'valid' => FALSE, 
@@ -305,10 +334,8 @@ class Shortcode {
         $api_url = getURL($this->provider, $sType) . $sParam;
 
         $content = wp_remote_get($api_url, $aGetArgs);
-
-
-
         $content = $content["body"];
+
         $content = json_decode($content, true);
 
         if ($this->provider == 'bite'){
@@ -317,22 +344,15 @@ class Shortcode {
                     'valid' => FALSE, 
                     'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['type'] . ' - ' . $content['message'] . '</p>'
                 ];
-            }elseif (isset($content['active'])){
-                if (!$content['active']) {
-                    $aRet = [
-                        'valid' => false,
-                        'content' => '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>'
-                    ];
-                }else{
-                    $aRet = [
-                        'valid' => TRUE, 
-                        'content' => $content
-                    ];
-                }
-            }else{
+            }elseif (self::isValid($content)){
                 $aRet = [
                     'valid' => TRUE, 
                     'content' => $content
+                ];
+            }else{
+                $aRet = [
+                    'valid' => FALSE,
+                    'content' => '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>'
                 ];
             }
         }else{
