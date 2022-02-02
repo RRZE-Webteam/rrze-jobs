@@ -336,187 +336,242 @@ function getPersons( $personsData ) {
 function getMap( $provider ){
 	$map = [
 		'job_id' => [
+			'bite' => 'id',
 			'interamt' => 'Id',
 			'univis'=> 'id',
 			'label' => 'Job ID'
 		],
 		'application_start' => [
+			'bite' => ['channels', 'channel0', 'from'],
 			'interamt' => 'DatumOeffentlichAusschreiben',
 			'univis'=> '',  // fehlt
 			'label' => 'Bewerbungsstart'
 		],
 		'application_end' => [
+			'bite' => ['channels', 'channel0', 'to'],
 			'interamt' => 'DatumBewerbungsfrist',
 			'univis'=> 'enddate',
 			'label' => 'Bewerbungsschluss'
 		],
 		'application_link' => [
+			'bite' => ['channels', 'channel0', 'route', 'application'],
 			'interamt' => 'BewerbungUrl',
 			'univis'=> 'desc6',
 			'label' => 'Link zur Bewerbung'
 		],
 		'job_intern' => [
+			'bite' => '', // fehlt
 			'interamt' => '', // fehlt
 			'univis'=> 'intern',
 			'label' => 'Intern'
 		],
 		'job_type' => [
+			'bite' => ['custom', 'ausschreibungskennziffer'],
 			'interamt' => 'Kennung',
 			'univis'=> '', // fehlt
 			'label' => 'Kennung'
 		],
 		'job_title' => [
+			'bite' => 'title',
 			'interamt' => 'Stellenbezeichnung',
 			'univis'=> 'title',
 			'label' => 'Stellenbezeichnung'
 		],
 		'job_start' => [
+			'bite' => ['custom', 'jobstartdate'],
 			'interamt' => 'DatumBesetzungZum',
 			'univis'=> 'start',
 			'label' => 'Besetzung zum'
 		],
 		'job_limitation' => [
+			'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => if string contains "temporary" => befristet, else unbefristet
 			'interamt' => 'BeschaeftigungDauer',
 			'univis'=> 'type1',
 			'label' => 'Befristung'
 		],
 		'job_limitation_duration' => [      // Befristung Dauer
+			'bite' => '',
 			'interamt' => 'BefristetFuer',  // Anzahl Monate !!!
 			'univis'=> 'befristet', 
 			'label' => 'Dauer der Befristung'
 		],
 		'job_limitation_reason' => [ 
+			'bite' => '',
 			'interamt' => '', 
 			'univis'=> 'type3', 
 			'label' => 'Grund der Befristung'
 		],
+		'job_salary_type' => [
+			'bite' => ['custom', 'entgelt_art'],
+			'interamt' => '', // existiert nicht, da inkludiert in job_salary_from
+			'univis'=> '', // existiert nicht, da inkludiert in job_salary_from
+			'label' => 'Entgelt Gruppe'
+		],
 		'job_salary_from' => [
+			'bite' => ['custom', 'estimatedsalary'],
 			'interamt' => 'TarifEbeneVon',
 			'univis'=> 'vonbesold',
 			'label' => 'Tarifebene von'
 		],
 		'job_salary_to' => [
+			'bite' => '',
 			'interamt' => 'TarifEbeneBis',
 			'univis'=> 'bisbesold',
 			'label' => 'Tarifebene bis'
 		],
 		'job_qualifications' => [
+			'bite' => ['custom', 'profil'],
 			'interamt' => 'Qualifikation',
 			'univis'=> 'desc2',
 			'label' => 'Qualifikationen'
 		],
 		'job_qualifications_nth' => [
+			'bite' => '',
 			'interamt' => '', // fehlt
 			'univis'=>  'desc3',
 			'label' => 'Wünschenswerte Qualifikationen'
 		],
 		'job_employmenttype' => [
+			'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => substring
 			'interamt' => 'Teilzeit',
 			'univis'=> 'type2',
 			'label' => 'Vollzeit / Teilzeit'
 		],
 		'job_workhours' => [
+			'bite' => '', // fehlt
 			'interamt' => 'WochenarbeitszeitArbeitnehmer',
 			'univis'=> 'wstunden',
 			'label' => 'Wochenarbeitszeit'
 		],
 		'job_category' => [
+			'bite' => ['custom', 'zuordnung', 0], // derzeit steht dort nur "stellen", sollte "wiss", "n-wiss", "hiwi", "azubi" oder "other" liefern
 			'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
 			'univis'=> 'group',
 			'label' => 'Berufsgruppe'
 		],
 		'job_description' => [
+			'bite' => ['custom', 'aufgaben'],
 			'interamt' => 'Beschreibung',
 			'univis'=> 'desc1',
 			'label' => 'Beschreibung'
 		],
 		'job_description_introduction' => [
+			'bite' => ['custom', 'einleitung'], 
 			'interamt' => '', // fehlt
 			'univis'=> 'desc5',
 			'label' => 'Beschreibung - Einleitung'
 		],
+		'job_description_introduction_added' => [
+			'bite' => ['custom', 'stellenzusatz'],
+			'interamt' => '', // fehlt
+			'univis'=> '', // fehlt
+			'label' => 'Stellenzusatz'
+		],
 		'job_experience' => [
+			'bite' => ['custom', 'profil'],
 			'interamt' => '', // fehlt
 			'univis'=> 'desc2',
 			'label' => 'Berufserfahrung'
 		],
 		'job_benefits' => [
+			'bite' => ['custom', 'wir_bieten'],
 			'interamt' => '', // fehlt
 			'univis'=> 'desc4',
 			'label' => 'Benefits'
 		],
 		'employer_organization' => [
+			'bite' => 'Technische Universität Nürnberg', // 2DO: muss über settings eingestellt werden 'Technische Universität Nürnberg', da API keine Daten dazu liefert
 			'interamt' => 'StellenangebotBehoerde',
 			'univis'=> 'orgname',
 			'label' => 'Organisationseinheit',
 		],
 		'employer_street' => [
-			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
-			'univis'=> array('Person', 'locations', 'location', 'street'),
+			'bite' => ['location', 'street'],
+			'interamt' => ['Einsatzort', 'EinsatzortStrasse'],
+			'univis'=> ['Person', 'locations', 'location', 'street'],
 			'label' => 'Straße'
 		],
+		'employer_street_nr' => [
+			'bite' => ['location', 'houseNumber'],
+			'interamt' => '', // fehlt
+			'univis' => '', // fehlt
+			'label' => '' // fehlt
+		],
 		'employer_postalcode' => [
-			'interamt' =>  array('Einsatzort', 'EinsatzortPLZ'),
+			'bite' => ['location', 'postCode'],
+			'interamt' =>  ['Einsatzort', 'EinsatzortPLZ'],
 			'univis'=> '', // fehlt
 			'label' => 'PLZ'
 		],
 		'employer_city' => [
-			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
-			'univis'=> array('Person', 'locations', 'location', 'ort'),
+			'bite' => ['location', 'city'],
+			'interamt' => ['Einsatzort', 'EinsatzortOrt'],
+			'univis'=> ['Person', 'locations', 'location', 'ort'],
 			'label' => 'Ort'
 		],
 		'employer_district' => [
+			'bite' => '', // fehlt
 			'interamt' => 'BeschaeftigungBereichBundesland',
 			'univis'=> '', // fehlt
 			'label' => 'Bezirk'
 		],
 		'contact_link'  => [
+			'bite' => '', // fehlt
 			'interamt' => 'HomepageBehoerde',
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Link'
 		],
 		'contact_title' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Titel'
 		],
 		'contact_firstname' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Vorname'
 		],
 		'contact_lastname' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Nachname'
 		],
 		'contact_tel' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Telefonnummer'
 		],
 		'contact_mobile' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'],
 			'univis'=> '', // fehlt
 			'label' => 'Ansprechpartner Mobilnummer'
 		],
 		'contact_email' => [
-			'interamt' => array('ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'),
+			'bite' => '',
+			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner E-Mail'
 		],
 		'contact_street' => [
-			'interamt' => array('Einsatzort', 'EinsatzortStrasse'),
+			'bite' => '',
+			'interamt' => ['Einsatzort', 'EinsatzortStrasse'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Straße'
 		],
 		'contact_postalcode' => [
-			'interamt' => array('Einsatzort', 'EinsatzortPLZ'),
+			'bite' => '',
+			'interamt' => ['Einsatzort', 'EinsatzortPLZ'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'PLZ'
 		],
 		'contact_city' => [
-			'interamt' => array('Einsatzort', 'EinsatzortOrt'),
+			'bite' => '',
+			'interamt' => ['Einsatzort', 'EinsatzortOrt'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ort'
 		]
