@@ -283,6 +283,7 @@ function fillMap( &$map, &$job ) {
 			  $map_ret[$k] =  $job[$val];
 		  }
 	  }
+
 	  return $map_ret;
   }
   
@@ -360,7 +361,7 @@ function getMap( $provider ){
 			'label' => 'Link zur Bewerbung'
 		],
 		'job_intern' => [
-			'bite' => '', // fehlt
+			'bite' => '', // fehlt, es gibt bei BITE nur öffentlich zugängliche Stellen
 			'interamt' => '', // fehlt
 			'univis'=> 'intern',
 			'label' => 'Intern'
@@ -378,7 +379,7 @@ function getMap( $provider ){
 			'label' => 'Stellenbezeichnung'
 		],
 		'job_start' => [
-			'bite' => ['custom', 'jobstartdate'],
+			'bite' => ['custom', 'jobstartdate'], // wenn es nicht exisitert: "nächstmöglichen Zeitpunkt"
 			'interamt' => 'DatumBesetzungZum',
 			'univis'=> 'start',
 			'label' => 'Besetzung zum'
@@ -444,7 +445,7 @@ function getMap( $provider ){
 			'label' => 'Wochenarbeitszeit'
 		],
 		'job_category' => [
-			'bite' => ['custom', 'zuordnung', 0], // derzeit steht dort nur "stellen", sollte "wiss", "n-wiss", "hiwi", "azubi" oder "other" liefern
+			'bite' => ['custom', 'zuordnung'], // "wiss", "n-wiss", "hiwi", "azubi", "prof" or "other"
 			'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
 			'univis'=> 'group',
 			'label' => 'Berufsgruppe'
@@ -480,7 +481,7 @@ function getMap( $provider ){
 			'label' => 'Benefits'
 		],
 		'employer_organization' => [
-			'bite' => 'Technische Universität Nürnberg', // 2DO: muss über settings eingestellt werden 'Technische Universität Nürnberg', da API keine Daten dazu liefert
+			'bite' => ['custom', 'hiringorganization'], // tu_nuernberg => 'Technische Universität Nürnberg'
 			'interamt' => 'StellenangebotBehoerde',
 			'univis'=> 'orgname',
 			'label' => 'Organisationseinheit',
@@ -522,62 +523,74 @@ function getMap( $provider ){
 			'label' => 'Ansprechpartner Link'
 		],
 		'contact_title' => [
-			'bite' => '',
+			'bite' => '', // existiert nicht, aber contact_name
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Titel'
 		],
 		'contact_firstname' => [
-			'bite' => '',
+			'bite' => '', // existiert nicht, aber contact_name
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Vorname'
 		],
 		'contact_lastname' => [
-			'bite' => '',
+			'bite' => '', // existiert nicht, aber contact_name
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Nachname'
 		],
+		'contact_name' => [
+			'bite' => ['custom', 'contact_name'], 
+			'interamt' => '', // exisitert nicht, aber aufgeschlüsselt in contact_title, contact_fistname, contact_lastname
+			'univis'=> '', // see fillPersons()
+			'label' => 'Ansprechpartner Name'
+		],
 		'contact_tel' => [
-			'bite' => '',
+			'bite' => ['custom', 'contact_tel'], 
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner Telefonnummer'
 		],
 		'contact_mobile' => [
-			'bite' => '',
+			'bite' => ['custom', 'contact_mobile'],
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'],
 			'univis'=> '', // fehlt
 			'label' => 'Ansprechpartner Mobilnummer'
 		],
 		'contact_email' => [
-			'bite' => '',
+			'bite' => ['custom', 'contact_email'],
 			'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ansprechpartner E-Mail'
 		],
 		'contact_street' => [
-			'bite' => '',
+			'bite' => '', // exisitert nicht, aber contact_address
 			'interamt' => ['Einsatzort', 'EinsatzortStrasse'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Straße'
 		],
 		'contact_postalcode' => [
-			'bite' => '',
+			'bite' => '', // exisitert nicht, aber contact_address
 			'interamt' => ['Einsatzort', 'EinsatzortPLZ'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'PLZ'
 		],
 		'contact_city' => [
-			'bite' => '',
+			'bite' => '', // exisitert nicht, aber contact_address
 			'interamt' => ['Einsatzort', 'EinsatzortOrt'],
 			'univis'=> '', // see fillPersons()
 			'label' => 'Ort'
-		]
-  ];
+		],
+		'contact_address' => [
+			'bite' => ['custom', 'contact_address'],
+			'interamt' => '', // exisitert nicht, aber aufgeschlüsset in contact_street, contact_postalcode, contact_city
+			'univis'=> '', // see fillPersons()
+			'label' => 'Adresse'
+		],
+  	];
   
-  $provider_map = array();
+  	$provider_map = array();
 	foreach ($map as $key => $val) {
 		$provider_map[$key] = $val[$provider];
 	}
