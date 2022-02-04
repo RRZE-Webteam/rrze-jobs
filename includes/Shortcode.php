@@ -4,12 +4,7 @@ namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
 use function RRZE\Jobs\Config\getShortcodeSettings;
-use function RRZE\Jobs\Config\getMap;
-use function RRZE\Jobs\Config\getURL;
-use function RRZE\Jobs\Config\fillMap;
-use function RRZE\Jobs\Config\getPersons;
-use function RRZE\Jobs\Config\formatUnivIS;
-use function RRZE\Jobs\Config\isInternAllowed;
+use RRZE\Jobs\Job;
 
 include_once(ABSPATH.'wp-admin/includes/plugin.php');
 
@@ -22,6 +17,7 @@ class Shortcode {
     private $settings = '';
     private $pluginname = '';
     private $options = [];
+    private $helper = '';
 
 
     /**
@@ -40,6 +36,7 @@ class Shortcode {
         }
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
+        $this->helper = new Job();
     }
     
 
@@ -114,21 +111,21 @@ class Shortcode {
                     (isset($map['job_description_introduction']) ? '<p>'.$map['job_description_introduction'].'</p>' : '')
                     . (isset($map['job_description_introduction_added']) ? '<p>'.$map['job_description_introduction_added'].'</p>' : '')
                     . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
-                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.formatUnivIS($map['job_description']).'</p>' : '')
-                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications']).'</p>' : '')
-                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
-                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.formatUnivIS($map['job_benefits']).'</p>' : '')
-                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.formatUnivIS($map['application_link']).'</p>' : '');
+                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
+                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
+                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
+                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
+                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
                 break;
             case 'univis':
                 $description =
-                    (isset($map['job_description_introduction']) ? '<p>'.formatUnivIS($map['job_description_introduction']).'</p>' : '')
+                    (isset($map['job_description_introduction']) ? '<p>'.$this->helper->formatUnivIS($map['job_description_introduction']).'</p>' : '')
                     . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
-                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.formatUnivIS($map['job_description']).'</p>' : '')
-                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications']).'</p>' : '')
-                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
-                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.formatUnivIS($map['job_benefits']).'</p>' : '')
-                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.formatUnivIS($map['application_link']).'</p>' : '');
+                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
+                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
+                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
+                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
+                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
                 break;
             case 'interamt':
                 $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
@@ -155,8 +152,7 @@ class Shortcode {
         // provider => attribute provider or GET-parameter provider or default from shortcode settings
         $this->provider = strtolower( !empty( $atts['provider'] ) ? sanitize_text_field($atts['provider']) : ( !empty($_GET['provider']) ? sanitize_text_field($_GET['provider']) : $this->settings['provider']['default'] ));
 
-        $this->map_template = getMap( $this->provider );
-
+        $this->map_template = $this->helper->getMap($this->provider);
 
         // jobid => attribute jobid or GET-parameter jobid 
         $this->jobid = ( !empty( $atts['jobid'] ) ? sanitize_text_field($atts['jobid']) : ( !empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0 ) );
@@ -392,7 +388,7 @@ class Shortcode {
                 ];
         }
 
-        $api_url = getURL($this->provider, $sType) . $sParam;
+        $api_url = $this->helper->getURL($this->provider, $sType) . $sParam;
 
         $content = wp_remote_get($api_url, $aGetArgs);
         $content = $content["body"];
@@ -493,7 +489,7 @@ class Shortcode {
                     // let's skip this entry, there might be valid ones
                     continue;
                 }
-                $maps[] = fillMap($this->map_template, $aResponse['content']);
+                $maps[] = $this->helper->fillMap($this->map_template, $aResponse['content']);
 
 
 
@@ -532,7 +528,7 @@ class Shortcode {
                             return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
                         }        
                     }
-                    $persons = getPersons($aResponse['content']['Person']);
+                    $persons = $this->helper->getUnivisPersons($aResponse['content']['Person']);
                 }
 
                 $aJobs = [];
@@ -572,9 +568,9 @@ class Shortcode {
                                 return $aResponse['content'];
                             }
 
-                            $job = fillMap($this->map_template, $aResponse['content']);
+                            $job = $this->helper->fillMap($this->map_template, $aResponse['content']);
                         } else {
-                            $job = fillMap($this->map_template, $jobData);
+                            $job = $this->helper->fillMap($this->map_template, $jobData);
                         }
 
                         // Skip if expired
@@ -711,7 +707,7 @@ class Shortcode {
             }
 
             $maps = $this->sortArrayByField( $maps, $orderby, $order );
-            $intern_allowed = isInternAllowed();
+            $intern_allowed = $this->helper->isInternAllowed();
 
             $shortcode_items = '';
             foreach ($maps as $map) {
@@ -806,7 +802,7 @@ class Shortcode {
                 break;
             case 'univis':
                 $job = $aResponse['content']['Position'][0];
-                $aPersons = getPersons($aResponse['content']['Person']);
+                $aPersons = $this->helper->getUnivisPersons($aResponse['content']['Person']);
                 $aPersons = $aPersons[$job['acontact']];
                 break;
         }
@@ -815,12 +811,19 @@ class Shortcode {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
         }
 
+
+        // TEST
+
+        // echo '<pre>';
+        // var_dump($job);
+        // exit;
+
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = (has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : '');
 
-        $map = fillMap($this->map_template, $job);
+        $map = $this->helper->fillMap($this->map_template, $job);
 
-        $intern_allowed = isInternAllowed();
+        $intern_allowed = $this->helper->isInternAllowed();
 
         if ($this->provider == 'univis') {
             foreach ($aPersons as $key => $val) {
@@ -935,7 +938,7 @@ class Shortcode {
 
         $jobs_page_url = get_permalink($this->options['rrze-jobs_jobs_page']);
 
-        $intern_allowed = isInternAllowed();
+        $intern_allowed = $this->helper->isInternAllowed();
 
         foreach ($maps as $k =>$map) {
             $job_intern = ( isset( $map['job_intern'] ) && $map['job_intern'] == 'ja' ? 1 : 0 );
