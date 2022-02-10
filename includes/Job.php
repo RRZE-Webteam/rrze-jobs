@@ -477,7 +477,7 @@ class Job
         }
     }
 
-    private static function isValid(&$content){
+    public function isValid(&$content){
 
         if (isset($content['active'])){
             if ($content['active']){

@@ -343,35 +343,6 @@ class Shortcode {
     }
 
 
-    // outsourced to Job.php -> rrze_wp_extended
-    // private static function checkDates(&$content){
-    //     if (!isset($content['channels']['channel0']['from']) || !isset($content['channels']['channel0']['to'])){
-    //         return TRUE;
-    //     }
-    //     $now = date("Y-m-d H:i:s");
-    //     $from = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['from'])); // 2022-01-19T23:01:00+00:00
-    //     $to = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['to'])); // 2022-01-21T23:01:00+00:00
-
-    //     if (($from <= $now) && ($to >= $now)){
-    //         return TRUE;
-    //     }else{
-    //         return FALSE;
-    //     }
-    // }
-
-    // private static function isValid(&$content){
-
-    //     if (isset($content['active'])){
-    //         if ($content['active']){
-    //             return self::checkDates($content);
-    //         }else{
-    //             return FALSE;
-    //         }
-    //     }else{
-    //         return self::checkDates($content);
-    //     }
-    // }
-
     private function getResponse($sType, $sParam = NULL){
         $aRet = [
             'valid' => FALSE, 
@@ -402,7 +373,7 @@ class Shortcode {
                     'valid' => FALSE, 
                     'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['type'] . ' - ' . $content['message'] . '</p>'
                 ];
-            }elseif (self::isValid($content)){
+            }elseif ($this->helper->isValid($content)){
                 $aRet = [
                     'valid' => TRUE, 
                     'content' => $content
