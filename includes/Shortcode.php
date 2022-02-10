@@ -343,33 +343,34 @@ class Shortcode {
     }
 
 
-    private static function checkDates(&$content){
-        if (!isset($content['channels']['channel0']['from']) || !isset($content['channels']['channel0']['to'])){
-            return TRUE;
-        }
-        $now = date("Y-m-d H:i:s");
-        $from = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['from'])); // 2022-01-19T23:01:00+00:00
-        $to = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['to'])); // 2022-01-21T23:01:00+00:00
+    // outsourced to Job.php -> rrze_wp_extended
+    // private static function checkDates(&$content){
+    //     if (!isset($content['channels']['channel0']['from']) || !isset($content['channels']['channel0']['to'])){
+    //         return TRUE;
+    //     }
+    //     $now = date("Y-m-d H:i:s");
+    //     $from = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['from'])); // 2022-01-19T23:01:00+00:00
+    //     $to = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['to'])); // 2022-01-21T23:01:00+00:00
 
-        if (($from <= $now) && ($to >= $now)){
-            return TRUE;
-        }else{
-            return FALSE;
-        }
-    }
+    //     if (($from <= $now) && ($to >= $now)){
+    //         return TRUE;
+    //     }else{
+    //         return FALSE;
+    //     }
+    // }
 
-    private static function isValid(&$content){
+    // private static function isValid(&$content){
 
-        if (isset($content['active'])){
-            if ($content['active']){
-                return self::checkDates($content);
-            }else{
-                return FALSE;
-            }
-        }else{
-            return self::checkDates($content);
-        }
-    }
+    //     if (isset($content['active'])){
+    //         if ($content['active']){
+    //             return self::checkDates($content);
+    //         }else{
+    //             return FALSE;
+    //         }
+    //     }else{
+    //         return self::checkDates($content);
+    //     }
+    // }
 
     private function getResponse($sType, $sParam = NULL){
         $aRet = [
