@@ -1,7 +1,10 @@
 # RRZE Jobs
-Einbindung von Jobangeboten per Shortcode über API (zurzeit Interamt, UnivIS, BITE)
+Einbindung von Jobangeboten über API per Shortcode
 
-**Anbindung an BITE ist in Entwicklung**
+APIs:
+- BITE
+- Interamt
+- UnivIS
 
 
 ## Download
