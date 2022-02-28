@@ -178,9 +178,10 @@ class Shortcode {
         $orderby = ( isset( $atts['orderby'] ) ? $atts['orderby'] : $this->settings['orderby']['default']);
         $order = ( isset( $atts['order'] ) ? $atts['order'] : $this->settings['order']['default']);
         $fallback_apply = ( isset( $atts['fallback_apply'] ) ? $atts['fallback_apply'] : $this->settings['fallback_apply']['default']);
+        $link_only = ( isset( $atts['link_only'] ) ? $atts['link_only'] : $this->settings['link_only']['default']);
 
         if ( ($orgids || $this->provider == 'bite') && !$this->jobid ){
-            $output = $this->get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply );
+            $output = $this->get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply, $link_only );
         } else {
             $output = $this->get_single_job( $internal, $fallback_apply );
         }
@@ -433,7 +434,7 @@ class Shortcode {
         $item =  '<li class=".rrze-jobs-bite-li"><a class=".rrze-jobs-bite-link" href="' . $item . '">' . $key . '</a></li>';
     }
 
-    private function get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply ) {
+    private function get_all_jobs( $limit, $orderby, $order, $internal, $fallback_apply, $link_only ) {
         $output = '';
         $aResponse = [];
         $custom_logo_id = get_theme_mod('custom_logo');
@@ -443,67 +444,68 @@ class Shortcode {
 
         // BITE
         if ($this->provider == 'bite'){
-            // return just as a list of links to jobpostings
-            //     // 1. get JobsIDs
-            //     $aResponse = $this->getResponse('list');
+            if ($link_only){
+                // return just as a list of links to jobpostings
+                    // 1. get JobsIDs
+                    $aResponse = $this->getResponse('list');
 
-            //     if (!$aResponse['valid']){
-            //         return $aResponse['content'];
-            //     }
+                    if (!$aResponse['valid']){
+                        return $aResponse['content'];
+                    }
 
-            //     $aLink = [];
+                    $aLink = [];
 
-            //     foreach($aResponse['content']['entries'] as $entry){
-            //         $aResponse = $this->getResponse('single', $entry['id']);
-            //         if (!$aResponse['valid']){
-            //             // let's skip this entry, there might be valid ones
-            //             continue;
-            //         }
+                    foreach($aResponse['content']['entries'] as $entry){
+                        $aResponse = $this->getResponse('single', $entry['id']);
+                        if (!$aResponse['valid']){
+                            // let's skip this entry, there might be valid ones
+                            continue;
+                        }
 
-            //         $job_title = $aResponse['content']['title'];
-            //         $link = $aResponse['content']['channels']['channel0']['route']['posting'];
-            //         $aLink[$job_title] = $link;
-            //     }
+                        $job_title = $aResponse['content']['title'];
+                        $link = $aResponse['content']['channels']['channel0']['route']['posting'];
+                        $aLink[$job_title] = $link;
+                    }
 
-            //     if (!empty($aLink)){
-            //         array_walk($aLink, [$this, 'makeLink']);
-            //         return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
-            //     }else{
-            //         if (isset($this->options['rrze-jobs_no_jobs_message'])) {
-            //             return '<p>' . $this->options['rrze-jobs_no_jobs_message'] . '</a></p>';
-            //         }
-            //     }
+                    if (!empty($aLink)){
+                        array_walk($aLink, [$this, 'makeLink']);
+                        return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
+                    }else{
+                        if (isset($this->options['rrze-jobs_no_jobs_message'])) {
+                            return '<p>' . $this->options['rrze-jobs_no_jobs_message'] . '</a></p>';
+                        }
+                    }
+            }else{
+                // 1. get JobsIDs
+                $aResponseJobIDs = $this->getResponse('list');
 
-
-            // 1. get JobsIDs
-            $aResponseJobIDs = $this->getResponse('list');
-
-            if (!$aResponseJobIDs['valid']){
-                return $aResponseJobIDs['content'];
-            }
-
-            foreach($aResponseJobIDs['content']['entries'] as $entry){
-                // 2. get actual job
-                $aResponse = $this->getResponse('single', $entry['id']);
-                if (!$aResponse['valid']){
-                    // let's skip this entry, there might be valid ones
-                    continue;
+                if (!$aResponseJobIDs['valid']){
+                    return $aResponseJobIDs['content'];
                 }
-                $maps[] = $this->helper->fillMap($this->map_template, $aResponse['content']);
+
+                foreach($aResponseJobIDs['content']['entries'] as $entry){
+                    // 2. get actual job
+                    $aResponse = $this->getResponse('single', $entry['id']);
+                    if (!$aResponse['valid']){
+                        // let's skip this entry, there might be valid ones
+                        continue;
+                    }
+                    $maps[] = $this->helper->fillMap($this->map_template, $aResponse['content']);
 
 
 
-                // $job_title = $aResponse['content']['title']; // does not deliver JOB-TITLE but title for the template
-                // $description = $aResponse['content']['content']['html'];
+                    // $job_title = $aResponse['content']['title']; // does not deliver JOB-TITLE but title for the template
+                    // $description = $aResponse['content']['content']['html'];
 
 
-                // $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-                // $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last] SIDEBAR in Entwicklung [/three_columns_one_last][divider]');
+                    // $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
+                    // $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last] SIDEBAR in Entwicklung [/three_columns_one_last][divider]');
 
-                // $shortcode_item_inner .= '</div>';
-                // $shortcode_items .= do_shortcode('[collapse title="' . $job_title . '" name="' . substr($this->provider,0,1) . $entry['id'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                    // $shortcode_item_inner .= '</div>';
+                    // $shortcode_items .= do_shortcode('[collapse title="' . $job_title . '" name="' . substr($this->provider,0,1) . $entry['id'] . '"]' . $shortcode_item_inner . '[/collapse]');
+                }
+                // return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
             }
-            // return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');;
         }else{
             // Interamt + UnivIS
             foreach ( $this->aOrgIDs as $orgid ){

@@ -87,6 +87,13 @@ function getShortcodeSettings()
             'label' => __('Default application link', 'rrze-jobs'),
             'type' => 'string',
         ],
+        'link_only' => [
+            'field_type' => 'toggle',
+            'label' => __( 'Show only links to BITE', 'rrze-univis' ),
+            'type' => 'boolean',
+            'default' => FALSE,
+            'checked'   => FALSE
+        ],
     ];
 }
 
