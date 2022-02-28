@@ -111,21 +111,28 @@ class Shortcode {
                     (isset($map['job_description_introduction']) ? '<p>'.$map['job_description_introduction'].'</p>' : '')
                     . (isset($map['job_description_introduction_added']) ? '<p>'.$map['job_description_introduction_added'].'</p>' : '')
                     . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
-                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
-                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
-                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
-                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
-                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
+                    . (isset($map['job_description']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_task']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
+                    . (isset($map['job_qualifications']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_qualifications']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
+                    . (isset($map['job_qualifications_nth']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_qualifications']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
+                    . (isset($map['job_benefits']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_remarks']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
+                    . (isset($map['application_link']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_application']) . '</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
                 break;
             case 'univis':
                 $description =
                     (isset($map['job_description_introduction']) ? '<p>'.$this->helper->formatUnivIS($map['job_description_introduction']).'</p>' : '')
                     . (isset($map['job_title']) ? '<h3>'.$map['job_title'].'</h3>' : '')
-                    . (isset($map['job_description']) ? '<h4>Das Aufgabengebiet umfasst u.a.:</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
-                    . (isset($map['job_qualifications']) ? '<h4>Notwendige Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
-                    . (isset($map['job_qualifications_nth']) ? '<h4>Wünschenswerte Qualifikation</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
-                    . (isset($map['job_benefits']) ? '<h4>Bemerkungen</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
-                    . (isset($map['application_link']) ? '<h4>Bewerbung</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
+
+                    // Das Aufgabengebiet umfasst u.a.:
+                    // Notwendige Qualifikation
+                    // Wünschenswerte Qualifikation
+                    // Bemerkungen
+                    // Bewerbung
+                    
+                    . (isset($map['job_description']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_task']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_description']).'</p>' : '')
+                    . (isset($map['job_qualifications']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_qualifications']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications']).'</p>' : '')
+                    . (isset($map['job_qualifications_nth']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_qualifications']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_qualifications_nth']).'</p>' : '')
+                    . (isset($map['job_benefits']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_remarks']) . '</h4><p>'.$this->helper->formatUnivIS($map['job_benefits']).'</p>' : '')
+                    . (isset($map['application_link']) ? '<h4>' . strip_tags($this->options['rrze-jobs_job_headline_application']) . '</h4><p>'.$this->helper->formatUnivIS($map['application_link']).'</p>' : '');
                 break;
             case 'interamt':
                 $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
@@ -757,7 +764,7 @@ class Shortcode {
                 $shortcode_item_inner .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
                 $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $description  .'</div>[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar( $map, $logo_url ) . '[/three_columns_one_last][divider]');
 
-                if (isset($this->options['rrze-jobs_job_notice']) && $this->options['rrze-jobs_job_notice'] != '') {
+                if (!empty($this->options['rrze-jobs_job_notice'])) {
                     $shortcode_item_inner .= '<hr /><div>' . strip_tags( $this->options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>' ) . '</div>';
                 }
 
