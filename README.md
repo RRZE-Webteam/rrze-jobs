@@ -41,14 +41,18 @@ Beispiele:
 
 [jobs provider="bite"]
 [jobs provider="bite" link_only="1"]
+
 [jobs provider="bite" jobid="123456"]
 [jobs provider="interamt" jobid="123456"]
 [jobs provider="univis" jobid="123456"]
+
 [jobs provider="univis" orgids="123456, 98765, 454587"]
 [jobs provider="univis" orgids="123456" limit="8"]
 [jobs provider="univis" orgids="123456" limit="12" internal="include"]
+[jobs provider="univis" internal="only"]
+
 [jobs provider="interamt jobid="123456" fallback_apply="bewerbung@domain.tld"]
-[jobs provider="interamt jobid="123456" fallback_apply="https://domain.tld/bewerbungsformular"]
+[jobs provider="univis" jobid="123456" fallback_apply="https://domain.tld/bewerbungsformular"]
 
 
 ```
