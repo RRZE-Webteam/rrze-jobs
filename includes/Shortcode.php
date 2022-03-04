@@ -23,11 +23,12 @@ class Shortcode {
     /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct() {
+    public function __construct($settings) {
         include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
-        $this->options =  get_option( 'rrze-jobs' );
+        // $this->options =  get_option( 'rrze-jobs' );
+        $this->options =  $settings->getOptions();
         add_action('init', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
         add_action('init', [$this, 'initGutenberg']);
@@ -220,7 +221,7 @@ class Shortcode {
         }
 
         if ( $application_button_link != '' ) {
-            $sidebar .= do_shortcode( '<div>[button link="' . $mailto. $application_button_link . '" width="full"]Jetzt bewerben![/button]</div>' );
+            $sidebar .= do_shortcode( '<div>[button link="' . $mailto. $application_button_link . '" width="full"]' . $this->options['rrze-jobs_sidebar_application_button'] . '[/button]</div>' );
         }
 
         $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
@@ -231,8 +232,8 @@ class Shortcode {
         if ( isset( $map['job_type'] ) ) {
             $sidebar .= '<dt>' . __( 'Reference', 'rrze-jobs' ) . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
         }
-        if (isset($map['application_link'])) {
-            $sidebar .= '<dt>' . __( 'Application', 'rrze-jobs' ) . '</dt>';
+        if (isset($map['application_link']) && $this->options['rrze-jobs_sidebar_show_application_link']) {
+            $sidebar .= '<dt>' . $this->options['rrze-jobs_sidebar_headline_application'] . '</dt>';
             $sidebar .= '<dd>' . make_clickable($map['application_link']) . '</dd>';
         }
         $sidebar .= '</dl></div>';

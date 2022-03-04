@@ -156,12 +156,34 @@ function getFields()
                 'type' => 'text',
                 'default' => '',
             ],
+
+            [
+                'name' => 'sidebar_application_button',
+                'label' => __('"Apply to" button', 'rrze-jobs'),
+                'desc' => __('Label for the button to apply to in sidebar', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => 'Jetzt bewerben!',
+            ],
+            [
+                'name' => 'sidebar_headline_application',
+                'label' => __("Bewerbung", 'rrze-jobs'),
+                'desc' => __('Title of "Your application" in sidebar', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => __('Bewerbung', 'rrze-jobs'),
+            ],
+            [
+                'name' => 'sidebar_show_application_link',
+                'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
+                'desc' => __('In addition to the "Apply to" button, display a link in the sidebar', 'rrze-jobs'),
+                'type' => 'checkbox',
+                'default' => TRUE,
+            ],
             [
                 'name' => 'job_headline_task',
                 'label' => __("Ihre Aufgaben", 'rrze-jobs'),
                 'desc' => __('Title of "Your assignments"', 'rrze-jobs'),
                 'type' => 'text',
-                'default' => 'Das Aufgabengebiet umfasst u.a.:',
+                'default' => __('Das Aufgabengebiet umfasst u.a.:', 'rrze-jobs'),
             ],
             [
                 'name' => 'job_headline_qualifications',
