@@ -11,10 +11,9 @@ License:         GNU General Public License v2
 License URI:     http://www.gnu.org/licenses/gpl-2.0.html
 Domain Path:     /languages
 Text Domain:     rrze-jobs
-*/
+ */
 
 namespace RRZE\Jobs;
-
 
 /*
 Die Codezeile defined('ABSPATH') || exit;
@@ -23,7 +22,7 @@ dass die Plugin-Dateien nur innerhalb der WordPress-Umgebung ausgeführt werden.
 Denn wenn bspw. eine Datei I/O-Operationen enthält,
 kann sie schließlich kompromittiert werden (durch einen Angreifer),
 was zu unerwartetem Verhalten führen kann.
-*/
+ */
 defined('ABSPATH') || exit;
 
 require_once 'config/config.php';
@@ -87,7 +86,8 @@ function system_requirements()
 /**
  * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
  */
-function activation() {
+function activation()
+{
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -106,7 +106,8 @@ function activation() {
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
-function deactivation() {
+function deactivation()
+{
     // Hier können die Funktionen hinzugefügt werden, die
     // bei der Deaktivierung des Plugins aufgerufen werden müssen.
     // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
@@ -118,13 +119,14 @@ function deactivation() {
  * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
  * und alle Plugins eingebunden wurden.
  */
-function loaded() {
+function loaded()
+{
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
     // Überprüft die minimal erforderliche PHP- u. WP-Version.
     if ($error = system_requirements()) {
-        include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+        include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $plugin_data = get_plugin_data(__FILE__);
         $plugin_name = $plugin_data['Name'];
         $tag = is_network_admin() ? 'network_admin_notices' : 'admin_notices';

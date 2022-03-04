@@ -89,14 +89,13 @@ function getShortcodeSettings()
         ],
         'link_only' => [
             'field_type' => 'toggle',
-            'label' => __( 'Show only links to BITE', 'rrze-univis' ),
+            'label' => __('Show only links to BITE', 'rrze-univis'),
             'type' => 'boolean',
-            'default' => FALSE,
-            'checked'   => FALSE
+            'default' => false,
+            'checked' => false,
         ],
     ];
 }
-
 
 /**
  * Gibt die Einstellungen des Menus zurück.
@@ -156,6 +155,25 @@ function getFields()
                 'type' => 'text',
                 'default' => '',
             ],
+            [
+                'name' => 'hr',
+                'label' => '',
+                'desc' => '',
+                'type' => 'line',
+            ],
+            [
+                'name' => 'jobs_page',
+                'label' => __('Jobs Page', 'rrze-jobs'),
+                'desc' => __('Link target, used on Public Displays only.', 'rrze-jobs'),
+                'type' => 'selectPage',
+                'default' => '',
+            ],
+            [
+                'name' => 'hr2',
+                'label' => '',
+                'desc' => '',
+                'type' => 'line',
+            ],
 
             [
                 'name' => 'sidebar_application_button',
@@ -176,7 +194,7 @@ function getFields()
                 'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
                 'desc' => __('In addition to the "Apply to" button, display a link in the sidebar', 'rrze-jobs'),
                 'type' => 'checkbox',
-                'default' => TRUE,
+                'default' => true,
             ],
             [
                 'name' => 'job_headline_task',
@@ -224,13 +242,7 @@ function getFields()
                 'type' => 'textarea',
                 'default' => __('No job offers found.', 'rrze-jobs'),
             ],
-            [
-                'name' => 'jobs_page',
-                'label' => __('Jobs Page', 'rrze-jobs'),
-                'desc' => __('Link target, used on Public Displays only.', 'rrze-jobs'),
-                'type' => 'selectPage',
-                'default' => '',
-            ],
+
         ],
     ];
 }
@@ -252,7 +264,3 @@ function getHelpTab()
         ],
     ];
 }
-
-
-
-
