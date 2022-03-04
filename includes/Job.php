@@ -301,7 +301,9 @@ class Job
 
         $provider_map = array();
         foreach ($map as $key => $val) {
-            $provider_map[$key] = $val[$provider];
+            if (!empty($val[$provider])){
+                $provider_map[$key] = $val[$provider];
+            }
         }
 
         return $provider_map;
