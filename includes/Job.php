@@ -42,8 +42,10 @@ class Job
      * @return array
      */
 
-    public function getMap($provider)
+    public function getMap($provider, $sendLabel = false)
     {
+        $field = ($sendLabel ? 'label' : $provider);
+
         $map = [
             'job_id' => [
                 'bite' => 'id',
@@ -301,8 +303,8 @@ class Job
 
         $provider_map = array();
         foreach ($map as $key => $val) {
-            if (!empty($val[$provider])){
-                $provider_map[$key] = $val[$provider];
+            if (!empty($val[$field])){
+                $provider_map[$key] = $val[$field];
             }
         }
 

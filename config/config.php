@@ -5,6 +5,7 @@ namespace RRZE\Jobs\Config;
 defined('ABSPATH') || exit;
 define('RRZE_JOBS_LOGO', plugins_url('assets/img/fau.gif', __DIR__));
 define('RRZE_JOBS_ADDRESS_REGION', 'Bayern');
+use RRZE\Jobs\Job;
 
 function getShortcodeSettings()
 {
@@ -120,8 +121,16 @@ function getSections()
 {
     return [
         [
-            'id' => 'rrze-jobs',
-            'title' => __('Settings', 'rrze-jobs'),
+            'id' => 'rrze-jobs-access',
+            'title' => __('Zugänge', 'rrze-jobs'),
+        ],
+        [
+            'id' => 'rrze-jobs-labels',
+            'title' => __('Beschriftungen', 'rrze-jobs'),
+        ],
+        [
+            'id' => 'rrze-jobs-fields',
+            'title' => __('Felder', 'rrze-jobs'),
         ],
     ];
 }
@@ -132,8 +141,8 @@ function getSections()
  */
 function getFields()
 {
-    return [
-        'rrze-jobs' => [
+    $aFields = [
+        'rrze-jobs-access' => [
             [
                 'name' => 'orgids_interamt',
                 'label' => __("orgIDs Interamt", 'rrze-jobs'),
@@ -168,13 +177,8 @@ function getFields()
                 'type' => 'selectPage',
                 'default' => '',
             ],
-            [
-                'name' => 'hr2',
-                'label' => '',
-                'desc' => '',
-                'type' => 'line',
-            ],
-
+        ],
+        'rrze-jobs-labels' => [
             [
                 'name' => 'sidebar_application_button',
                 'label' => __('"Apply to" button', 'rrze-jobs'),
@@ -242,9 +246,25 @@ function getFields()
                 'type' => 'textarea',
                 'default' => __('No job offers found.', 'rrze-jobs'),
             ],
-
         ],
     ];
+
+    // add fields defined in map (Job.php)
+    $jobOutput = new Job();
+    $map_template = $jobOutput->getMap('bite', 'label');
+
+    foreach($map_template as $field => $label){
+        $aFields['rrze-jobs-fields'][] = [
+            'name' => $field,
+            'label' => $label,
+            'desc' => __('set default value or leave to be filled by provider', 'rrze-jobs'),
+            'type' => 'text',
+            'default' => __('- wird von der Stellenbörse geliefert -', 'rrze-jobs'),
+        ];
+    }
+    
+    return $aFields;
+
 }
 
 /**
