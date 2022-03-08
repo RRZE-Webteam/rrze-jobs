@@ -436,7 +436,155 @@ class Job
         return false;
     }
 
-    public function formatUnivIS($txt)
+
+    
+    private function skipJob(&$job, $intern_allowed){
+        // Skip if expired
+        if ($job['application_end'] < date('Y-m-d')) {
+            return true;
+        }
+        
+        // Skip internal job offers if necessary
+        $isInternJob = (!empty($map['job_intern']) && $map['job_intern'] == 'ja' ? 1 : 0);
+        switch ($intern_allowed) {
+            case 'only':
+            case 'include':
+                if ($isInternJob) {
+                    return false;
+                }
+                break;
+            case 'exclude':
+                if ($isInternJob) {
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    public function cleanData(&$provider, &$job, $intern_allowed){
+        // Skip job?
+        if ($this->skipJob($job, $intern_allowed)){
+            return false;
+        }
+
+        // Convert dates
+        $fields = ['job_start', 'application_start', 'application_end'];
+        foreach($aFields as $field){
+            if (!empty($job[$field])){
+                $job[$field] = date('Y-m-d', strtotime($job[$field]));
+            }
+        }
+        if (!empty($job['application_end'])){
+            $job['application_end'] = date('d.m.Y', strtotime($job['application_end']));
+        }
+
+        // Set 'job_start_sort'
+        if (!empty($job['job_start'])) {
+            // field might contain a date - if it contains a date, it must be in english format
+            if (preg_match("/\d{4}-\d{2}-\d{2}/", $job['job_start'], $parts)) {
+                $job['job_start_sort'] = $parts[0];
+            } elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $job['job_start'], $parts)) {
+                $job['job_start_sort'] = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
+            } else {
+                // field contains only a string - check if it is ASAP
+                $val = strtolower($job['job_start']);
+                if (strpos($val, 'sofort') !== false || strpos($val, 'bald') !== false || strpos($val, 'glich') !== false || strpos($val, 'asap') !== false || strpos($val, 'a.s.a.p.') !== false) {
+                    // sofort, ab sofort, baldmöglich, baldmöglichst, zum nächstmöglichen Zeitpunkt, nächstmöglich, frühst möglich, frühestmöglich, asap, a.s.a.p.
+                    $job['job_start_sort'] = '0';
+                } else {
+                    $job['job_start_sort'] = $job[$field];
+                }
+            }
+            // Convert date 'job_start'
+            $job['job_start'] = date('d.m.Y', strtotime($job['job_start']));
+        }
+
+        // Set 'job_employmenttype'
+        if ($provider == 'univis'){
+            if (!empty($job['job_employmenttype'])) {
+                $job['job_employmenttype'] = ucfirst($job['job_employmenttype']) . 'zeit';
+            }
+        }
+
+        // Set 'job_category_grouped'
+        if ($provider == 'interamt'){
+            if (!empty($job['job_category'])) {
+                if ($job['job_category'] == 'Bildung und Wissenschaft') {
+                    $job['job_category_grouped'] = 'wiss';
+                } else {
+                    $job['job_category_grouped'] = 'n-wiss';
+                }
+            }
+            if (strpos($job['job_title'], 'Auszubildende') !== false) {
+                $job['job_category_grouped'] = 'azubi';
+            } elseif (strpos($job['job_title'], 'Wissenschaftliche Hilfs') !== false) {
+                $job['job_category_grouped'] = 'hiwi';
+            }
+        }
+
+        // Set 'application_link'
+        if ($provider == 'interamt' && !empty($job['job_description'])){
+            $start_application_string = strpos($job['job_description'], 'Bitte bewerben Sie sich');
+            if ($start_application_string === false) {
+                $start_application_string = strpos($job['job_description'], 'Senden Sie Ihre Bewerbung');
+            }
+            if ($start_application_string !== false && $start_application_string > 100) {
+                $application_string = substr($job['job_description'], $start_application_string);
+                $job['application_link'] = strip_tags(html_entity_decode($application_string), '<a><br><br /><b><strong><i><em>');
+            }
+        }
+
+        // Set 'application_email'
+        if (!empty($job['application_link'])) {
+            preg_match_all("/[\._a-zA-Z0-9-]+@[\._a-zA-Z0-9-]+[a-zA-Z]+/i", $job['application_link'], $matches);
+            if (!empty($matches[0])) {
+                $application_email = $matches[0][0];
+                $job['application_email'] = $application_email;
+            }
+        }
+
+        // Set 'employer_organization'
+        if (!empty($job['employer_organization'])) {
+            $job['employer_organization'] = nl2br(str_replace('Zentrale wissenschaftliche Einrichtungen der FAU' . PHP_EOL, '', $job['employer_organization']));
+        }
+
+        // Set 'job_salary_search'
+        if (!empty($job['job_salary_from'])) {
+            $job['job_salary_search'] = (int) filter_var($job['job_salary_from'], FILTER_SANITIZE_NUMBER_INT);
+        } elseif (isset($job['job_salary_to'])) {
+            $job['job_salary_search'] = (int) filter_var($job['job_salary_to'], FILTER_SANITIZE_NUMBER_INT);
+        }
+        if (empty($job['job_salary_search'])) {
+            $job['job_salary_search'] = 99;
+        }
+        $job['job_salary_search'] = abs($job['job_salary_search']);
+
+        // Set 'job_limitation_boolean'
+        if (!empty($job['job_limitation']) || !empty($job['job_limitation_duration'])) {
+            $job['job_limitation_boolean'] = 1;
+        } else {
+            $job['job_limitation_boolean'] = 0;
+        }
+
+        // format fields
+        $aFields = [
+            'job_description',
+            'job_qualifications',
+            'job_qualifications_nth',
+            'job_benefits',
+            'application_link',
+        ];
+
+        foreach($aFields as $field){
+            if (!empty($job[$field])){
+                $job[$field] = $this->formatUnivIS($job[$field]);
+            }
+        }
+    }
+
+    private function formatUnivIS($txt)
     {
         $subs = array(
             '/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>', // list
