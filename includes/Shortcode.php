@@ -608,7 +608,7 @@ class Shortcode
                                 $job[$key] = $val;
                             }
                         }
-                        $job = $this->jobOutput->cleanData($this->provider, $job, $intern_allowed);
+                        $this->jobOutput->cleanData($this->provider, $job, $intern_allowed);
 
                         if ($job){
                             $maps[] = $job;

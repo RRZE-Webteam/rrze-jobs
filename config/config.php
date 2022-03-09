@@ -131,6 +131,7 @@ function getSections()
         [
             'id' => 'rrze-jobs-fields',
             'title' => __('Datenfelder', 'rrze-jobs'),
+            'desc' => __('Diese Felder werden von den Schnittstellen (Interamt, UnivIS, BITE) geliefert.<br />Sie können einen Standardwert für jedes Feld festlegen, das im Stellenangebot ausgegeben wird.<br />Lassen Sie das Feld leer, damit der von der Schnittstelle bezogene Wert verwendet werden kann.', 'rrze-jobs'),
         ],
     ];
 }
@@ -182,7 +183,7 @@ function getFields()
             [
                 'name' => 'sidebar_application_button',
                 'label' => __('"Apply to" button', 'rrze-jobs'),
-                'desc' => __('Label for the button to apply to in the sidebar', 'rrze-jobs'),
+                'desc' => __('Sidebar: Label for the button to apply to', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => 'Jetzt bewerben!',
             ],
@@ -251,16 +252,24 @@ function getFields()
 
     // add fields defined in map (Job.php)
     $jobOutput = new Job();
-    $map_template = $jobOutput->getMap('bite', 'label');
+    $map_template = $jobOutput->getMap('bite', true);
+    $aHideFields = [
+        'job_id',
+        'job_intern',
+    ];
 
-    foreach($map_template as $field => $label){
-        $aFields['rrze-jobs-fields'][] = [
-            'name' => $field,
-            'label' => $label,
-            'desc' => __('enter default value or leave empty to be filled by provider', 'rrze-jobs'),
-            'type' => 'text',
-            'default' => '',
-        ];
+    foreach($map_template as $sField => $aDetails){
+
+        if (!in_array($sField, $aHideFields)){
+            $aFields['rrze-jobs-fields'][] = [
+                'name' => $sField,
+                'label' => $aDetails['label'],
+                'desc' => (!empty($aDetails['desc'])?$aDetails['desc']:''),
+                // 'desc' => __('enter default value or leave empty to be filled by provider', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => '',
+            ];
+        }
     }
     
     return $aFields;

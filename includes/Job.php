@@ -42,10 +42,8 @@ class Job
      * @return array
      */
 
-    public function getMap($provider, $sendLabel = false)
+    public function getMap($provider, $bStructure = false)
     {
-        $field = ($sendLabel ? 'label' : $provider);
-
         $map = [
             'job_id' => [
                 'bite' => 'id',
@@ -58,6 +56,7 @@ class Job
                 'interamt' => 'DatumOeffentlichAusschreiben',
                 'univis' => '', // fehlt
                 'label' => 'Bewerbungsstart',
+                'desc' =>  'nicht bei UnivIS',
             ],
             'application_end' => [
                 'bite' => ['channels', 'channel0', 'to'],
@@ -76,12 +75,14 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'intern',
                 'label' => 'Intern',
+                'desc' =>  'nur bei UnivIS',
             ],
             'job_type' => [
                 'bite' => ['custom', 'ausschreibungskennziffer'],
                 'interamt' => 'Kennung',
                 'univis' => '', // fehlt
                 'label' => 'Kennung',
+                'desc' =>  'nicht bei UnivIS',
             ],
             'job_title' => [
                 'bite' => 'title',
@@ -94,6 +95,7 @@ class Job
                 'interamt' => 'DatumBesetzungZum',
                 'univis' => 'start',
                 'label' => 'Besetzung zum',
+                'desc' =>  'leer = "zum nächstmöglichen Zeitpunkt"',
             ],
             'job_limitation' => [
                 'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => if string contains "temporary" => befristet, else unbefristet
@@ -106,6 +108,7 @@ class Job
                 'interamt' => 'BefristetFuer', // Anzahl Monate !!!
                 'univis' => 'befristet',
                 'label' => 'Dauer der Befristung',
+                'desc' =>  'in Monaten',
             ],
             'job_limitation_reason' => [
                 'bite' => ['custom', 'job_limitation_reason'],
@@ -117,7 +120,8 @@ class Job
                 'bite' => ['custom', 'entgelt_art'],
                 'interamt' => '', // existiert nicht, da inkludiert in job_salary_from
                 'univis' => '', // existiert nicht, da inkludiert in job_salary_from
-                'label' => 'Entgelt Gruppe',
+                'label' => 'Entgelt Gruppe (nur bei BITE)',
+                'desc' =>  'nur bei BITE',
             ],
             'job_salary_from' => [
                 'bite' => ['custom', 'estimatedsalary'],
@@ -130,6 +134,7 @@ class Job
                 'interamt' => 'TarifEbeneBis',
                 'univis' => 'bisbesold',
                 'label' => 'Tarifebene bis',
+                'desc' =>  'nicht bei BITE',
             ],
             'job_qualifications' => [
                 'bite' => ['custom', 'profil'],
@@ -142,24 +147,28 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'desc3',
                 'label' => 'Wünschenswerte Qualifikationen',
+                'desc' =>  'nur bei UnivIS',
             ],
             'job_employmenttype' => [
                 'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => substring
                 'interamt' => 'Teilzeit',
                 'univis' => 'type2',
                 'label' => 'Vollzeit / Teilzeit',
+                'desc' =>  'erlaubte Werte: "full_time" oder "part_time" und gegebenenfalls mit Leerzeichen getrennt: "temporary"',
             ],
             'job_workhours' => [
                 'bite' => '', // fehlt
                 'interamt' => 'WochenarbeitszeitArbeitnehmer',
                 'univis' => 'wstunden',
                 'label' => 'Wochenarbeitszeit',
+                'desc' =>  'nicht bei BITE',
             ],
             'job_category' => [
                 'bite' => ['custom', 'zuordnung'], // "wiss", "n-wiss", "hiwi", "azubi", "prof" or "other"
                 'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
                 'univis' => 'group',
                 'label' => 'Berufsgruppe',
+                'desc' =>  'erlaubte Werte: "wiss", "n-wiss", "hiwi", "azubi", "prof" oder "other"',
             ],
             'job_description' => [
                 'bite' => ['custom', 'aufgaben'],
@@ -172,24 +181,28 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'desc5',
                 'label' => 'Beschreibung - Einleitung',
+                'desc' =>  'nicht bei Interamt',
             ],
             'job_description_introduction_added' => [
                 'bite' => ['custom', 'stellenzusatz'],
                 'interamt' => '', // fehlt
                 'univis' => '', // fehlt
                 'label' => 'Stellenzusatz',
+                'desc' =>  'nur bei BITE',
             ],
             'job_experience' => [
                 'bite' => ['custom', 'profil'],
                 'interamt' => '', // fehlt
                 'univis' => 'desc2',
                 'label' => 'Berufserfahrung',
+                'desc' =>  'nicht bei Interamt',
             ],
             'job_benefits' => [
                 'bite' => ['custom', 'wir_bieten'],
                 'interamt' => '', // fehlt
                 'univis' => 'desc4',
                 'label' => 'Benefits',
+                'desc' =>  'nicht bei Interamt',
             ],
             'employer_organization' => [
                 'bite' => ['custom', 'hiringorganization'], // tu_nuernberg => 'Technische Universität Nürnberg'
@@ -207,13 +220,15 @@ class Job
                 'bite' => ['location', 'houseNumber'],
                 'interamt' => '', // fehlt
                 'univis' => '', // fehlt
-                'label' => '', // fehlt
+                'label' => 'Hausnummer', // fehlt
+                'desc' =>  'nur bei BITE',
             ],
             'employer_postalcode' => [
                 'bite' => ['location', 'postCode'],
                 'interamt' => ['Einsatzort', 'EinsatzortPLZ'],
                 'univis' => '', // fehlt
                 'label' => 'PLZ',
+                'desc' =>  'nicht bei UnivIS',
             ],
             'employer_city' => [
                 'bite' => ['location', 'city'],
@@ -226,48 +241,55 @@ class Job
                 'interamt' => 'BeschaeftigungBereichBundesland',
                 'univis' => '', // fehlt
                 'label' => 'Bezirk',
+                'desc' => 'nur bei Interamt',
             ],
             'contact_link' => [
                 'bite' => '', // fehlt
                 'interamt' => 'HomepageBehoerde',
                 'univis' => '', // see fillPersons()
                 'label' => 'Ansprechpartner Link',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_title' => [
                 'bite' => '', // existiert nicht, aber contact_name
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerAnrede'],
                 'univis' => '', // see fillPersons()
                 'label' => 'Ansprechpartner Titel',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_firstname' => [
                 'bite' => '', // existiert nicht, aber contact_name
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerVorname'],
                 'univis' => '', // see fillPersons()
                 'label' => 'Ansprechpartner Vorname',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_lastname' => [
                 'bite' => '', // existiert nicht, aber contact_name
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerNachname'],
                 'univis' => '', // see fillPersons()
                 'label' => 'Ansprechpartner Nachname',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_name' => [
                 'bite' => ['custom', 'contact_name'],
                 'interamt' => '', // exisitert nicht, aber aufgeschlüsselt in contact_title, contact_fistname, contact_lastname
                 'univis' => '', // see fillPersons()
                 'label' => 'Ansprechpartner Name',
+                'desc' => 'nicht bei Interamt',
             ],
             'contact_tel' => [
                 'bite' => ['custom', 'contact_tel'],
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'],
                 'univis' => '', // see fillPersons()
-                'label' => 'Ansprechpartner Telefonnummer',
+                'label' => 'Ansprechpartner Telefonnummer',                
             ],
             'contact_mobile' => [
                 'bite' => ['custom', 'contact_mobile'],
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerMobil'],
                 'univis' => '', // fehlt
                 'label' => 'Ansprechpartner Mobilnummer',
+                'desc' => 'nicht bei UnivIS',
             ],
             'contact_email' => [
                 'bite' => ['custom', 'contact_email'],
@@ -279,36 +301,44 @@ class Job
                 'bite' => '', // exisitert nicht, aber contact_address
                 'interamt' => ['Einsatzort', 'EinsatzortStrasse'],
                 'univis' => '', // see fillPersons()
-                'label' => 'Straße',
+                'label' => 'Ansprechpartner Straße mit Hausnummer',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_postalcode' => [
                 'bite' => '', // exisitert nicht, aber contact_address
                 'interamt' => ['Einsatzort', 'EinsatzortPLZ'],
                 'univis' => '', // see fillPersons()
-                'label' => 'PLZ',
+                'label' => 'Ansprechpartner PLZ',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_city' => [
                 'bite' => '', // exisitert nicht, aber contact_address
                 'interamt' => ['Einsatzort', 'EinsatzortOrt'],
                 'univis' => '', // see fillPersons()
-                'label' => 'Ort',
+                'label' => 'Ansprechpartner Ort',
+                'desc' => 'nicht bei BITE',
             ],
             'contact_address' => [
                 'bite' => ['custom', 'contact_address'],
                 'interamt' => '', // exisitert nicht, aber aufgeschlüsset in contact_street, contact_postalcode, contact_city
                 'univis' => '', // see fillPersons()
-                'label' => 'Adresse',
+                'label' => 'Ansprechpartner Adresse',
+                'desc' => 'nur bei BITE',
             ],
         ];
 
-        $provider_map = array();
-        foreach ($map as $key => $val) {
-            if (!empty($val[$field])){
-                $provider_map[$key] = $val[$field];
-            }
-        }
+        if ($bStructure){
+            return $map;
+        }else{
+            $provider_map = [];
 
-        return $provider_map;
+            foreach ($map as $field => $aVal) {
+                if (!empty($aVal[$provider])){
+                    $provider_map[$field] = $aVal[$provider];
+                }
+            }
+            return $provider_map;
+        }
     }
 
     /* * * * * * * * * * * * * * *
@@ -364,14 +394,16 @@ class Job
     }
 
     /**
-     * Füllt die Map mit Werten aus der Schnittstelle
+     * Füllt die Map mit Werten mit Defaultwerten und denen aus der Schnittstelle
      * @return array
      */
-    public function fillMap(&$map, &$job)
+    public function fillMap(&$map, &$job, &$options = NULL)
     {
         $map_ret = array();
 
         foreach ($map as $k => $val) {
+            // did user store default?
+            // if (!empty($options[]))
             if (is_array($val)) {
                 switch (count($val)) {
                     case 2:
@@ -470,7 +502,7 @@ class Job
         }
 
         // Convert dates
-        $fields = ['job_start', 'application_start', 'application_end'];
+        $aFields = ['job_start', 'application_start', 'application_end'];
         foreach($aFields as $field){
             if (!empty($job[$field])){
                 $job[$field] = date('Y-m-d', strtotime($job[$field]));
