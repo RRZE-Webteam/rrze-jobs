@@ -564,7 +564,7 @@ class Shortcode
                             return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
                         }
                     }
-                    $persons = $this->jobOutput->getUnivisPersons($aResponseByAPI['content']['Person']);
+                    $aPersons = $this->jobOutput->getUnivisPersons($aResponseByAPI['content']['Person']);
                 }
 
                 $aJobs = [];
@@ -592,26 +592,32 @@ class Shortcode
                 if (!empty($aJobs)) {
                     foreach ($aJobs as $jobData) {
                         if ($this->provider == 'interamt') {
+
+                            // Interamt is different: 1. call returns IDs, 2. call fetches data for single job by ID
                             $aResponseByAPI = $this->getResponse('single', $jobData['Id']);
 
                             if (!$aResponseByAPI['valid']) {
                                 return $aResponseByAPI['content'];
                             }
 
-                            $job = $this->jobOutput->fillMap($this->map_template, $aResponseByAPI['content']);
+                            $singleJob = $this->jobOutput->fillMap($this->map_template, $aResponseByAPI['content']);
                         } else {
-                            $job = $this->jobOutput->fillMap($this->map_template, $jobData);
+                            $singleJob = $this->jobOutput->fillMap($this->map_template, $jobData);
                         }
                         if ($this->provider == 'univis') {
-                            $person = $persons[$jobData['acontact']];
-                            foreach ($person as $key => $val) {
-                                $job[$key] = $val;
+
+                            // add Person data to each job
+                            $personKey = (!empty($jobData['acontact']) ? $jobData['acontact'] : (!empty($jobData['contact']) ? $jobData['contact'] : false));
+
+                            if (!empty($jobData[$personKey]) && !empty($aPersons[$jobData[$personKey]])){
+                                foreach ($aPersons[$jobData[$personKey]] as $key => $val) {
+                                    $job[$key] = $val;
+                                }
                             }
                         }
-                        $this->jobOutput->cleanData($this->provider, $job, $intern_allowed);
 
-                        if ($job){
-                            $maps[] = $job;
+                        if (!empty($singleJob)){
+                            $maps[] = $this->jobOutput->cleanData($this->provider, $singleJob, $intern_allowed);
                         }
                     }
                 }
