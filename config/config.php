@@ -216,6 +216,13 @@ function getFields()
                 'default' => 'Notwendige Qualifikation',
             ],
             [
+                'name' => 'job_headline_qualifications_nth',
+                'label' => __("Ihr Profil", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => 'Wünschenswerte Qualifikation',
+            ],
+            [
                 'name' => 'job_headline_remarks',
                 'label' => __("Wir bieten", 'rrze-jobs'),
                 'desc' => '',

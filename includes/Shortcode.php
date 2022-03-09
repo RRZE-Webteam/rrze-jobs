@@ -109,19 +109,29 @@ class Shortcode
         return $aEmploymentType;
     }
 
-    private function getLabelsField(&$map, $fieldName){
-        return (isset($map[$fieldName]) ? '<h4>' . strip_tags($this->options['rrze-jobs-labels_' . $fieldName]) . '</h4><p>' . $map[$fieldName] . '</p>' : '');
+    private function getLabelsField($field, $label, $map){
+
+
+        if (empty($map[$field])) echo $field . '<br>';
+
+    
+
+        echo 'here<pre>';
+        var_dump($map);
+        exit;
+
+        return (!empty($map[$field]) ? '<h4>' . strip_tags($this->options['rrze-jobs-labels_' . $label]) . '</h4><p>' . $map[$field] . '</p>' : '');
     }
 
     private function getDescription(&$map)
     {
         $description = '';
         $aFields = [
-            'job_description',
-            'job_qualifications',
-            'job_qualifications_nth',
-            'job_benefits',
-            'application_link',
+            'job_headline_task' => 'job_description',
+            'job_headline_qualifications' => 'job_qualifications',
+            'job_headline_qualifications_nth' => 'job_qualifications_nth',
+            'job_headline_remarks' => 'job_benefits',
+            'job_headline_qualifications' => 'application_link',
         ];
 
         switch ($this->provider) {
@@ -131,13 +141,18 @@ class Shortcode
                     (isset($map['job_description_introduction']) ? '<p>' . $map['job_description_introduction'] . '</p>' : '')
                     . ($this->provider == 'bite' && isset($map['job_description_introduction_added']) ? '<p>' . $map['job_description_introduction_added'] . '</p>' : '')
                     . (isset($map['job_title']) ? '<h3>' . $map['job_title'] . '</h3>' : '')
-                    . array_walk($aFields, [$this, 'getLabelsField']);
+                    . array_walk($aFields, [$this, 'getLabelsField'], $map);
                 break;
             case 'interamt':
                 $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
                 break;
                 exit;
         }
+
+        // echo '<pre>';
+        // var_dump($map);
+        // exit;
+
         return $description;
     }
 
@@ -477,7 +492,7 @@ class Shortcode
         $custom_logo_id = get_theme_mod('custom_logo');
         $logo_url = (has_custom_logo() ? wp_get_attachment_url($custom_logo_id) : RRZE_JOBS_LOGO);
         $intern_allowed = $this->jobOutput->isInternAllowed();
-        $maps = [];
+        $aMaps = [];
 
         // BITE
         if ($this->provider == 'bite') {
@@ -527,7 +542,7 @@ class Shortcode
                         // let's skip this entry, there might be valid ones
                         continue;
                     }
-                    $maps[] = $this->jobOutput->fillMap($this->map_template, $aResponseByAPI['content']);
+                    $aMaps[] = $this->jobOutput->fillMap($this->map_template, $aResponseByAPI['content']);
 
                     // $job_title = $aResponseByAPI['content']['title']; // does not deliver JOB-TITLE but title for the template
                     // $description = $aResponseByAPI['content']['content']['html'];
@@ -602,6 +617,7 @@ class Shortcode
 
                             $singleJob = $this->jobOutput->fillMap($this->map_template, $aResponseByAPI['content']);
                         } else {
+                            // UnivIS
                             $singleJob = $this->jobOutput->fillMap($this->map_template, $jobData);
                         }
                         if ($this->provider == 'univis') {
@@ -615,9 +631,10 @@ class Shortcode
                                 }
                             }
                         }
-
+                
                         if (!empty($singleJob)){
-                            $maps[] = $this->jobOutput->cleanData($this->provider, $singleJob, $intern_allowed);
+                            $this->jobOutput->cleanData($this->provider, $singleJob, $intern_allowed);
+                            $aMaps[] = $singleJob;
                         }
                     }
                 }
@@ -633,12 +650,12 @@ class Shortcode
         if (isset($_GET['format']) && $_GET['format'] == 'embedded' && isset($_GET['job'])) {
             $jobnr = (int) $_GET['job'] - 1;
 
-            usort($maps, function ($a, $b) {
+            usort($aMaps, function ($a, $b) {
                 return strcmp($a['job_id'], $b['job_id']);
             });
 
-            if ((count($maps) > 0) && (isset($maps[$jobnr]['job_id']))) {
-                $this->jobid = $maps[$jobnr]['job_id'];
+            if ((count($aMaps) > 0) && (isset($aMaps[$jobnr]['job_id']))) {
+                $this->jobid = $aMaps[$jobnr]['job_id'];
                 return $this->get_single_job();
             } else {
                 return '<img src="' . plugin_dir_url(__DIR__) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
@@ -649,7 +666,7 @@ class Shortcode
         /*
          * Normale Ausgabe
          */
-        if (count($maps) > 0) {
+        if (count($aMaps) > 0) {
 
             // check if orderby contains a valid fieldname
             if (!empty($this->orderby) && !array_key_exists($this->orderby, $this->map_template)) {
@@ -657,10 +674,10 @@ class Shortcode
                 return '<p>' . __('Parameter "orderby" is not correct. Please use one of the following values: ', 'rrze-jobs') . $correct_vals;
             }
 
-            $maps = $this->sortArrayByField($maps, $this->orderby, $this->order);
+            $aMaps = $this->sortArrayByField($aMaps, $this->orderby, $this->order);
 
             $shortcode_items = '';
-            foreach ($maps as $map) {
+            foreach ($aMaps as $map) {
                 $shortcode_item_inner = '';
                 // If parameter "limit" is reached stop output
                 if (($this->limit > 0) && ($this->count >= $this->limit)) {
@@ -684,8 +701,8 @@ class Shortcode
         }
 
         if (isset($_GET['format']) && $_GET['format'] == 'embedded') {
-            if (count($maps) > 0) {
-                return $this->getPublicDisplayList($maps);
+            if (count($aMaps) > 0) {
+                return $this->getPublicDisplayList($aMaps);
             } else {
                 return '<img src="' . plugin_dir_url(__DIR__) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
             }
@@ -830,7 +847,7 @@ class Shortcode
      *      2 jobs in 2 column HTML
      *      3 jobs in 3 column HTML
      */
-    private function getPublicDisplayList($maps = [])
+    private function getPublicDisplayList($aMaps = [])
     {
         $output = '';
         $last = '';
@@ -839,7 +856,7 @@ class Shortcode
 
         $intern_allowed = $this->jobOutput->isInternAllowed();
 
-        foreach ($maps as $k => $map) {
+        foreach ($aMaps as $k => $map) {
             $job_intern = (isset($map['job_intern']) && $map['job_intern'] == 'ja' ? 1 : 0);
 
             if (!$intern_allowed && $job_intern) {
@@ -882,10 +899,10 @@ class Shortcode
 
             $job_item .= '<p><img src="' . plugin_dir_url(__FILE__) . 'qrcode.php?url=' . $jobs_page_url . '&collapse=' . substr($this->provider, 0, 1) . $map['job_id'] . '"></p>';
 
-            if ($k == (count($maps) - 1) || $k > 1) {
+            if ($k == (count($aMaps) - 1) || $k > 1) {
                 $last = '_last';
             }
-            switch (count($maps)) {
+            switch (count($aMaps)) {
                 case 1:
                     $output .= $job_item;
                     break;
