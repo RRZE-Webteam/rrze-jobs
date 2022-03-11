@@ -6,6 +6,12 @@ defined('ABSPATH') || exit;
 
 class Job
 {
+    private $showInternalJobs = false;
+
+    public function __construct()
+    {
+        $this->showInternalJobs = $this->isInternAllowed();
+    }
 
     /* * * * * * * * * * * * * * *
      *
@@ -56,7 +62,7 @@ class Job
                 'interamt' => 'DatumOeffentlichAusschreiben',
                 'univis' => '', // fehlt
                 'label' => 'Bewerbungsstart',
-                'desc' =>  'nicht bei UnivIS',
+                'desc' => 'nicht bei UnivIS',
             ],
             'application_end' => [
                 'bite' => ['channels', 'channel0', 'to'],
@@ -75,14 +81,14 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'intern',
                 'label' => 'Intern',
-                'desc' =>  'nur bei UnivIS',
+                'desc' => 'nur bei UnivIS',
             ],
             'job_type' => [
                 'bite' => ['custom', 'ausschreibungskennziffer'],
                 'interamt' => 'Kennung',
                 'univis' => '', // fehlt
                 'label' => 'Kennung',
-                'desc' =>  'nicht bei UnivIS',
+                'desc' => 'nicht bei UnivIS',
             ],
             'job_title' => [
                 'bite' => 'title',
@@ -95,7 +101,7 @@ class Job
                 'interamt' => 'DatumBesetzungZum',
                 'univis' => 'start',
                 'label' => 'Besetzung zum',
-                'desc' =>  'leer = "zum nächstmöglichen Zeitpunkt"',
+                'desc' => 'leer = "zum nächstmöglichen Zeitpunkt"',
             ],
             'job_limitation' => [
                 'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => if string contains "temporary" => befristet, else unbefristet
@@ -108,7 +114,7 @@ class Job
                 'interamt' => 'BefristetFuer', // Anzahl Monate !!!
                 'univis' => 'befristet',
                 'label' => 'Dauer der Befristung',
-                'desc' =>  'in Monaten',
+                'desc' => 'in Monaten',
             ],
             'job_limitation_reason' => [
                 'bite' => ['custom', 'job_limitation_reason'],
@@ -121,7 +127,7 @@ class Job
                 'interamt' => '', // existiert nicht, da inkludiert in job_salary_from
                 'univis' => '', // existiert nicht, da inkludiert in job_salary_from
                 'label' => 'Entgelt Gruppe (nur bei BITE)',
-                'desc' =>  'nur bei BITE',
+                'desc' => 'nur bei BITE',
             ],
             'job_salary_from' => [
                 'bite' => ['custom', 'estimatedsalary'],
@@ -134,7 +140,7 @@ class Job
                 'interamt' => 'TarifEbeneBis',
                 'univis' => 'bisbesold',
                 'label' => 'Tarifebene bis',
-                'desc' =>  'nicht bei BITE',
+                'desc' => 'nicht bei BITE',
             ],
             'job_qualifications' => [
                 'bite' => ['custom', 'profil'],
@@ -147,28 +153,28 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'desc3',
                 'label' => 'Wünschenswerte Qualifikationen',
-                'desc' =>  'nur bei UnivIS',
+                'desc' => 'nur bei UnivIS',
             ],
             'job_employmenttype' => [
                 'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => substring
                 'interamt' => 'Teilzeit',
                 'univis' => 'type2',
                 'label' => 'Vollzeit / Teilzeit',
-                'desc' =>  'erlaubte Werte: "full_time" oder "part_time" und gegebenenfalls mit Leerzeichen getrennt: "temporary"',
+                'desc' => 'erlaubte Werte: "full_time" oder "part_time" und gegebenenfalls mit Leerzeichen getrennt: "temporary"',
             ],
             'job_workhours' => [
                 'bite' => '', // fehlt
                 'interamt' => 'WochenarbeitszeitArbeitnehmer',
                 'univis' => 'wstunden',
                 'label' => 'Wochenarbeitszeit',
-                'desc' =>  'nicht bei BITE',
+                'desc' => 'nicht bei BITE',
             ],
             'job_category' => [
                 'bite' => ['custom', 'zuordnung'], // "wiss", "n-wiss", "hiwi", "azubi", "prof" or "other"
                 'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
                 'univis' => 'group',
                 'label' => 'Berufsgruppe',
-                'desc' =>  'erlaubte Werte: "wiss", "n-wiss", "hiwi", "azubi", "prof" oder "other"',
+                'desc' => 'erlaubte Werte: "wiss", "n-wiss", "hiwi", "azubi", "prof" oder "other"',
             ],
             'job_description' => [
                 'bite' => ['custom', 'aufgaben'],
@@ -181,28 +187,28 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => 'desc5',
                 'label' => 'Beschreibung - Einleitung',
-                'desc' =>  'nicht bei Interamt',
+                'desc' => 'nicht bei Interamt',
             ],
             'job_description_introduction_added' => [
                 'bite' => ['custom', 'stellenzusatz'],
                 'interamt' => '', // fehlt
                 'univis' => '', // fehlt
                 'label' => 'Stellenzusatz',
-                'desc' =>  'nur bei BITE',
+                'desc' => 'nur bei BITE',
             ],
             'job_experience' => [
                 'bite' => ['custom', 'profil'],
                 'interamt' => '', // fehlt
                 'univis' => 'desc2',
                 'label' => 'Berufserfahrung',
-                'desc' =>  'nicht bei Interamt',
+                'desc' => 'nicht bei Interamt',
             ],
             'job_benefits' => [
                 'bite' => ['custom', 'wir_bieten'],
                 'interamt' => '', // fehlt
                 'univis' => 'desc4',
                 'label' => 'Benefits',
-                'desc' =>  'nicht bei Interamt',
+                'desc' => 'nicht bei Interamt',
             ],
             'employer_organization' => [
                 'bite' => ['custom', 'hiringorganization'], // tu_nuernberg => 'Technische Universität Nürnberg'
@@ -221,14 +227,14 @@ class Job
                 'interamt' => '', // fehlt
                 'univis' => '', // fehlt
                 'label' => 'Hausnummer', // fehlt
-                'desc' =>  'nur bei BITE',
+                'desc' => 'nur bei BITE',
             ],
             'employer_postalcode' => [
                 'bite' => ['location', 'postCode'],
                 'interamt' => ['Einsatzort', 'EinsatzortPLZ'],
                 'univis' => '', // fehlt
                 'label' => 'PLZ',
-                'desc' =>  'nicht bei UnivIS',
+                'desc' => 'nicht bei UnivIS',
             ],
             'employer_city' => [
                 'bite' => ['location', 'city'],
@@ -282,7 +288,7 @@ class Job
                 'bite' => ['custom', 'contact_tel'],
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerTelefon'],
                 'univis' => '', // see fillPersons()
-                'label' => 'Ansprechpartner Telefonnummer',                
+                'label' => 'Ansprechpartner Telefonnummer',
             ],
             'contact_mobile' => [
                 'bite' => ['custom', 'contact_mobile'],
@@ -327,13 +333,13 @@ class Job
             ],
         ];
 
-        if ($bStructure){
+        if ($bStructure) {
             return $map;
-        }else{
+        } else {
             $provider_map = [];
 
             foreach ($map as $field => $aVal) {
-                if (!empty($aVal[$provider])){
+                if (!empty($aVal[$provider])) {
                     $provider_map[$field] = $aVal[$provider];
                 }
             }
@@ -397,9 +403,9 @@ class Job
      * Füllt die Map mit Werten mit Defaultwerten und denen aus der Schnittstelle
      * @return array
      */
-    public function fillMap(&$map, &$job, &$options = NULL)
+    public function fillMap(&$provider, &$map, &$job, &$aPersons, $shortcode_internaljobs = 'exclude', &$options = null)
     {
-        $map_ret = array();
+        $aJob = [];
 
         foreach ($map as $k => $val) {
             // did user store default?
@@ -410,31 +416,36 @@ class Job
                         if (isset($job[$val[0]][$val[1]])) {
                             if (is_string($job[$val[0]][$val[1]])) {
                                 // check if_string() is only needed to supress PHP Notices while BITE API development is in progress (['custom', 'stellenzusatz'] ought to return string, but during development it might return an array as well)
-                                $map_ret[$k] = htmlentities($job[$val[0]][$val[1]]);
+                                $aJob[$k] = htmlentities($job[$val[0]][$val[1]]);
                             }
                         }
                         break;
                     case 3:
                         if (isset($job[$val[0]][$val[1]][$val[2]])) {
                             if (is_array($job[$val[0]][$val[1]][$val[2]])) {
-                                $map_ret[$k] = htmlentities(implode(PHP_EOL, $job[$val[0]][$val[1]][$val[2]]));
+                                $aRaJobet[$k] = htmlentities(implode(PHP_EOL, $job[$val[0]][$val[1]][$val[2]]));
                             } else {
-                                $map_ret[$k] = htmlentities($job[$val[0]][$val[1]][$val[2]]);
+                                $aJob[$k] = htmlentities($job[$val[0]][$val[1]][$val[2]]);
                             }
                         }
                         break;
                     case 4:
                         if (isset($job[$val[0]][$val[1]][$val[2]][$val[3]])) {
-                            $map_ret[$k] = htmlentities($job[$val[0]][$val[1]][$val[2]][$val[3]]);
+                            $aJob[$k] = htmlentities($job[$val[0]][$val[1]][$val[2]][$val[3]]);
                         }
                         break;
                 }
             } elseif (isset($job[$val])) {
-                $map_ret[$k] = $job[$val];
+                $aJob[$k] = $job[$val];
             }
         }
 
-        return $map_ret;
+        $bValid = $this->cleanData($provider, $aJob, $shortcode_internaljobs);
+
+        return [
+            'valid' => $bValid,
+            'data' => $aJob,
+        ];
     }
 
     private static function isIPinRange($fromIP, $toIP, $myIP)
@@ -451,7 +462,7 @@ class Job
      * IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
      * @return boolean
      */
-    public function isInternAllowed()
+    private function isInternAllowed()
     {
         $allowedHost = 'uni-erlangen.de';
         $remoteIP = $_SERVER['REMOTE_ADDR'];
@@ -468,47 +479,76 @@ class Job
         return false;
     }
 
+    private function formatUnivIS($txt)
+    {
+        $subs = array(
+            '/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>', // list
+            '/(<\/ul>\n(.*)<ul>*)+/' => '', // list
+            '/\*{2}/m' => '/\*/', // **
+            '/_{2}/m' => '/_/', // __
+            '/\|(.*)\|/m' => '<i>$1</i>', // |itallic|
+            '/_(.*)_/m' => '<sub>$1</sub>', // H_2_O
+            '/\^(.*)\^/m' => '<sup>$1</sup>', // pi^2^
+            '/\[([^\]]*)\]\s{0,1}((http|https|ftp|ftps):\/\/\S*)/mi' => '<a href="$2">$1</a>', // [link text] http...
+            '/\[([^\]]*)\]\s{0,1}(mailto:)([^")\s<>]+)/mi' => '<a href="mailto:$3">$1</a>', // find [link text] mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
+            '/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
+        );
 
-    
-    private function skipJob(&$job, $intern_allowed){
+        $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
+        $txt = nl2br($txt);
+        $txt = make_clickable($txt);
+        return $txt;
+    }
+
+    private function skipJob(&$job, &$shortcode_internaljobs)
+    {
         // Skip if expired
         if ($job['application_end'] < date('Y-m-d')) {
             return true;
         }
-        
-        // Skip internal job offers if necessary
-        $isInternJob = (!empty($map['job_intern']) && $map['job_intern'] == 'ja' ? 1 : 0);
-        switch ($intern_allowed) {
-            case 'only':
-            case 'include':
-                if ($isInternJob) {
-                    return false;
-                }
-                break;
-            case 'exclude':
-                if ($isInternJob) {
-                    return true;
-                }
-                break;
-        }
 
-        return false;
+        $isInternJob = (!empty($job['job_intern']) && $job['job_intern'] == 'ja' ? 1 : 0);
+        if (!$isInternJob) {
+            // is not an internal job
+            return false;
+        } else {
+            if (!$this->showInternalJobs) {
+                // visitor is not allowed to be shown internal jobs
+                return true;
+            } else {
+                // check shortcode attribute
+                switch ($shortcode_internaljobs) {
+                    case 'only':
+                    case 'include':
+                        if ($isInternJob) {
+                            return false;
+                        }
+                        break;
+                    case 'exclude':
+                        if ($isInternJob) {
+                            return true;
+                        }
+                        break;
+                }
+            }
+        }
     }
 
-    public function cleanData(&$provider, &$job, $intern_allowed){
+    private function cleanData(&$provider, &$job, &$shortcode_internaljobs)
+    {
         // Skip job?
-        if ($this->skipJob($job, $intern_allowed)){
-            return false;
-        }
+        // if ($this->skipJob($job, $shortcode_internaljobs)) {
+        //     return false;
+        // }
 
         // Convert dates
         $aFields = ['job_start', 'application_start', 'application_end'];
-        foreach($aFields as $field){
-            if (!empty($job[$field])){
+        foreach ($aFields as $field) {
+            if (!empty($job[$field])) {
                 $job[$field] = date('Y-m-d', strtotime($job[$field]));
             }
         }
-        if (!empty($job['application_end'])){
+        if (!empty($job['application_end'])) {
             $job['application_end'] = date('d.m.Y', strtotime($job['application_end']));
         }
 
@@ -534,14 +574,60 @@ class Job
         }
 
         // Set 'job_employmenttype'
-        if ($provider == 'univis'){
-            if (!empty($job['job_employmenttype'])) {
-                $job['job_employmenttype'] = ucfirst($job['job_employmenttype']) . 'zeit';
+        $job['job_employmenttype'] = ($provider == 'univis' && !empty($job['job_employmenttype']) ? ucfirst($job['job_employmenttype']) . 'zeit' : $job['job_employmenttype']);
+
+        // Set job_employmenttype_txt and job_employmenttype_schema
+        $aEmploymentType = [
+            'txt' => '',
+            'schema' => '',
+        ];
+        switch ($provider) {
+            case 'bite';
+                $aTmp = explode(' ', $job['job_employmenttype']);
+                $aEmploymentType['schema'] = strtoupper($aTmp[0]);
+                if (!empty($aTmp[1])) {
+                    $aEmploymentType['schema'] .= ' TEMPORARY';
+                }
+                if ($aEmploymentType['schema'] == 'FULL_TIME') {
+                    $aEmploymentType['txt'] = 'Vollzeit';
+                }
+                break;
+            case 'univis':
+            case 'interamt':
+                $aEmploymentType['txt'] = $job['job_employmenttype'];
+                $aEmploymentType['schema'] = 'FULL_TIME';
+                if ($aEmploymentType['txt'] != 'Vollzeit') {
+                    $aEmploymentType['schema'] = 'PART_TIME';
+                }
+                if (!empty($job['job_limitation']) && $job['job_limitation'] != 'unbef') {
+                    $aEmploymentType['schema'] .= ' TEMPORARY';
+                }
+                break;
+        }
+
+        $job['job_employmenttype_txt'] = $aEmploymentType['txt'];
+        $job['job_employmenttype_schema'] = $aEmploymentType['schema'];
+
+        // Set 'job_type'
+        if ((!empty($job['job_type'])) && ($job['job_type'] != 'keine')) {
+            $kennung_old = $job['job_type'];
+            switch (mb_substr($job['job_type'], -2)) {
+                case '-I':
+                    $job['job_type'] = preg_replace('/-I$/', '-W', $job['job_type']);
+                    break;
+                case '-U':
+                    $job['job_type'] = preg_replace('/-U$/', '-W', $job['job_type']);
+                    break;
+                default:
+                    $job['job_type'] = $job['job_type'] . '-W';
             }
+            $job['job_type'] = str_replace(["[", "]"], ["&#91;", "&#93;"], $job['job_type']);
+        } else {
+            $job['job_type'] = '';
         }
 
         // Set 'job_category_grouped'
-        if ($provider == 'interamt'){
+        if ($provider == 'interamt') {
             if (!empty($job['job_category'])) {
                 if ($job['job_category'] == 'Bildung und Wissenschaft') {
                     $job['job_category_grouped'] = 'wiss';
@@ -557,7 +643,7 @@ class Job
         }
 
         // Set 'application_link'
-        if ($provider == 'interamt' && !empty($job['job_description'])){
+        if ($provider == 'interamt' && !empty($job['job_description'])) {
             $start_application_string = strpos($job['job_description'], 'Bitte bewerben Sie sich');
             if ($start_application_string === false) {
                 $start_application_string = strpos($job['job_description'], 'Senden Sie Ihre Bewerbung');
@@ -578,8 +664,21 @@ class Job
         }
 
         // Set 'employer_organization'
-        if (!empty($job['employer_organization'])) {
-            $job['employer_organization'] = nl2br(str_replace('Zentrale wissenschaftliche Einrichtungen der FAU' . PHP_EOL, '', $job['employer_organization']));
+        $job['employer_organization'] = (!empty($job['employer_organization']) ? nl2br(str_replace('Zentrale wissenschaftliche Einrichtungen der FAU' . PHP_EOL, '', $job['employer_organization'])) : '');
+
+        // Set 'job_salary'
+        $job['job_salary'] = '';
+        if (!empty($map['job_salary_to'])) {
+            if (!empty($map['job_salary_from']) && ($map['job_salary_from'] != $map['job_salary_to'])) {
+                $job['job_salary'] = $map['job_salary_from'] . ' - ' . $map['job_salary_to'];
+            } else {
+                $job['job_salary'] = $map['job_salary_to'];
+            }
+        } elseif (!empty($map['job_salary_from'])) {
+            $job['job_salary'] = $map['job_salary_from'];
+        }
+        if (($provider == 'bite') && !empty($map['job_salary_type'])) {
+            $job['job_salary'] = 'TV-L ' . $map['job_salary_type'] . $job['job_salary'];
         }
 
         // Set 'job_salary_search'
@@ -594,11 +693,13 @@ class Job
         $job['job_salary_search'] = abs($job['job_salary_search']);
 
         // Set 'job_limitation_boolean'
-        if (!empty($job['job_limitation']) || !empty($job['job_limitation_duration'])) {
-            $job['job_limitation_boolean'] = 1;
-        } else {
-            $job['job_limitation_boolean'] = 0;
-        }
+        $job['job_limitation_boolean'] = (!empty($job['job_limitation']) || !empty($job['job_limitation_duration']) ? 1 : 0);
+
+        // Set 'job_date_posted'
+        $job['job_date_posted'] = (!empty($job['application_start']) ? date('Y-m-d', strtotime($job['application_start'])) : date('Y-m-d'));
+
+        // Set 'job_intern'
+        $job['job_intern'] = (!empty($job['job_intern']) && $job['job_intern'] == 'ja' ? 1 : 0);
 
         // format fields
         $aFields = [
@@ -609,32 +710,58 @@ class Job
             'application_link',
         ];
 
-        foreach($aFields as $field){
-            if (!empty($job[$field])){
+        foreach ($aFields as $field) {
+            if (!empty($job[$field])) {
                 $job[$field] = $this->formatUnivIS($job[$field]);
             }
         }
-    }
 
-    private function formatUnivIS($txt)
-    {
-        $subs = array(
-            '/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>', // list
-            '/(<\/ul>\n(.*)<ul>*)+/' => '', // list
-            '/\*{2}/m' => '/\*/', // **
-            '/_{2}/m' => '/_/', // __
-            '/\|(.*)\|/m' => '<i>$1</i>', // |itallic|
-            '/_(.*)_/m' => '<sub>$1</sub>', // H_2_O
-            '/\^(.*)\^/m' => '<sup>$1</sup>', // pi^2^
-            '/\[([^\]]*)\]\s{0,1}((http|https|ftp|ftps):\/\/\S*)/mi' => '<a href="$2">$1</a>', // [link text] http...
-            '/\[([^\]]*)\]\s{0,1}(mailto:)([^")\s<>]+)/mi' => '<a href="mailto:$3">$1</a>', // find [link text] mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
-            '/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
-        );
+        // Set job_limitation_reason
+        if (isset($job['job_limitation_reason'])) {
+            switch ($job['job_limitation_reason']) {
+                case 'vertr':
+                    $job['job_limitation_reason'] = 'Vertretung';
+                    break;
+                case 'schwanger':
+                    $job['job_limitation_reason'] = 'Mutterschutzvertretung';
+                    break;
+                case 'eltern':
+                    $job['job_limitation_reason'] = 'Mutterschutz- / Elternzeitvertretung';
+                    break;
+                case 'krankh':
+                    $job['job_limitation_reason'] = 'Krankheitsvertretung';
+                    break;
+                case 'forsch':
+                    $job['job_limitation_reason'] = 'befristetes Forschungsvorhaben';
+                    break;
+                case 'zeitb':
+                    $job['job_limitation_reason'] = 'Beamtenschaft auf Zeit';
+                    break;
+            }
 
-        $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
-        $txt = nl2br($txt);
-        $txt = make_clickable($txt);
-        return $txt;
+        }
+
+        // Set 'job_education' and 'job_experience'
+        $aFields = [
+            'job_education',
+            'job_experience',
+        ];
+
+        foreach ($aFields as $field) {
+            $job[$field] = (!empty($job[$field]) ? strip_tags(htmlentities($job[$field])) : '');
+        }
+
+        // Set 'job_benefits'
+        $job['job_benefits'] = (!empty($job['job_benefits']) ? htmlentities($job['job_benefits']) : '');
+
+        // Add Person data
+        if ($provider == 'univis') {
+            $personKey = (!empty($job['acontact']) ? $job['acontact'] : (!empty($job['contact']) ? $job['contact'] : ''));
+
+            if (!empty($personKey) && !empty($aPersons[$personKey])) {
+                array_merge($job, $aPersons[$personKey]);
+            }
+        }
     }
 
 }

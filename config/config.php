@@ -265,20 +265,20 @@ function getFields()
         'job_intern',
     ];
 
-    foreach($map_template as $sField => $aDetails){
+    foreach ($map_template as $sField => $aDetails) {
 
-        if (!in_array($sField, $aHideFields)){
+        if (!in_array($sField, $aHideFields)) {
             $aFields['rrze-jobs-fields'][] = [
                 'name' => $sField,
                 'label' => $aDetails['label'],
-                'desc' => (!empty($aDetails['desc'])?$aDetails['desc']:''),
+                'desc' => (!empty($aDetails['desc']) ? $aDetails['desc'] : ''),
                 // 'desc' => __('enter default value or leave empty to be filled by provider', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => '',
             ];
         }
     }
-    
+
     return $aFields;
 
 }
