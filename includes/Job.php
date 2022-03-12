@@ -534,12 +534,14 @@ class Job
         }
     }
 
+    // cleanData() check if job is valid, allowed to be shown and converts all fields
+    // returns BOOLEAN
     private function cleanData(&$provider, &$job, &$shortcode_internaljobs)
     {
         // Skip job?
-        // if ($this->skipJob($job, $shortcode_internaljobs)) {
-        //     return false;
-        // }
+        if ($this->skipJob($job, $shortcode_internaljobs)) {
+            return false;
+        }
 
         // Convert dates
         $aFields = ['job_start', 'application_start', 'application_end'];
@@ -762,6 +764,8 @@ class Job
                 array_merge($job, $aPersons[$personKey]);
             }
         }
+
+        return true;
     }
 
 }

@@ -511,6 +511,7 @@ class Shortcode
                         }
 
                         $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aJobRawData, $aPersons, $this->internal);
+
                         if ($aJob['valid']) {
                             $aMaps[] = $aJob['data'];
                         }
