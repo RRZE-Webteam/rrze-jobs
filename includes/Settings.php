@@ -687,4 +687,19 @@ class Settings
     {
         echo '<hr>';
     }
+
+    public function callbackDate($args)
+    {
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html = sprintf(
+            '<input type="date" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]">',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
 }

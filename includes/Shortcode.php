@@ -206,7 +206,8 @@ class Shortcode
         if (isset($map['job_type'])) {
             $sidebar .= '<dt>' . __('Reference', 'rrze-jobs') . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
         }
-        if (isset($map['application_link']) && $this->options['rrze-jobs-labels_sidebar_show_application_link']) {
+
+        if (isset($map['application_link']) && $this->options['rrze-jobs-labels_sidebar_show_application_link'] == 'on') {
             $sidebar .= '<dt>' . $this->options['rrze-jobs-labels_sidebar_headline_application'] . '</dt>';
             $sidebar .= '<dd>' . $map['application_link'] . '</dd>';
         }
@@ -452,7 +453,7 @@ class Shortcode
                         continue;
                     }
 
-                    $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aResponseByAPI['content'], $aPersons, $this->internal);
+                    $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aResponseByAPI['content'], $aPersons, $this->internal, $this->options);
                     if ($aJob['valid']) {
                         $aMaps[] = $aJob['data'];
                     }
@@ -510,7 +511,7 @@ class Shortcode
                             $aJobRawData = $aSingleRawData;
                         }
 
-                        $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aJobRawData, $aPersons, $this->internal);
+                        $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aJobRawData, $aPersons, $this->internal, $this->options);
 
                         if ($aJob['valid']) {
                             $aMaps[] = $aJob['data'];
@@ -623,7 +624,7 @@ class Shortcode
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
         }
 
-        $map = $this->jobOutput->fillMap($this->provider, $this->map_template, $job, $aPersons, $this->internal);
+        $map = $this->jobOutput->fillMap($this->provider, $this->map_template, $job, $aPersons, $this->internal, $this->options);
 
         if (empty($map)) {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';

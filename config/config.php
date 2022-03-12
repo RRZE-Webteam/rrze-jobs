@@ -181,25 +181,9 @@ function getFields()
         ],
         'rrze-jobs-labels' => [
             [
-                'name' => 'sidebar_application_button',
-                'label' => __('"Apply to" button', 'rrze-jobs'),
-                'desc' => __('Sidebar: Label for the button to apply to', 'rrze-jobs'),
-                'type' => 'text',
-                'default' => 'Jetzt bewerben!',
-            ],
-            [
-                'name' => 'sidebar_headline_application',
-                'label' => __("Bewerbung", 'rrze-jobs'),
-                'desc' => __('Title of "Your application" in the sidebar', 'rrze-jobs'),
-                'type' => 'text',
-                'default' => __('Bewerbung', 'rrze-jobs'),
-            ],
-            [
-                'name' => 'sidebar_show_application_link',
-                'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
-                'desc' => __('Display both, a link and a button, to apply to in the sidebar', 'rrze-jobs'),
-                'type' => 'checkbox',
-                'default' => true,
+                'name' => 'hr1',
+                'label' => __('Stellenangebot', 'rrze-jobs'),
+                'type' => 'line',
             ],
             [
                 'name' => 'job_headline_task',
@@ -247,11 +231,46 @@ function getFields()
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
+
+            [
+                'name' => 'hr2',
+                'label' => __('Sidebar', 'rrze-jobs'),
+                'type' => 'line',
+            ],
+            [
+                'name' => 'sidebar_application_button',
+                'label' => __('"Apply to" button', 'rrze-jobs'),
+                'desc' => __('Sidebar: Label for the button to apply to', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => 'Jetzt bewerben!',
+            ],
+            [
+                'name' => 'sidebar_headline_application',
+                'label' => __("Bewerbung", 'rrze-jobs'),
+                'desc' => __('Title of "Your application" in the sidebar', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => __('Bewerbung', 'rrze-jobs'),
+            ],
+            [
+                'name' => 'sidebar_show_application_link',
+                'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
+                'desc' => __('Display both, a link and a button, to apply to in the sidebar', 'rrze-jobs'),
+                'type' => 'checkbox',
+                'default' => true,
+            ],
+
+
+            [
+                'name' => 'hr3',
+                'label' => __('Sonstiges', 'rrze-jobs'),
+                'type' => 'line',
+            ],
             [
                 'name' => 'no_jobs_message',
                 'label' => __("No Jobs Message", 'rrze-jobs'),
                 'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
                 'type' => 'textarea',
+                'size' => 'large',
                 'default' => __('No job offers found.', 'rrze-jobs'),
             ],
         ],
@@ -272,9 +291,9 @@ function getFields()
                 'name' => $sField,
                 'label' => $aDetails['label'],
                 'desc' => (!empty($aDetails['desc']) ? $aDetails['desc'] : ''),
-                // 'desc' => __('enter default value or leave empty to be filled by provider', 'rrze-jobs'),
-                'type' => 'text',
-                'default' => '',
+                'type' => (!empty($aDetails['type']) ? $aDetails['type'] : 'text'),
+                'options' => (!empty($aDetails['options']) ? $aDetails['options'] : ''), 
+                'default' => (!empty($aDetails['default']) ? $aDetails['default'] : ''), 
             ];
         }
     }
