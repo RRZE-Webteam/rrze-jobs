@@ -702,4 +702,38 @@ class Settings
 
         echo $html;
     }
+
+    public function callbackNumber($args)
+    {
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $min = !empty($args['min']) ? 'min="' . $args['min'] . '"' : '';
+        $max = !empty($args['max']) ? 'max="' . $args['max'] . '"' : '';
+        $html = sprintf(
+            '<input type="number" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]" %5$s %6$s>',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $min,
+            $max,
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+    public function callbackEmail($args)
+    {
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html = sprintf(
+            '<input type="email" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]">',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
 }

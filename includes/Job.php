@@ -117,7 +117,6 @@ class Job
                     '0' => __('unbefristet', 'rrze-jobs'),
                 ],
                 'default' => '0',
-    
             ],
             'job_limitation_duration' => [ // Befristung Dauer
                 'bite' => ['custom', 'job_limitation_duration'],
@@ -125,6 +124,8 @@ class Job
                 'univis' => 'befristet',
                 'label' => 'Dauer der Befristung',
                 'desc' => 'in Monaten',
+                'type' => 'number',
+                'min' => 1,
             ],
             'job_limitation_reason' => [
                 'bite' => ['custom', 'job_limitation_reason'],
@@ -136,14 +137,20 @@ class Job
                 'bite' => ['custom', 'entgelt_art'],
                 'interamt' => '', // existiert nicht, da inkludiert in job_salary_from
                 'univis' => '', // existiert nicht, da inkludiert in job_salary_from
-                'label' => 'Entgelt Gruppe (nur bei BITE)',
+                'label' => 'Entgelt Gruppe',
                 'desc' => 'nur bei BITE',
+                'type' => 'number',
+                'min' => 1,
+                'max' => 15,
             ],
             'job_salary_from' => [
                 'bite' => ['custom', 'estimatedsalary'],
                 'interamt' => 'TarifEbeneVon',
                 'univis' => 'vonbesold',
                 'label' => 'Tarifebene von',
+                'type' => 'number',
+                'min' => 1,
+                'max' => 15,
             ],
             'job_salary_to' => [
                 'bite' => '',
@@ -151,6 +158,9 @@ class Job
                 'univis' => 'bisbesold',
                 'label' => 'Tarifebene bis',
                 'desc' => 'nicht bei BITE',
+                'type' => 'number',
+                'min' => 1,
+                'max' => 15,
             ],
             'job_qualifications' => [
                 'bite' => ['custom', 'profil'],
@@ -172,7 +182,14 @@ class Job
                 'interamt' => 'Teilzeit',
                 'univis' => 'type2',
                 'label' => 'Vollzeit / Teilzeit',
-                'desc' => 'erlaubte Werte: "full_time" oder "part_time" und gegebenenfalls mit Leerzeichen getrennt: "temporary"',
+                'type' => 'select',
+                'options' => [
+                    'part_time' => __('Teilzeit', 'rrze-jobs'),
+                    'part_time temporary' => __('Teilzeit befristet', 'rrze-jobs'),
+                    'full_time' => __('Vollzeit', 'rrze-jobs'),
+                    'full_time temporary' => __('Vollzeit befristet', 'rrze-jobs'),
+                ],
+                'default' => 'full_time',
             ],
             'job_workhours' => [
                 'bite' => '', // fehlt
@@ -180,13 +197,24 @@ class Job
                 'univis' => 'wstunden',
                 'label' => 'Wochenarbeitszeit',
                 'desc' => 'nicht bei BITE',
+                'type' => 'number',
+                'min' => 1,
             ],
             'job_category' => [
                 'bite' => ['custom', 'zuordnung'], // "wiss", "n-wiss", "hiwi", "azubi", "prof" or "other"
                 'interamt' => 'Fachrichtung', // bis 2022-01-20: FachrichtungCluster
                 'univis' => 'group',
                 'label' => 'Berufsgruppe',
-                'desc' => 'erlaubte Werte: "wiss", "n-wiss", "hiwi", "azubi", "prof" oder "other"',
+                'type' => 'select',
+                'options' => [
+                    'wiss' => __('wiss', 'rrze-jobs'),
+                    'n-wiss' => __('n-wiss', 'rrze-jobs'),
+                    'hiwi' => __('hiwi', 'rrze-jobs'),
+                    'azubi' => __('azubi', 'rrze-jobs'),
+                    'prof' => __('prof', 'rrze-jobs'),
+                    'other' => __('other', 'rrze-jobs'),
+                ],
+                'default' => 'n-wiss',
             ],
             'job_description' => [
                 'bite' => ['custom', 'aufgaben'],
@@ -329,6 +357,7 @@ class Job
                 'interamt' => ['ExtAnsprechpartner', 'ExtAnsprechpartnerEMail'],
                 'univis' => '', // see fillPersons()
                 'label' => 'E-Mail',
+                'type' => 'email',
             ],
             'contact_street' => [
                 'bite' => '', // exisitert nicht, aber contact_address

@@ -294,10 +294,11 @@ function getFields()
                 'type' => (!empty($aDetails['type']) ? $aDetails['type'] : 'text'),
                 'options' => (!empty($aDetails['options']) ? $aDetails['options'] : ''), 
                 'default' => (!empty($aDetails['default']) ? $aDetails['default'] : ''), 
+                'min' => (!empty($aDetails['min']) ? $aDetails['min'] : ''), 
+                'max' => (!empty($aDetails['max']) ? $aDetails['max'] : ''), 
             ];
         }
     }
-
     return $aFields;
 
 }
