@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-04 16:35+0000\n"
-"PO-Revision-Date: 2022-03-15 17:23+0000\n"
+"PO-Revision-Date: 2022-03-15 17:27+0000\n"
 "Last-Translator: barbara <barbara.bothe@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -212,7 +212,7 @@ msgstr "Monate"
 
 #: config/config.php:271
 msgid "No Jobs Message"
-msgstr "Nchricht \"Keine Stellenausschreibungen\""
+msgstr "Nachricht \"Keine Stellenausschreibungen\""
 
 #: config/config.php:221
 msgid "Notice"
