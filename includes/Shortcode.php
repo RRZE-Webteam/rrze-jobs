@@ -79,13 +79,13 @@ class Shortcode
                 }
 
                 $description =
-                    (isset($map['job_description_introduction']) ? '<p>' . $map['job_description_introduction'] . '</p>' : '')
-                    . ($this->provider == 'bite' && isset($map['job_description_introduction_added']) ? '<p>' . $map['job_description_introduction_added'] . '</p>' : '')
-                    . (isset($map['job_title']) ? '<h3>' . $map['job_title'] . '</h3>' : '')
+                    (!empty($map['job_description_introduction']) ? '<p>' . $map['job_description_introduction'] . '</p>' : '')
+                    . ($this->provider == 'bite' && !empty($map['job_description_introduction_added']) ? '<p>' . $map['job_description_introduction_added'] . '</p>' : '')
+                    . (!empty($map['job_title']) ? '<h3>' . $map['job_title'] . '</h3>' : '')
                     . $description;
                 break;
             case 'interamt':
-                $description = isset($map['job_description']) ? $map['job_description'] : $map['job_title'];
+                $description = !empty($map['job_description']) ? $map['job_description'] : $map['job_title'];
                 break;
                 exit;
         }
@@ -147,8 +147,8 @@ class Shortcode
             // orgids => attribute orgids or attribute orgid or fetch from settings page
             $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
             if (!$orgids) {
-                if (isset($this->options['rrze-jobs-access' . '_orgids_' . $this->provider])) {
-                    $orgids = $this->options['rrze-jobs-access' . '_orgids_' . $this->provider];
+                if (!empty($this->options['rrze-jobs-access_orgids_' . $this->provider])) {
+                    $orgids = $this->options['rrze-jobs-access_orgids_' . $this->provider];
                 }
             }
 
@@ -175,22 +175,21 @@ class Shortcode
 
     private function get_sidebar(&$map)
     {
-
         $sidebar = '';
         $application_button_link = '';
         $mailto = '';
 
-        if (isset($map['application_email'])) {
+        if (!empty($map['application_email'])) {
             $application_button_link = $map['application_email'];
             $mailto = 'mailto:';
-        } elseif (isset($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
+        } elseif (!empty($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
             preg_match('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $map['application_link'], $match);
-            if (isset($match[0])) {
+            if (empty($match[0])) {
                 $application_button_link = $match[0];
             }
         }
 
-        if (!isset($map['employer_district']) || $map['employer_district'] == '') {
+        if (empty($map['employer_district'])) {
             $map['employer_district'] = RRZE_JOBS_ADDRESS_REGION;
         }
 
@@ -199,15 +198,15 @@ class Shortcode
         }
 
         $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
-        if (isset($map['application_end'])) {
+        if (!empty($map['application_end'])) {
             $sidebar .= '<dt>' . __('Application deadline', 'rrze-jobs') . '</dt>'
                 . '<dd itemprop="validThrough" content="' . $map['application_end'] . '">' . $map['application_end'] . '</dd>';
         }
-        if (isset($map['job_type'])) {
+        if (!empty($map['job_type'])) {
             $sidebar .= '<dt>' . __('Reference', 'rrze-jobs') . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
         }
 
-        if (isset($map['application_link']) && $this->options['rrze-jobs-labels_sidebar_show_application_link'] == 'on') {
+        if (!empty($map['application_link']) && $this->options['rrze-jobs-labels_sidebar_show_application_link'] == 'on') {
             $sidebar .= '<dt>' . $this->options['rrze-jobs-labels_sidebar_headline_application'] . '</dt>';
             $sidebar .= '<dd>' . $map['application_link'] . '</dd>';
         }
@@ -215,20 +214,20 @@ class Shortcode
         $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
         $sidebar .= '<h3>' . __('Details', 'rrze-jobs') . '</h3>'
         . '<dt>' . __('Job title', 'rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
-        if ((isset($map['job_start'])) && ($map['job_start'] != '')) {
+        if (!empty($map['job_start'])) {
             $sidebar .= '<dt>' . __('Job start', 'rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . $map['job_start'] . '</dd>';
         } elseif ($this->provider == 'bite') {
             // BITE delivers no field named "job_start" if "nächstmöglichen Zeitpunkt" is meant
             $sidebar .= '<dt>' . __('Job start', 'rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . __('nächstmöglichen Zeitpunkt', 'rrze_jobs') . '</dd>';
         }
         $sidebar .= '<dt>' . __('Deployment location', 'rrze-jobs') . '</dt>';
-        if (isset($map['employer_organization'])) {
+        if (!empty($map['employer_organization'])) {
             $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">' . $map['employer_organization'] . '<br />';
         }
-        if (isset($map['employer_street'])) {
+        if (!empty($map['employer_street'])) {
             $sidebar .= $map['employer_street'] . '<br />';
         }
-        if (isset($map['employer_postalcode'])) {
+        if (!empty($map['employer_postalcode'])) {
             $sidebar .= $map['employer_postalcode'] . ' ';
         }
         if (!empty($map['employer_organization'])) {
@@ -242,14 +241,12 @@ class Shortcode
         if (!empty($map['employer_organization'])) {
             $sidebar .= '<meta itemprop="name" content="' . $map['employer_organization'] . '" />';
         }
-        $sidebar .= (isset($map['contact_street']) ? '<meta itemprop="streetAddress" content="' . $map['contact_street'] . '" />' : '');
-        $sidebar .= (isset($map['contact_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['contact_postalcode'] . '" />' : '');
-        $sidebar .= (isset($map['contact_city']) ? '<meta itemprop="addressLocality" content="' . $map['contact_city'] . '" />' : '');
-        $sidebar .= (isset($map['employer_district']) ? '<meta itemprop="addressRegion" content="' . $map['employer_district'] . '" />' : '');
-        $sidebar .= (isset($map['contact_link']) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '');
+        $sidebar .= (!empty($map['contact_street']) ? '<meta itemprop="streetAddress" content="' . $map['contact_street'] . '" />' : '');
+        $sidebar .= (!empty($map['contact_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['contact_postalcode'] . '" />' : '');
+        $sidebar .= (!empty($map['contact_city']) ? '<meta itemprop="addressLocality" content="' . $map['contact_city'] . '" />' : '');
+        $sidebar .= (!empty($map['employer_district']) ? '<meta itemprop="addressRegion" content="' . $map['employer_district'] . '" />' : '');
+        $sidebar .= (!empty($map['contact_link']) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '');
         $sidebar .= '</span></span>';
-
-        // $aEmploymenttype = $this->getEmploymentType($map);
 
         if (!empty($map['job_salary'])) {
             $sidebar .= '<dt>' . __('Payment', 'rrze-jobs') . '</dt><dd itemprop="estimatedSalary">' . $map['job_salary'] . '</dd>';
@@ -273,14 +270,14 @@ class Shortcode
 
         if (!empty($map['contact_lastname'])) {
             $sidebar .= '<dt>' . __('Contact for further information', 'rrze-jobs') . '</dt>'
-                . '<dd>' . (!empty($map['contact_title']) ? $map['contact_title'] . ' ' : '') . (!empty($map['contact_firstname']) ? $map['contact_firstname'] . ' ' : '') . (isset($map['contact_lastname']) ? $map['contact_lastname'] : '');
+                . '<dd>' . (!empty($map['contact_title']) ? $map['contact_title'] . ' ' : '') . (!empty($map['contact_firstname']) ? $map['contact_firstname'] . ' ' : '') . (!empty($map['contact_lastname']) ? $map['contact_lastname'] : '');
             if ((!empty($map['contact_tel']))) {
                 $sidebar .= '<br />' . __('Phone', 'rrze-jobs') . ': ' . $map['contact_tel'];
             }
-            if ((isset($map['contact_mobile'])) && ($map['contact_mobile'] != '')) {
+            if (!empty($map['contact_mobile'])) {
                 $sidebar .= '<br />' . __('Mobile', 'rrze-jobs') . ': ' . $map['contact_mobile'];
             }
-            if ((isset($map['contact_email'])) && ($map['contact_email'] != '')) {
+            if (!empty($map['contact_email'])) {
                 $sidebar .= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $map['contact_email'] . '">' . $map['contact_email'] . '</a>';
             }
             $sidebar .= '</dd>';
@@ -293,7 +290,7 @@ class Shortcode
         . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . $map['job_experience'] . '" />' : '')
         . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . $map['job_benefits'] . '" />' : '')
         . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />' : '')
-        . '<meta itemprop="qualifications" content="' . (isset($map['job_qualifications']) ? $map['job_qualifications'] : '') . '" />'
+        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . $map['job_qualifications'] . '" />' : '')
         . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id'] . '" />'
             . '</div>';
         $sidebar .= '</div>';
@@ -303,7 +300,7 @@ class Shortcode
 
     private static function checkDates(&$content)
     {
-        if (!isset($content['channels']['channel0']['from']) || !isset($content['channels']['channel0']['to'])) {
+        if (empty($content['channels']['channel0']['from']) || empty($content['channels']['channel0']['to'])) {
             return true;
         }
         $now = date("Y-m-d H:i:s");
@@ -400,8 +397,6 @@ class Shortcode
         $output = '';
         $aResponseByAPI = [];
         $aPersons = [];
-        // $custom_logo_id = get_theme_mod('custom_logo');
-        // $this->logo_url = (has_custom_logo() ? wp_get_attachment_url($this->custom_logo_id) : RRZE_JOBS_LOGO);
         $aMaps = [];
 
         // BITE
@@ -433,8 +428,8 @@ class Shortcode
                     array_walk($aLink, [$this, 'makeLink']);
                     return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
                 } else {
-                    if (isset($this->options['rrze-jobs-labels_no_jobs_message'])) {
-                        return '<p>' . $this->options['rrze-jobs_no_jobs_message'] . '</a></p>';
+                    if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
+                        return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
                     }
                 }
             } else {
@@ -527,14 +522,14 @@ class Shortcode
          * $_GET['job] defines, which job in the list is to be shown, f.e. ?format=embedded&job=2 shows the second job, if there is one otherwise an image
          */
 
-        if (isset($_GET['format']) && ($_GET['format'] == 'embedded') && isset($_GET['job'])) {
+        if (!empty($_GET['format']) && ($_GET['format'] == 'embedded') && !empty($_GET['job'])) {
             $jobnr = (int) $_GET['job'] - 1;
 
             usort($aMaps, function ($a, $b) {
                 return strcmp($a['job_id'], $b['job_id']);
             });
 
-            if ((count($aMaps) > 0) && (isset($aMaps[$jobnr]['job_id']))) {
+            if ((count($aMaps) > 0) && (!empty($aMaps[$jobnr]['job_id']))) {
                 $this->jobid = $aMaps[$jobnr]['job_id'];
                 return $this->get_single_job();
             } else {
@@ -576,7 +571,7 @@ class Shortcode
             }
         }
 
-        if (isset($_GET['format']) && $_GET['format'] == 'embedded') {
+        if (!empty($_GET['format']) && $_GET['format'] == 'embedded') {
             if (count($aMaps) > 0) {
                 return $this->getPublicDisplayList($aMaps);
             } else {
@@ -585,10 +580,10 @@ class Shortcode
         }
 
         if ($this->count == 0) {
-            if (isset($this->options['rrze-jobs-labels_no_jobs_message'])) {
+            if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
                 return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
             } else {
-                return '<p>asdf' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
             }
         }
 
@@ -619,6 +614,8 @@ class Shortcode
                 break;
         }
 
+
+
         // job not found => exit
         if (empty($job)) {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
@@ -626,8 +623,10 @@ class Shortcode
 
         $map = $this->jobOutput->fillMap($this->provider, $this->map_template, $job, $aPersons, $this->internal, $this->options);
 
-        if (empty($map)) {
+        if (empty($map) || !$map['valid']) {
             return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
+        }else{
+            $map = $map['data'];
         }
 
         if ($this->provider == 'univis') {
@@ -636,35 +635,16 @@ class Shortcode
             }
         }
 
-        // BK 2022-03-04 : why? $azubi is not used anywhere
-        // $azubi = false;
-        // if ((isset($map['job_title'])) && (strpos($map['job_title'], 'Auszubildende'))) {
-        //     $azubi = true;
-        // }
-
         $description = $this->getDescription($map);
-
-        // BK 2022-03-11 : why? $date_deadline is not used anywhere
-        // if (isset($map['application_end'])) {
-        //     $date = date_create($map['application_end']);
-        //     $date_deadline = date_format($date, 'd.m.Y');
-        // }
-
-        // BK 2021-12-17 : why does this exist? $map['job_description'] is not used
-        // if ( isset( $kennung_old ) && isset( $map['job_type'] ) && isset( $map['job_description'] ) ) {
-        //     $map['job_description'] = str_replace( $kennung_old, $map['job_type'], $map['job_description'] );
-        // }
-
         $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
 
         $output = '';
         $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-
         $output .= do_shortcode('[three_columns_two]' . $description . '[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar($map) . '[/three_columns_one_last][divider]');
 
         // display job_notice
-        if (!isset($_GET['format']) && isset($this->options['rrze-jobs_job_notice']) && $this->options['rrze-jobs_job_notice'] != '') {
-            $output .= '<hr /><div>' . strip_tags($this->options['rrze-jobs_job_notice'], '<p><a><br><br /><b><strong><i><em>') . '</div>';
+        if (empty($_GET['format']) && !empty($this->options['rrze-jobs-labels_job_notice'])) {
+            $output .= '<hr /><div>' . strip_tags($this->options['rrze-jobs-labels_job_notice'], '<p><a><br><br /><b><strong><i><em>') . '</div>';
         }
         $output .= '</div>';
 
@@ -682,16 +662,9 @@ class Shortcode
         $output = '';
         $last = '';
 
-        $jobs_page_url = get_permalink($this->options['rrze-jobs_jobs_page']);
-
-        // $intern_allowed = $this->jobOutput->isInternAllowed();
+        $jobs_page_url = get_permalink($this->options['rrze-jobs-labels_jobs_page']);
 
         foreach ($aMaps as $k => $map) {
-            // $job_intern = (isset($map['job_intern']) && $map['job_intern'] == 'ja' ? 1 : 0);
-
-            // if (!$intern_allowed && $job_intern) {
-            //     return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
-            // }
 
             // if there are more than 3 jobs return ''
             if ($k > 2) {
@@ -713,13 +686,13 @@ class Shortcode
             $job_item = "<h2>" . $map['job_title'] . "</h2>";
             $job_item .= $teaser;
             $job_item .= '<p>';
-            if (isset($map['job_start'])) {
+            if (!empty($map['job_start'])) {
                 $job_item .= '<span class="label">' . __('Job start', 'rrze-jobs') . ':</span> ' . $map['job_start'];
             }
-            if (isset($map['application_end'])) {
+            if (!empty($map['application_end'])) {
                 $job_item .= '<br /><span class="label">' . __('Application deadline', 'rrze-jobs') . ':</span> ' . $map['application_end'];
             }
-            if (isset($map['job_employmenttype'])) {
+            if (!empty($map['job_employmenttype'])) {
                 $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype'];
             }
             if (!empty($map['job_salary'])) {

@@ -88,6 +88,34 @@ class Settings
     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
+
+        // einmalig alte Parameter holen
+        $bOldOptionsFound = false;
+        $updated = get_option('rrze-jobs-updated');
+        if (empty($updated)){
+            $oldOptions = get_option('rrze-jobs');
+
+            $aFields = [
+                'orgids_interamt',
+                'orgids_univis',
+                'apiKey',
+                'jobs_page',
+            ];
+
+            foreach($aFields as $field){
+                if (!empty($oldOptions['rrze-jobs_' . $field])){
+                    $bOldOptionsFound = true;
+                    $oldOptions['rrze-jobs-access_' . $field] = $oldOptions['rrze-jobs_' . $field];
+                }
+            }
+
+            if ($bOldOptionsFound){
+                update_option('rrze-jobs', $oldOptions);
+            }
+
+            update_option('rrze-jobs-updated', 1);
+        }
+
     }
 
     /**
@@ -168,7 +196,7 @@ class Settings
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
                 $name = $option['name'];
-                $default = isset($option['default']) ? $option['default'] : '';
+                $default = !empty($option['default']) ? $option['default'] : '';
                 $options = array_merge($options, [$section . '_' . $name => $default]);
             }
         }

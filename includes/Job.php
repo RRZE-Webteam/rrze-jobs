@@ -132,6 +132,7 @@ class Job
                 'interamt' => '',
                 'univis' => 'type3',
                 'label' => 'Grund der Befristung',
+                'desc' => 'nicht bei Interamt',
             ],
             'job_salary_type' => [
                 'bite' => ['custom', 'entgelt_art'],
@@ -142,6 +143,7 @@ class Job
                 'type' => 'number',
                 'min' => 1,
                 'max' => 15,
+                'desc' => 'nur bei BITE',
             ],
             'job_salary_from' => [
                 'bite' => ['custom', 'estimatedsalary'],
@@ -184,12 +186,13 @@ class Job
                 'label' => 'Vollzeit / Teilzeit',
                 'type' => 'select',
                 'options' => [
+                    '0' => '',
                     'part_time' => __('Teilzeit', 'rrze-jobs'),
                     'part_time temporary' => __('Teilzeit befristet', 'rrze-jobs'),
                     'full_time' => __('Vollzeit', 'rrze-jobs'),
                     'full_time temporary' => __('Vollzeit befristet', 'rrze-jobs'),
                 ],
-                'default' => 'full_time',
+                'default' => '0',
             ],
             'job_workhours' => [
                 'bite' => '', // fehlt
@@ -207,14 +210,15 @@ class Job
                 'label' => 'Berufsgruppe',
                 'type' => 'select',
                 'options' => [
-                    'wiss' => __('wiss', 'rrze-jobs'),
-                    'n-wiss' => __('n-wiss', 'rrze-jobs'),
-                    'hiwi' => __('hiwi', 'rrze-jobs'),
-                    'azubi' => __('azubi', 'rrze-jobs'),
-                    'prof' => __('prof', 'rrze-jobs'),
-                    'other' => __('other', 'rrze-jobs'),
+                    '0' => '',
+                    'other' => __('Andere', 'rrze-jobs'),
+                    'azubi' => __('Auszubildende', 'rrze-jobs'),
+                    'wiss' => __('Forschung & Lehre', 'rrze-jobs'),
+                    'prof' => __('Professor:innen', 'rrze-jobs'),
+                    'hiwi' => __('Studentische Hilfskräfte', 'rrze-jobs'),
+                    'n-wiss' => __('Technik & Verwaltung', 'rrze-jobs'),
                 ],
-                'default' => 'n-wiss',
+                'default' => '0',
             ],
             'job_description' => [
                 'bite' => ['custom', 'aufgaben'],
@@ -337,7 +341,7 @@ class Job
                 'interamt' => '', // exisitert nicht, aber aufgeschlüsselt in contact_title, contact_fistname, contact_lastname
                 'univis' => '', // see fillPersons()
                 'label' => 'Name',
-                'desc' => 'nicht bei Interamt',
+                'desc' => 'nur bei BITE, d.h. "Titel Vorname Nachname" werden in einem einzigen Feld geliefert',
             ],
             'contact_tel' => [
                 'bite' => ['custom', 'contact_tel'],
@@ -385,7 +389,7 @@ class Job
                 'interamt' => '', // exisitert nicht, aber aufgeschlüsset in contact_street, contact_postalcode, contact_city
                 'univis' => '', // see fillPersons()
                 'label' => 'Adresse',
-                'desc' => 'nur bei BITE',
+                'desc' => 'nur bei BITE, d.h. "Straße und Hausnummer, PLZ, Ort" werden von BITE in einem einzigen Feld geliefert',
                 'type' => 'textarea',
             ],
         ];
@@ -416,30 +420,30 @@ class Job
         foreach ($personsData as $person) {
             $postalTmp = '';
             $key = $person['key'];
-            if (isset($person['title'])) {
+            if (!empty($person['title'])) {
                 $persons[$key]['contact_title'] = $person['title'];
-            } elseif (isset($person['atitle'])) {
+            } elseif (!empty($person['atitle'])) {
                 $persons[$key]['contact_title'] = $person['atitle'];
             }
-            if (isset($person['firstname'])) {
+            if (!empty($person['firstname'])) {
                 $persons[$key]['contact_firstname'] = $person['firstname'];
             }
-            if (isset($person['lastname'])) {
+            if (!empty($person['lastname'])) {
                 $persons[$key]['contact_lastname'] = $person['lastname'];
             }
-            if (isset($person['location'][0]['tel'])) {
+            if (!empty($person['location'][0]['tel'])) {
                 $persons[$key]['contact_tel'] = $person['location'][0]['tel'];
             }
-            if (isset($person['location'][0]['email'])) {
+            if (!empty($person['location'][0]['email'])) {
                 $persons[$key]['contact_email'] = $person['location'][0]['email'];
             }
-            if (isset($person['location'][0]['street'])) {
+            if (!empty($person['location'][0]['street'])) {
                 $persons[$key]['contact_street'] = $person['location'][0]['street'];
             }
-            if (isset($person['location'][0]['url'])) {
+            if (!empty($person['location'][0]['url'])) {
                 $persons[$key]['contact_link'] = $person['location'][0]['url'];
             }
-            if (isset($person['location'][0]['ort'])) {
+            if (!empty($person['location'][0]['ort'])) {
                 $postalTmp = $person['location'][0]['ort'];
             }
             if ($postalTmp != '') {
@@ -468,7 +472,7 @@ class Job
             if (is_array($val)) {
                 switch (count($val)) {
                     case 2:
-                        if (isset($job[$val[0]][$val[1]])) {
+                        if (!empty($job[$val[0]][$val[1]])) {
                             if (is_string($job[$val[0]][$val[1]])) {
                                 // check if_string() is only needed to supress PHP Notices while BITE API development is in progress (['custom', 'stellenzusatz'] ought to return string, but during development it might return an array as well)
                                 $aJob[$k] = htmlentities($job[$val[0]][$val[1]]);
@@ -476,7 +480,7 @@ class Job
                         }
                         break;
                     case 3:
-                        if (isset($job[$val[0]][$val[1]][$val[2]])) {
+                        if (!empty($job[$val[0]][$val[1]][$val[2]])) {
                             if (is_array($job[$val[0]][$val[1]][$val[2]])) {
                                 $aRaJobet[$k] = htmlentities(implode(PHP_EOL, $job[$val[0]][$val[1]][$val[2]]));
                             } else {
@@ -485,12 +489,12 @@ class Job
                         }
                         break;
                     case 4:
-                        if (isset($job[$val[0]][$val[1]][$val[2]][$val[3]])) {
+                        if (!empty($job[$val[0]][$val[1]][$val[2]][$val[3]])) {
                             $aJob[$k] = htmlentities($job[$val[0]][$val[1]][$val[2]][$val[3]]);
                         }
                         break;
                 }
-            } elseif (isset($job[$val])) {
+            } elseif (!empty($job[$val])) {
                 $aJob[$k] = $job[$val];
             }
         }
@@ -552,6 +556,7 @@ class Job
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
         $txt = nl2br($txt);
         $txt = make_clickable($txt);
+
         return $txt;
     }
 
@@ -748,7 +753,7 @@ class Job
         // Set 'job_salary_search'
         if (!empty($job['job_salary_from'])) {
             $job['job_salary_search'] = (int) filter_var($job['job_salary_from'], FILTER_SANITIZE_NUMBER_INT);
-        } elseif (isset($job['job_salary_to'])) {
+        } elseif (!empty($job['job_salary_to'])) {
             $job['job_salary_search'] = (int) filter_var($job['job_salary_to'], FILTER_SANITIZE_NUMBER_INT);
         }
         if (empty($job['job_salary_search'])) {
@@ -781,7 +786,7 @@ class Job
         }
 
         // Set job_limitation_reason
-        if (isset($job['job_limitation_reason'])) {
+        if (!empty($job['job_limitation_reason'])) {
             switch ($job['job_limitation_reason']) {
                 case 'vertr':
                     $job['job_limitation_reason'] = 'Vertretung';
@@ -814,9 +819,6 @@ class Job
         foreach ($aFields as $field) {
             $job[$field] = (!empty($job[$field]) ? strip_tags(htmlentities($job[$field])) : '');
         }
-
-        // Set 'job_benefits'
-        $job['job_benefits'] = (!empty($job['job_benefits']) ? htmlentities($job['job_benefits']) : '');
 
         // Add Person data
         if ($provider == 'univis') {

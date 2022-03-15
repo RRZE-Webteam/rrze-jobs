@@ -127,11 +127,12 @@ function getSections()
         [
             'id' => 'rrze-jobs-labels',
             'title' => __('Layout', 'rrze-jobs'),
+            'desc' => __('Hier können Sie die Überschriften und Beschriftungen für die einzelnen Abschnitte im Stellenangebot festlegen.', 'rrze-jobs'),
         ],
         [
             'id' => 'rrze-jobs-fields',
             'title' => __('Datenfelder', 'rrze-jobs'),
-            'desc' => __('Diese Felder werden von den Schnittstellen (Interamt, UnivIS, BITE) geliefert.<br />Sie können einen Standardwert für jedes Feld festlegen, das im Stellenangebot ausgegeben wird.<br />Lassen Sie das Feld leer, damit der von der Schnittstelle bezogene Wert verwendet werden kann.', 'rrze-jobs'),
+            'desc' => __('Diese Felder werden von den Schnittstellen (Interamt, UnivIS, BITE) geliefert.<br />Sie können einen Standardwert für jedes Feld festlegen, das im Stellenangebot ausgegeben wird.<br />Lassen Sie das <strong>Feld leer</strong>, damit der von der Schnittstelle bezogene Wert verwendet werden kann.', 'rrze-jobs'),
         ],
     ];
 }
@@ -165,19 +166,6 @@ function getFields()
                 'type' => 'text',
                 'default' => '',
             ],
-            [
-                'name' => 'hr',
-                'label' => '',
-                'desc' => '',
-                'type' => 'line',
-            ],
-            [
-                'name' => 'jobs_page',
-                'label' => __('Jobs Page', 'rrze-jobs'),
-                'desc' => __('QR on Public Displays link to this target.', 'rrze-jobs'),
-                'type' => 'selectPage',
-                'default' => '',
-            ],
         ],
         'rrze-jobs-labels' => [
             [
@@ -194,31 +182,31 @@ function getFields()
             ],
             [
                 'name' => 'job_headline_qualifications',
-                'label' => __("Ihr Profil", 'rrze-jobs'),
+                'label' => __("Ihr Profil (notwendig)", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Notwendige Qualifikation',
+                'default' => __('Notwendige Qualifikation', 'rrze-jobs'),
             ],
             [
                 'name' => 'job_headline_qualifications_nth',
-                'label' => __("Ihr Profil", 'rrze-jobs'),
+                'label' => __("Ihr Profil (wünschenswert)", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Wünschenswerte Qualifikation',
+                'default' => __('Wünschenswerte Qualifikation', 'rrze-jobs'),
             ],
             [
                 'name' => 'job_headline_remarks',
                 'label' => __("Wir bieten", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Bemerkungen',
+                'default' => __('Bemerkungen', 'rrze-jobs'),
             ],
             [
                 'name' => 'job_headline_application',
                 'label' => __("Bewerbung", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Bewerbung',
+                'default' => __('Bewerbung', 'rrze-jobs'),
             ],
             [
                 'name' => 'job_notice',
@@ -226,10 +214,10 @@ function getFields()
                 'desc' => __('This notice will be dispayed at the bottom of each job offer.', 'rrze-jobs'),
                 'type' => 'textarea',
                 'size' => 'large',
-                'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
+                'default' => __('<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
 <p>Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".</p>
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
-<p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
+<p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>', 'rrze-jobs'),
             ],
 
             [
@@ -242,7 +230,7 @@ function getFields()
                 'label' => __('"Apply to" button', 'rrze-jobs'),
                 'desc' => __('Sidebar: Label for the button to apply to', 'rrze-jobs'),
                 'type' => 'text',
-                'default' => 'Jetzt bewerben!',
+                'default' => __('Jetzt bewerben!', 'rrze-jobs'),
             ],
             [
                 'name' => 'sidebar_headline_application',
@@ -254,7 +242,7 @@ function getFields()
             [
                 'name' => 'sidebar_show_application_link',
                 'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
-                'desc' => __('Display both, a link and a button, to apply to in the sidebar', 'rrze-jobs'),
+                'desc' => __('Display both, a link and a button to apply to', 'rrze-jobs'),
                 'type' => 'checkbox',
                 'default' => true,
             ],
@@ -265,6 +253,14 @@ function getFields()
                 'label' => __('Sonstiges', 'rrze-jobs'),
                 'type' => 'line',
             ],
+            [
+                'name' => 'jobs_page',
+                'label' => __('Jobs Page', 'rrze-jobs'),
+                'desc' => __('QR on Public Displays link to this target.', 'rrze-jobs'),
+                'type' => 'selectPage',
+                'default' => '',
+            ],
+
             [
                 'name' => 'no_jobs_message',
                 'label' => __("No Jobs Message", 'rrze-jobs'),
@@ -282,6 +278,7 @@ function getFields()
     $aHideFields = [
         'job_id',
         'job_intern',
+        'employer_street_nr',
     ];
 
     foreach ($map_template as $sField => $aDetails) {
