@@ -227,7 +227,7 @@ function getFields()
             [
                 'name' => 'sidebar_application_button',
                 'label' => __('"Apply to" button', 'rrze-jobs'),
-                'desc' => __('Label for the button to apply to', 'rrze-jobs'),
+                // 'desc' => __('Label for the button to apply to', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => 'Jetzt bewerben!',
             ],

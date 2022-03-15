@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-04 16:35+0000\n"
-"PO-Revision-Date: 2022-03-15 17:16+0000\n"
+"PO-Revision-Date: 2022-03-15 17:23+0000\n"
 "Last-Translator: barbara <barbara.bothe@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -23,7 +23,7 @@ msgstr ""
 
 #: config/config.php:237
 msgid "\"Apply to\" button"
-msgstr ""
+msgstr "Button \"Bewerben\""
 
 #: config/config.php:125
 msgid "Accesses"
