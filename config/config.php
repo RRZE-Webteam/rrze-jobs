@@ -122,17 +122,17 @@ function getSections()
     return [
         [
             'id' => 'rrze-jobs-access',
-            'title' => __('Zugänge', 'rrze-jobs'),
+            'title' => __('Accesses', 'rrze-jobs'),
         ],
         [
             'id' => 'rrze-jobs-labels',
             'title' => __('Layout', 'rrze-jobs'),
-            'desc' => __('Hier können Sie die Überschriften und Beschriftungen für die einzelnen Abschnitte im Stellenangebot festlegen.', 'rrze-jobs'),
+            'desc' => __('Here you can set the headings and captions for each section in the job posting.', 'rrze-jobs'),
         ],
         [
             'id' => 'rrze-jobs-fields',
-            'title' => __('Datenfelder', 'rrze-jobs'),
-            'desc' => __('Diese Felder werden von den Schnittstellen (Interamt, UnivIS, BITE) geliefert.<br />Sie können einen Standardwert für jedes Feld festlegen, das im Stellenangebot ausgegeben wird.<br />Lassen Sie das <strong>Feld leer</strong>, damit der von der Schnittstelle bezogene Wert verwendet werden kann.', 'rrze-jobs'),
+            'title' => __('Data fields', 'rrze-jobs'),
+            'desc' => __('These fields are supplied by the interfaces (Interamt, UnivIS, BITE).<br />You can set a default value for each field that is output in the job offer.<br />Leave the <strong>field empty</strong> , so that the value obtained from the interface can be used.', 'rrze-jobs'),
         ],
     ];
 }
@@ -161,7 +161,7 @@ function getFields()
             ],
             [
                 'name' => 'apiKey',
-                'label' => __("apiKey", 'rrze-jobs'),
+                'label' => __("API Key", 'rrze-jobs'),
                 'desc' => __('Enter the apiKey for BITE', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => '',
@@ -170,43 +170,43 @@ function getFields()
         'rrze-jobs-labels' => [
             [
                 'name' => 'hr1',
-                'label' => __('Stellenangebot', 'rrze-jobs'),
+                'label' => __('Job offer', 'rrze-jobs'),
                 'type' => 'line',
             ],
             [
                 'name' => 'job_headline_task',
-                'label' => __("Ihre Aufgaben", 'rrze-jobs'),
+                'label' => __("Your tasks", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => __('Das Aufgabengebiet umfasst u.a.:', 'rrze-jobs'),
+                'default' => 'Das Aufgabengebiet umfasst u.a.:',
             ],
             [
                 'name' => 'job_headline_qualifications',
-                'label' => __("Ihr Profil (notwendig)", 'rrze-jobs'),
+                'label' => __("Your profile (necessary)", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => __('Notwendige Qualifikation', 'rrze-jobs'),
+                'default' => 'Notwendige Qualifikation',
             ],
             [
                 'name' => 'job_headline_qualifications_nth',
-                'label' => __("Ihr Profil (wünschenswert)", 'rrze-jobs'),
+                'label' => __("Your profile (desired)", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => __('Wünschenswerte Qualifikation', 'rrze-jobs'),
+                'default' => 'Wünschenswerte Qualifikation',
             ],
             [
                 'name' => 'job_headline_remarks',
-                'label' => __("Wir bieten", 'rrze-jobs'),
+                'label' => __("We offer", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => __('Bemerkungen', 'rrze-jobs'),
+                'default' => 'Bemerkungen',
             ],
             [
                 'name' => 'job_headline_application',
-                'label' => __("Bewerbung", 'rrze-jobs'),
+                'label' => __("Application", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => __('Bewerbung', 'rrze-jobs'),
+                'default' => 'Bewerbung',
             ],
             [
                 'name' => 'job_notice',
@@ -214,12 +214,11 @@ function getFields()
                 'desc' => __('This notice will be dispayed at the bottom of each job offer.', 'rrze-jobs'),
                 'type' => 'textarea',
                 'size' => 'large',
-                'default' => __('<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
+                'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
 <p>Schwerbehinderte im Sinne des Schwerbehindertengesetzes werden bei gleicher fachlicher Qualifikation und persönlicher Eignung bevorzugt berücksichtigt, wenn die ausgeschriebene Stelle sich für Schwerbehinderte eignet. Details dazu finden Sie in der jeweiligen Ausschreibung unter dem Punkt "Bemerkungen".</p>
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
-<p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>', 'rrze-jobs'),
+<p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
-
             [
                 'name' => 'hr2',
                 'label' => __('Sidebar', 'rrze-jobs'),
@@ -228,29 +227,27 @@ function getFields()
             [
                 'name' => 'sidebar_application_button',
                 'label' => __('"Apply to" button', 'rrze-jobs'),
-                'desc' => __('Sidebar: Label for the button to apply to', 'rrze-jobs'),
+                'desc' => __('Label for the button to apply to', 'rrze-jobs'),
                 'type' => 'text',
-                'default' => __('Jetzt bewerben!', 'rrze-jobs'),
+                'default' => 'Jetzt bewerben!',
             ],
             [
                 'name' => 'sidebar_headline_application',
-                'label' => __("Bewerbung", 'rrze-jobs'),
-                'desc' => __('Title of "Your application" in the sidebar', 'rrze-jobs'),
+                'label' => __("Application", 'rrze-jobs'),
+                'desc' => __('Title of "Your application"', 'rrze-jobs'),
                 'type' => 'text',
-                'default' => __('Bewerbung', 'rrze-jobs'),
+                'default' => 'Bewerbung',
             ],
             [
                 'name' => 'sidebar_show_application_link',
-                'label' => __("Bewerbungslink anzeigen", 'rrze-jobs'),
+                'label' => __("Show application link", 'rrze-jobs'),
                 'desc' => __('Display both, a link and a button to apply to', 'rrze-jobs'),
                 'type' => 'checkbox',
                 'default' => true,
             ],
-
-
             [
                 'name' => 'hr3',
-                'label' => __('Sonstiges', 'rrze-jobs'),
+                'label' => __('Miscellaneous', 'rrze-jobs'),
                 'type' => 'line',
             ],
             [
@@ -260,14 +257,13 @@ function getFields()
                 'type' => 'selectPage',
                 'default' => '',
             ],
-
             [
                 'name' => 'no_jobs_message',
                 'label' => __("No Jobs Message", 'rrze-jobs'),
                 'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
                 'type' => 'textarea',
                 'size' => 'large',
-                'default' => __('No job offers found.', 'rrze-jobs'),
+                'default' => 'Keine Stellenanzeigen gefunden.',
             ],
         ],
     ];
