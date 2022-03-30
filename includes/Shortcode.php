@@ -543,6 +543,10 @@ class Shortcode
          */
         if (count($aMaps) > 0) {
 
+            // echo '<pre>';
+            // var_dump($aMaps);
+            // exit;
+
             // check if orderby contains a valid fieldname
             if (!empty($this->orderby) && !array_key_exists($this->orderby, $this->map_template)) {
                 $correct_vals = implode(', ', array_keys($this->map_template));

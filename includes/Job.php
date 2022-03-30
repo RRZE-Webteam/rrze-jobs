@@ -104,7 +104,7 @@ class Job
                 'univis' => 'start',
                 'label' => 'Besetzung zum',
                 'desc' => 'leer = "zum nächstmöglichen Zeitpunkt"',
-                'type' => 'date',
+                // 'type' => 'date',
             ],
             'job_limitation' => [
                 'bite' => ['seo', 'employmentType', 0], // (full_time OR part_time) AND (temporary OR '') => if string contains "temporary" => befristet, else unbefristet
@@ -611,9 +611,10 @@ class Job
         }
 
         // Convert dates
-        $aFields = ['job_start', 'application_start', 'application_end'];
+        $aFields = ['application_start', 'application_end'];
         foreach ($aFields as $field) {
             if (!empty($job[$field])) {
+
                 $job[$field] = date('Y-m-d', strtotime($job[$field]));
             }
         }
@@ -628,7 +629,7 @@ class Job
                 $job['job_start_sort'] = $parts[0];
             } elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $job['job_start'], $parts)) {
                 $job['job_start_sort'] = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-            } else {
+            } 
                 // field contains only a string - check if it is ASAP
                 $val = strtolower($job['job_start']);
                 if (strpos($val, 'sofort') !== false || strpos($val, 'bald') !== false || strpos($val, 'glich') !== false || strpos($val, 'asap') !== false || strpos($val, 'a.s.a.p.') !== false) {
@@ -637,9 +638,12 @@ class Job
                 } else {
                     $job['job_start_sort'] = $job[$field];
                 }
+            if ($job['job_start_sort'] == '0'){
+                $job['job_start'] = __('nächstmöglichen Zeitpunkt', 'rrze_jobs');   
+            }else{
+                // Convert date 'job_start'
+                $job['job_start'] = date('d.m.Y', strtotime($job['job_start']));
             }
-            // Convert date 'job_start'
-            $job['job_start'] = date('d.m.Y', strtotime($job['job_start']));
         }
 
         // Set 'job_employmenttype'
