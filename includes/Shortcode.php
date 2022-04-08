@@ -68,7 +68,6 @@ class Shortcode
             'job_headline_qualifications' => 'job_qualifications',
             'job_headline_qualifications_nth' => 'job_qualifications_nth',
             'job_headline_remarks' => 'job_benefits',
-            'job_headline_qualifications' => 'application_link',
         ];
 
         switch ($this->provider) {
@@ -88,6 +87,7 @@ class Shortcode
                 $description = !empty($map['job_description']) ? $map['job_description'] : $map['job_title'];
                 break;
         }
+
         $description = str_replace('"', '', $description);
 
         return $description;
@@ -593,8 +593,6 @@ class Shortcode
         $output = '';
         $aPersons = [];
         $aResponseByAPI = $this->getResponse('single', $this->jobid);
-        // $custom_logo_id = get_theme_mod('custom_logo');
-        // $this->logo_url = (has_custom_logo() ? wp_get_attachment_url($this->custom_logo_id) : '');
 
         if (!$aResponseByAPI['valid']) {
             return $aResponseByAPI['content'];
@@ -611,8 +609,6 @@ class Shortcode
                 $aPersons = $aPersons[$job['acontact']];
                 break;
         }
-
-
 
         // job not found => exit
         if (empty($job)) {
