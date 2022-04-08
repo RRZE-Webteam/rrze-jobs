@@ -68,7 +68,6 @@ class Shortcode
             'job_headline_qualifications' => 'job_qualifications',
             'job_headline_qualifications_nth' => 'job_qualifications_nth',
             'job_headline_remarks' => 'job_benefits',
-            'job_headline_qualifications' => 'application_link',
         ];
 
         switch ($this->provider) {
@@ -87,8 +86,8 @@ class Shortcode
             case 'interamt':
                 $description = !empty($map['job_description']) ? $map['job_description'] : $map['job_title'];
                 break;
-                exit;
         }
+
         $description = str_replace('"', '', $description);
 
         return $description;
@@ -285,12 +284,12 @@ class Shortcode
         $sidebar .= '</dl>';
 
         $sidebar .= '<div><meta itemprop="datePosted" content="' . $map['job_date_posted'] . '" />'
-        . (!empty($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . $map['job_education'] . '" />' : '')
-        . (!empty($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . $map['job_unit'] . '" />' : '')
-        . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . $map['job_experience'] . '" />' : '')
-        . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . $map['job_benefits'] . '" />' : '')
-        . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />' : '')
-        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . $map['job_qualifications'] . '" />' : '')
+        . (!empty($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . wp_strip_all_tags($map['job_education']) . '" />' : '')
+        . (!empty($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . wp_strip_all_tags($map['job_unit']) . '" />' : '')
+        . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . wp_strip_all_tags($map['job_experience']) . '" />' : '')
+        . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . wp_strip_all_tags($map['job_benefits']) . '" />' : '')
+        . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . wp_strip_all_tags($map['job_category']) . '" />' : '')
+        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . wp_strip_all_tags($map['job_qualifications']) . '" />' : '')
         . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id'] . '" />'
             . '</div>';
         $sidebar .= '</div>';
@@ -542,11 +541,6 @@ class Shortcode
          * Normale Ausgabe
          */
         if (count($aMaps) > 0) {
-
-            // echo '<pre>';
-            // var_dump($aMaps);
-            // exit;
-
             // check if orderby contains a valid fieldname
             if (!empty($this->orderby) && !array_key_exists($this->orderby, $this->map_template)) {
                 $correct_vals = implode(', ', array_keys($this->map_template));
@@ -599,8 +593,6 @@ class Shortcode
         $output = '';
         $aPersons = [];
         $aResponseByAPI = $this->getResponse('single', $this->jobid);
-        // $custom_logo_id = get_theme_mod('custom_logo');
-        // $this->logo_url = (has_custom_logo() ? wp_get_attachment_url($this->custom_logo_id) : '');
 
         if (!$aResponseByAPI['valid']) {
             return $aResponseByAPI['content'];
@@ -617,8 +609,6 @@ class Shortcode
                 $aPersons = $aPersons[$job['acontact']];
                 break;
         }
-
-
 
         // job not found => exit
         if (empty($job)) {
@@ -696,8 +686,8 @@ class Shortcode
             if (!empty($map['application_end'])) {
                 $job_item .= '<br /><span class="label">' . __('Application deadline', 'rrze-jobs') . ':</span> ' . $map['application_end'];
             }
-            if (!empty($map['job_employmenttype'])) {
-                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype'];
+            if (!empty($map['job_employmenttype_txt'])) {
+                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype_txt'];
             }
             if (!empty($map['job_salary'])) {
                 $job_item .= '<br /><span class="label">' . __('Payment', 'rrze-jobs') . '</span>: ' . $map['job_salary'];
