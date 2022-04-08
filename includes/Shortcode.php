@@ -285,12 +285,12 @@ class Shortcode
         $sidebar .= '</dl>';
 
         $sidebar .= '<div><meta itemprop="datePosted" content="' . $map['job_date_posted'] . '" />'
-        . (!empty($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . $map['job_education'] . '" />' : '')
-        . (!empty($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . $map['job_unit'] . '" />' : '')
-        . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . $map['job_experience'] . '" />' : '')
-        . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . $map['job_benefits'] . '" />' : '')
-        . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . $map['job_category'] . '" />' : '')
-        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . $map['job_qualifications'] . '" />' : '')
+        . (!empty($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . wp_strip_all_tags($map['job_education']) . '" />' : '')
+        . (!empty($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . wp_strip_all_tags($map['job_unit']) . '" />' : '')
+        . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . wp_strip_all_tags($map['job_experience']) . '" />' : '')
+        . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . wp_strip_all_tags($map['job_benefits']) . '" />' : '')
+        . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . wp_strip_all_tags($map['job_category']) . '" />' : '')
+        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . wp_strip_all_tags($map['job_qualifications']) . '" />' : '')
         . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id'] . '" />'
             . '</div>';
         $sidebar .= '</div>';
