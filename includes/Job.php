@@ -605,7 +605,7 @@ class Job
 
         // set defaults if given
         foreach ($job as $fieldname => $val){
-            if (!empty($options['rrze-jobs-fields_' . $fieldname])){
+            if (!empty($options['rrze-jobs-fields_' . $fieldname]) && empty($job[$fieldname])){
                 $job[$fieldname] = $options['rrze-jobs-fields_' . $fieldname];
             }
         }
@@ -646,40 +646,22 @@ class Job
             }
         }
 
-        // Set 'job_employmenttype'
-        $job['job_employmenttype'] = ($provider == 'univis' && !empty($job['job_employmenttype']) ? ucfirst($job['job_employmenttype']) . 'zeit' : $job['job_employmenttype']);
 
-        // Set job_employmenttype_txt and job_employmenttype_schema
-        $aEmploymentType = [
-            'txt' => '',
-            'schema' => '',
-        ];
-        switch ($provider) {
-            case 'bite';
-                $aTmp = explode(' ', $job['job_employmenttype']);
-                $aEmploymentType['schema'] = strtoupper($aTmp[0]);
-                if (!empty($aTmp[1])) {
-                    $aEmploymentType['schema'] .= ' TEMPORARY';
-                }
-                if ($aEmploymentType['schema'] == 'FULL_TIME') {
-                    $aEmploymentType['txt'] = 'Vollzeit';
-                }
-                break;
-            case 'univis':
-            case 'interamt':
-                $aEmploymentType['txt'] = $job['job_employmenttype'];
-                $aEmploymentType['schema'] = 'FULL_TIME';
-                if ($aEmploymentType['txt'] != 'Vollzeit') {
-                    $aEmploymentType['schema'] = 'PART_TIME';
-                }
-                if (!empty($job['job_limitation']) && $job['job_limitation'] != 'unbef') {
-                    $aEmploymentType['schema'] .= ' TEMPORARY';
-                }
-                break;
+        // Set 'job_employmenttype'
+        $aParts = explode(' ', strtoupper($job['job_employmenttype']));
+
+        if ($aParts[0] == 'FULL_TIME' || $aParts[0] == 'VOLLZEIT' || $aParts[0] == 'VOLL'){
+            $job['job_employmenttype_schema'] = 'FULL_TIME';
+            $job['job_employmenttype_txt'] = __('Vollzeit', 'rrze-jobs');
+        }else{
+            $job['job_employmenttype_schema'] = 'PART_TIME';
+            $job['job_employmenttype_txt'] = __('Teilzeit', 'rrze-jobs');
         }
 
-        $job['job_employmenttype_txt'] = $aEmploymentType['txt'];
-        $job['job_employmenttype_schema'] = $aEmploymentType['schema'];
+        if (!empty($aParts[1]) || (!empty($job['job_limitation']) && $job['job_limitation'] != 'unbef')){
+            $job['job_employmenttype_schema'] .= ' LIMITED';
+            $job['job_employmenttype_txt'] .= ' ' . __('befristet', 'rrze-jobs');
+        }
 
         // Set 'job_type'
         if ((!empty($job['job_type'])) && ($job['job_type'] != 'keine')) {

@@ -87,7 +87,6 @@ class Shortcode
             case 'interamt':
                 $description = !empty($map['job_description']) ? $map['job_description'] : $map['job_title'];
                 break;
-                exit;
         }
         $description = str_replace('"', '', $description);
 
@@ -542,11 +541,6 @@ class Shortcode
          * Normale Ausgabe
          */
         if (count($aMaps) > 0) {
-
-            // echo '<pre>';
-            // var_dump($aMaps);
-            // exit;
-
             // check if orderby contains a valid fieldname
             if (!empty($this->orderby) && !array_key_exists($this->orderby, $this->map_template)) {
                 $correct_vals = implode(', ', array_keys($this->map_template));
@@ -696,8 +690,8 @@ class Shortcode
             if (!empty($map['application_end'])) {
                 $job_item .= '<br /><span class="label">' . __('Application deadline', 'rrze-jobs') . ':</span> ' . $map['application_end'];
             }
-            if (!empty($map['job_employmenttype'])) {
-                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype'];
+            if (!empty($map['job_employmenttype_txt'])) {
+                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype_txt'];
             }
             if (!empty($map['job_salary'])) {
                 $job_item .= '<br /><span class="label">' . __('Payment', 'rrze-jobs') . '</span>: ' . $map['job_salary'];

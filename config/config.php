@@ -278,7 +278,6 @@ function getFields()
     ];
 
     foreach ($map_template as $sField => $aDetails) {
-
         if (!in_array($sField, $aHideFields)) {
             $aFields['rrze-jobs-fields'][] = [
                 'name' => $sField,
