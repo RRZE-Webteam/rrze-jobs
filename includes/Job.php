@@ -308,6 +308,16 @@ class Job
                 'type' => 'line',
 
             ],
+            'contact' => [
+                'bite' => '', // not needed
+                'interamt' => '', // not needed
+                'univis' => 'contact',
+            ],
+            'acontact' => [
+                'bite' => '', // not needed
+                'interamt' => '', // not needed
+                'univis' => 'acontact',
+            ],
             'contact_link' => [
                 'bite' => '', // fehlt
                 'interamt' => 'HomepageBehoerde',
@@ -499,7 +509,7 @@ class Job
             }
         }
 
-        $bValid = $this->cleanData($provider, $aJob, $shortcode_internaljobs, $options);
+        $bValid = $this->cleanData($provider, $aJob, $aPersons, $shortcode_internaljobs, $options);
 
         return [
             'valid' => $bValid,
@@ -596,7 +606,7 @@ class Job
 
     // cleanData() check if job is valid, allowed to be shown and converts all fields
     // returns BOOLEAN
-    private function cleanData(&$provider, &$job, &$shortcode_internaljobs, &$options)
+    private function cleanData(&$provider, &$job, &$aPersons, &$shortcode_internaljobs, &$options)
     {
         // Skip job?
         if ($this->skipJob($job, $shortcode_internaljobs)) {
@@ -811,7 +821,7 @@ class Job
             $personKey = (!empty($job['acontact']) ? $job['acontact'] : (!empty($job['contact']) ? $job['contact'] : ''));
 
             if (!empty($personKey) && !empty($aPersons[$personKey])) {
-                array_merge($job, $aPersons[$personKey]);
+                $job = array_merge($job, $aPersons[$personKey]);
             }
         }
 
