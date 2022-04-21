@@ -312,11 +312,13 @@ class Job
                 'bite' => '', // not needed
                 'interamt' => '', // not needed
                 'univis' => 'contact',
+                'label' => '',
             ],
             'acontact' => [
                 'bite' => '', // not needed
                 'interamt' => '', // not needed
                 'univis' => 'acontact',
+                'label' => '',
             ],
             'contact_link' => [
                 'bite' => '', // fehlt
