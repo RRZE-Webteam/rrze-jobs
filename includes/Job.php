@@ -735,17 +735,17 @@ class Job
 
         // Set 'job_salary'
         $job['job_salary'] = '';
-        if (!empty($map['job_salary_to'])) {
-            if (!empty($map['job_salary_from']) && ($map['job_salary_from'] != $map['job_salary_to'])) {
-                $job['job_salary'] = $map['job_salary_from'] . ' - ' . $map['job_salary_to'];
+        if (!empty($job['job_salary_to'])) {
+            if (!empty($job['job_salary_from']) && ($job['job_salary_from'] != $job['job_salary_to'])) {
+                $job['job_salary'] = $job['job_salary_from'] . ' - ' . $job['job_salary_to'];
             } else {
-                $job['job_salary'] = $map['job_salary_to'];
+                $job['job_salary'] = $job['job_salary_to'];
             }
-        } elseif (!empty($map['job_salary_from'])) {
-            $job['job_salary'] = $map['job_salary_from'];
+        } elseif (!empty($job['job_salary_from'])) {
+            $job['job_salary'] = $job['job_salary_from'];
         }
-        if (($provider == 'bite') && !empty($map['job_salary_type'])) {
-            $job['job_salary'] = 'TV-L ' . $map['job_salary_type'] . $job['job_salary'];
+        if (($provider == 'bite') && !empty($job['job_salary_type'])) {
+            $job['job_salary'] = 'TV-L ' . $job['job_salary_type'] . $job['job_salary'];
         }
 
         // Set 'job_salary_search'
