@@ -654,6 +654,7 @@ class Job
                 $job['job_start'] = __('nächstmöglichen Zeitpunkt', 'rrze_jobs');   
             }else{
                 // Convert date 'job_start'
+                $job['job_start'] = preg_replace('/(\d{2}\.\d{2})\.(\d{2}$)/', '$1.20$2', $job['job_start']);
                 $job['job_start'] = date('d.m.Y', strtotime($job['job_start']));
             }
         }
