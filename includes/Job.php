@@ -562,7 +562,7 @@ class Job
             '/\^(.*)\^/m' => '<sup>$1</sup>', // pi^2^
             '/\[([^\]]*)\]\s{0,1}((http|https|ftp|ftps):\/\/\S*)/mi' => '<a href="$2">$1</a>', // [link text] http...
             '/\[([^\]]*)\]\s{0,1}(mailto:)([^")\s<>]+)/mi' => '<a href="mailto:$3">$1</a>', // find [link text] mailto:email@address.tld but not <a href="mailto:email@address.tld">mailto:email@address.tld</a>
-            '/\*(.*)\*/m' => '<strong>$1</strong>', // *bold*
+            '/\*([^\*]*)\*/m' => '<strong>$1</strong>', // *bold*
         );
 
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
