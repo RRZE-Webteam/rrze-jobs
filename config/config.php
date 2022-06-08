@@ -312,3 +312,24 @@ function getHelpTab()
         ],
     ];
 }
+
+/**
+ * Fixe und nicht aenderbare Plugin-Optionen
+ * @return array 
+ */
+function getConstants() {
+        $options = array(
+	    
+	    'fauthemes' => [
+		'FAU-Einrichtungen', 
+		'FAU-Philfak',
+		'FAU-Natfak', 
+		'FAU-RWFak', 
+		'FAU-Medfak', 
+		'FAU-Techfak',
+		'FAU-Jobs'
+		],
+
+        );               
+        return $options; // Standard-Array für zukünftige Optionen
+    }

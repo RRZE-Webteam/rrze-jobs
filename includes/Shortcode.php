@@ -31,8 +31,7 @@ class Shortcode
     /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct($settings)
-    {
+    public function __construct($settings) {
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
@@ -119,8 +118,7 @@ class Shortcode
         }
     }
 
-    public function shortcodeOutput($atts)
-    {
+    public function shortcodeOutput($atts)  {
         $output = '';
         $this->count = 0;
 
@@ -172,8 +170,7 @@ class Shortcode
         return $output;
     }
 
-    private function get_sidebar(&$map)
-    {
+    private function get_sidebar(&$map)  {
         $sidebar = '';
         $application_button_link = '';
         $mailto = '';
@@ -313,8 +310,7 @@ class Shortcode
         }
     }
 
-    private static function isValid(&$content)
-    {
+    private static function isValid(&$content) {
 
         if (isset($content['active'])) {
             if ($content['active']) {
@@ -327,8 +323,7 @@ class Shortcode
         }
     }
 
-    private function getResponse($sType, $sParam = null)
-    {
+    private function getResponse($sType, $sParam = null) {
         $aRet = [
             'valid' => false,
             'content' => '',
@@ -342,15 +337,25 @@ class Shortcode
                     'Content-Type' => 'application/json',
                     'BAPI-Token' => $this->options['rrze-jobs-access_apiKey'],
                 ],
+		'sslverify' => true
             ];
         }
 
         $api_url = $this->jobOutput->getURL($this->provider, $sType) . $sParam;
 
-        $content = wp_remote_get($api_url, $aGetArgs);
-        $content = $content["body"];
+	$remote_get    = wp_safe_remote_get( $api_url, $aGetArgs);
+	if ( is_wp_error( $remote_get ) ) {	
+		 $aRet = [
+                    'valid' => false,
+                    'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $remote_get->get_error_message() . '</p>',
+                ];
+		return $aRet;
+         } else {
+		$content = json_decode($remote_get["body"], true);
+	  }
+	
 
-        $content = json_decode($content, true);
+      
 
         if ($this->provider == 'bite') {
             if (!empty($content['code'])) {
@@ -386,13 +391,11 @@ class Shortcode
         return $aRet;
     }
 
-    private function makeLink(&$item, $key)
-    {
+    private function makeLink(&$item, $key)  {
         $item = '<li class=".rrze-jobs-bite-li"><a class=".rrze-jobs-bite-link" href="' . $item . '">' . $key . '</a></li>';
     }
 
-    private function get_all_jobs()
-    {
+    private function get_all_jobs()  {
         $output = '';
         $aResponseByAPI = [];
         $aPersons = [];
