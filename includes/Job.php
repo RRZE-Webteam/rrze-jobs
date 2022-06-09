@@ -4,8 +4,7 @@ namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
 
-class Job
-{
+class Job {
     private $showInternalJobs = false;
 
     public function __construct()
@@ -48,8 +47,7 @@ class Job
      * @return array
      */
 
-    public function getMap($provider, $bStructure = false)
-    {
+    public function getMap($provider, $bStructure = false) {
         $map = [
             'job_id' => [
                 'bite' => 'id',
