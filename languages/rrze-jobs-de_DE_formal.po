@@ -3,10 +3,10 @@ msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-04 16:35+0000\n"
-"PO-Revision-Date: 2022-03-15 17:27+0000\n"
-"Last-Translator: barbara <barbara.bothe@fau.de>\n"
-"Language-Team: Deutsch\n"
-"Language: de_DE\n"
+"PO-Revision-Date: 2022-07-05 14:11+0000\n"
+"Last-Translator: \n"
+"Language-Team: Deutsch (Sie)\n"
+"Language: de-DE-formal\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Poedit-SearchPath-0: .\n"
 "X-Poedit-SearchPath-1: ..\n"
-"X-Loco-Version: 2.3.1; wp-5.3.2"
+"X-Loco-Version: 2.6.2; wp-6.0"
 
 #: config/config.php:237
 msgid "\"Apply to\" button"
@@ -165,7 +165,7 @@ msgstr "Job ID (0 = alle)"
 msgid "Job offer"
 msgstr "Stellenangebot"
 
-#: config/config.php:68 includes/Shortcode.php:218 includes/Shortcode.php:221
+#: config/config.php:68 includes/Shortcode.php:218 includes/Shortcode.php:221 
 #: includes/Shortcode.php:690
 msgid "Job start"
 msgstr "Besetzung zum"
@@ -374,7 +374,7 @@ msgstr ""
 "leer</strong>, damit der von der Schnittstelle bezogene Wert verwendet "
 "werden kann."
 
-#: includes/Shortcode.php:370 includes/Shortcode.php:377
+#: includes/Shortcode.php:370 includes/Shortcode.php:377 
 #: includes/Shortcode.php:621 includes/Shortcode.php:627
 msgid "This job offer is not available"
 msgstr "Dieses Stellenangebot steht nicht zur Verfügung."
