@@ -110,7 +110,7 @@ class Shortcode {
         ];
 
         foreach ($aAtts as $att) {
-            $this->att = (!empty($atts[$att]) ? $atts[$att] : $this->settings[$att]['default']);
+            $this->$att = (!empty($atts[$att]) ? $atts[$att] : $this->settings[$att]['default']);
         }
     }
 
