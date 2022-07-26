@@ -8,8 +8,7 @@ use RRZE\Jobs\Job;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-class Shortcode
-{
+class Shortcode {
     private $provider = '';
     private $map_template = [];
     private $jobid = 0;
@@ -44,23 +43,22 @@ class Shortcode
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
         if (!is_plugin_active('fau-jobportal/fau-jobportal.php')) {
-            add_shortcode('jobs', [$this, 'shortcodeOutput'], 10, 2);
+            add_shortcode('jobs', [$this, 'shortcodeOutput']);
+	        add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
         }
     }
 
     /**
      * Enqueue der Skripte.
      */
-    public function enqueue_scripts()
-    {
+    public function enqueue_scripts() {
         wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
         if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.min.css')) {
             wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css');
         }
     }
 
-    private function getDescription(&$map)
-    {
+    private function getDescription(&$map) {
         $description = '';
         $aFields = [
             'job_headline_task' => 'job_description',
@@ -92,8 +90,7 @@ class Shortcode
         return $description;
     }
 
-    private function sortArrayByField($myArray, $fieldname, $order)
-    {
+    private function sortArrayByField($myArray, $fieldname, $order)  {
         if (!empty($this->order)) {
             usort($myArray, function ($a, $b) use ($fieldname, $order) {
                 return ($this->order == 'ASC' ? strtolower($a[$fieldname]) <=> strtolower($b[$fieldname]) : strtolower($b[$fieldname]) <=> strtolower($a[$fieldname]));
@@ -102,8 +99,7 @@ class Shortcode
         return $myArray;
     }
 
-    private function setAtts($atts)
-    {
+    private function setAtts($atts)  {
         $aAtts = [
             'limit',
             'orderby',
@@ -114,7 +110,7 @@ class Shortcode
         ];
 
         foreach ($aAtts as $att) {
-            $this->att = (!empty($atts[$att]) ? $atts[$att] : $this->settings[$att]['default']);
+            $this->$att = (!empty($atts[$att]) ? $atts[$att] : $this->settings[$att]['default']);
         }
     }
 
@@ -133,19 +129,20 @@ class Shortcode
             $val = trim(strtolower(sanitize_text_field($val)));
         });
 
-        foreach ($aProvider as $this->provider) {
-            $this->provider = $this->provider;
-
-            $this->map_template = $this->jobOutput->getMap($this->provider);
+        foreach ($aProvider as $provider) {
+            $this->provider = $provider;
+            $this->map_template = $this->jobOutput->getMap($provider);
 
             // set jobid from attribute jobid or GET-parameter jobid
             $this->jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0));
 
             // orgids => attribute orgids or attribute orgid or fetch from settings page
             $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
+	    
+	    
             if (!$orgids) {
-                if (!empty($this->options['rrze-jobs-access_orgids_' . $this->provider])) {
-                    $orgids = $this->options['rrze-jobs-access_orgids_' . $this->provider];
+                if (!empty($this->options['rrze-jobs-access_orgids_' . $provider])) {
+                    $orgids = $this->options['rrze-jobs-access_orgids_' .$provider];
                 }
             }
 
@@ -153,11 +150,11 @@ class Shortcode
                 $this->aOrgIDs = explode(',', $orgids);
             }
 
-            if ($this->provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
+            if ($provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
                 return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
             }
 
-            if (($orgids || $this->provider == 'bite') && !$this->jobid) {
+            if (($orgids || $provider == 'bite') && !$this->jobid) {
                 $output .= $this->get_all_jobs();
             } else {
                 $output = $this->get_single_job();
@@ -294,8 +291,7 @@ class Shortcode
         return $sidebar;
     }
 
-    private static function checkDates(&$content)
-    {
+    private static function checkDates(&$content)  {
         if (empty($content['channels']['channel0']['from']) || empty($content['channels']['channel0']['to'])) {
             return true;
         }
@@ -341,9 +337,9 @@ class Shortcode
             ];
         }
 
-        $api_url = $this->jobOutput->getURL($this->provider, $sType) . $sParam;
-
+        $api_url = $this->jobOutput->getURL($this->provider, $sType) . $sParam;	
 	$remote_get    = wp_safe_remote_get( $api_url, $aGetArgs);
+	
 	if ( is_wp_error( $remote_get ) ) {	
 		 $aRet = [
                     'valid' => false,
@@ -395,7 +391,7 @@ class Shortcode
         $item = '<li class=".rrze-jobs-bite-li"><a class=".rrze-jobs-bite-link" href="' . $item . '">' . $key . '</a></li>';
     }
 
-    private function get_all_jobs()  {
+    private function get_all_jobs($debug = false)  {
         $output = '';
         $aResponseByAPI = [];
         $aPersons = [];
@@ -407,7 +403,8 @@ class Shortcode
                 // return just as a list of links to jobpostings
                 // 1. get JobsIDs
                 $aResponseByAPI = $this->getResponse('list');
-
+	//	echo "LISTOUT: ". Helper::get_html_var_dump($aResponseByAPI);
+		
                 if (!$aResponseByAPI['valid']) {
                     return $aResponseByAPI['content'];
                 }
@@ -437,7 +434,7 @@ class Shortcode
             } else {
                 // 1. get JobsIDs
                 $aResponseByAPIJobIDs = $this->getResponse('list');
-
+	//    echo "LISTOUT: ". Helper::get_html_var_dump($aResponseByAPIJobIDs);
                 if (!$aResponseByAPIJobIDs['valid']) {
                     return $aResponseByAPIJobIDs['content'];
                 }
@@ -445,6 +442,7 @@ class Shortcode
                 foreach ($aResponseByAPIJobIDs['content']['entries'] as $entry) {
                     // 2. get actual job
                     $aResponseByAPI = $this->getResponse('single', $entry['id']);
+	//	    echo "SINGLEOUT: ". Helper::get_html_var_dump($aResponseByAPI);
                     if (!$aResponseByAPI['valid']) {
                         // let's skip this entry, there might be valid ones
                         continue;
@@ -591,8 +589,7 @@ class Shortcode
         return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');
     }
 
-    public function get_single_job()
-    {
+    public function get_single_job()  {
         $output = '';
         $aPersons = [];
         $aResponseByAPI = $this->getResponse('single', $this->jobid);
