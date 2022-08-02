@@ -42,9 +42,10 @@ class Shortcode {
         add_action('init', [$this, 'initGutenberg']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
+	
         if (!is_plugin_active('fau-jobportal/fau-jobportal.php')) {
             add_shortcode('jobs', [$this, 'shortcodeOutput']);
-	        add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
+	    add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
         }
     }
 
@@ -53,8 +54,8 @@ class Shortcode {
      */
     public function enqueue_scripts() {
         wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
-        if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.min.css')) {
-            wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css');
+        if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.css')) {
+            wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.css');
         }
     }
 

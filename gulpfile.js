@@ -25,7 +25,7 @@ function css() {
         })
 	.pipe(sass().on('error', sass.logError))
 	.pipe(postcss(plugins))
-        .pipe(dest(info.cssdir))
+        .pipe(dest(info.output.css))
 	.pipe(touch());
 }
 function cssdev() {
@@ -36,14 +36,14 @@ function cssdev() {
     return src([info.source.sass + '*.scss'])
 	.pipe(sass().on('error', sass.logError))
 	.pipe(postcss(plugins))
-        .pipe(dest(info.cssdir))
+        .pipe(dest(info.output.css))
 	.pipe(touch());
 }
 
 function js() {
     return src([info.source.js +'*.js'])
 	.pipe(uglify())
-	.pipe(dest(info.jsdir))
+	.pipe(dest(info.output.js))
 	.pipe(touch());
 }
 
