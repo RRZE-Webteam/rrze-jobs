@@ -7,8 +7,7 @@ define('RRZE_JOBS_LOGO', plugins_url('assets/img/fau.gif', __DIR__));
 define('RRZE_JOBS_ADDRESS_REGION', 'Bayern');
 use RRZE\Jobs\Job;
 
-function getShortcodeSettings()
-{
+function getShortcodeSettings() {
     return [
         'block' => [
             'blocktype' => 'rrze-jobs/jobs',
@@ -102,8 +101,7 @@ function getShortcodeSettings()
  * Gibt die Einstellungen des Menus zurück.
  * @return array [description]
  */
-function getMenuSettings()
-{
+function getMenuSettings() {
     return [
         'page_title' => __('Jobs', 'rrze-jobs'),
         'menu_title' => __('RRZE Jobs', 'rrze-jobs'),
@@ -117,8 +115,7 @@ function getMenuSettings()
  * Gibt die Einstellungen der Optionsbereiche zurück.
  * @return array [description]
  */
-function getSections()
-{
+function getSections() {
     return [
         [
             'id' => 'rrze-jobs-access',
@@ -141,8 +138,7 @@ function getSections()
  * Gibt die Einstellungen der Optionsfelder zurück.
  * @return array [description]
  */
-function getFields()
-{
+function getFields() {
     $aFields = [
         'rrze-jobs-access' => [
             [
@@ -318,18 +314,20 @@ function getHelpTab()
  * @return array 
  */
 function getConstants() {
-        $options = array(
-	    
-	    'fauthemes' => [
-		'FAU-Einrichtungen', 
-		'FAU-Philfak',
-		'FAU-Natfak', 
-		'FAU-RWFak', 
-		'FAU-Medfak', 
-		'FAU-Techfak',
-		'FAU-Jobs'
-		],
-
-        );               
-        return $options; // Standard-Array für zukünftige Optionen
-    }
+    $options = array(
+	'Transient_Prefix' => 'rrze_jobs',
+	'Transient_Seconds' =>  6 * HOUR_IN_SECONDS,
+	'fauthemes' => [
+	    'FAU-Einrichtungen', 
+	    'FAU-Einrichtungen-Beta', 
+	    'FAU-Philfak',
+	    'FAU-Natfak', 
+	    'FAU-RWFak', 
+	    'FAU-Medfak', 
+	    'FAU-Techfak',
+	    'FAU-Jobs'
+	],
+    );      
+	
+    return $options; // Standard-Array für zukünftige Optionen
+}
