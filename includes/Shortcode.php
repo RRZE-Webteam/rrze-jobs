@@ -140,7 +140,7 @@ class Shortcode {
 	    wp_enqueue_style('rrze-elements');
 	    wp_enqueue_style('rrze-jobs-css');
 
-	    return $output;
+	    return $cachedout;
 	} 
 	
 	
