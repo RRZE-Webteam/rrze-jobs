@@ -119,12 +119,10 @@ class Shortcode {
     }
 
     public function shortcodeOutput($atts)  {
-        $output = '';
+       
         $this->count = 0;
-
         $this->setAtts($atts);
 
-	
 	// set jobid from attribute jobid or GET-parameter jobid
         $this->jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0));
 
@@ -134,8 +132,18 @@ class Shortcode {
         // provider <== attribute or GET-parameter or config
         $this->provider = (!empty($atts['provider']) ? $atts['provider'] : (!empty($_GET['provider']) ? sanitize_text_field($_GET['provider']) : $this->options['provider']));
 
+	
+	
+	if (!empty($_GET['format']) && ($_GET['format'] == 'embedded') && !empty($_GET['job'])) {
+	   $format = 'embedded';
+	   $jobnr = (int) $_GET['job'] - 1;
+	   $format .= '-'.$jobnr;
+	} else {
+	   $format = 'default';
+	}
+	
 	$cache = new Cache($this->pluginFile, $this->settings);
-	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid);
+	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid, $format);
 	if ($cachedout) {
 	    wp_enqueue_style('rrze-elements');
 	    wp_enqueue_style('rrze-jobs-css');
@@ -143,6 +151,8 @@ class Shortcode {
 	    return $cachedout;
 	} 
 	
+	
+	$output = '';
 	
         // multi-provider given f.e. "bite, interamt" or "univis,interamt,bite    , unknownProvider"
         $aProvider = explode(',', $this->provider);
@@ -175,7 +185,7 @@ class Shortcode {
             }
         }
 	
-	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $output);
+	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $format, $output);
 	
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');
@@ -444,7 +454,7 @@ class Shortcode {
                     return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
                 } else {
                     if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
-                        return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
+                        return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</p>';
                     }
                 }
             } else {
@@ -596,9 +606,9 @@ class Shortcode {
 
         if ($this->count == 0) {
             if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
-                return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
+                return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</p>';
             } else {
-                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
+                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</p>';
             }
         }
 

@@ -259,7 +259,7 @@ function getFields() {
                 'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
                 'type' => 'textarea',
                 'size' => 'large',
-                'default' => 'Keine Stellenanzeigen gefunden.',
+                'default' => __('No open job positions found.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
             ],
         ],
     ];

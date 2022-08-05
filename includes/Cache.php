@@ -25,7 +25,7 @@ class Cache  {
 	return true;
     }
     
-    public function get_cached_job($provider = '', $provider_orgid = '', $jobid = '') {
+    public function get_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default') {
 	$prefix = $this->constants['Transient_Prefix'];
 	if (empty($provider)) {
 	    $provider = 'noprovider';
@@ -44,6 +44,9 @@ class Cache  {
 	    $jobid = preg_replace('/[^a-z0-9]+/i', '', $jobid);
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
+	if ($format !== 'default') {
+	    $transient_name .= '_'.$format;
+	}
 	$value = get_transient( $transient_name );
 	
 	if ( false === $value ) {
@@ -52,7 +55,7 @@ class Cache  {
 	    return $value;
 	}
     }
-    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $content = '') {	
+    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '') {	
 	if (empty($content)) {
 	    return false;
 	}
@@ -75,6 +78,9 @@ class Cache  {
 	    $jobid = preg_replace('/[^a-z0-9]+/i', '', $jobid);
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
+	if ($format !== 'default') {
+	    $transient_name .= '_'.$format;
+	}
 	$cachetime = $this->constants['Transient_Seconds'];
 	
 	set_transient( $transient_name, $content, $cachetime);
