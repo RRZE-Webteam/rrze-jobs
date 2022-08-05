@@ -14,9 +14,8 @@
     "clone": "git+https://github.com/RRZE-Webteam/rrze-jobs.git"
   },
   "browserslist": [
-    "last 3 years",
-    "ie 11"
-  ],
+    "last 3 years"
+    ],
   "supports": {
     "email": "webmaster@fau.de",
     "docs": "https://www.wordpress.rrze.fau.de/plugins/fau-und-rrze-plugins/rrze-jobs/"
@@ -27,8 +26,11 @@
         "js": "./src/js/",
         "sass": "./src/sass/"
     },
-   "jsdir": "./assets/js/",
-   "cssdir": "./assets/css/",
+    "output": {
+	 "js": "./assets/js/",
+	"css": "./assets/css/"
+    },
+
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
@@ -55,6 +57,5 @@
   },
   "bugs": {
     "url": "https://github.com/RRZE-Webteam/rrze-jobs/issues"
-  },
-  "homepage": "https://github.com/RRZE-Webteam/rrze-jobs#readme"
+  }
 }

@@ -4,7 +4,10 @@ namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
 use function RRZE\Jobs\Config\getShortcodeSettings;
+
 use RRZE\Jobs\Job;
+use RRZE\Jobs\Cache;
+
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -42,9 +45,10 @@ class Shortcode {
         add_action('init', [$this, 'initGutenberg']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
+	
         if (!is_plugin_active('fau-jobportal/fau-jobportal.php')) {
             add_shortcode('jobs', [$this, 'shortcodeOutput']);
-	        add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
+	    add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
         }
     }
 
@@ -53,8 +57,8 @@ class Shortcode {
      */
     public function enqueue_scripts() {
         wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
-        if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.min.css')) {
-            wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.min.css');
+        if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.css')) {
+            wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.css');
         }
     }
 
@@ -120,9 +124,26 @@ class Shortcode {
 
         $this->setAtts($atts);
 
-        // provider <== attribute or GET-parameter or config
-        $this->provider = (!empty($atts['provider']) ? $atts['provider'] : (!empty($_GET['provider']) ? $_GET['provider'] : $this->options['provider']));
+	
+	// set jobid from attribute jobid or GET-parameter jobid
+        $this->jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0));
 
+        // orgids => attribute orgids or attribute orgid or fetch from settings page
+        $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
+	
+        // provider <== attribute or GET-parameter or config
+        $this->provider = (!empty($atts['provider']) ? $atts['provider'] : (!empty($_GET['provider']) ? sanitize_text_field($_GET['provider']) : $this->options['provider']));
+
+	$cache = new Cache($this->pluginFile, $this->settings);
+	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid);
+	if ($cachedout) {
+	    wp_enqueue_style('rrze-elements');
+	    wp_enqueue_style('rrze-jobs-css');
+
+	    return $output;
+	} 
+	
+	
         // multi-provider given f.e. "bite, interamt" or "univis,interamt,bite    , unknownProvider"
         $aProvider = explode(',', $this->provider);
         array_walk($aProvider, function (&$val) {
@@ -133,13 +154,6 @@ class Shortcode {
             $this->provider = $provider;
             $this->map_template = $this->jobOutput->getMap($provider);
 
-            // set jobid from attribute jobid or GET-parameter jobid
-            $this->jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0));
-
-            // orgids => attribute orgids or attribute orgid or fetch from settings page
-            $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
-	    
-	    
             if (!$orgids) {
                 if (!empty($this->options['rrze-jobs-access_orgids_' . $provider])) {
                     $orgids = $this->options['rrze-jobs-access_orgids_' .$provider];
@@ -160,7 +174,9 @@ class Shortcode {
                 $output = $this->get_single_job();
             }
         }
-
+	
+	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $output);
+	
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');
 
