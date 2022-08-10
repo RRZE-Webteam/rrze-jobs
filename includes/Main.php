@@ -30,8 +30,7 @@ class Main {
         $settings->onLoaded();
 
         // Shortcode wird eingebunden.
-        // include 'Shortcode.php';
-        $shortcode = new Shortcode($settings);
+        $shortcode = new Shortcode($this->pluginFile,$settings);
 
     }
 

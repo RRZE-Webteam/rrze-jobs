@@ -3,7 +3,6 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
-use function RRZE\Jobs\Config\getShortcodeSettings;
 use function RRZE\Jobs\Config\getConstants;
 
 use RRZE\Jobs\Job;
@@ -15,14 +14,19 @@ class Cache  {
     protected $pluginFile;
     private $settings = '';
     
-    public function __construct($pluginFile, $settings) {
-        $this->pluginFile = $pluginFile;
-        $this->settings = $settings;
+    public function __construct() {
 	$this->constants = getConstants();
     }
 
     public function onLoaded() {
 	return true;
+    }
+    
+    public function set_cachetime($time) {
+	if ((isset($time)) && (intval($time) > 0)) {
+	    $this->constants['Transient_Seconds'] = $time;
+	}
+	return $this->constants['Transient_Seconds'];
     }
     
     public function get_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default') {
@@ -45,6 +49,8 @@ class Cache  {
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
 	if ($format !== 'default') {
+	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);
+	    
 	    $transient_name .= '_'.$format;
 	}
 	$value = get_transient( $transient_name );
@@ -79,6 +85,7 @@ class Cache  {
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
 	if ($format !== 'default') {
+	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);
 	    $transient_name .= '_'.$format;
 	}
 	$cachetime = $this->constants['Transient_Seconds'];

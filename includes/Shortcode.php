@@ -7,7 +7,7 @@ use function RRZE\Jobs\Config\getShortcodeSettings;
 
 use RRZE\Jobs\Job;
 use RRZE\Jobs\Cache;
-
+// use RRZE\Jobs\Provider;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
@@ -33,7 +33,9 @@ class Shortcode {
     /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct($settings) {
+    public function __construct($pluginFile,$settings) {
+	 $this->pluginFile = $pluginFile;
+	 
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
@@ -142,7 +144,7 @@ class Shortcode {
 	   $format = 'default';
 	}
 	
-	$cache = new Cache($this->pluginFile, $this->settings);
+	$cache = new Cache();
 	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid, $format);
 	if ($cachedout) {
 	    wp_enqueue_style('rrze-elements');
@@ -187,6 +189,13 @@ class Shortcode {
 	
 	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $format, $output);
 	
+//	$positions = new Provider();	
+//	$params['UnivIS']['get_list']['department'] = $orgids;
+//	$positions->set_params($params);
+
+//	$newdata = $positions->get_positions();
+//	echo Helper::get_html_var_dump($newdata);
+		
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');
 
