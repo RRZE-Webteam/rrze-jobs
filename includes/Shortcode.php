@@ -189,12 +189,12 @@ class Shortcode {
 	
 	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $format, $output);
 	
-//	$positions = new Provider();	
-//	$params['UnivIS']['get_list']['department'] = $orgids;
-//	$positions->set_params($params);
+	$positions = new Provider();	
+	$params['UnivIS']['get_list']['department'] = $orgids;
+	$positions->set_params($params);
 
-//	$newdata = $positions->get_positions();
-//	echo Helper::get_html_var_dump($newdata);
+	$newdata = $positions->get_positions();
+	echo Helper::get_html_var_dump($newdata);
 		
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');

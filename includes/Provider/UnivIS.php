@@ -266,6 +266,14 @@ class UnivIS extends Provider {
 				$value = $this->sanitize_univis_orgunits($value);
 				break;
 				
+			    case 'intern':  // Stellenangebot intern
+			    case 'nd':   // Nachtdienst
+			    case 'sd':   // Schichtdienst
+			    case 'bd':   // Bereitsschaftsdienst
+				$value = $this->sanitize_univis_boolean($value);
+				break;
+				
+				
 			    default:
 				$value = sanitize_text_field($value);
 			}
@@ -275,10 +283,307 @@ class UnivIS extends Provider {
 		 }
 	     }
 	 }
+	 if (isset($data['Person'])) {
+	      foreach ($data['Person'] as $num => $person) {
+		 if (is_array($person)) {
+		    foreach ($person as $name => $value) {
+			switch($name) {
+			    case 'lehr':  // Lehrperson
+			    case 'pub_visible':   // Publikationsliste und Vorträge anzeigen
+			    case 'visible':   // (Druck und Internet)
+			    case 'restrict':   // Öffentliche Anzeige personenbezogener Daten
+				$value = $this->sanitize_univis_boolean($value);
+				break;
+				
+			    case 'orgunit':
+			    case 'orgunit_en':
+				$value = $this->sanitize_univis_orgunits($value);
+				break;
+				
+			    case 'location':
+				$value = $this->sanitize_univis_location($value);
+				break;
+			    
+			     case 'officehour':
+				$value = $this->sanitize_univis_officehours($value);
+				break;
+			    
+			    
+			    case 'orgname':
+			    case 'work':	
+			    case 'title':
+			    case 'atitle':
+			    case 'lastname':
+			    case 'firstname':
+			    
+				 $value = sanitize_text_field($value);
+				break;
+			    
+			    case 'id':
+			    case 'idm_id':
+			    case 'key':	
+				$value = $this->sanitize_univis_key($value);
+				break;
+			    
+			    default:
+				$value = sanitize_text_field($value);
+			}
+			$data['Person'][$num][$name] = $value;
+			
+		    }
+		 }
+	      }
+	 }
 	 return $data;
 	 
      } 
      
+     // sanitize univis officehours
+    private function sanitize_univis_officehours($value) {
+	 if (is_array($value)) {
+	     $res = array();
+	     foreach ($value as $name => $entry) {
+		 if (is_array($entry)) {
+		     // Subarray, es gibt mehr als eine location
+		     $res[$name] = $this->sanitize_univis_officehours($entry);
+		 } else {
+		     
+		    $repeat = isset($value['repeat'] ) ? $value['repeat'] : 0;
+		    $repeat_submode = isset( $value['repeat_submode'] ) ? $value['repeat_submode'] : 0;
+		    $starttime = isset( $value['starttime'] ) ? $value['starttime'] : 0;
+		    $endtime = isset( $value['endtime'] ) ? $value['endtime'] : 0;
+		    $office = isset( $value['office'] ) ? sanitize_text_field($value['office']) : '';
+		    $comment = isset($value['comment'] ) ? sanitize_text_field($value['comment']) : '';
+                    
+		    
+		    $officehour = $this->univis_officehours_repeat($repeat, $repeat_submode, $starttime, $endtime, $office, $comment);                    
+		    
+		    $res = $officehour;
+		     
+		 }
+		 
+	     }
+	     return $res;
+	 } else {
+	     $value = sanitize_text_field($value);
+	     return $value;
+	 }
+     }
+
+     
+      //public static function officehours_repeat( $officehours ) {
+    private function univis_officehours_repeat( $repeat, $repeat_submode, $starttime, $endtime, $office, $comment ) {
+        $date = array();
+
+        if ( !$repeat_submode ) {
+            $repeat = strtok($repeat, ' ');
+            $repeat_submode = strtok(' ');
+            $repeat_submode = explode( ',', $repeat_submode );
+        }
+
+        if (($repeat ) && ($repeat !== '-') ) {
+            $dict = array(
+                'd1' => __('Daily', 'rrze-jobs'),
+                'w1' => __('Each week Woche', 'rrze-jobs'),
+                'w2' => __('Each second week', 'rrze-jobs'),
+            );
+
+            if( array_key_exists( $repeat, $dict ) )
+                array_push( $date, $dict[$repeat] );
+
+            if( is_array( $repeat_submode ) && !empty($repeat_submode[0] )) {
+                $days_short = array(
+                    1 => __('<abbr title="Monday">Mo</abbr>', 'rrze-jobs'),
+                    2 => __('<abbr title="Tuesday">Tu</abbr>', 'rrze-jobs'),
+                    3 => __('<abbr title="Wednesday">We</abbr>', 'rrze-jobs'),
+                    4 => __('<abbr title="Thursday">Th</abbr>', 'rrze-jobs'),
+                    5 => __('<abbr title="Friday">Fr</abbr>', 'rrze-jobs'),
+                    6 => __('<abbr title="Saturday">Sa</abbr>', 'rrze-jobs'),
+                    7 => __('<abbr title="Sunday">Su</abbr>', 'rrze-jobs')
+                );
+
+                $days_long = array(
+                    1 => __('Monday', 'rrze-jobs'),
+                    2 => __('Tuesday', 'rrze-jobs'),
+                    3 => __('Wedndesday', 'rrze-jobs'),
+                    4 => __('Thursday', 'rrze-jobs'),
+                    5 => __('Friday', 'rrze-jobs'),
+                    6 => __('Saturday', 'rrze-jobs'),
+                    7 => __('Sunday', 'rrze-jobs')
+                );
+                foreach( $repeat_submode as $value ) {
+			if (isset($days_short[$value])) {
+			    $days_short[$value] = $days_short[$value] . ',';
+			    array_push($date, $days_short[$value]);
+			}
+                }
+            }
+        }
+        if ( $starttime ) {
+            $time = $this->convert_univis_time( $starttime );
+            if ( $endtime ) {
+                $time .= ' - ' . $this->convert_univis_time( $endtime );
+            }
+            $time = $time . ' '.__('oclock','rrze-jobs').',';
+            array_push($date, $time);
+        }
+
+        if ( $office ) {
+            $office = __('Room', 'rrze-jobs') . ' ' . $office . ',';
+            array_push($date, $office);            
+        }
+        
+        if( $comment !== 0 ) {
+            array_push($date, $comment);
+        }
+
+        $officehours = implode( ' ', $date );
+        
+        return $officehours;
+    }
+    
+    /*
+     * Correct Time Format of UnivIS
+     */
+    private function convert_univis_time($time) {
+        if ( strpos( $time, 'PM' ) ) {
+            $modtime = explode( ':', rtrim( $time, ' PM' ) );
+            if ( $modtime[0] != 12 ) {
+                $modtime[0] = $modtime[0] + 12;
+            }                
+            $time = implode( ':', $modtime );
+        } elseif ( strpos( $time, 'AM' ) ) {
+            $time = str_replace( '12:', '00:', $time);
+            $time = rtrim( $time, ' AM');            
+	}
+	
+	
+        return $time;
+    }
+     
+    // sanitize univis location
+    private function sanitize_univis_location($value) {
+	 if (is_array($value)) {
+	     $res = array();
+	     foreach ($value as $name => $entry) {
+		 if (is_array($entry)) {
+		     // Subarray, es gibt mehr als eine location
+		     $res[$name] = $this->sanitize_univis_location($entry);
+		 } else {
+		     switch($name) {
+			    case 'street':
+			    case 'office':	
+			    case 'ort':
+			    case 'pgp':
+				$value = sanitize_text_field($entry);
+				break;
+			    case 'tel':
+			    case 'fax':
+			    case 'mobile':				
+				$value = $this->sanitize_univis_telefon($entry);
+				break;
+				
+			    case 'url':
+				$value = sanitize_url($entry);	
+				break;
+			    case 'email':
+				$value = sanitize_email($entry);	
+				break;				    
+			  default:
+				$value = sanitize_text_field($entry);
+		     }
+		     $res[$name] = $value;
+		 }
+		 
+	     }
+	     return $res;
+	 } else {
+	     $value = sanitize_text_field($value);
+	     return $value;
+	 }
+     }
+
+     // try to sanitize and repair the telephone number 
+     private function sanitize_univis_telefon($phone_number ) {
+	 
+	$phone_number = trim($phone_number);
+	
+        if( ( strpos( $phone_number, '+49 9131 85-' ) !== 0 ) && ( strpos( $phone_number, '+49 911 5302-' ) !== 0 ) ) {
+            if( !preg_match( '/\+49 [1-9][0-9]{1,4} [1-9][0-9]+/', $phone_number ) ) {
+                $phone_data = preg_replace( '/\D/', '', $phone_number );
+                $vorwahl_erl = '+49 9131 85-';
+                $vorwahl_nbg = '+49 911 5302-';
+
+		switch( strlen( $phone_data ) ) {
+		    case '3':
+			$phone_number = $vorwahl_nbg . $phone_data;
+			break;
+		    case '5':
+			if( strpos( $phone_data, '06' ) === 0 ) {
+			    $phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
+			    break;
+			}                                 
+			$phone_number = $vorwahl_erl . $phone_data;
+			break;
+		    case '7':
+			if( strpos( $phone_data, '85' ) === 0 || strpos( $phone_data, '06' ) === 0 )  {
+			    $phone_number = $vorwahl_erl . substr( $phone_data, -5 );
+			    break;
+			}
+			if( strpos( $phone_data, '5302' ) === 0 ) {
+			    $phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
+			    break;
+			} 
+		    default:
+			if( strpos( $phone_data, '9115302' ) !== FALSE ) {
+			    $durchwahl = explode( '9115302', $phone_data );
+			    if( strlen( $durchwahl[1] ) ===  3 ) {
+				$phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
+			    }
+			    break;
+			}  
+			if( strpos( $phone_data, '913185' ) !== FALSE )  {
+			    $durchwahl = explode( '913185', $phone_data );
+			    if( strlen( $durchwahl[1] ) ===  5 ) {
+				$phone_number = $vorwahl_erl . substr( $phone_data, -5 );
+			    }
+			    break;
+			}
+			if( strpos( $phone_data, '09131' ) === 0 || strpos( $phone_data, '499131' ) === 0 ) {
+			    $durchwahl = explode( '9131', $phone_data );
+			    $phone_number = "+49 9131 " . $durchwahl[1];
+			    break;
+			}
+			if( strpos( $phone_data, '0911' ) === 0 || strpos( $phone_data, '49911' ) === 0 ) {
+			    $durchwahl = explode( '911', $phone_data );
+			    $phone_number = "+49 911 " . $durchwahl[1];
+			    break;
+			}
+
+		}
+                
+        
+            }
+        }
+        return $phone_number;
+    }
+     
+     
+     
+    // sanitize univis boolean thingis
+    private function sanitize_univis_boolean($value) {
+	if ((!isset($value)) || (empty($value))) {
+	     return false;
+	}
+	$val = strtolower($value);
+	if (strpos($val, 'ja') !== false 
+		|| strpos($val, 'yes') !== false 
+		|| strpos($val, '1') !== false ) {
+		return true;
+
+	}
+	return false;
+     }
      
      // sanitize orgunits
      private function sanitize_univis_orgunits($value) {
@@ -331,7 +636,7 @@ class UnivIS extends Provider {
     
      // check for valid univis keys
      private function sanitize_univis_key($key) {
-	 $key = preg_replace('/[^A-Za-z0-9\/\._]+/i', '', $key);
+	 $key = preg_replace('/[^A-Za-z0-9\/\._]+$/i', '', $key);
 	 return $key;
      }
      
