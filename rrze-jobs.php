@@ -62,16 +62,14 @@ add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
 /**
  * Einbindung der Sprachdateien.
  */
-function load_textdomain()
-{
+function load_textdomain() {
     load_plugin_textdomain('rrze-jobs', false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
 }
 
 /**
  * Überprüft die minimal erforderliche PHP- u. WP-Version.
  */
-function system_requirements()
-{
+function system_requirements() {
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
         /* Übersetzer: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version */
@@ -86,8 +84,7 @@ function system_requirements()
 /**
  * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
  */
-function activation()
-{
+function activation() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -106,8 +103,7 @@ function activation()
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
-function deactivation()
-{
+function deactivation() {
     // Hier können die Funktionen hinzugefügt werden, die
     // bei der Deaktivierung des Plugins aufgerufen werden müssen.
     // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.

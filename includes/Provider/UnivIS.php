@@ -15,7 +15,6 @@ use RRZE\Jobs\Cache;
 class UnivIS extends Provider { 
 
     public function __construct() {
-         $this->classname   = 'univis';
 	 $this->api_url	    = 'https://univis.uni-erlangen.de/prg';
 	 $this->url	    = 'https://univis.uni-erlangen.de/';
 	 $this->name	    = "UnivIS";
@@ -26,6 +25,7 @@ class UnivIS extends Provider {
 		'redirection' => 5,
 	    );
 	 
+	 // defines all required parameters for defined request method
 	 $this->required_fields = array(
 	     'get_list'	=> array(
 		 'department'	=> 'string'
@@ -34,6 +34,29 @@ class UnivIS extends Provider {
 		 'id'	=> 'number'
 	     )
 	 );
+	 
+	 
+	 // map to transform univis fieldnames and content to schema.org Notation
+	 $this->map_to_schema = array(
+	     
+	     'JobPosting' => array(
+		    'datePosted'    => 'creation',
+		    'directApply'   => true,
+			// im Text ist immer Mailadresse oder URL angegeben.
+			// dies sollte noch automatisiert werden und wir müssen 
+			// eine URL binden zur Applikation. 
+			// die eigentliche URL müpsste in
+			// applicationContact reindefiniert werden.
+			'applicationContact'
+			// muss aus textuellen inhalten oder oacontact generiert werdem
+			//  		 https://schema.org/ContactPoint
+		    'educationRequirements' => 'desc3',
+		 // to be filled.
+	     )
+	     // other scheme maps may be added for other use cases
+	     
+	 );
+	 
      } 
      
      public $methods = array(
@@ -280,6 +303,8 @@ class UnivIS extends Provider {
 			
 			$data['Position'][$num][$name] = $value;
 		    }
+
+		    
 		 }
 	     }
 	 }
@@ -349,16 +374,20 @@ class UnivIS extends Provider {
 		 } else {
 		     
 		    $repeat = isset($value['repeat'] ) ? $value['repeat'] : 0;
-		    $repeat_submode = isset( $value['repeat_submode'] ) ? $value['repeat_submode'] : 0;
-		    $starttime = isset( $value['starttime'] ) ? $value['starttime'] : 0;
-		    $endtime = isset( $value['endtime'] ) ? $value['endtime'] : 0;
+		    $repeat_submode = isset( $value['repeat_submode'] ) ? sanitize_text_field($value['repeat_submode']) : 0;
+		    $starttime = isset( $value['starttime'] ) ? sanitize_text_field($value['starttime']) : 0;
+		    $endtime = isset( $value['endtime'] ) ? sanitize_text_field($value['endtime']) : 0;
 		    $office = isset( $value['office'] ) ? sanitize_text_field($value['office']) : '';
 		    $comment = isset($value['comment'] ) ? sanitize_text_field($value['comment']) : '';
                     
+		    $res['repeat'] = $repeat;
+		    $res['starttime'] = $starttime;
+		    $res['endtime'] = $endtime;
+		    $res['office'] = $office;
+		    $res['comment'] = $comment;
+		    $res['text'] =  $this->univis_officehours_repeat($repeat, $repeat_submode, $starttime, $endtime, $office, $comment);                    		   
 		    
-		    $officehour = $this->univis_officehours_repeat($repeat, $repeat_submode, $starttime, $endtime, $office, $comment);                    
-		    
-		    $res = $officehour;
+		    // we need the original entries to add schema.org Schedule Notation later
 		     
 		 }
 		 
@@ -374,62 +403,117 @@ class UnivIS extends Provider {
       //public static function officehours_repeat( $officehours ) {
     private function univis_officehours_repeat( $repeat, $repeat_submode, $starttime, $endtime, $office, $comment ) {
         $date = array();
-
-        if ( !$repeat_submode ) {
-            $repeat = strtok($repeat, ' ');
-            $repeat_submode = strtok(' ');
-            $repeat_submode = explode( ',', $repeat_submode );
-        }
-
-        if (($repeat ) && ($repeat !== '-') ) {
-            $dict = array(
-                'd1' => __('Daily', 'rrze-jobs'),
-                'w1' => __('Each week Woche', 'rrze-jobs'),
-                'w2' => __('Each second week', 'rrze-jobs'),
-            );
-
-            if( array_key_exists( $repeat, $dict ) )
-                array_push( $date, $dict[$repeat] );
-
-            if( is_array( $repeat_submode ) && !empty($repeat_submode[0] )) {
-                $days_short = array(
-                    1 => __('<abbr title="Monday">Mo</abbr>', 'rrze-jobs'),
-                    2 => __('<abbr title="Tuesday">Tu</abbr>', 'rrze-jobs'),
-                    3 => __('<abbr title="Wednesday">We</abbr>', 'rrze-jobs'),
-                    4 => __('<abbr title="Thursday">Th</abbr>', 'rrze-jobs'),
-                    5 => __('<abbr title="Friday">Fr</abbr>', 'rrze-jobs'),
-                    6 => __('<abbr title="Saturday">Sa</abbr>', 'rrze-jobs'),
-                    7 => __('<abbr title="Sunday">Su</abbr>', 'rrze-jobs')
-                );
-
-                $days_long = array(
+	$days_short = array(
                     1 => __('Monday', 'rrze-jobs'),
                     2 => __('Tuesday', 'rrze-jobs'),
-                    3 => __('Wedndesday', 'rrze-jobs'),
+                    3 => __('Wednesday', 'rrze-jobs'),
                     4 => __('Thursday', 'rrze-jobs'),
                     5 => __('Friday', 'rrze-jobs'),
                     6 => __('Saturday', 'rrze-jobs'),
                     7 => __('Sunday', 'rrze-jobs')
                 );
-                foreach( $repeat_submode as $value ) {
-			if (isset($days_short[$value])) {
-			    $days_short[$value] = $days_short[$value] . ',';
-			    array_push($date, $days_short[$value]);
-			}
-                }
-            }
+
+
+        if (($repeat ) && ($repeat !== '-') ) {
+            $repeat_submodes = explode( ' ', $repeat );
+	    if ((isset($repeat_submodes[0])) && (strpos($repeat_submodes[0],'d')!==false) && (strpos($repeat_submodes[0],'d')==0)) {
+		// taegliche wiederholung
+		$daily_repeat = substr($repeat_submodes[0],1);
+		if ($daily_repeat == '1') {
+		    $res =  __('Daily', 'rrze-jobs');
+		} else {
+		    $res = __('Each','rrze-jobs').' '.$daily_repeat.'. '.__('day','rrze-jobs');
+		}
+		
+	    } elseif ((isset($repeat_submodes[0])) && (strpos($repeat_submodes[0],'w')!==false) && (strpos($repeat_submodes[0],'w')==0)) {
+		// woechentliche Wiederholung    
+		$weekly_repeat = substr($repeat_submodes[0],1);
+		
+		if ($weekly_repeat == '1') {
+		    $res =  __('Each', 'rrze-jobs').' '.__('week','rrze-jobs');
+		} else {
+		    $res = __('Each','rrze-jobs').' '.$weekly_repeat.'. '.__('week','rrze-jobs');
+		}
+		if (isset($repeat_submodes[1])) {
+		   if (strpos($repeat_submodes[1],',') !== false) {
+		       // mehr als ein Tag in der Woche
+		       $daylist = explode(',',$repeat_submodes[1]);
+		       foreach($daylist as $thisday) {
+			    $daynum = intval($thisday);
+			    $res .= ", ".$days_short[$daynum];
+		       }
+
+		   } else {
+		       $daynum = intval($repeat_submodes[1]);
+		       $res .= ", ".$days_short[$daynum];
+		   }
+		}
+		
+		
+	    } elseif ((isset($repeat_submodes[0])) && (strpos($repeat_submodes[0],'m')!==false) && (strpos($repeat_submodes[0],'m')==0)) {
+		// monatliche Wiederholung
+		$monthly_repeat = substr($repeat_submodes[0],1);
+		
+		if ($monthly_repeat == '1') {
+		    $res =  __('Each','rrze-jobs').' '.__('month','rrze-jobs');
+		} else {
+		    $res =   __('Each','rrze-jobs').' '.$monthly_repeat.'. '.__('month','rrze-jobs');
+		}
+		if ((isset($repeat_submodes[1])) && (strpos($repeat_submodes[1],'w')!==false) && (strpos($repeat_submodes[1],'w')==0)) {
+		  // woechentliche Wiederholung    
+		    $weekly_repeat = substr($repeat_submodes[1],1);
+		    if ($weekly_repeat == '1') {
+			$res .=  ', '. __('First','rrze-jobs').' '.__('week','rrze-jobs');
+		    } else {
+			$res .=  ', '.  $weekly_repeat.'. '.__('week','rrze-jobs');
+		    }
+
+	
+		    if (isset($repeat_submodes[2])) {
+		       if (strpos($repeat_submodes[2],',') !== false) {
+			   // mehr als ein Tag in der Woche
+			   $daylist = explode($repeat_submodes[2],',');
+			   foreach($daylist as $thisday) {
+				$daynum = intval($thisday);
+				$res .= ", ".$days_short[$daynum];
+			   }
+		       } else {
+			   $daynum = intval($repeat_submodes[2]);
+			   $res .= ", ".$days_short[$daynum];
+		       }
+		    }
+		} elseif ((isset($repeat_submodes[1])) && (strpos($repeat_submodes[1],'d')!==false) && (strpos($repeat_submodes[1],'d')==0)) {
+		      $daynum = substr($repeat_submodes[1],1);
+		     $res .= ", ". __('each','rrze-jobs').' '.$daynum.'. '.__('day','rrze-jobs');
+		}
+		
+		
+	    }	
+	    array_push($date, $res);
+
+           
         }
         if ( $starttime ) {
-            $time = $this->convert_univis_time( $starttime );
-            if ( $endtime ) {
-                $time .= ' - ' . $this->convert_univis_time( $endtime );
-            }
-            $time = $time . ' '.__('oclock','rrze-jobs').',';
+	    $time = $starttime;
+	    $charset = get_bloginfo('language');
+	    if (strpos($charset,'de') !== false) {
+		$time = $this->convert_time_24hours( $starttime );
+		if ( $endtime ) {
+		    $time .= ' - ' . $this->convert_time_24hours( $endtime );
+		}
+		
+		$time .= ' Uhr';
+		
+	    } else {
+		if ( $endtime ) {
+		    $time .= ' - ' .$endtime;
+		}
+	    }
+	    
             array_push($date, $time);
         }
 
         if ( $office ) {
-            $office = __('Room', 'rrze-jobs') . ' ' . $office . ',';
             array_push($date, $office);            
         }
         
@@ -437,29 +521,14 @@ class UnivIS extends Provider {
             array_push($date, $comment);
         }
 
-        $officehours = implode( ' ', $date );
+        $officehours = implode( ', ', $date );
         
         return $officehours;
     }
     
-    /*
-     * Correct Time Format of UnivIS
-     */
-    private function convert_univis_time($time) {
-        if ( strpos( $time, 'PM' ) ) {
-            $modtime = explode( ':', rtrim( $time, ' PM' ) );
-            if ( $modtime[0] != 12 ) {
-                $modtime[0] = $modtime[0] + 12;
-            }                
-            $time = implode( ':', $modtime );
-        } elseif ( strpos( $time, 'AM' ) ) {
-            $time = str_replace( '12:', '00:', $time);
-            $time = rtrim( $time, ' AM');            
-	}
-	
-	
-        return $time;
-    }
+    
+
+   
      
     // sanitize univis location
     private function sanitize_univis_location($value) {

@@ -106,5 +106,22 @@ class Provider {
 	 return $value;
      }
 
+     /*
+     * convert timestring to 24 hour format
+     */
+    public function convert_time_24hours($time) {
+        if ( strpos( $time, 'PM' ) ) {
+            $modtime = explode( ':', rtrim( $time, ' PM' ) );
+            if ( $modtime[0] != 12 ) {
+                $modtime[0] = $modtime[0] + 12;
+            }                
+            $time = implode( ':', $modtime );
+        } elseif ( strpos( $time, 'AM' ) ) {
+            $time = str_replace( '12:', '00:', $time);
+            $time = rtrim( $time, ' AM');            
+	}
+
+        return $time;
+    }
    
 }
