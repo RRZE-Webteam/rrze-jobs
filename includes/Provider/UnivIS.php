@@ -47,7 +47,7 @@ class UnivIS extends Provider {
 			// eine URL binden zur Applikation. 
 			// die eigentliche URL müpsste in
 			// applicationContact reindefiniert werden.
-			'applicationContact'
+			'applicationContact',
 			// muss aus textuellen inhalten oder oacontact generiert werdem
 			//  		 https://schema.org/ContactPoint
 		    'educationRequirements' => 'desc3',
