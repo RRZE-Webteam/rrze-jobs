@@ -98,6 +98,9 @@ class Provider {
 	     case 'int':
 		 $value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
 		 break;
+	      case 'float':
+		 $value = preg_replace('/[^0-9,\.]+/i', '', $value);
+		 break;
 	     default:
 		  $value = sanitize_text_field($value);
 	     
@@ -123,5 +126,46 @@ class Provider {
 
         return $time;
     }
-   
+    
+    /*
+     * Try to make the Salary Schema MonetaryAmount by the textual strings of TV-L 
+     * 
+     * Example: https://schema.org/MonetaryAmount
+
+		"baseSalary": {
+		    "@type": "MonetaryAmount",
+		    "currency": "EUR",
+		    "value": {
+		      "@type": "Text",
+		      "value": "TV-L E1 - TV-L E2",
+		      "unitText": "MONTH"
+		    }
+		  }
+
+     */
+    public function get_Salary_by_TVL($vonbesold, $bisbesold) {
+	
+	$res = array();
+	$value = '';
+	
+	 if (!empty($bisbesold)) {
+            if (!empty($vonbesold) && ($vonbesold != $bisbesold)) {
+               $value = $vonbesold . ' - ' . $bisbesold;
+            } else {
+               $value = $bisbesold;
+            }
+        } elseif (!empty($vonbesold)) {
+           $value = $vonbesold;
+        }
+	$res["@type"] =  "MonetaryAmount";
+	$res["currency"] =  "EUR";
+	$res["value"]["@type"] =  "Text";
+	$res["value"]["value"] =  $value;
+	$res["value"]["unitText"] =  "MONTH";
+	
+	return $res;
+
+    }
+	    
+	   
 }
