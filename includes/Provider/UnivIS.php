@@ -386,11 +386,9 @@ class UnivIS extends Provider {
 	  // angegeben wird, sieht man in Teiln von employmentType ab. 
 	  // Daher nehme hierfür das Feld mit der Zusatzbeschreibung
 	  // disambiguatingDescription
+	$res['disambiguatingDescription'] = '';
 	if ((isset($jobdata['type3'])) && (!empty($jobdata['type3']))) {
-	      if (!empty($res['disambiguatingDescription'])) {
-		  $res['disambiguatingDescription'] .= "<br>\n";
-	      }
-	       $res['disambiguatingDescription'] .= $jobdata['type3'];
+	      $res['disambiguatingDescription'] = $jobdata['type3'];
 	}
 	  
 	   // Es gibt kein spezielles Feld in JobPosting in dem ich die 
@@ -432,12 +430,13 @@ class UnivIS extends Provider {
 			$res['worksFor'] = $person['orgname'];
 			$res['gender'] = $person['gender'];
 			$res['identifier'] = $person['id'];
-			$res['honorificPrefix'] = $person['title'];
-			
-			$res['name'] = $person['title'];
-			if (!empty($res['name'])) {
+
+			$res['name'] = '';
+			if  ((isset($res['title'])) && (!empty($res['title']))) {
+			    $res['honorificPrefix'] = $person['title'];
+			    $res['name'] = $person['title'];
 			    $res['name'] .= ' ';
-			}
+			} 
 			$res['name'] .= $person['firstname']. ' '.$person['lastname'];
 			$res['workLocation']['name'] =  $person['orgname'];
 			$res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
