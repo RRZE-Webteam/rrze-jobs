@@ -7,6 +7,7 @@ use function RRZE\Jobs\Config\getShortcodeSettings;
 
 use RRZE\Jobs\Job;
 use RRZE\Jobs\Cache;
+use RRZE\Jobs\Template;
 // use RRZE\Jobs\Provider;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -189,13 +190,39 @@ class Shortcode {
 	
 	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $format, $output);
 	
-	$positions = new Provider();	
-	$params['UnivIS']['get_list']['department'] = $orgids;
-	$positions->set_params($params);
+	
+	$positions = new Provider();
 
+	if (!empty($this->jobid)) {
+	    // single job
+	    $params['UnivIS']['get_list']['id'] = $this->jobid;
+	    $template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
+	} else {
+	    // list
+	    $params['UnivIS']['get_list']['department'] = $orgids;
+	    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+	}
+	
+	$positions->set_params($params);
 	$newdata = $positions->get_positions();
 	echo Helper::get_html_var_dump($newdata);
 		
+	
+        if (!is_readable($template)) {
+	    $output .=  "<!-- Templatefile $template not readable!! -->";
+	    
+	   return $output;
+	}
+	
+	
+	$content = Template::getContent($template, $newdata);
+	$content = do_shortcode($content);
+	if (!empty($content)) {
+	    echo $content;
+	} else {
+	    echo "empty content from template<br>";
+	}
+	
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');
 

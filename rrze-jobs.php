@@ -110,7 +110,18 @@ function deactivation() {
 
     // delete_option(Options::get_option_name());
 }
+/**
+ * Instantiate Plugin class.
+ * @return object Plugin
+ */
+function plugin() {
+    static $instance;
+    if (null === $instance) {
+        $instance = new Plugin(__FILE__);
+    }
 
+    return $instance;
+}
 /**
  * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
  * und alle Plugins eingebunden wurden.
@@ -118,7 +129,7 @@ function deactivation() {
 function loaded() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
-
+    plugin()->loaded();
     // Überprüft die minimal erforderliche PHP- u. WP-Version.
     if ($error = system_requirements()) {
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
