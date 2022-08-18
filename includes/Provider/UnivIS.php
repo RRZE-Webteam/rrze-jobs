@@ -8,7 +8,6 @@
 namespace RRZE\Jobs\Provider;
 
 defined('ABSPATH') || exit;
-use RRZE\Jobs\Helper;
 use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
 
@@ -48,66 +47,41 @@ class UnivIS extends Provider {
           
      // map univis field names and entries to schema standard
      public function map_to_schema($data) {
-
 	$newpositions = array();
 	 // First we make a simple Mapping by an array with fields, that match 
 	 // as they are
-	$schema_mapping = array(
-	     'JobPosting' => array(
-		    'creation'  => 'datePosted',
-		    'desc1'	=> 'description',
-		    'title'	=> 'title',
-		    'id'	=> 'identifier',
-		    'enddate'	=> 'validThrough',
-		    'desc5'	=> 'disambiguatingDescription',
-	     )
-	     // other scheme maps may be added for other use cases  
-	 ); 
+	
 	if (isset($data['Position'])) {	    
 	     foreach ($data['Position'] as $num => $job) {
-		 if (is_array($job)) {
-		    foreach ($job as $name => $value) {
-			if (isset($schema_mapping['JobPosting'][$name])) {
-			    $newkey = $schema_mapping['JobPosting'][$name];	   
-			    $newpositions['JobPosting'][$num][$newkey] = $value;
-			}
-		    }
-		    
-		    // Now the complex transforms
-		    
-		    $newpositions['JobPosting'][$num] = $this->generate_missing_schema_values($job, $data);
+		 if (is_array($job)) {	    
+		    $newpositions['JobPosting'][$num] = $this->generate_schema_values($job, $data);
 		    $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
 		    
 		 }
 	     }
-	     
-	     $data = $newpositions;
-	     
+	     $data = $newpositions;	     
 	}
-	 
-	 
-	 
-	 	 
-	 // at last: check for fieldnames, that are not part of schema.org 
-	 // and are missing in results
-	 
-	 
-	 
-	 return $data;
+	return $data;
      }
      
+     
+     // go through the provider data stream and diff it from the fields
+     // we already map to schema.
+     // all fields that remain are new or was not mapped to schema and
+     // may be used to other purpuses
      private function add_remaining_non_schema_fields($jobdata) {
 	$known_fields = array(
 		    'creation',		   
 		    'title',
 		    'id', 'key',
 		    'enddate', 'start',
-		    'desc1', 'desc2', 'desc3', 'desc5', 'desc6',
-		    'type1', 'type2', 'type3', 'type4',
+		    'desc1', 'desc2', 'desc3', 'desc4', 'desc6',
+		    'type1', 'type2', 'type3', 'type4', 'orig_type1', 'orig_type2', 'orig_type3', 'orig_type4',
 		    'acontact', 'contact',
 		    'vonbesold', 'bisbesold',
 		    'nd', 'sd', 'bd', 'wstunden',
-		    'orgname'
+		    'orgname', 'orgunit', 'orgunit_en',
+		    'group', 'orig_group', 'befristet'
 	    );
 	$providerfield = array();
 	
@@ -121,7 +95,7 @@ class UnivIS extends Provider {
      }
      
       // some missing schema fields can be generated automatically 
-     private function generate_missing_schema_values($jobdata, $data) {
+     private function generate_schema_values($jobdata, $data) {
 	 // Paramas:
 	 // $jobdata - one single jobarray
 	 // $data - all univis data. includes Persondata we need for contacts
@@ -132,17 +106,39 @@ class UnivIS extends Provider {
 	// the following schema fields are not set in univis data,
 	// but they can be evaluated from others
 
+	 
+	
+	 // datePosted
+	  $res['datePosted'] = $jobdata['creation'];
+	  
+	  // description
+	  $res['description'] = $jobdata['desc1'];
+	  
+	  // title
+	  $res['title'] = $jobdata['title'];
+	  
+	   // identifier
+	  $res['identifier'] = $jobdata['id'];
+	 
+	  // validThrough
+	  $res['validThrough'] = $jobdata['enddate'];
+	  
+  
+	  
 	// qualifications
 	    // contains out of template (headlines) + content from  
 	    // desc2 (Notwendige Qualifikation:)
 	    // desc3 ( Wünschenswerte Qualifikation:)
 	 
 	 if ((isset($jobdata['desc2'])) && (!empty($jobdata['desc2']))) {
-	     $res['qualifications'] = '<h2>'.__('Notwendige Qualifikation','rrze-jobs').'</h2>';
+	     $res['qualifications'] = '<strong>'.__('Notwendige Qualifikation','rrze-jobs').':</strong><br>';
 	     $res['qualifications'] .= $jobdata['desc2'];
 	 }
 	 if ((isset($jobdata['desc3'])) && (!empty($jobdata['desc3']))) {
-	     $res['qualifications'] = '<h2>'.__('Wünschenswerte Qualifikation','rrze-jobs').'</h2>';
+	     if (!empty($res['qualifications'])) {
+		 $res['qualifications'] .= "\n";
+	     }
+	     $res['qualifications'] .= '<strong>'.__('Wünschenswerte Qualifikation','rrze-jobs').':</strong><br>';
 	     $res['qualifications'] .= $jobdata['desc2'];
 	 }
 	 
@@ -195,10 +191,11 @@ class UnivIS extends Provider {
 	    
  
  
-	 // estimatedSalary  (type: MonetaryAmount)
+	 // baseSalary  (type: MonetaryAmount)
 	    // aus vonbesold und bisbesold   generieren
-	    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
-	    
+	    if (isset($jobdata['vonbesold']) || isset($jobdata['vonbesold'])) {
+		$res['baseSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
+	    }
 	   	    
 	    
 	    
@@ -206,14 +203,55 @@ class UnivIS extends Provider {
 	    // aus orgunit und oder orgname generieren	    
 	    // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
 	 
+	    $res['employmentUnit']['name'] = $jobdata['orgname'];
 	    $res['hiringOrganization']['name'] = $jobdata['orgname'];
 	    
+	    if (isset($jobdata['orgunit'])) {
+		// Wir haben ein Orgabaum. Daher nehme nicht den letzten EIntrag aus
+		// dem Orgabaum als Name, sondern ergänze mit dem davor, wenn vorhanden
+		// Da aus UnivIS die Werte leider in 2 Sprachen kommen, 
+		// gebe hier entsprechend der Website-Sprache zurück.
+		
+		 $orgarray = $jobdata['orgunit'];
+		 $charset = get_bloginfo('language');
+		 if (strpos($charset,'de') !== false) {
+		     $orgarray = $jobdata['orgunit'];
+		 } elseif (isset($jobdata['orgunit_en'])) {
+		    $orgarray = $jobdata['orgunit_en'];
+		 }
+		 $thisname = '';
+		 $count = count($orgarray);
+		 if (trim($orgarray[$count - 1]) !== trim($jobdata['orgname'])) {
+		     $thisname = $orgarray[$count - 1];
+		 } 
+		 if (isset($orgarray[$count - 2])) {
+		     if (!empty($thisname)) {
+			 $thisname = $orgarray[$count - 2].', '.$thisname; 
+		     } else {
+			 $thisname = $orgarray[$count - 2];
+		     }
+		    
+		 }
+		 if (!empty($thisname)) {
+		     $res['hiringOrganization']['name'] = $thisname;
+		 }
+		 
+	    }
+	    
+	    
+	    if ((!isset($jobdata['contact'])) && (isset($jobdata['acontact']))) {
+		// Wenn es keinen Ansprechpartner gibt als Eintrag, aber einen 
+		// Ansprechpartner für Bewerbungen, dann nehme den bei den 
+		// Bewerbungen auch als Ansprechpartner für Fragen
+		$jobdata['contact'] = $jobdata['acontact'];
+	    }
+
 	    $contactpersondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);	
 	    if (!empty($contactpersondata)) {
-		    $res['hiringOrganization']['email'] = $contactpersondata['email'];		
-		    $res['hiringOrganization']['faxNumber'] = $contactpersondata['faxNumber'];
-		    $res['hiringOrganization']['telephone'] = $contactpersondata['telephone'];
-		    $res['hiringOrganization']['address'] = $contactpersondata['workLocation']['address'];
+		    $res['employmentUnit']['email'] = $contactpersondata['email'];		
+		    $res['employmentUnit']['faxNumber'] = $contactpersondata['faxNumber'];
+		    $res['employmentUnit']['telephone'] = $contactpersondata['telephone'];
+		    $res['employmentUnit']['address'] = $contactpersondata['workLocation']['address'];
 
 	    }
 	//    $res['contact'] = $contactpersondata;
@@ -262,6 +300,14 @@ class UnivIS extends Provider {
 		 $typeliste[] = 'TEMPORARY';
 	     }
 	 }
+	 
+	if (!empty($jobdata['orig_group'])) {
+	     if ($jobdata['orig_group'] == 'azubi') {
+		 $typeliste[] = 'INTERN';
+	     }
+	 }
+
+	 
 	 $res['employmentType'] = $typeliste;
 
 	 
@@ -291,55 +337,85 @@ class UnivIS extends Provider {
 	 
 	 
 	 // workHours
-	 $res['workHours'] = '';
-	 
-	   if (isset($jobdata['wstunden']))  {
-	      $res['workHours'] = $jobdata['wstunden'].' '.__('hours per week','rrze-jobs');
-	  }
-	  if (!empty($jobdata['type4'] )) {
-	       if (!empty($res['workHours'])) {
-		  $res['workHours'] .= ', ';
-	      }
-	      $res['workHours'] = $jobdata['type4'];
-	  }
-	  
-	  if ((isset($jobdata['nd'])) && ($jobdata['nd']===true)) {
-	      if (!empty($res['workHours'])) {
-		  $res['workHours'] .= ', ';
-	      }
-	      $res['workHours'] .= __('Night duty','rrze-jobs');
-	  }
-	  if ((isset($jobdata['sd'])) && ($jobdata['sd']===true)) {
-	      if (!empty($res['workHours'])) {
-		  $res['workHours'] .= ', ';
-	      }
-	      $res['workHours'] .= __('Shift work','rrze-jobs');
-	  }
-	   if ((isset($jobdata['bd'])) && ($jobdata['bd']===true)) {
-	      if (!empty($res['workHours'])) {
-		  $res['workHours'] .= ', ';
-	      }
-	      $res['workHours'] .= __('On-call duty','rrze-jobs');
-	  }
-	  
-	  
-	    // wenn type4 gesetzt (Vormittags / nachmittags)
+	  // wenn type4 gesetzt (Vormittags / nachmittags)
 	    // ausserdem, wenn gesetzt: 
 	    // 'nd':  Nachtdienst
 	    // 'sd':  Schichtdienst
 	    // 'bd':  Bereitsschaftsdienst
 	    // + wstunden
+	$res['workHours'] = '';
 	 
-	  if ((isset($jobdata['type3'])) && (!empty($jobdata['type3']))) {
-	       $res['disambiguatingDescription'] = $jobdata['type3'];
-	  }
+	if (isset($jobdata['wstunden']))  {
+	      $res['workHours'] = $jobdata['wstunden'].' '.__('hours per week','rrze-jobs');
+	}
+	if (!empty($jobdata['type4'] )) {
+	       if (!empty($res['workHours'])) {
+		  $res['workHours'] .= ', ';
+	      }
+	      $res['workHours'] = $jobdata['type4'];
+	 }
+	  
+	if ((isset($jobdata['nd'])) && ($jobdata['nd']===true)) {
+	      if (!empty($res['workHours'])) {
+		  $res['workHours'] .= ', ';
+	      }
+	      $res['workHours'] .= __('Night duty','rrze-jobs');
+	}
+	if ((isset($jobdata['sd'])) && ($jobdata['sd']===true)) {
+	      if (!empty($res['workHours'])) {
+		  $res['workHours'] .= ', ';
+	      }
+	      $res['workHours'] .= __('Shift work','rrze-jobs');
+	}
+	if ((isset($jobdata['bd'])) && ($jobdata['bd']===true)) {
+	      if (!empty($res['workHours'])) {
+		  $res['workHours'] .= ', ';
+	      }
+	      $res['workHours'] .= __('On-call duty','rrze-jobs');
+	}
+	  
+	 
+	// Gruppe / Kategorie der Stelle  
+	if ((isset($jobdata['group'])) && (!empty($jobdata['group']))) {
+	    $res['occupationalCategory'] = $jobdata['group'];
+	}
+	
+	  
+	  // Es gibt kein spezielles Feld in JobPosting mit dem 
+	  // so etwas wie Schwangerschaftsvertreung, Krankheitsvertrung oä 
+	  // angegeben wird, sieht man in Teiln von employmentType ab. 
+	  // Daher nehme hierfür das Feld mit der Zusatzbeschreibung
+	  // disambiguatingDescription
+	if ((isset($jobdata['type3'])) && (!empty($jobdata['type3']))) {
+	      if (!empty($res['disambiguatingDescription'])) {
+		  $res['disambiguatingDescription'] .= "<br>\n";
+	      }
+	       $res['disambiguatingDescription'] .= $jobdata['type3'];
+	}
+	  
+	   // Es gibt kein spezielles Feld in JobPosting in dem ich die 
+	   // Befristungsdauer angeben kann, daher ergänze ich auch diese in 
+	  // der Zusatzbeschreibung
+	if ((isset($jobdata['befristet'])) && (!empty($jobdata['befristet']))) {
+	      if (!empty($res['disambiguatingDescription'])) {
+		  $res['disambiguatingDescription'] .= ", ";
+	      }
+	      $res['disambiguatingDescription'] .= __('Temporary employment until','rrze-jobs').' '.$jobdata['befristet'];
+	}
+	if ((isset($jobdata['desc4'])) && (!empty($jobdata['desc4']))) {
+	     if (!empty($res['disambiguatingDescription'])) {
+		  $res['disambiguatingDescription'] .= "\n";
+	      }
+	      $res['disambiguatingDescription'] .= '<strong>'.__('Remarks','rrze-jobs').'</strong><br>'.$jobdata['desc4'];
+	    
+	}  
 	  
 	  
-	 return $res;
-     }
+	return $res;
+    }
      
      // get a person by its key and return the contactdata fields
-     private function get_univis_person_contactpoint_by_key($key, $data) {
+    private function get_univis_person_contactpoint_by_key($key, $data) {
 	 
 	 $res = array();
 	 
@@ -357,6 +433,12 @@ class UnivIS extends Provider {
 			$res['gender'] = $person['gender'];
 			$res['identifier'] = $person['id'];
 			$res['honorificPrefix'] = $person['title'];
+			
+			$res['name'] = $person['title'];
+			if (!empty($res['name'])) {
+			    $res['name'] .= ' ';
+			}
+			$res['name'] .= $person['firstname']. ' '.$person['lastname'];
 			$res['workLocation']['name'] =  $person['orgname'];
 			$res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
 			$res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
@@ -573,6 +655,7 @@ class UnivIS extends Provider {
 				break;
 			    
 			    case 'group':
+				$data['Position'][$num]['orig_group'] = $value;
 				$value = $this->sanitize_univis_group($value);
 				break;
 			    
