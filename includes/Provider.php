@@ -47,9 +47,107 @@ class Provider {
 	 }
 	 return;
     }
-
+    
+    
+    // merge all positions from different provider, if there are more as one
+    public function merge_positions() {
+	if ((!isset($this->positions)) || (empty($this->positions))) {
+	    return false;
+	}
+	
+	$res = array();
+	$positionlist = array();
+	
+	foreach ($this->positions as $providername => $provider) {
+	    $res['request'][$providername]['request'] =  $provider['request'];
+	    $res['status'][$providername]['valid'] = $provider['valid'];
+	    if ($provider['valid'] === true) {
+		$truecounter++;
+		if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {
+		    
+		    foreach ($provider['content']['JobPosting'] as $num => $posdata) {
+			  $res['positions'][] = $posdata;
+		    }
+		}   
+	    }
+	}
+	if ($truecounter == count($this->positions)) {
+	    $res['valid'] = true;
+	} else {
+	    $res['valid'] = false;
+	}  
+	if (count($this->positions) > 1) {
+	    // check for duplicate posts
+	    
+	    // a job is duplicate if all the folowing fields together are 
+	    // identical in content:
+	    $matching_fields = array('title', 'validThrough', 'employmentUnit.name', 
+		'jobStartDate', 'applicationContact.url', 'applicationContact.email', 
+		'baseSalary.value.value');
+	    
+	    // todo later:
+	    // make a checksum of the content of description (after remove all
+	    // html and other markup and look if this matches too
+	    
+	    $dup = array();
+	    foreach ($res['positions'] as $num => $pos) {		
+		foreach ($res['positions'] as $num2 => $pos2) {
+		    if ($num == $num2)  {
+			continue;
+		    }
+		    if ($num > $num2) {
+			// we dont need to look backwards, cause we did them in 
+			// a previous round already
+			continue;
+		    }
+		    
+		    $matchnum = 0;
+		    foreach ($matching_fields as $field) {
+			if (strpos($field,".") !== false) {
+			    $fieldnames = explode(".",$field);
+			    
+			   
+			    if (isset($fieldnames[2])) {
+				if ($pos[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]]  == $pos2[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]]) {
+				    $matchnum++;
+				}
+			    } elseif (isset($fieldnames[1])) {
+				if ($pos[$fieldnames[0]][$fieldnames[1]]  == $pos2[$fieldnames[0]][$fieldnames[1]]) {
+				    $matchnum++;
+				}
+			    }
+			    
+			    
+			} elseif ($pos[$field]  == $pos2[$field]) {
+			    $matchnum++;
+			
+			}
+		    }
+		    if ($matchnum == count($matching_fields)) {
+			//ok, we found a duplicate entry.
+			// mark it in a dup-list
+			
+			$dup[$num2] = true;
+		    }
+		}
+	    }
+	    if (count($dup)>0) {
+		// there is one or more duplicate entries
+		$newposlist = array();
+		foreach ($res['positions'] as $num => $pos) {
+		    if ((!isset($dup[$num])) || ($dup[$num] !== true)) {
+			$newposlist[] = $pos;
+		    }
+		}
+		$res['positions'] = $newposlist;
+	    }
+	}
+	
+	return $res;
+    }
+    
+    
     public function get_positions($provider = '', $query = 'get_list') {
-
         // Ask all providers        	
         foreach ($this->systems as $system_name) {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
@@ -157,8 +255,9 @@ class Provider {
         } elseif (!empty($vonbesold)) {
            $value = $vonbesold;
         }
-	$res["@type"] =  "MonetaryAmount";
+	
 	$res["currency"] =  "EUR";
+	$res["stringvalue"] =  $value;
 	$res["value"]["@type"] =  "Text";
 	$res["value"]["value"] =  $value;
 	$res["value"]["unitText"] =  "MONTH";

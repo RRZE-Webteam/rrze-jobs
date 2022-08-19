@@ -76,12 +76,12 @@ class UnivIS extends Provider {
 		    'id', 'key',
 		    'enddate', 'start',
 		    'desc1', 'desc2', 'desc3', 'desc4', 'desc6',
-		    'type1', 'type2', 'type3', 'type4', 'orig_type1', 'orig_type2', 'orig_type3', 'orig_type4',
+		    'orig_type1', 'orig_type2', 'orig_type3', 'orig_type4',
 		    'acontact', 'contact',
 		    'vonbesold', 'bisbesold',
 		    'nd', 'sd', 'bd', 'wstunden',
 		    'orgname', 'orgunit', 'orgunit_en',
-		    'group', 'orig_group', 'befristet'
+		    'group', 'orig_group'
 	    );
 	$providerfield = array();
 	
@@ -139,7 +139,7 @@ class UnivIS extends Provider {
 		 $res['qualifications'] .= "\n";
 	     }
 	     $res['qualifications'] .= '<strong>'.__('Wünschenswerte Qualifikation','rrze-jobs').':</strong><br>';
-	     $res['qualifications'] .= $jobdata['desc2'];
+	     $res['qualifications'] .= $jobdata['desc3'];
 	 }
 	 
 
@@ -191,10 +191,10 @@ class UnivIS extends Provider {
 	    
  
  
-	 // baseSalary  (type: MonetaryAmount)
+	 // estimatedSalary  (type: MonetaryAmount)
 	    // aus vonbesold und bisbesold   generieren
 	    if (isset($jobdata['vonbesold']) || isset($jobdata['vonbesold'])) {
-		$res['baseSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
+		$res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
 	    }
 	   	    
 	    
@@ -252,6 +252,10 @@ class UnivIS extends Provider {
 		    $res['employmentUnit']['faxNumber'] = $contactpersondata['faxNumber'];
 		    $res['employmentUnit']['telephone'] = $contactpersondata['telephone'];
 		    $res['employmentUnit']['address'] = $contactpersondata['workLocation']['address'];
+		    
+		    if ((!isset($res['applicationContact']['name'])) || (empty($res['applicationContact']['name']))) {
+			$res['applicationContact']['name'] = $contactpersondata['name'];
+		    }
 
 	    }
 	//    $res['contact'] = $contactpersondata;
@@ -402,12 +406,11 @@ class UnivIS extends Provider {
 	}
 	if ((isset($jobdata['desc4'])) && (!empty($jobdata['desc4']))) {
 	     if (!empty($res['disambiguatingDescription'])) {
-		  $res['disambiguatingDescription'] .= "\n";
+		  $res['disambiguatingDescription'] = '<p>'.$res['disambiguatingDescription']."</p>\n";
 	      }
-	      $res['disambiguatingDescription'] .= '<strong>'.__('Remarks','rrze-jobs').'</strong><br>'.$jobdata['desc4'];
+	      $res['disambiguatingDescription'] .= '<p>'.$jobdata['desc4'].'</p>';
 	    
 	}  
-	  
 	  
 	return $res;
     }
@@ -1313,9 +1316,9 @@ class UnivIS extends Provider {
         );
 
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
-        $txt = nl2br($txt);
+       // $txt = nl2br($txt);
         $txt = make_clickable($txt);
-	
+	$txt = wpautop($txt);
 	$txt = trim($txt);
 
         return $txt;

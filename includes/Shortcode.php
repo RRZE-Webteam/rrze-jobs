@@ -73,7 +73,7 @@ class Shortcode {
             'job_headline_qualifications_nth' => 'job_qualifications_nth',
             'job_headline_remarks' => 'job_benefits',
         ];
-
+// $this->options['rrze-jobs-labels_job_headline_task']
         switch ($this->provider) {
             case 'bite':
             case 'univis':
@@ -144,20 +144,7 @@ class Shortcode {
 	} else {
 	   $format = 'default';
 	}
-	
-	$cache = new Cache();
-	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid, $format);
-	if ($cachedout) {
-	    wp_enqueue_style('rrze-elements');
-	    wp_enqueue_style('rrze-jobs-css');
 
-	    return $cachedout;
-	} 
-	
-	
-	$output = '';
-	
-        // multi-provider given f.e. "bite, interamt" or "univis,interamt,bite    , unknownProvider"
         $aProvider = explode(',', $this->provider);
         array_walk($aProvider, function (&$val) {
             $val = trim(strtolower(sanitize_text_field($val)));
@@ -165,7 +152,6 @@ class Shortcode {
 
         foreach ($aProvider as $provider) {
             $this->provider = $provider;
-            $this->map_template = $this->jobOutput->getMap($provider);
 
             if (!$orgids) {
                 if (!empty($this->options['rrze-jobs-access_orgids_' . $provider])) {
@@ -181,14 +167,8 @@ class Shortcode {
                 return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
             }
 
-            if (($orgids || $provider == 'bite') && !$this->jobid) {
-                $output .= $this->get_all_jobs();
-            } else {
-                $output = $this->get_single_job();
-            }
         }
 	
-	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $format, $output);
 	
 	
 	$positions = new Provider();
@@ -204,24 +184,93 @@ class Shortcode {
 	}
 	
 	$positions->set_params($params);
-	$newdata = $positions->get_positions();
-	echo Helper::get_html_var_dump($newdata);
-		
+	$positions->get_positions();
+	$newdata = $positions->merge_positions();
 	
-        if (!is_readable($template)) {
-	    $output .=  "<!-- Templatefile $template not readable!! -->";
+	
+	// Output Strings - later to be changed with settings
+	$strings = array(
+	    "title_title"	=>  __('Title', 'rrze-jobs'),
+	    "title_Keyfacts"	=>  __('Details', 'rrze-jobs'),
+	    "title_description"	=> $this->options['rrze-jobs-labels_job_headline_task'],
+	    "title_payment"	=>  __('Payment', 'rrze-jobs'),
+	    "title.jobStartDate"    =>  __('Job start', 'rrze-jobs'),
+	    "title_type2"	=> __('Part-time / full-time', 'rrze-jobs'),
+	    "title_validThrough"	=> __('Application deadline', 'rrze-jobs'),
+	    "title_applicationbutton"	=> $this->options['rrze-jobs-labels_sidebar_application_button'],
+	    "title_qualifications"   =>  __('Qualifications', 'rrze-jobs'),
+	    "title_applicationdescription" => $this->options['rrze-jobs-labels_sidebar_headline_application'],
+	    "title_workHours"	=> __('Weekly working hours', 'rrze-jobs'),
+	    "title_contact"   =>  __('Contact for further information', 'rrze-jobs'),
+	    "title_befristet"   =>   __('Limitation', 'rrze-jobs'),
+	    "title_Location"   =>  __('Location', 'rrze-jobs'),    
+	    "title_jobnotice"   =>  __('Remarks', 'rrze-jobs'),
+	    "text_jobnotice"	=> strip_tags($this->options['rrze-jobs-labels_job_notice'])
 	    
-	   return $output;
-	}
+	    
+	    
+	);
+	$parserdata = array();
 	
-	
-	$content = Template::getContent($template, $newdata);
-	$content = do_shortcode($content);
-	if (!empty($content)) {
-	    echo $content;
+	if (!empty($this->jobid)) {
+	    // single job
+	    
+	    $data['const'] = $strings;
+	    $content = '';
+	    $parserdata['num'] = 1;
+	    foreach ($newdata['positions'] as $num => $data) {
+		    $template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
+		    $data['const'] = $strings;
+		    $content .= Template::getContent($template, $data);
+		}
+	    
+	    
+	    $content = do_shortcode($content);
+	    if (!empty($content)) {
+		echo $content;
+	    } else {
+		echo "empty content from template<br>";
+	    }
 	} else {
-	    echo "empty content from template<br>";
+	    // list
+	   
+	    
+	    if ($newdata['valid']==true) {
+		$parserdata['joblist'] = '';
+		
+		$parserdata['num'] = count($newdata['valid']);
+		foreach ($newdata['positions'] as $num => $data) {
+		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
+		    $data['const'] = $strings;
+		    $parserdata['joblist'] .= Template::getContent($template, $data);
+		}
+		
+		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+	    } else {
+		$parserdata['errormsg'] = __('No jobs found.','rrze-jobs');
+		$parserdata['errortitle'] = __('Error','rrze-jobs');
+		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
+	    }
+	    if (!is_readable($template)) {
+		$output .=  "<!-- Templatefile $template not readable!! -->";    
+	       return $output;
+	    }
+
+
+	    $content = Template::getContent($template, $parserdata);
+	    $content = do_shortcode($content);
+	    if (!empty($content)) {
+		echo $content;
+	    } else {
+		echo "empty content from template<br>";
+	    }
 	}
+	
+	
+	// echo Helper::get_html_var_dump($newdata);
+	//	echo Helper::get_html_var_dump($parserdata);
+	
+        
 	
         wp_enqueue_style('rrze-elements');
         wp_enqueue_style('rrze-jobs-css');
