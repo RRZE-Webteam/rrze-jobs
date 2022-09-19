@@ -138,72 +138,185 @@ function getSections() {
  * Gibt die Einstellungen der Optionsfelder zurück.
  * @return array [description]
  */
+
+/*
+ * TODO:  nachhaltigere Variablennamen umsetzen und dabei Abwärtskompatibilitaet zu bestehenden Installationen herstellen
+ * Sinnvoll ist eher Richtung:
+ *       univis_orgid
+ *       interamt_partnerid
+ *       bite_apikey
+ *
+ * Dabei auch prüfen, ob man wirlich mehr als eine Id braucht und ob wir hier dies eben auf einen einzigen Zugang beschränken.
+ * Wer andere provider will, kann das über den Shortcode Parameter setzen. Hier sollte der eine (1) Default oder Fallback stehen.
+ * -WW, 16.09.2022
+ */
 function getFields() {
     $aFields = [
         'rrze-jobs-access' => [
             [
                 'name' => 'orgids_interamt',
-                'label' => __("orgIDs Interamt", 'rrze-jobs'),
-                'desc' => __('Enter the IDs of your organizations comma separated', 'rrze-jobs'),
+                'label' => __("Interamt Partner Id", 'rrze-jobs'),
+                'desc' => __('Enter the Partner-ID of the Interamt-Service', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => '',
             ],
             [
                 'name' => 'orgids_univis',
-                'label' => __("orgIDs UnivIS", 'rrze-jobs'),
-                'desc' => __('Enter the IDs of your organizations comma separated', 'rrze-jobs'),
+                'label' => __("UnivIS OrgId", 'rrze-jobs'),
+                'desc' => __('Enter the Id of your organization in UnivIS', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => '',
             ],
             [
-                'name' => 'apiKey',
-                'label' => __("API Key", 'rrze-jobs'),
-                'desc' => __('Enter the apiKey for BITE', 'rrze-jobs'),
+                'name' => 'bite_apikey',
+                'label' => __("BITE API Key", 'rrze-jobs'),
+                'desc' => __('Enter the API Key for BITE', 'rrze-jobs'),
                 'type' => 'text',
                 'default' => '',
             ],
         ],
+	
+	
+	
         'rrze-jobs-labels' => [
             [
                 'name' => 'hr1',
                 'label' => __('Job offer', 'rrze-jobs'),
                 'type' => 'line',
             ],
-            [
-                'name' => 'job_headline_task',
-                'label' => __("Your tasks", 'rrze-jobs'),
+	    
+	    
+	   [
+                'name' => 'job_headline_title',
+                'label' => __('Label for','rrze-jobs').' '.__("Title", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Das Aufgabengebiet umfasst u.a.:',
+                'default' => __("Title", 'rrze-jobs')
+            ],
+	    [
+                'name' => 'job_headline_keyfacts',
+                'label' => __('Label for','rrze-jobs').' '.__('Details', 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __('Details', 'rrze-jobs')
             ],
             [
+                'name' => 'job_headline_description',
+                'label' =>__('Label for','rrze-jobs').' '.__('Description', 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __('Description', 'rrze-jobs')
+            ],
+	    [
                 'name' => 'job_headline_qualifications',
-                'label' => __("Your profile (necessary)", 'rrze-jobs'),
+                'label' =>__('Label for','rrze-jobs').' '.__('Qualifications', 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Notwendige Qualifikation',
+                'default' => __('Qualifications', 'rrze-jobs')
             ],
             [
-                'name' => 'job_headline_qualifications_nth',
-                'label' => __("Your profile (desired)", 'rrze-jobs'),
+                'name' => 'job_headline_qualifications_required',
+                'label' =>__('Label for','rrze-jobs').' '.__("Necessary qualifications", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Wünschenswerte Qualifikation',
+                'default' => __("Necessary qualifications", 'rrze-jobs'),
             ],
             [
-                'name' => 'job_headline_remarks',
-                'label' => __("We offer", 'rrze-jobs'),
+                'name' => 'job_headline_qualifications_optional',
+                'label' => __('Label for','rrze-jobs').' '.__("Desirable qualifications", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Bemerkungen',
+                'default' => __("Desirable qualifications", 'rrze-jobs'),
             ],
-            [
+	    [
+                'name' => 'job_headline_disambiguatingDescription',
+                'label' => __('Label for','rrze-jobs').' '.__("Supplementary description", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Supplementary description", 'rrze-jobs'),
+            ],
+	    [
+                'name' => 'job_headline_jobnotice',
+                'label' => __('Label for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Notice", 'rrze-jobs'),
+            ],
+	    [
+                'name' => 'job_headline_jobStartDate',
+                'label' => __('Label for','rrze-jobs').' '.__("Job start date", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Job start date", 'rrze-jobs'),
+            ],
+	      [
+                'name' => 'job_headline_validThrough',
+                'label' => __('Label for','rrze-jobs').' '.__('Application deadline', 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __('Application deadline', 'rrze-jobs'),
+            ],
+	    
+	    [
+                'name' => 'job_headline_Location',
+                'label' => __('Label for','rrze-jobs').' '.__("Location", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Location", 'rrze-jobs'),
+            ],
+	     [
+                'name' => 'job_headline_payment',
+                'label' => __('Label for','rrze-jobs').' '.__("Payment", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Payment", 'rrze-jobs'),
+            ],
+	     [
+                'name' => 'job_headline_befristet',
+                'label' => __('Label for','rrze-jobs').' '.__("Limitation", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Limitation", 'rrze-jobs'),
+            ],
+	     [
+                'name' => 'job_headline_contact',
+                'label' => __('Label for','rrze-jobs').' '.__("Contact", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Contact", 'rrze-jobs'),
+            ],
+	       [
+                'name' => 'job_headline_workingtime',
+                'label' => __('Label for','rrze-jobs').' '.__("Working time", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Working time", 'rrze-jobs'),
+            ],
+	    [
+                'name' => 'job_headline_workHours',
+                'label' => __('Label for','rrze-jobs').' '.__('Weekly working hours', 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __('Weekly working hours', 'rrze-jobs'),
+            ],
+	   [
+                'name' => 'job_headline_application_button',
+	       'label' => __('Label for','rrze-jobs').' '.__('Apply now', 'rrze-jobs'),
+                // 'desc' => __('Label for the button to apply to', 'rrze-jobs'),
+                'type' => 'text',
+                'default' => __('Apply now', 'rrze-jobs'),
+            ],    
+	    [
                 'name' => 'job_headline_application',
-                'label' => __("Application", 'rrze-jobs'),
+                'label' => __('Label for','rrze-jobs').' '.__("Application", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
-                'default' => 'Bewerbung',
+                'default' =>__("Application", 'rrze-jobs'),
             ],
+	    
+	    
+         
+          
             [
                 'name' => 'job_notice',
                 'label' => __("Notice", 'rrze-jobs'),
@@ -215,32 +328,9 @@ function getFields() {
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
-            [
-                'name' => 'hr2',
-                'label' => __('Sidebar', 'rrze-jobs'),
-                'type' => 'line',
-            ],
-            [
-                'name' => 'sidebar_application_button',
-                'label' => __('"Apply to" button', 'rrze-jobs'),
-                // 'desc' => __('Label for the button to apply to', 'rrze-jobs'),
-                'type' => 'text',
-                'default' => 'Jetzt bewerben!',
-            ],
-            [
-                'name' => 'sidebar_headline_application',
-                'label' => __("Application", 'rrze-jobs'),
-                'desc' => __('Title of "Your application"', 'rrze-jobs'),
-                'type' => 'text',
-                'default' => 'Bewerbung',
-            ],
-            [
-                'name' => 'sidebar_show_application_link',
-                'label' => __("Show application link", 'rrze-jobs'),
-                'desc' => __('Display both, a link and a button to apply to', 'rrze-jobs'),
-                'type' => 'checkbox',
-                'default' => true,
-            ],
+
+          
+         
             [
                 'name' => 'hr3',
                 'label' => __('Miscellaneous', 'rrze-jobs'),

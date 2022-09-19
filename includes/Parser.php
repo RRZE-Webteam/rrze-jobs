@@ -199,6 +199,12 @@ class Parser
             return $content;
         }
         $this->vars = (array) $data;
-        return $this->render($content);
+	$text = $this->render($content);
+	
+	$text = force_balance_tags( $text );
+    $text = preg_replace( '#<p>\s*+(<br\s*/*>)?\s*</p>#i', '', $text );
+    $text = preg_replace( '~\s?<p>(\s|&nbsp;)+</p>\s?~', '', $text );
+        $text = preg_replace( '/[\n\r\t]+/', '', $text );
+        return $text;
     }
 }

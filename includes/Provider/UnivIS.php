@@ -131,15 +131,20 @@ class UnivIS extends Provider {
 	    // desc3 ( Wünschenswerte Qualifikation:)
 	 
 	 if ((isset($jobdata['desc2'])) && (!empty($jobdata['desc2']))) {
-	     $res['qualifications'] = '<strong>'.__('Notwendige Qualifikation','rrze-jobs').':</strong><br>';
+	     
+	     // 
+	     $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+	    //  $res['qualifications'] = '<p><strong>'.__("Your profile (necessary)", 'rrze-jobs').':</strong></p>';
 	     $res['qualifications'] .= $jobdata['desc2'];
 	 }
 	 if ((isset($jobdata['desc3'])) && (!empty($jobdata['desc3']))) {
 	     if (!empty($res['qualifications'])) {
-		 $res['qualifications'] .= "\n";
+		 $res['qualifications'] .= "<br>\n";
 	     }
-	     $res['qualifications'] .= '<strong>'.__('Wünschenswerte Qualifikation','rrze-jobs').':</strong><br>';
-	     $res['qualifications'] .= $jobdata['desc3'];
+	     // {{=const.title_qualifications}}
+	     $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+	    // $res['qualifications'] .= '<p><strong>'.__("Your profile (desired)", 'rrze-jobs').':</strong></p>';
+	    $res['qualifications'] .= $jobdata['desc3'];
 	 }
 	 
 
@@ -1316,9 +1321,8 @@ class UnivIS extends Provider {
         );
 
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
-       // $txt = nl2br($txt);
         $txt = make_clickable($txt);
-	$txt = wpautop($txt);
+	$txt = wpautop($txt, false);
 	$txt = trim($txt);
 
         return $txt;

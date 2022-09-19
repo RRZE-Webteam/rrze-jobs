@@ -30,15 +30,33 @@ class Provider {
 	 $this->params = array();
      } 
      
-
+     public function is_valid_provider($provider) {
+	 if ((!isset($provider)) || (empty($provider))) {
+	     return false;
+	 }
+	 $found = false;
+	 foreach ($this->systems as $system_name) {
+	     if ((strtolower(trim($provider))) == strtolower(trim($system_name))) {
+		 $found = $system_name;
+		 break;
+	     }
+	 }
+	 return $found;	 
+     }
+     
      public function set_provider_params($provider, $params) {
-	  if (!empty($provider)) {
+	$provider = is_valid_provider($provider);
+	if ($provider===false) {
+	     return false;
+	}
+	 
+	if (!empty($provider)) {
 	       if (is_array($params)){
 		    $this->params[$provider] = $params;
 		}
-	  }
+	}
 	
-	 return;
+	return;
     } 
      
     public function set_params($params) {
@@ -148,7 +166,8 @@ class Provider {
     
     
     public function get_positions($provider = '', $query = 'get_list') {
-        // Ask all providers        	
+        // Ask all providers        
+
         foreach ($this->systems as $system_name) {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
 	    $system = new $system_class();
@@ -162,6 +181,7 @@ class Provider {
 
 	    if (method_exists($system, $query)) {
 		$params = array();
+	
 		if (isset($this->params[$system->name])) {
 		    $params = $this->params[$system->name];
 		}
@@ -264,6 +284,22 @@ class Provider {
 	
 	return $res;
 
+    }
+    
+    public function get_empoymentType_as_string($type) {
+	if (is_array($type)) {
+	    $res = '';
+	    foreach ($type as $i) {
+		if (!empty($res)) {
+		    $res .= ', '.strval($i);
+		} else {		
+		    $res = strval($i);
+		}
+	    }
+	    return $res;
+	} else {
+	    return strval($type);
+	}
     }
 	    
 	   

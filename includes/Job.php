@@ -548,8 +548,7 @@ class Job {
         return false;
     }
 
-    private function formatUnivIS($txt)
-    {
+    private function formatUnivIS($txt) {
         $subs = array(
             '/^\-+\s+(.*)?/mi' => '<ul><li>$1</li></ul>', // list
             '/(<\/ul>\n(.*)<ul>*)+/' => '', // list
@@ -564,7 +563,7 @@ class Job {
         );
 
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
-        $txt = nl2br($txt);
+     //   $txt = nl2br($txt);
         $txt = make_clickable($txt);
 
         return $txt;
