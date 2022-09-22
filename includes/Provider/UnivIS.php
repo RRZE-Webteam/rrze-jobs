@@ -27,7 +27,7 @@ class UnivIS extends Provider {
 	 // defines all required parameters for defined request method
 	 $this->required_fields = array(
 	     'get_list'	=> array(
-		 'department'	=> 'string'
+		 'department'	=> 'uriparam'
 	     ),
 	     'get_single'	=> array(
 		 'id'	=> 'number'
@@ -138,9 +138,9 @@ class UnivIS extends Provider {
 	     $res['qualifications'] .= $jobdata['desc2'];
 	 }
 	 if ((isset($jobdata['desc3'])) && (!empty($jobdata['desc3']))) {
-	     if (!empty($res['qualifications'])) {
-		 $res['qualifications'] .= "<br>\n";
-	     }
+	//     if (!empty($res['qualifications'])) {
+	//	 $res['qualifications'] .= "<br>\n";
+	//     }
 	     // {{=const.title_qualifications}}
 	     $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
 	    // $res['qualifications'] .= '<p><strong>'.__("Your profile (desired)", 'rrze-jobs').':</strong></p>';
@@ -162,11 +162,18 @@ class UnivIS extends Provider {
 		if (!empty($persondata)) {
 		    
 			$res['applicationContact']['contactType'] = __('Contact for application','rrze-jobs');
-			
-			$res['applicationContact']['email'] = $persondata['email'];
-			$res['applicationContact']['name'] = $persondata['name'];
-			$res['applicationContact']['faxNumber'] = $persondata['faxNumber'];
-			$res['applicationContact']['telephone'] = $persondata['telephone'];
+			if (isset($persondata['email'])) {
+			    $res['applicationContact']['email'] = $persondata['email'];
+			}
+			if (isset($persondata['name'])) {
+			    $res['applicationContact']['name'] = $persondata['name'];
+			}
+			if (isset($persondata['faxNumber'])) {
+			    $res['applicationContact']['faxNumber'] = $persondata['faxNumber'];
+			}
+			if (isset($persondata['telephone'])) {
+			    $res['applicationContact']['telephone'] = $persondata['telephone'];
+			}
 			
 			$res['directApply'] = true;
 		     // directApply => true/false
@@ -253,14 +260,21 @@ class UnivIS extends Provider {
 
 	    $contactpersondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);	
 	    if (!empty($contactpersondata)) {
+		if (isset($contactpersondata['email'])) {
 		    $res['employmentUnit']['email'] = $contactpersondata['email'];		
+		}
+		if (isset($contactpersondata['faxNumber'])) {
 		    $res['employmentUnit']['faxNumber'] = $contactpersondata['faxNumber'];
-		    $res['employmentUnit']['telephone'] = $contactpersondata['telephone'];
+		}
+		if (isset($contactpersondata['telephone'])) {
+		     $res['employmentUnit']['telephone'] = $contactpersondata['telephone'];
+		}
+		if (isset($contactpersondata['workLocation']['address'])) {
 		    $res['employmentUnit']['address'] = $contactpersondata['workLocation']['address'];
-		    
-		    if ((!isset($res['applicationContact']['name'])) || (empty($res['applicationContact']['name']))) {
-			$res['applicationContact']['name'] = $contactpersondata['name'];
-		    }
+		}  
+		if ((!isset($res['applicationContact']['name'])) || (empty($res['applicationContact']['name']))) {
+		    $res['applicationContact']['name'] = $contactpersondata['name'];
+		}
 
 	    }
 	//    $res['contact'] = $contactpersondata;
@@ -432,11 +446,13 @@ class UnivIS extends Provider {
 		     if ($person['key'] == $key) {
 			$res['email'] = $person['location'][0]['email'];
 			$res['telephone'] = $person['location'][0]['tel'];
-			$res['faxNumber'] = $person['location'][0]['fax'];
+			if (isset($person['location'][0]['fax']))
+			    $res['faxNumber'] = $person['location'][0]['fax'];
 			$res['familyName'] = $person['lastname'];
 			$res['givenName'] = $person['firstname'];
 			$res['worksFor'] = $person['orgname'];
-			$res['gender'] = $person['gender'];
+			if (isset ($person['gender']))
+			    $res['gender'] = $person['gender'];
 			$res['identifier'] = $person['id'];
 
 			$res['name'] = '';
@@ -523,6 +539,7 @@ class UnivIS extends Provider {
 	      $aRet = [
                     'valid' => false,
 		    'error' => 'required_parameter',
+		    'params_given'   => $params,
                     'content' => $check
               ];
 	      return $aRet;
@@ -547,7 +564,7 @@ class UnivIS extends Provider {
 	 $uri = $this->uriparameter;
 	 
 	 foreach ($params[$method] as $name => $value) {
-	     $type = 'string';
+	     $type = 'uriparam';
 	     if (isset($this->required_fields[$method][$name])) {
 		$type =  $this->required_fields[$method][$name];
 	     } 
@@ -604,7 +621,7 @@ class UnivIS extends Provider {
 	$cache->set_cachetime($this->cachetime);
 	$org = '';
 	if (isset($params[$method]['department'])) {
-	    $org = $params[$method]['department'];
+	    $org = preg_replace('/[^0-9,]/', '', $params[$method]['department']);
 	} 
 	$id = '';
 	if (isset($params[$method]['id'])) {
@@ -619,15 +636,31 @@ class UnivIS extends Provider {
 	if ( is_wp_error( $remote_get ) ) {	
 		 $aRet = [
                     'valid' => false,
-                    'content' => $remote_get->get_error_message()
+                    'error' => $remote_get->get_error_message(),
+		    'code'    => $remote_get->get_error_code(),
+		    'params_given'   => $params,
+		    'content'	=> ''
                 ];
 		return $aRet;
          } else {
 	     $content = json_decode($remote_get["body"], true);
 	     
+	     if (strpos($content, 'keine passenden Datensätze gefunden') === false) {
+		  $aRet = [
+                    'valid' => false,
+                    'error' => 'No entry',
+		    'code'   => 404,
+		    'params_given'   => $params,
+		    'content'	=> ''
+                ];
+		return $aRet;
+	     }
+	     
 	     $aRet = [
 		    'request'	=> $url,
                     'valid'	=> true,
+		    'code'   => 200,
+		    'params_given'   => $params,
                     'content'	=> $content,
               ];
 	     

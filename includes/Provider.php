@@ -75,18 +75,29 @@ class Provider {
 	
 	$res = array();
 	$positionlist = array();
+	$truecounter = 0;
 	
 	foreach ($this->positions as $providername => $provider) {
-	    $res['request'][$providername]['request'] =  $provider['request'];
+	    if (isset($provider['request'])) {
+		$res['request'][$providername]['request'] =  $provider['request'];
+	    }
+	    
 	    $res['status'][$providername]['valid'] = $provider['valid'];
 	    if ($provider['valid'] === true) {
 		$truecounter++;
-		if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {
-		    
+		if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {		    
 		    foreach ($provider['content']['JobPosting'] as $num => $posdata) {
 			  $res['positions'][] = $posdata;
 		    }
 		}   
+	    } else {
+		 $res['status'][$providername]['error'] = $provider['error'];
+		 $res['status'][$providername]['code'] = $provider['code'];
+		 if (isset($provider['params_given'])) {
+		    $res['status'][$providername]['params_given'] = $provider['params_given'];
+		 }
+		 $res['status'][$providername]['content'] = $provider['content'];
+ 
 	    }
 	}
 	if ($truecounter == count($this->positions)) {
@@ -203,6 +214,11 @@ class Provider {
      // Sanitize Requests values
      public function sanitize_type($type = 'string', $value) {
 	 switch ($type) {
+	    case 'uriparam':
+		 $value = sanitize_text_field($value);
+		 $value = preg_replace('/[^0-9a-z\-_,\.]+/i', '', $value);
+		 break;
+	     
 	     case 'string':
 		  $value = sanitize_text_field($value);
 		 break;

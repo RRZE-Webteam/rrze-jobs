@@ -129,8 +129,12 @@ class Shortcode {
 		    $search_provider = $validprovider;
 		    break;
 		} else {
-		    $errortext = "No valid provider \"$provider\" (Input: \"$input\")";
-		    return $this->get_errormsg('Error: Bad provider', $errortext);
+		    $ret['status'][$provider]['code'] = 400;
+		    $ret['status'][$provider]['error'] = __('Invalid provider','rrze-jobs').' '.$provider;
+		    $ret['status'][$provider]['valid'] = false;
+		    $ret['valid'] = false;
+
+		    return $this->get_errormsg($ret);
 		}   
 	    }
 	}
@@ -139,8 +143,8 @@ class Shortcode {
 	$query = 'get_list';
 	$params = array();
 	if ($jobid) {
-	    $params['UnivIS']['get_list']['id'] = $jobid;
-	    $params['Interamt']['get_list']['Id'] =$jobid;
+	    $params['UnivIS']['get_single']['id'] = $jobid;
+	    $params['Interamt']['get_single']['Id'] =$jobid;
 	    $query = 'get_single';	    
 	}
 	
@@ -172,9 +176,8 @@ class Shortcode {
 	
 	
 	
-	if ($newdata['valid']===false) {
-	   $errortext = "No valid jobdata found. Provider $search_provider with id $orgids, jobid: $jobid";
-	   return $this->get_errormsg('Error', $errortext, $newdata);	
+	if ($newdata['valid']==false) {	   
+	   return $this->get_errormsg($newdata);	
 	}
 	
 	
@@ -186,15 +189,14 @@ class Shortcode {
 	
 	if ($query == 'get_single') {
 	    // single job
-	    
-	    echo "look for ".$jobid;
-	     echo  Helper::get_html_var_dump($newdata);
+	    $content = '';
+	//    $content .= "look for ".$jobid;
+	//     $content .=  Helper::get_html_var_dump($newdata);
 	    
 
 	    if ($newdata['valid']===true) {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
-		$data['const'] = $strings;
-		$content = '';
+		$data['const'] = $strings;	
 		$parserdata['num'] = 1;
 
 
@@ -216,14 +218,14 @@ class Shortcode {
 		    return $content;
 		} else {
 		    $errortext = "Empty content from template by asking for job id: ".$jobid;
-		    return $this->get_errormsg('Error: No content', $errortext, $newdata);	
+		    return $this->get_errormsg($newdata, $errortext, 'Error: No content');	
 		}
 	    } else {
 		
 		  $errortext = "Empty content from template by asking for job id: ".$jobid;
 		  $errortext .= Helper::get_html_var_dump($newdata);
 		  
-		 return $this->get_errormsg('Error: No content', $errortext, $newdata);	
+		 return $this->get_errormsg( $newdata, $errortext,'Error: No content');	
 		
 	    }
 	    
@@ -232,19 +234,26 @@ class Shortcode {
 	    // list
     
 	    
-	    if ($newdata['valid']===true) {
+	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
+	//	echo Helper::get_html_var_dump($newdata);
+		$parserdata['num'] = count($newdata['positions']);
+		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
 		
-		$parserdata['num'] = count($newdata['valid']);
 		foreach ($newdata['positions'] as $num => $data) {
-		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
-		    $data['const'] = $strings;
-		    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
 		    
-		    $data = $this->ParseDataVars($data);
+		    $hidethis = $this->hideinternal($data);
 		    
-		    
-		    $parserdata['joblist'] .= Template::getContent($template, $data);
+		    if ($hidethis) {
+			   // Ignore/hide this position in display
+		    } else {
+			$data['const'] = $strings;
+			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);		    
+			$data = $this->ParseDataVars($data);
+			$parserdata['joblist'] .= Template::getContent($template, $data);
+			
+		    }
+
 		}
 		
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
@@ -256,7 +265,7 @@ class Shortcode {
 	    }
 	    if (!is_readable($template)) {
 		$errortext .=  "Templatefile $template not readable!!";    
-		return $this->get_errormsg('Template Error', $errortext, $parserdata);
+		return $this->get_errormsg($parserdata,$errortext, 'Template Error');
 	    }
 
 	    $parserdata['const'] = $strings;
@@ -270,7 +279,7 @@ class Shortcode {
 		
 	    } else {
 		$errortext .=  "Empty content from template $template";    
-		return $this->get_errormsg('Output Error', $errortext, $parserdata);
+		return $this->get_errormsg($parserdata, $errortext, 'Output Error' );
 	    
 		
 	    }
@@ -283,29 +292,119 @@ class Shortcode {
         
 	$errortext =  "Unknown shortcode handling";    
 	$errortext .=  Helper::get_html_var_dump($parserdata);
-	return $this->get_errormsg('Error', $errortext, $parserdata);
+	return $this->get_errormsg($parserdata, $errortext);
 
     }
     
     
     
+    
+     private static function isIPinRange($fromIP, $toIP, $myIP) {
+        $min = ip2long($fromIP);
+        $max = ip2long($toIP);
+        $needle = ip2long($myIP);
+
+        return (($needle >= $min) and ($needle <= $max));
+    }
+
+
+    // check if the position is internal and has to be ignored by current user host
+    /* IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
+     */
+    private function hideinternal($data) {
+	if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)) {
+	    if ((isset($this->options['rrze-jobs-misc_hide_internal_jobs'])) && ($this->options['rrze-jobs-misc_hide_internal_jobs'] === false)) {
+		    return false;	
+	    }
+	    
+	    $remoteIP = $_SERVER['REMOTE_ADDR'];
+	    $remoteAdr = gethostbyaddr($remoteIP);
+	    
+	    // TODO: Move this into constant arrays instead of hard codet values
+	    if ($this->isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) || $this->isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)) {
+		 return true;
+	    }
+	    
+	    if (is_user_logged_in() ) {
+		if ($this->options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true) {
+		       return false;
+		}
+	    }
+	   
+
+	    
+	    if ((isset($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) && (!empty($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts']))) {
+		
+		$required_hosts = trim($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
+		$hosts = preg_split("/[\s,\n]+/", $required_hosts);
+		$ret = true;
+		foreach ($hosts as $h) {
+		    if  ((strpos($remoteAdr, $h) !== false)) {
+			$ret = false;
+			break;
+		    }
+		}
+		
+		return $ret;
+		
+	    }
+
+	    return true;
+	}
+	return false;
+    }
     /*
      * Erroroutput for Shortcode calls
      */
 
-    private function get_errormsg($title, $text, $parserdata = array()) {	
-	if ((!isset($text)) || (empty($text))) {
-	    $parserdata['errormsg'] = __('No jobs found.','rrze-jobs');
-	} else {
+    private function get_errormsg($parserdata, $text = '' , $title = '') {	
+	
+	
+	$parserdata['errormsg'] = $parserdata['errorcode'] =  $parserdata['errortitle'] = '';
+	
+	foreach ($parserdata['status'] as $provider ) {
+	    
+	    $errortextfield = 'rrze-jobs-labels_job_errortext_'.$provider['code'];
+	    if (isset($this->options[$errortextfield])) {
+		$errormsg = $this->options[$errortextfield];
+	    } else {
+		$errormsg = $provider['error'];
+	    }
+	    if (!empty($parserdata['errormsg'])) {
+		$parserdata['errormsg'] .= ', ';
+	    }
+	    $parserdata['errormsg'] .= $errormsg;
+	    
+	    if (!empty($parserdata['errorcode'])) {
+		$parserdata['errorcode'] .= ', ';
+	    }
+	    $parserdata['errorcode'] .= $provider['code'];
+	    
+	    
+	    if (!empty($parserdata['errortitle'])) {
+		$parserdata['errortitle'] .= ', ';
+	    }
+	    $parserdata['errortitle'] .= __('Error','rrze-jobs').' '. $provider['code'];
+	}
+	
+	if (!empty($text)) {
 	     $parserdata['errormsg'] = $text;
 	}
 	
-	if ((!isset($title)) || (empty($title))) {
-	    $parserdata['errortitle'] = __('Error','rrze-jobs');
-	} else {
+	if (!empty($title)) {
 	    $parserdata['errortitle'] = $title;
 	}
 	
+	
+	if ((empty($parserdata['errormsg']))  || ((isset($this->options['rrze-jobs-labels_job_errortext_display'])) && ($this->options['rrze-jobs-labels_job_errortext_display'] == false))) {
+	    $content =  "<!--  "; 	
+	    $content .= " Code: ".$parserdata['errorcode']."; Msg: ". $parserdata['errormsg'];
+	    $content .= " -->"; 
+
+	    return $content;
+	}
+
+
 	
 	$template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
 	$content = Template::getContent($template, $parserdata);	
@@ -316,8 +415,7 @@ class Shortcode {
 	    wp_enqueue_style('rrze-jobs-css');
 	    return $content;
 	} else {
-	    $content =  "<!-- Error on creating errormessage for shortcode call -->";    
-	    $content .= Helper::get_html_var_dump($parserdata);
+	    $content =  "<!-- Error on creating errormessage for shortcode call -->";    	   
 	    return $content;
 	    
 	}
@@ -343,7 +441,6 @@ class Shortcode {
     }
     // get the Labels from the options 
     private function get_labels() {
-	
 	$res = array();
 	foreach ($this->options as $name => $value) {
 	    $pos = strpos($name, 'rrze-jobs-labels_job_headline_');
@@ -354,8 +451,19 @@ class Shortcode {
 		    $res[$keyname] = $value;
 		}
 	    }
-	   
+	    $pos = strpos($name, 'rrze-jobs-labels_job_defaulttext_');
+	    if (($pos !== false) && ($pos==0)) {
+		preg_match('/rrze-jobs-labels_job_defaulttext_([a-z0-9\-_]*)/i', $name, $output_array);
+		if (!empty($output_array)) {
+		    $keyname = 'text_'.$output_array[1];
+		    $res[$keyname] = $value;
+		}
+	    }
 	}
+	
+	
+	
+	
 	return $res;
 	
 	

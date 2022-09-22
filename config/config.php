@@ -131,6 +131,10 @@ function getSections() {
             'title' => __('Data fields', 'rrze-jobs'),
             'desc' => __('These fields are supplied by the interfaces (Interamt, UnivIS, BITE).<br />You can set a default value for each field that is output in the job offer.<br />Leave the <strong>field empty</strong> , so that the value obtained from the interface can be used.', 'rrze-jobs'),
         ],
+	[
+            'id' => 'rrze-jobs-misc',
+            'title' => __('Misc', 'rrze-jobs'),
+        ],
     ];
 }
 
@@ -235,13 +239,7 @@ function getFields() {
                 'type' => 'text',
                 'default' => __("Supplementary description", 'rrze-jobs'),
             ],
-	    [
-                'name' => 'job_headline_jobnotice',
-                'label' => __('Label for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
-                'desc' => '',
-                'type' => 'text',
-                'default' => __("Notice", 'rrze-jobs'),
-            ],
+	   
 	    [
                 'name' => 'job_headline_jobStartDate',
                 'label' => __('Label for','rrze-jobs').' '.__("Job start date", 'rrze-jobs'),
@@ -315,12 +313,22 @@ function getFields() {
             ],
 	    
 	    
-         
-          
+	    [
+                'name' => 'hr2',
+                'label' => __('Static Textentries below each job offer', 'rrze-jobs'),
+                'type' => 'line',
+            ],     
+	    
+	    [
+                'name' => 'job_headline_jobnotice',
+                'label' => __('Label for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Notice", 'rrze-jobs'),
+            ],
             [
-                'name' => 'job_notice',
-                'label' => __("Notice", 'rrze-jobs'),
-                'desc' => __('This notice will be dispayed at the bottom of each job offer.', 'rrze-jobs'),
+                'name' => 'job_defaulttext_jobnotice',
+                'label' => __('Output for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
                 'type' => 'textarea',
                 'size' => 'large',
                 'default' => '<p>Für alle Stellenausschreibungen gilt: Die Friedrich-Alexander-Universität fördert die berufliche Gleichstellung der Frauen. Frauen werden deshalb ausdrücklich aufgefordert, sich zu bewerben.</p>
@@ -328,30 +336,85 @@ function getFields() {
 <p>Bei Wunsch der Bewerberin, des Bewerbers, kann die Gleichstellungsbeauftragte zum Bewerbungsgespräch hinzugezogen werden, ohne dass der Bewerberin, dem Bewerber dadurch Nachteile entstehen.</p>
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
-
-          
-         
-            [
-                'name' => 'hr3',
-                'label' => __('Miscellaneous', 'rrze-jobs'),
-                'type' => 'line',
+	     [
+                'name' => 'job_errortext_display',
+                'label' => __('Errormessages', 'rrze-jobs'),
+                'desc' => __('In case of errors or in case that no job was found, you can switch off the errormessages.', 'rrze-jobs'),
+                'type' => 'radio',
+                'default' => true,
+		'options'   => array(
+		    true  => __('Show Errors and not found messages', 'rrze-jobs'),
+		    false  => __('Hide errors and not found messages', 'rrze-jobs'),
+		)
             ],
-            [
+	    [
+                'name' => 'job_errortext_404',
+                'label' => __("No Jobs Message", 'rrze-jobs'),
+                'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('No open job positions found.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+            ],
+	     [
+                'name' => 'job_errortext_400',
+                'label' => __("Invalid provider", 'rrze-jobs'),
+                'desc' => __('This message will be displayed if the given provider in the shortcode is invalid.', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('Invalid provider.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+            ],
+	    [
+                'name' => 'job_errortext_405',
+                'label' => __("Invalid parameters or method", 'rrze-jobs'),
+                'desc' => __('This message will be displayed if shortcode uses wrong parameters.', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('Invalid parameters or method.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+            ],
+	    
+
+           
+        ],
+	'rrze-jobs-misc' => [
+	     [
                 'name' => 'jobs_page',
                 'label' => __('Jobs Page', 'rrze-jobs'),
                 'desc' => __('QR on Public Displays link to this target.', 'rrze-jobs'),
                 'type' => 'selectPage',
                 'default' => '',
             ],
-            [
-                'name' => 'no_jobs_message',
-                'label' => __("No Jobs Message", 'rrze-jobs'),
-                'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
-                'type' => 'textarea',
-                'size' => 'large',
-                'default' => __('No open job positions found.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+           
+	/*    [
+                'name' => 'hide_internal_jobs',
+                'label' => __('Hide internal jobs', 'rrze-jobs'),
+                'desc' => __('Hide internal jobs, display them only if the website was displayed from an allowed host', 'rrze-jobs'),
+                'type' => 'radio',
+                'default' => true,
+		'options'   => array(
+		    true  => __('Hide', 'rrze-jobs'),
+		    false  => __('Show', 'rrze-jobs'),
+		)
             ],
-        ],
+	 */
+	    [
+	 
+                'name' => 'hide_internal_jobs_notforadmins',
+                'label' => __('Display internal jobs as admins', 'rrze-jobs'),
+                'type' => 'radio',
+                'default' => true,
+		'options'   => array(
+		    true  => __('Internal jobs will always be visible for website admins', 'rrze-jobs'),
+		    false  => __('Treat admins like normal website users', 'rrze-jobs'),
+		)
+            ],
+
+	    
+	    [
+                'name' => 'hide_internal_jobs_required_hosts',
+                'label' => __('Required hosts for internal jobs', 'rrze-jobs'),
+                'desc' => __('Internal job positions will be displayed only on hosts from the given hostnames', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => 'uni-erlangen.de, fau.de',
+		
+            ],
+	]
     ];
 
     // add fields defined in map (Job.php)
