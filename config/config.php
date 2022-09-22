@@ -347,26 +347,34 @@ function getFields() {
 		    false  => __('Hide errors and not found messages', 'rrze-jobs'),
 		)
             ],
+	      [
+                'name' => 'job_errortext_400',
+                'label' => __("Invalid provider", 'rrze-jobs'),
+                'desc' => __('This message will be displayed if the given provider in the shortcode is invalid.', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('Invalid provider.', 'rrze-jobs')  
+            ],
+	     [
+                'name' => 'job_errortext_403',
+                'label' => __("Internal Position", 'rrze-jobs'),
+                'desc' => __('This message will be displayed, if someone tries to get an internal positions without the needed authorization', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('Internal position, avaible for members only', 'rrze-jobs')  
+            ],
 	    [
                 'name' => 'job_errortext_404',
                 'label' => __("No Jobs Message", 'rrze-jobs'),
                 'desc' => __('This message will be displayed if the API does not return any data.', 'rrze-jobs'),
                 'type' => 'textarea',
-                'default' => __('No open job positions found.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+                'default' => __('No open job positions found.', 'rrze-jobs')  
             ],
-	     [
-                'name' => 'job_errortext_400',
-                'label' => __("Invalid provider", 'rrze-jobs'),
-                'desc' => __('This message will be displayed if the given provider in the shortcode is invalid.', 'rrze-jobs'),
-                'type' => 'textarea',
-                'default' => __('Invalid provider.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
-            ],
+	   
 	    [
                 'name' => 'job_errortext_405',
                 'label' => __("Invalid parameters or method", 'rrze-jobs'),
                 'desc' => __('This message will be displayed if shortcode uses wrong parameters.', 'rrze-jobs'),
                 'type' => 'textarea',
-                'default' => __('Invalid parameters or method.', 'rrze-jobs') // 'Keine Stellenanzeigen gefunden.',
+                'default' => __('Invalid parameters or method.', 'rrze-jobs')  
             ],
 	    
 

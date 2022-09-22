@@ -198,13 +198,22 @@ class Shortcode {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
 		$data['const'] = $strings;	
 		$parserdata['num'] = 1;
-
+		$content = '';
 
 		foreach ($newdata['positions'] as $num => $data) {
-			$data['const'] = $strings;
-			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
-			$data = $this->ParseDataVars($data);
-			$content .= Template::getContent($template, $data);
+			$hidethis = $this->hideinternal($data);
+			if ($hidethis) {
+			   // Ignore/hide this position in display
+			    $ret['status'][$num]['code'] = 403;
+			    $ret['status'][$num]['valid'] = false;
+			    return $this->get_errormsg($ret);
+			} else {
+			
+			    $data['const'] = $strings;
+			    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
+			    $data = $this->ParseDataVars($data);
+			    $content .= Template::getContent($template, $data);
+			}
 		}
 
 
@@ -218,7 +227,7 @@ class Shortcode {
 		    return $content;
 		} else {
 		    $errortext = "Empty content from template by asking for job id: ".$jobid;
-		    return $this->get_errormsg($newdata, $errortext, 'Error: No content');	
+		    return $this->get_errormsg($newdata);	
 		}
 	    } else {
 		
