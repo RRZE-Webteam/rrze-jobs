@@ -513,9 +513,10 @@ class UnivIS extends Provider {
 	 if (is_array($check)) {    
 	      $aRet = [
                     'valid' => false,
-		    'error' => 'required_parameter',
+		    'code'  => 405,
+		    'error' => $check,
 		    'params_given'   => $params,
-                    'content' => $check
+                    'content' => ''
               ];
 	      return $aRet;
 	 }
@@ -537,10 +538,11 @@ class UnivIS extends Provider {
 	 
 	 if (is_array($check) && count($check) > 0) {    
 	      $aRet = [
-                    'valid' => false,
-		    'error' => 'required_parameter',
+                  'valid' => false,
+		    'code'  => 405,
+		    'error' => $check,
 		    'params_given'   => $params,
-                    'content' => $check
+                    'content' => ''
               ];
 	      return $aRet;
 	 }

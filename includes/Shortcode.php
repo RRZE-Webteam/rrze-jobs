@@ -80,7 +80,6 @@ class Shortcode {
             'limit',
             'orderby',
             'order',
-            'internal',
             'fallback_apply',
             'link_only',
         ];
@@ -100,11 +99,12 @@ class Shortcode {
 
         // orgids => attribute orgids or attribute orgid or fetch from settings page
         $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
-	
-	
+
 	$search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
 	
 	$output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
+	
+	$fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_url($atts['fallback_apply']) : '');
 	
 	
 	$positions = new Provider();
@@ -167,25 +167,25 @@ class Shortcode {
 	
 
 	$positions->set_params($params);
-	// echo "get positions with $search_provider and $query with orgid $orgids, jobid: $jobid<br>";
-	// echo "options: ". Helper::get_html_var_dump($this->options); 
-		
-		
+	
+	
+	echo "SEARCH: $search_provider<br>";
+
 	$positions->get_positions($search_provider, $query);
+
 	$newdata = $positions->merge_positions();
+echo Helper::get_html_var_dump($newdata);
 	
-	
-	
+
+
 	if ($newdata['valid']==false) {	   
 	   return $this->get_errormsg($newdata);	
 	}
 	
 	
 	$parserdata = array();
-	// Output Strings - later to be changed with settings
 	$strings = $this->get_labels();
 	
-	// echo Helper::get_html_var_dump($this->options);
 	
 	if ($query == 'get_single') {
 	    // single job
@@ -211,6 +211,10 @@ class Shortcode {
 			
 			    $data['const'] = $strings;
 			    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
+			    if ((!empty($fallback_apply)) && (empty($data['applicationContact']['url']))) {
+				$data['applicationContact']['url'] = $fallback_apply;
+			    }
+			    
 			    $data = $this->ParseDataVars($data);
 			    $content .= Template::getContent($template, $data);
 			}
@@ -255,9 +259,13 @@ class Shortcode {
 		    
 		    if ($hidethis) {
 			   // Ignore/hide this position in display
+			    // Also do not give an error message like at sinngle display
 		    } else {
 			$data['const'] = $strings;
-			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);		    
+			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);		
+			if ((!empty($fallback_apply)) && (empty($data['applicationContact']['url']))) {
+				$data['applicationContact']['url'] = $fallback_apply;
+			}
 			$data = $this->ParseDataVars($data);
 			$parserdata['joblist'] .= Template::getContent($template, $data);
 			
@@ -293,12 +301,7 @@ class Shortcode {
 		
 	    }
 	}
-	
-	
-	// echo Helper::get_html_var_dump($newdata);
-	//	echo Helper::get_html_var_dump($parserdata);
-	
-        
+
 	$errortext =  "Unknown shortcode handling";    
 	$errortext .=  Helper::get_html_var_dump($parserdata);
 	return $this->get_errormsg($parserdata, $errortext);

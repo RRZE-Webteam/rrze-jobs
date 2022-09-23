@@ -3,7 +3,78 @@
 /*----------------------------------------------------------------------------*/
 
 .rrze-jobs-single {
-    .standard-btn {
-	margin-bottom: 0;
+    display: flex;
+    gap: 30px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    article {
+	min-width: 300px;
+	flex: auto;
+	width: 100%;
+	@media (min-width: 1024px) {
+	    width: min-content;
+	}
+	
     }
+    
+    aside {
+	width: 100%;
+	@media (min-width: 1024px) {
+	    width: min-content;
+	    border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
+	    padding-left: 15px;
+	}
+	
+	span {
+	    font-size: inherit;
+	    line-height: inherit;
+	}
+    }
+    
+    @media (min-width: 600px) {
+	table.rrze-jobs-single-keyfacts {
+	    background: transparent;
+	    border: none;
+	    min-width: 300px;
+
+	    tr {
+		 border: none;
+	    }
+	    th, td {
+		display: inline-block;
+		width: 100%;
+	    }
+	    th {
+		vertical-align: top;
+		border: none;
+		background: transparent;
+		padding: 0;
+		font-size: 0.9em;
+		// color: var(--color-TextLight, #aaa);
+	    }
+	    td {
+		vertical-align: top;
+		border: none;
+		background: transparent;	    
+		padding: 0 0 1em 1em;
+
+
+		ul {
+		    margin: 0; 
+		    li {
+			list-style: inside disc;
+			font-size: inherit;
+			line-height: inherit;
+		    }
+		}
+	    }
+	} 
+    }
+
+    
+    
+    
 }

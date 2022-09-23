@@ -17,9 +17,7 @@ class Provider {
     var $version;
     var $url; 
 
-    public $systems = [
-        "UnivIS"
-    ];
+    public $systems = [ "UnivIS", "Interamt" ];
     private $common_methods = ["get_list", "get_single"];
     
     
@@ -183,20 +181,17 @@ class Provider {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
 	    $system = new $system_class();
 	    
-	   
 	    if (!empty($provider)) {
 		if ($system->name !== $provider) {
-		    break;
+		    continue;
 		}
 	    }
-
 	    if (method_exists($system, $query)) {
 		$params = array();
 	
 		if (isset($this->params[$system->name])) {
 		    $params = $this->params[$system->name];
 		}
-		
 		$positions = $system->$query($params);
 
 		if ($positions) {
@@ -277,7 +272,7 @@ class Provider {
 		  }
 
      */
-    public function get_Salary_by_TVL($vonbesold, $bisbesold) {
+    public function get_Salary_by_TVL($vonbesold, $bisbesold = '') {
 	
 	$res = array();
 	$value = '';

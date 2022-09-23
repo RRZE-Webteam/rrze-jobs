@@ -40,17 +40,7 @@ function getShortcodeSettings() {
             'label' => __('Job ID (0 = all)', 'rrze-jobs'),
             'type' => 'number',
         ],
-        'internal' => [
-            'field_type' => 'select',
-            'values' => [
-                'exclude' => __('exclude internal job offers', 'rrze-jobs'),
-                'include' => __('include internal job offers', 'rrze-jobs'),
-                'only' => __('only internal job offers', 'rrze-jobs'),
-            ],
-            'default' => 'exclude',
-            'label' => __('Internal job offers', 'rrze-jobs'),
-            'type' => 'string',
-        ],
+       
         'limit' => [
             'field_type' => 'text',
             'values' => '',
@@ -368,13 +358,19 @@ function getFields() {
                 'type' => 'textarea',
                 'default' => __('No open job positions found.', 'rrze-jobs')  
             ],
-	   
 	    [
                 'name' => 'job_errortext_405',
                 'label' => __("Invalid parameters or method", 'rrze-jobs'),
                 'desc' => __('This message will be displayed if shortcode uses wrong parameters.', 'rrze-jobs'),
                 'type' => 'textarea',
                 'default' => __('Invalid parameters or method.', 'rrze-jobs')  
+            ],
+	    [
+                'name' => 'job_errortext_406',
+                'label' => __("Missing Provider Identifier", 'rrze-jobs'),
+                'desc' => __('This message will be displayed if a provider is adressed with a shortcode, but cannot be used cause of a missing id or key.', 'rrze-jobs'),
+                'type' => 'textarea',
+                'default' => __('Missing Provider Identifier', 'rrze-jobs')  
             ],
 	    
 

@@ -16,7 +16,7 @@ class Interamt extends Provider {
     public function __construct() {
 	 $this->api_url	    = 'https://interamt.de/koop/app/webservice_v2';
 	 $this->url	    = 'https://interamt.de/';
-	 $this->name	    = "UnivIS";
+	 $this->name	    = "Interamt";
 	 $this->cachetime   =  3 * HOUR_IN_SECONDS;
 	 $this->uriparameter = '';
 	 $this->request_args = array(
@@ -70,19 +70,7 @@ class Interamt extends Provider {
      // all fields that remain are new or was not mapped to schema and
      // may be used to other purpuses
      private function add_remaining_non_schema_fields($jobdata) {
-	$known_fields = array(
-		    'creation',		   
-		    'title',
-		    'id', 'key',
-		    'enddate', 'start',
-		    'desc1', 'desc2', 'desc3', 'desc4', 'desc6',
-		    'orig_type1', 'orig_type2', 'orig_type3', 'orig_type4',
-		    'acontact', 'contact',
-		    'vonbesold', 'bisbesold',
-		    'nd', 'sd', 'bd', 'wstunden',
-		    'orgname', 'orgunit', 'orgunit_en',
-		    'group', 'orig_group'
-	    );
+	$known_fields = array("StellenBezeichnung", "Behoerde", "Id", "Bezahlung", "Plz", "Ort");
 	$providerfield = array();
 	
 	foreach ($jobdata as $name => $value) {
@@ -109,19 +97,31 @@ class Interamt extends Provider {
 	 
 	
 	 // datePosted
-	  $res['datePosted'] = $jobdata['DatumOeffentlichAusschreiben'];
+	  if (isset($jobdata['Daten']["Eingestellt"])) {
+	       $res['datePosted'] = $jobdata['Daten']["Eingestellt"];
+	  }
 	  
 	  // description
 	  $res['description'] = $jobdata['Beschreibung'];
 	  
 	  // title
-	  $res['title'] = $jobdata['Stellenbezeichnung'];
+	  if (isset($jobdata['StellenBezeichnung'])) {
+	       $res['title'] = $jobdata['StellenBezeichnung'];
+	  } elseif (isset($jobdata['Stellenbezeichnung'])) {
+	       $res['title'] = $jobdata['Stellenbezeichnung'];
+	  }
+	 
 	  
 	   // identifier
 	  $res['identifier'] = $jobdata['Id'];
 	 
 	  // validThrough
-	  $res['validThrough'] = $jobdata['DatumBewerbungsfrist'];
+	  if (isset($jobdata['Daten']["Bewerbungsfrist"])) {
+	       $res['validThrough'] = $jobdata['Daten']["Bewerbungsfrist"];
+	  }
+	  
+	
+	  
 	  
   
 	  
@@ -147,7 +147,7 @@ class Interamt extends Provider {
 
 		
 		
-		$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);	
+		$persondata = array();
 		if (!empty($persondata)) {
 		    
 			$res['applicationContact']['contactType'] = __('Contact for application','rrze-jobs');
@@ -168,12 +168,12 @@ class Interamt extends Provider {
 	    if ((isset($jobdata['desc6'])) && (!empty($jobdata['desc6']))) {
 	       $res['applicationContact']['description'] = $jobdata['desc6'];
 	       
-	       $url = $this->get_univis_application_url_by_text($jobdata['desc6']);	     
+	       $url = $jobdata['desc6'];	     
 	       if ($url) {
 		    $res['applicationContact']['url'] = $url;
 	       }	    
 	       
-	       $mail = $this->get_univis_application_mail_by_text($jobdata['desc6']);
+	       $mail = $jobdata['desc6'];
 	       if ($mail) {
 		    $res['applicationContact']['email'] = $mail;
 	       }
@@ -187,8 +187,15 @@ class Interamt extends Provider {
  
 	 // estimatedSalary  (type: MonetaryAmount)
 	    // aus vonbesold und bisbesold   generieren
-	    if (isset($jobdata['vonbesold']) || isset($jobdata['vonbesold'])) {
-		$res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
+	    if (isset($jobdata['Bezahlung']))  {
+		if ((isset($jobdata['Bezahlung']['Besoldung'])) && (!empty($jobdata['Bezahlung']['Besoldung']))) {
+		    $res['estimatedSalary'] = $this->get_Salary_by_TVL(jobdata['Bezahlung']['Besoldung']);
+		}
+		if ((isset($jobdata['Bezahlung']['Entgelt'])) && (!empty($jobdata['Bezahlung']['Entgelt']))) {
+		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['Bezahlung']['Entgelt']);
+		}
+		
+		
 	    }
 	   	    
 	    
@@ -197,50 +204,14 @@ class Interamt extends Provider {
 	    // aus orgunit und oder orgname generieren	    
 	    // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
 	 
-	    $res['employmentUnit']['name'] = $jobdata['orgname'];
-	    $res['hiringOrganization']['name'] = $jobdata['orgname'];
+	    $res['employmentUnit']['name'] = $jobdata['Behoerde'];
+	    $res['hiringOrganization']['name'] = $jobdata['Behoerde'];
 	    
-	    if (isset($jobdata['orgunit'])) {
-		// Wir haben ein Orgabaum. Daher nehme nicht den letzten EIntrag aus
-		// dem Orgabaum als Name, sondern ergänze mit dem davor, wenn vorhanden
-		// Da aus UnivIS die Werte leider in 2 Sprachen kommen, 
-		// gebe hier entsprechend der Website-Sprache zurück.
-		
-		 $orgarray = $jobdata['orgunit'];
-		 $charset = get_bloginfo('language');
-		 if (strpos($charset,'de') !== false) {
-		     $orgarray = $jobdata['orgunit'];
-		 } elseif (isset($jobdata['orgunit_en'])) {
-		    $orgarray = $jobdata['orgunit_en'];
-		 }
-		 $thisname = '';
-		 $count = count($orgarray);
-		 if (trim($orgarray[$count - 1]) !== trim($jobdata['orgname'])) {
-		     $thisname = $orgarray[$count - 1];
-		 } 
-		 if (isset($orgarray[$count - 2])) {
-		     if (!empty($thisname)) {
-			 $thisname = $orgarray[$count - 2].', '.$thisname; 
-		     } else {
-			 $thisname = $orgarray[$count - 2];
-		     }
-		    
-		 }
-		 if (!empty($thisname)) {
-		     $res['hiringOrganization']['name'] = $thisname;
-		 }
-		 
-	    }
+	   
 	    
 	    
-	    if ((!isset($jobdata['contact'])) && (isset($jobdata['acontact']))) {
-		// Wenn es keinen Ansprechpartner gibt als Eintrag, aber einen 
-		// Ansprechpartner für Bewerbungen, dann nehme den bei den 
-		// Bewerbungen auch als Ansprechpartner für Fragen
-		$jobdata['contact'] = $jobdata['acontact'];
-	    }
-
-	    $contactpersondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);	
+	
+	    $contactpersondata = array();
 	    if (!empty($contactpersondata)) {
 		    $res['employmentUnit']['email'] = $contactpersondata['email'];		
 		    $res['employmentUnit']['faxNumber'] = $contactpersondata['faxNumber'];
@@ -255,11 +226,17 @@ class Interamt extends Provider {
 	//    $res['contact'] = $contactpersondata;
 	    
 	    
-	    if (!empty($contactpersondata)) {
-		$res['jobLocation']['address'] = $contactpersondata['workLocation']['address'];
-	    } elseif (!empty($persondata)) {
-		$res['jobLocation']['address'] = $persondata['workLocation']['address'];
+	  
+	    
+	    if (isset($jobdata['Plz'])) {
+		$res['jobLocation']['address']['postalCode'] = $jobdata['Plz'];
 	    }
+	    if (isset($jobdata['Ort'])) {
+		$res['jobLocation']['address']['addressLocality'] = $jobdata['Ort'];
+	    }
+	    
+	    
+	    
 	    if (!isset($res['jobLocation']['address']['addressRegion'])) {
 		$res['jobLocation']['address']['addressRegion'] = __('Bavaria','rrze-jobs');
 	    }
@@ -409,75 +386,7 @@ class Interamt extends Provider {
 	return $res;
     }
      
-     // get a person by its key and return the contactdata fields
-    private function get_univis_person_contactpoint_by_key($key, $data) {
-	 
-	 $res = array();
-	 
-	 if (isset($data['Person'])) {
-	       foreach ($data['Person'] as $num => $person) {
-		 if (is_array($person)) {
-		     
-		     if ($person['key'] == $key) {
-			$res['email'] = $person['location'][0]['email'];
-			$res['telephone'] = $person['location'][0]['tel'];
-			$res['faxNumber'] = $person['location'][0]['fax'];
-			$res['familyName'] = $person['lastname'];
-			$res['givenName'] = $person['firstname'];
-			$res['worksFor'] = $person['orgname'];
-			$res['gender'] = $person['gender'];
-			$res['identifier'] = $person['id'];
-
-			$res['name'] = '';
-			if  ((isset($res['title'])) && (!empty($res['title']))) {
-			    $res['honorificPrefix'] = $person['title'];
-			    $res['name'] = $person['title'];
-			    $res['name'] .= ' ';
-			} 
-			$res['name'] .= $person['firstname']. ' '.$person['lastname'];
-			$res['workLocation']['name'] =  $person['orgname'];
-			$res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
-			$res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
-			$res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
-			
-			
-			// $res['orig'] =  $person;
-		     }
-		   
-		 }
-	       }
-	 }
-	 return $res;
-     }
-     
-     // searchs for an URL in the text and returns the first hit
-     private function get_univis_application_url_by_text($text) {
-	$res = '';
-	if (!empty($text)) { 
-	    preg_match_all('/<a href="([a-z0-9\/:\-\.\?\+]+)">([^<>]+)<\/a>/i', $text, $output_array);
-	 
-	    if (!empty($output_array)) {
-		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		    $res = $output_array[1][0];
-		}
-	    }
-	}
-	return $res; 
-     }
-      // searchs for an URL in the text and returns the first hit
-     private function get_univis_application_mail_by_text($text) {
-	$res = '';
-	if (!empty($text)) { 
-	    preg_match_all('/<a href="mailto:([@a-z0-9\/:\-\.]+)">([^<>]+)<\/a>/i', $text, $output_array);
-	 
-	    if (!empty($output_array)) {
-		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		    $res = $output_array[1][0];
-		}
-	    }
-	}
-	return $res; 
-     }
+    
      
      // make request for a positions list and return it as array
      public function get_list($params) {	 
@@ -486,15 +395,47 @@ class Interamt extends Provider {
 	 if (is_array($check)) {    
 	      $aRet = [
                     'valid' => false,
-		    'error' => 'required_parameter',
+		    'code'    => 405,
+		    'error' => $check,
 		    'params_given'   => $params,
-                    'content' => $check
+                    'content' => ''
               ];
 	      return $aRet;
 	 }
 	 $response = $this->get_data("get_list", $params);
 	 
 	 if ($response['valid'] == true) {
+	     
+	     // After i got the list from interamt, i have to get the detail 
+	     // data from each single job in an additional request, cause the
+	     // list doesnt contains the details
+	     
+	     
+	     $singleparams = $params;
+	     
+	     if ((isset($response['content']['Anzahltreffer']) && ((intval($response['content']['Anzahltreffer']) > 0)))) {
+		 
+		 
+		 if (isset($response['content']['Stellenangebote'])) {
+		    foreach ($response['content']['Stellenangebote'] as $num => $pos) {
+			$singleparams['get_single']['id'] = $pos['Id']; 
+			
+			$singledata = $this->get_single($singleparams);
+			
+			if ($singledata['valid'] == true) {
+			    $response['content']['Stellenangebote'][$num] = $singledata['content'];
+			}
+			
+		    }
+		 }
+		  
+	     
+	     }
+	     
+	   
+	     
+	     
+	     
 	     $response['content'] = $this->sanitize_sourcedata($response['content']);   
 	     $response['content'] = $this->map_to_schema($response['content']);
 	     
@@ -511,8 +452,10 @@ class Interamt extends Provider {
 	 if (is_array($check) && count($check) > 0) {    
 	      $aRet = [
                     'valid' => false,
-		    'error' => 'required_parameter',
-                    'content' => $check
+		    'code'  => 405,
+		    'error' => $check,
+		    'params_given'   => $params,
+                    'content' => ''
               ];
 	      return $aRet;
 	 }
@@ -592,14 +535,14 @@ class Interamt extends Provider {
 	$cache = new Cache();
 	$cache->set_cachetime($this->cachetime);
 	$org = '';
-	if (isset($params[$method]['department'])) {
-	    $org = $params[$method]['department'];
+	if (isset($params[$method]['partner'])) {
+	    $org = $params[$method]['partner'];
 	} 
 	$id = '';
 	if (isset($params[$method]['id'])) {
 	    $id = $params[$method]['id'];
 	} 
-	$cachedout = $cache->get_cached_job('UnivIS',$org,$id,$method);
+	$cachedout = $cache->get_cached_job('Interamt',$org,$id,$method);
 	if ($cachedout) {
 	    return $cachedout;
 	}
@@ -620,7 +563,7 @@ class Interamt extends Provider {
                     'content'	=> $content,
               ];
 	     
-	     $cache->set_cached_job('UnivIS',$org,$id,$method, $aRet);
+	     $cache->set_cached_job('Interamt',$org,$id,$method, $aRet);
 	     
 	     return $aRet;
 	  }
@@ -641,80 +584,23 @@ class Interamt extends Provider {
 		 if (is_array($job)) {
 		    foreach ($job as $name => $value) {
 			switch($name) {
-			    case 'desc1':
-			    case 'desc2':
-			    case 'desc3':
-			    case 'desc4':
-			    case 'desc5':
-			    case 'desc6':
-				$value = $this->sanitize_univis_textfeld($value);
-				break;
-			    
-			    case 'group':
-				$data['Position'][$num]['orig_group'] = $value;
-				$value = $this->sanitize_univis_group($value);
-				break;
-			    
-			    case 'orgname':
+
 			    case 'title':
 				 $value = sanitize_text_field($value);
 				break;
-			    case 'lang':
-				 $value = $this->sanitize_univis_lang($value);
-				break;
-			    case 'start':
-				 $value = $this->sanitize_univis_jobstart($value);	
-				break;
-			    case 'enddate':
-			    case 'creation':					
-				 $value = $this->sanitize_univis_dates($value);	
-				break;
-			   case 'befristet':					
-				 $value = $this->sanitize_univis_befristet($value);	
-				break; 
+
 			    case 'wstunden':
 				$value = $this->sanitize_type('float',$value);	
 				break;
 			    case 'id':
 				$value = $this->sanitize_type('number',$value);	
 				break;
-			    case 'key':
-			    case 'acontact':
-			    case 'contact':	
-				$value = $this->sanitize_univis_key($value);	
+
 				break;
 			    case 'url':
 				$value = sanitize_url($value);	
 				break;
-			    case 'type1':
-				$data['Position'][$num]['orig_type1'] = $value;
-				$value = $this->sanitize_univis_typen('type1',$value);	
-				break;
-			    case 'type2':
-				$data['Position'][$num]['orig_type2'] = $value;
-				$value = $this->sanitize_univis_typen('type2',$value);	
-				break;
-			    case 'type3':
-				$data['Position'][$num]['orig_type3'] = $value;
-				$value = $this->sanitize_univis_typen('type3',$value);	
-				break;
-			    case 'type4':
-				$data['Position'][$num]['orig_type4'] = $value;
-				$value = $this->sanitize_univis_typen('type4',$value);	
-				break;
-				
-			    case 'orgunit':
-			    case 'orgunit_en':
-				$value = $this->sanitize_univis_orgunits($value);
-				break;
-				
-			    case 'intern':  // Stellenangebot intern
-			    case 'nd':   // Nachtdienst
-			    case 'sd':   // Schichtdienst
-			    case 'bd':   // Bereitsschaftsdienst
-				$value = $this->sanitize_univis_boolean($value);
-				break;
-				
+
 				
 			    default:
 				$value = sanitize_text_field($value);
@@ -732,14 +618,6 @@ class Interamt extends Provider {
 		 if (is_array($person)) {
 		    foreach ($person as $name => $value) {
 			switch($name) {
-			    case 'lehr':  // Lehrperson
-			    case 'pub_visible':   // Publikationsliste und Vorträge anzeigen
-			    case 'visible':   // (Druck und Internet)
-			    case 'restrict':   // Öffentliche Anzeige personenbezogener Daten
-				$value = $this->sanitize_univis_boolean($value);
-				break;
-				
-	
 			    case 'location':
 				$value = $this->sanitize_interamt_location($value);
 				break;
@@ -755,7 +633,7 @@ class Interamt extends Provider {
 				break;
 			    
 			    case 'Id':
-				$value = $this->sanitize_text_field($value);
+				$value = sanitize_text_field($value);
 				break;
 			    
 			    default:
