@@ -1,4 +1,4 @@
-[collapse title="{{=title}}"]
+[collapse title="{{=title}}" name="{{=identifier}}"]
 <div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
     <meta itemprop="datePosted" content="{{=datePosted}}"><meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
     <meta itemprop="name" content="{{=hiringOrganization.name}}">
@@ -9,11 +9,12 @@
 	{{=description}}
 	</div>
 
-
+	{{qualifications}}
 	{{const.title_qualifications}}<h3>{{=const.title_qualifications}}</h3>{{/const.title_qualifications}}
 	<div itemprop="qualifications">   
 	    {{=qualifications}}
 	</div>
+	{{/qualifications}}
 
 	{{disambiguatingDescription}}
 	<h3>{{=const.title_disambiguatingDescription}}</h3>
@@ -84,20 +85,24 @@
 		    </span>
 		</td>
 	    </tr>
+	    {{text_workingtime}}
 	    <tr>
 		<th>{{=const.title_workingtime}}</th>
-		<td>{{=_provider-values.type2}}</td>
+		<td>{{=text_workingtime}}</td>
 	    </tr>
+	    {{/text_workingtime}}
 	    {{workHours}}
 	    <tr>
 		<th>{{=const.title_workHours}}</th> 
 		<td itemprop="workHours">{{=workHours}}</td>
 	    </tr>
 	    {{/workHours}}
+	    {{text_befristet}}
 	    <tr>
 		<th>{{=const.title_befristet}}</th>
-		<td>{{=_provider-values.befristet}}</td>
+		<td>{{=text_befristet}}</td>
 	    </tr>
+	    {{/text_befristet}}
 	    <tr>
 		<th>{{=const.title_contact}}</th>
 		<td>{{=applicationContact.name}}

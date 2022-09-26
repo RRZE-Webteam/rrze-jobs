@@ -314,13 +314,17 @@ class UnivIS extends Provider {
 	 if (!empty($jobdata['type2'])) {
 	     if ($jobdata['orig_type2'] == 'voll') {
 		 $typeliste[] = 'FULL_TIME';
+		 $res['text_workingtime'] = __('Full time', 'rrze-jobs');			 
 	     } else {
+		 $res['text_workingtime'] = __('Part time', 'rrze-jobs');
 		 $typeliste[] = 'PART_TIME';
 	     }
 	 }
 	  if ((!empty($jobdata['type1'])) || (isset($jobdata['befristet'])) ){
 	     if (($jobdata['orig_type1'] == 'bef') || (!empty($jobdata['befristet']))) {
 		 $typeliste[] = 'TEMPORARY';
+		 
+		 $res['text_befristet'] = __('Temporary employment','rrze-jobs');
 	     }
 	 }
 	 
@@ -414,15 +418,7 @@ class UnivIS extends Provider {
 	      $res['disambiguatingDescription'] = $jobdata['type3'];
 	}
 	  
-	   // Es gibt kein spezielles Feld in JobPosting in dem ich die 
-	   // Befristungsdauer angeben kann, daher ergänze ich auch diese in 
-	  // der Zusatzbeschreibung
-	if ((isset($jobdata['befristet'])) && (!empty($jobdata['befristet']))) {
-	      if (!empty($res['disambiguatingDescription'])) {
-		  $res['disambiguatingDescription'] .= ", ";
-	      }
-	      $res['disambiguatingDescription'] .= __('Temporary employment until','rrze-jobs').' '.$jobdata['befristet'];
-	}
+
 	if ((isset($jobdata['desc4'])) && (!empty($jobdata['desc4']))) {
 	     if (!empty($res['disambiguatingDescription'])) {
 		  $res['disambiguatingDescription'] = '<p>'.$res['disambiguatingDescription']."</p>\n";
@@ -713,7 +709,7 @@ class UnivIS extends Provider {
 				break;
 			    case 'enddate':
 			    case 'creation':					
-				 $value = $this->sanitize_univis_dates($value);	
+				 $value = $this->sanitize_dates($value);	
 				break;
 			   case 'befristet':					
 				 $value = $this->sanitize_univis_befristet($value);	
@@ -1026,7 +1022,7 @@ class UnivIS extends Provider {
 			    case 'tel':
 			    case 'fax':
 			    case 'mobile':				
-				$value = $this->sanitize_univis_telefon($entry);
+				$value = $this->sanitize_telefon($entry);
 				break;
 				
 			    case 'url':
@@ -1049,70 +1045,6 @@ class UnivIS extends Provider {
 	 }
      }
 
-     // try to sanitize and repair the telephone number 
-     private function sanitize_univis_telefon($phone_number ) {
-	 
-	$phone_number = trim($phone_number);
-	
-        if( ( strpos( $phone_number, '+49 9131 85-' ) !== 0 ) && ( strpos( $phone_number, '+49 911 5302-' ) !== 0 ) ) {
-            if( !preg_match( '/\+49 [1-9][0-9]{1,4} [1-9][0-9]+/', $phone_number ) ) {
-                $phone_data = preg_replace( '/\D/', '', $phone_number );
-                $vorwahl_erl = '+49 9131 85-';
-                $vorwahl_nbg = '+49 911 5302-';
-
-		switch( strlen( $phone_data ) ) {
-		    case '3':
-			$phone_number = $vorwahl_nbg . $phone_data;
-			break;
-		    case '5':
-			if( strpos( $phone_data, '06' ) === 0 ) {
-			    $phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
-			    break;
-			}                                 
-			$phone_number = $vorwahl_erl . $phone_data;
-			break;
-		    case '7':
-			if( strpos( $phone_data, '85' ) === 0 || strpos( $phone_data, '06' ) === 0 )  {
-			    $phone_number = $vorwahl_erl . substr( $phone_data, -5 );
-			    break;
-			}
-			if( strpos( $phone_data, '5302' ) === 0 ) {
-			    $phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
-			    break;
-			} 
-		    default:
-			if( strpos( $phone_data, '9115302' ) !== FALSE ) {
-			    $durchwahl = explode( '9115302', $phone_data );
-			    if( strlen( $durchwahl[1] ) ===  3 ) {
-				$phone_number = $vorwahl_nbg . substr( $phone_data, -3 );
-			    }
-			    break;
-			}  
-			if( strpos( $phone_data, '913185' ) !== FALSE )  {
-			    $durchwahl = explode( '913185', $phone_data );
-			    if( strlen( $durchwahl[1] ) ===  5 ) {
-				$phone_number = $vorwahl_erl . substr( $phone_data, -5 );
-			    }
-			    break;
-			}
-			if( strpos( $phone_data, '09131' ) === 0 || strpos( $phone_data, '499131' ) === 0 ) {
-			    $durchwahl = explode( '9131', $phone_data );
-			    $phone_number = "+49 9131 " . $durchwahl[1];
-			    break;
-			}
-			if( strpos( $phone_data, '0911' ) === 0 || strpos( $phone_data, '49911' ) === 0 ) {
-			    $durchwahl = explode( '911', $phone_data );
-			    $phone_number = "+49 911 " . $durchwahl[1];
-			    break;
-			}
-
-		}
-                
-        
-            }
-        }
-        return $phone_number;
-    }
      
      
      
@@ -1188,23 +1120,7 @@ class UnivIS extends Provider {
      
      
       
-     // check for given date fields, that may be corrupt...   
-     private function sanitize_univis_dates($dateinput) {
-	$res = '';
-	if (!empty($dateinput)) {
-	    if (preg_match("/\d{4}-\d{2}-\d{2}/", $dateinput, $parts)) {
-                $dateinput = $parts[0];
-            } elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $dateinput, $parts)) {
-                $dateinput = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-            } elseif (preg_match("/(\d{2}).(\d{2}).(\d{2})\s*$/", $dateinput, $parts)) {
-		$dateinput = '20'.$parts[3] . '-' . $parts[2] . '-' . $parts[1];
-	    }
-
-	    $res = date('d.m.Y', strtotime($dateinput));
-	}
-	return $res;
-     }
-     
+        
      
       // check and translate creative input in befristet date input
      private function sanitize_univis_befristet($start) {

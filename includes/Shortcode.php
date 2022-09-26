@@ -104,8 +104,9 @@ class Shortcode {
 	
 	$output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
 	
-	$fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_url($atts['fallback_apply']) : '');
-	
+	$fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_text_field($atts['fallback_apply']) : '');
+	// TODO: check if Mailadress or URL
+	// If Mail, check if there is a subject we can add, depending of job
 	
 	$positions = new Provider();
 
@@ -169,12 +170,12 @@ class Shortcode {
 	$positions->set_params($params);
 	
 	
-	echo "SEARCH: $search_provider<br>";
+	// echo "SEARCH: $search_provider<br>";
 
 	$positions->get_positions($search_provider, $query);
 
 	$newdata = $positions->merge_positions();
-echo Helper::get_html_var_dump($newdata);
+// echo Helper::get_html_var_dump($newdata);
 	
 
 
@@ -211,9 +212,8 @@ echo Helper::get_html_var_dump($newdata);
 			
 			    $data['const'] = $strings;
 			    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
-			    if ((!empty($fallback_apply)) && (empty($data['applicationContact']['url']))) {
-				$data['applicationContact']['url'] = $fallback_apply;
-			    }
+			    $data['applicationContact']['url'] = $this->create_apply_url($data,$fallback_apply);
+			   
 			    
 			    $data = $this->ParseDataVars($data);
 			    $content .= Template::getContent($template, $data);
@@ -262,10 +262,11 @@ echo Helper::get_html_var_dump($newdata);
 			    // Also do not give an error message like at sinngle display
 		    } else {
 			$data['const'] = $strings;
-			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);		
-			if ((!empty($fallback_apply)) && (empty($data['applicationContact']['url']))) {
-				$data['applicationContact']['url'] = $fallback_apply;
-			}
+			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);	
+			
+			$data['applicationContact']['url'] = $this->create_apply_url($data,$fallback_apply);
+			
+		
 			$data = $this->ParseDataVars($data);
 			$parserdata['joblist'] .= Template::getContent($template, $data);
 			
@@ -308,8 +309,31 @@ echo Helper::get_html_var_dump($newdata);
 
     }
     
-    
-    
+    // create the url for apply
+     private function create_apply_url($data, $fallback = '') {
+
+	 if ((isset($data['applicationContact']['url'])) && (!empty($data['applicationContact']['url']))) {
+	    return $data['applicationContact']['url'];
+	 } elseif ((isset($data['applicationContact']['email'])) && (!empty($data['applicationContact']['email']))) {
+	    return 'mailto:'.$data['applicationContact']['email'];
+	 }	 
+     
+	 if ((isset($fallback)) && (!empty($fallback))) {
+	     if ( strpos( $fallback, '@', 1 ) === false ) {
+		// no mail adress, asuming url
+		$fallback = sanitize_url($fallback);
+	    } else {
+		$fallback = sanitize_email($fallback);
+		if (!empty($fallback)) {
+		    $fallback = 'mailto:'.$fallback;
+		}
+		
+	    }
+	    return $fallback;
+	 }
+	 return;
+	
+     }    
     
      private static function isIPinRange($fromIP, $toIP, $myIP) {
         $min = ip2long($fromIP);
