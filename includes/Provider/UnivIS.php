@@ -193,7 +193,9 @@ class UnivIS extends Provider {
 	       
 	       $mail = $this->get_univis_application_mail_by_text($jobdata['desc6']);
 	       if ($mail) {
-		    $res['applicationContact']['email'] = $mail;
+		    $res['applicationContact']['email'] = $mail;	    
+		    $res['applicationContact']['email_subject'] = $this->get_application_subject_by_text($jobdata['desc6']);
+		    
 	       }
 	       $res['applicationContact']['contactType'] = __('Contact for application','rrze-jobs');
 	       $res['directApply'] = true;
@@ -501,6 +503,22 @@ class UnivIS extends Provider {
 	}
 	return $res; 
      }
+     
+     
+     private function get_application_subject_by_text($text) {
+	$res = '';
+	if (!empty($text)) { 
+	    preg_match_all('/(Subject|Betreff):\s*([\wßäöü\-\._\[\] ]+)/i', $text, $output_array);
+	 
+	    if (!empty($output_array)) {
+		if ((isset($output_array[2])) && (isset($output_array[2][0]))) {
+		    $res = $output_array[2][0];
+		}
+	    }
+	}
+	return $res; 	 
+     }
+     
      
      // make request for a positions list and return it as array
      public function get_list($params) {	 
@@ -1273,6 +1291,10 @@ class UnivIS extends Provider {
 
         $txt = preg_replace(array_keys($subs), array_values($subs), $txt);
         $txt = make_clickable($txt);
+	
+	$txt = $this->sanitize_html_field($txt);
+	
+	
 	$txt = wpautop($txt, false);
 	$txt = trim($txt);
 

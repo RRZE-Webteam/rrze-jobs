@@ -262,8 +262,9 @@ class Provider {
 	    'dt'  => array() 
 	);
 	$value = wp_kses($dateinput,$allowed_html);
-	$value = preg_replace('/<p>\s*(<br\s*\/*>)?\s*<\/p>/i', '', $value);
-	$value = wpautop($value, false);
+	
+	$value = preg_replace('/<\/p>[\s\t\n\r]+<p>/i', '</p><p>', $value);
+	$value = preg_replace('/<p>[\s\t\n\r]+<\/p>/i', '', $value);
 	$value = trim($value);
 	return $value;
      } 
@@ -432,5 +433,35 @@ class Provider {
 	}
     }
 	    
+     // create the url for apply
+     public function get_apply_url($data, $fallback = '') {
+
+	 if ((isset($data['applicationContact']['url'])) && (!empty($data['applicationContact']['url']))) {
+	    return $data['applicationContact']['url'];
+	 } elseif ((isset($data['applicationContact']['email'])) && (!empty($data['applicationContact']['email']))) {
+	     $mailadr = $data['applicationContact']['email'];
+	     if ((isset($data['applicationContact']['email_subject'])) && (!empty($data['applicationContact']['email_subject']))) {
+		 $mailadr .= '?subject='.$data['applicationContact']['email_subject'];
+	     }
+
+	    return 'mailto:'.$mailadr;
+	 }	 
+     
+	 if ((isset($fallback)) && (!empty($fallback))) {
+	     if ( strpos( $fallback, '@', 1 ) === false ) {
+		// no mail adress, asuming url
+		$fallback = sanitize_url($fallback);
+	    } else {
+		$fallback = sanitize_email($fallback);
+		if (!empty($fallback)) {
+		    $fallback = 'mailto:'.$fallback;
+		}
+		
+	    }
+	    return $fallback;
+	 }
+	 return;
+	
+     }   
 	   
 }

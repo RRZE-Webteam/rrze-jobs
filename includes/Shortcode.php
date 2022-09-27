@@ -212,7 +212,7 @@ class Shortcode {
 			
 			    $data['const'] = $strings;
 			    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
-			    $data['applicationContact']['url'] = $this->create_apply_url($data,$fallback_apply);
+			    $data['applicationContact']['url'] = $positions->get_apply_url($data,$fallback_apply);
 			   
 			    
 			    $data = $this->ParseDataVars($data);
@@ -249,7 +249,7 @@ class Shortcode {
 	    
 	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
-	//	echo Helper::get_html_var_dump($newdata);
+//		echo Helper::get_html_var_dump($newdata);
 		$parserdata['num'] = count($newdata['positions']);
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
 		
@@ -264,7 +264,7 @@ class Shortcode {
 			$data['const'] = $strings;
 			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);	
 			
-			$data['applicationContact']['url'] = $this->create_apply_url($data,$fallback_apply);
+			$data['applicationContact']['url'] = $positions->get_apply_url($data,$fallback_apply);
 			
 		
 			$data = $this->ParseDataVars($data);
@@ -309,31 +309,7 @@ class Shortcode {
 
     }
     
-    // create the url for apply
-     private function create_apply_url($data, $fallback = '') {
-
-	 if ((isset($data['applicationContact']['url'])) && (!empty($data['applicationContact']['url']))) {
-	    return $data['applicationContact']['url'];
-	 } elseif ((isset($data['applicationContact']['email'])) && (!empty($data['applicationContact']['email']))) {
-	    return 'mailto:'.$data['applicationContact']['email'];
-	 }	 
-     
-	 if ((isset($fallback)) && (!empty($fallback))) {
-	     if ( strpos( $fallback, '@', 1 ) === false ) {
-		// no mail adress, asuming url
-		$fallback = sanitize_url($fallback);
-	    } else {
-		$fallback = sanitize_email($fallback);
-		if (!empty($fallback)) {
-		    $fallback = 'mailto:'.$fallback;
-		}
-		
-	    }
-	    return $fallback;
-	 }
-	 return;
-	
-     }    
+    
     
      private static function isIPinRange($fromIP, $toIP, $myIP) {
         $min = ip2long($fromIP);

@@ -351,7 +351,15 @@ class Interamt extends Provider {
 	    
 	}
 	  
- 
+	if ((isset($jobdata['AnzahlStellen'])) && ($jobdata['AnzahlStellen'] > 0)) {
+	      $res['totalJobOpenings'] = $jobdata['AnzahlStellen'];
+	}
+	 
+	if ((isset($jobdata['Kennung'])) && (!empty($jobdata['Kennung']))) {
+	    // Kennung enthält bei Interamt einen Betreff für Bewerbungen
+	    // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden. 
+	      $res['applicationContact']['email_subject'] = $jobdata['Kennung'];
+	}
 
 	return $res;
     }
@@ -562,6 +570,7 @@ class Interamt extends Provider {
 				 $value = sanitize_text_field($value);
 				break;
 			    case 'Id':
+			    case 'AnzahlStellen':
 				$value = $this->sanitize_type('number',$value);	
 				break;
 			    case 'url':
@@ -597,9 +606,6 @@ class Interamt extends Provider {
 			    case 'Beschreibung':
 				 $value = $this->sanitize_html_field($value);
 				 break;
-			     case 'Id':
-				 $value = $this->sanitize_type('number',$value);	
-				 break;
 			     case 'BewerbungUrl':
 				 $value = sanitize_url($value);	
 				 break;
@@ -610,6 +616,7 @@ class Interamt extends Provider {
 				  $value = $this->sanitize_dates($value);	
 				 break;
 			    case 'Id':
+			    case 'AnzahlStellen':	
 				 $value = $this->sanitize_type('number',$value);	
 				 break;
 
