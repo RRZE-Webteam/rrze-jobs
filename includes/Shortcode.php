@@ -145,7 +145,7 @@ class Shortcode {
 	$params = array();
 	if ($jobid) {
 	    $params['UnivIS']['get_single']['id'] = $jobid;
-	    $params['Interamt']['get_single']['Id'] =$jobid;
+	    $params['Interamt']['get_single']['id'] =$jobid;
 	    $query = 'get_single';	    
 	}
 	
@@ -173,11 +173,11 @@ class Shortcode {
 	// echo "SEARCH: $search_provider<br>";
 
 	$positions->get_positions($search_provider, $query);
+
 	$newdata = $positions->merge_positions();
-// echo Helper::get_html_var_dump($newdata);
 	
 
-	if ($newdata['valid']==false) {	   
+	if ($newdata['valid']===false) {	   
 	   return $this->get_errormsg($newdata);	
 	}
 	
@@ -190,8 +190,8 @@ class Shortcode {
 	    // single job
 	    $content = '';
 	//    $content .= "look for ".$jobid;
-	//     $content .=  Helper::get_html_var_dump($newdata);
-	    
+	//     echo Helper::get_html_var_dump($newdata);
+	 //   return $content;
 
 	    if ($newdata['valid']===true) {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
@@ -214,6 +214,9 @@ class Shortcode {
 			   
 			    
 			    $data = $this->ParseDataVars($data);
+
+			    
+			    
 			    $content .= Template::getContent($template, $data);
 			}
 		}
@@ -232,9 +235,9 @@ class Shortcode {
 		    return $this->get_errormsg($newdata);	
 		}
 	    } else {
-		
+		   echo Helper::get_html_var_dump($newdata);
 		  $errortext = "Empty content from template by asking for job id: ".$jobid;
-	//	  $errortext .= Helper::get_html_var_dump($newdata);
+//		  $errortext .= Helper::get_html_var_dump($newdata);
 		  
 		 return $this->get_errormsg( $newdata, $errortext,'Error: No content');	
 		

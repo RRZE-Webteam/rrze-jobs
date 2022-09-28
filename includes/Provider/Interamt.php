@@ -52,14 +52,23 @@ class Interamt extends Provider {
 	 // as they are
 	
 	if (isset($data['Stellenangebote'])) {	    
+	    // in a list request we get all jobs in the array Stellenangebote
 	     foreach ($data['Stellenangebote'] as $num => $job) {
 		 if (is_array($job)) {	    
-		    $newpositions['JobPosting'][$num] = $this->generate_schema_values($job, $data);
+		    $newpositions['JobPosting'][$num] = $this->generate_schema_values($job);
 		    $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
 		    
 		 }
 	     }
 	     $data = $newpositions;	     
+	} else {
+	    // in a single request we get all jobdata direct on frist level
+	    if (is_array($data)) {	    
+		    $newpositions['JobPosting'][0] = $this->generate_schema_values($data);
+		    $newpositions['JobPosting'][0]['_provider-values'] = $this->add_remaining_non_schema_fields($data);
+		     $data = $newpositions;	     
+		 }
+	    
 	}
 	return $data;
      }
@@ -87,10 +96,9 @@ class Interamt extends Provider {
      }
      
       // some missing schema fields can be generated automatically 
-     private function generate_schema_values($jobdata, $data) {
+     private function generate_schema_values($jobdata) {
 	 // Paramas:
 	 // $jobdata - one single jobarray
-	 // $data - all univis data. includes Persondata we need for contacts
 	 
 	 
 	 $res = array();
@@ -403,7 +411,7 @@ class Interamt extends Provider {
 		    foreach ($response['content']['Stellenangebote'] as $num => $pos) {
 			$singleparams['get_single']['id'] = $pos['Id']; 
 			
-			$singledata = $this->get_single($singleparams);
+			$singledata = $this->get_single($singleparams, false);
 			
 			if ($singledata['valid'] == true) {
 			    $response['content']['Stellenangebote'][$num] = $singledata['content'];
@@ -429,7 +437,7 @@ class Interamt extends Provider {
      }
      
      
-     public function get_single($params) {
+     public function get_single($params, $parse = true) {
 	$check = $this->required_parameter("get_single",$params);
 	 
 	 if (is_array($check) && count($check) > 0) {    
@@ -446,9 +454,25 @@ class Interamt extends Provider {
 
 	 $response = $this->get_data("get_single", $params);
 	 
-	 if ($response['valid'] == true) {
-	     $response['content'] = $this->sanitize_sourcedata($response['content']);  
-     	     $response['content'] = $this->map_to_schema($response['content']);
+	 if ($response['valid'] === true) {
+	     
+	     if ((is_array($response['content'])) && (!empty($response['content']))) {
+		 
+		 
+		$response['content'] = $this->sanitize_sourcedata($response['content']);  
+		if ($parse) {
+		    $response['content'] = $this->map_to_schema($response['content']);
+		}
+	     } else {
+		  $aRet = [
+                    'valid' => false,
+		    'code'  => 404,
+		     'error' => 'No entry',
+		    'params_given'   => $params,
+                    'content' => ''
+		];
+		return $aRet;
+	     }
 	 }
 
 	 return $response;
@@ -470,7 +494,10 @@ class Interamt extends Provider {
 	     $uriname = $this->sanitize_type('key', $name);
 	     
 	     if ((!empty($uriname)) && (!empty($urivalue))) {
-		 $uri .= '&'.$uriname.'='.$urivalue;
+		 if (!empty($uri)) {
+		     $uri .= '&';
+		 }
+		 $uri .= $uriname.'='.$urivalue;
 	     }
 	 }
 	 

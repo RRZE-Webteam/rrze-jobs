@@ -2,7 +2,6 @@
 <div class="rrze-jobs">
 <div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
     <meta itemprop="datePosted" content="{{=datePosted}}"><meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
-    <meta itemprop="title" content="{{=title}}">
     <meta itemprop="employmentType" content="{{=employmentType}}">
     {{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
     <article>
@@ -85,20 +84,24 @@
 		    </span>
 		</td>
 	    </tr>
+	    {{text_workingtime}}
 	    <tr>
 		<th>{{=const.title_workingtime}}</th>
-		<td>{{=_provider-values.type2}}</td>
+		<td>{{=text_workingtime}}</td>
 	    </tr>
+	    {{/text_workingtime}}
 	    {{workHours}}
 	    <tr>
 		<th>{{=const.title_workHours}}</th> 
 		<td itemprop="workHours">{{=workHours}}</td>
 	    </tr>
 	    {{/workHours}}
+	    {{text_befristet}}
 	    <tr>
 		<th>{{=const.title_befristet}}</th>
-		<td>{{=_provider-values.befristet}}</td>
+		<td>{{=text_befristet}}</td>
 	    </tr>
+	    {{/text_befristet}}
 	    <tr>
 		<th>{{=const.title_contact}}</th>
 		<td>{{=applicationContact.name}}

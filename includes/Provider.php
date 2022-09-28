@@ -42,6 +42,7 @@ class Provider {
 	 return $found;	 
      }
      
+	// set parameters to a defined provider
      public function set_provider_params($provider, $params) {
 	$provider = is_valid_provider($provider);
 	if ($provider===false) {

@@ -653,7 +653,7 @@ class UnivIS extends Provider {
          } else {
 	     $content = json_decode($remote_get["body"], true);
 	     
-	     if (strpos($content, 'keine passenden Datensätze gefunden') === false) {
+	     if (strpos($content, 'keine passenden ') === false ) {
 		  $aRet = [
                     'valid' => false,
                     'error' => 'No entry',
