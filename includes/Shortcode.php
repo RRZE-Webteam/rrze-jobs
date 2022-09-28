@@ -173,11 +173,9 @@ class Shortcode {
 	// echo "SEARCH: $search_provider<br>";
 
 	$positions->get_positions($search_provider, $query);
-
 	$newdata = $positions->merge_positions();
 // echo Helper::get_html_var_dump($newdata);
 	
-
 
 	if ($newdata['valid']==false) {	   
 	   return $this->get_errormsg($newdata);	
@@ -236,7 +234,7 @@ class Shortcode {
 	    } else {
 		
 		  $errortext = "Empty content from template by asking for job id: ".$jobid;
-		  $errortext .= Helper::get_html_var_dump($newdata);
+	//	  $errortext .= Helper::get_html_var_dump($newdata);
 		  
 		 return $this->get_errormsg( $newdata, $errortext,'Error: No content');	
 		
@@ -259,7 +257,8 @@ class Shortcode {
 		    
 		    if ($hidethis) {
 			   // Ignore/hide this position in display
-			    // Also do not give an error message like at sinngle display
+			    // Also do not give an error message like at single display
+			
 		    } else {
 			$data['const'] = $strings;
 			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);	
@@ -277,7 +276,7 @@ class Shortcode {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
 	    } else {
 		$parserdata['errormsg'] = __('No jobs found.','rrze-jobs');
-		$parserdata['errormsg'] .= Helper::get_html_var_dump($newdata);
+	//	$parserdata['errormsg'] .= Helper::get_html_var_dump($newdata);
 		$parserdata['errortitle'] = __('Error','rrze-jobs');
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
 	    }
@@ -304,7 +303,7 @@ class Shortcode {
 	}
 
 	$errortext =  "Unknown shortcode handling";    
-	$errortext .=  Helper::get_html_var_dump($parserdata);
+//	$errortext .=  Helper::get_html_var_dump($parserdata);
 	return $this->get_errormsg($parserdata, $errortext);
 
     }

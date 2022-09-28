@@ -483,7 +483,9 @@ class UnivIS extends Provider {
 	 
 	    if (!empty($output_array)) {
 		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		    $res = $output_array[1][0];
+		    if (filter_var($output_array[1][0], FILTER_VALIDATE_URL) !== FALSE) {
+			$res = $output_array[1][0];
+		    }
 		}
 	    }
 	}
@@ -497,7 +499,9 @@ class UnivIS extends Provider {
 	 
 	    if (!empty($output_array)) {
 		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		    $res = $output_array[1][0];
+		    if (is_email($output_array[1][0])) {
+			$res = $output_array[1][0];
+		    }
 		}
 	    }
 	}
@@ -505,19 +509,7 @@ class UnivIS extends Provider {
      }
      
      
-     private function get_application_subject_by_text($text) {
-	$res = '';
-	if (!empty($text)) { 
-	    preg_match_all('/(Subject|Betreff):\s*([\wßäöü\-\._\[\] ]+)/i', $text, $output_array);
-	 
-	    if (!empty($output_array)) {
-		if ((isset($output_array[2])) && (isset($output_array[2][0]))) {
-		    $res = $output_array[2][0];
-		}
-	    }
-	}
-	return $res; 	 
-     }
+   
      
      
      // make request for a positions list and return it as array

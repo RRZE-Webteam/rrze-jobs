@@ -463,5 +463,17 @@ class Provider {
 	 return;
 	
      }   
-	   
+    public function get_application_subject_by_text($text) {
+	$res = '';
+	if (!empty($text)) { 
+	    preg_match_all('/(Subject|Betreff):\s*([\wßäöü\-\._\[\] ]+)/i', $text, $output_array);
+	 
+	    if (!empty($output_array)) {
+		if ((isset($output_array[2])) && (isset($output_array[2][0]))) {
+		    $res = $output_array[2][0];
+		}
+	    }
+	}
+	return $res; 	 
+     }
 }

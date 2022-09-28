@@ -168,12 +168,22 @@ class Interamt extends Provider {
 	  
 	
 
-	
-	    if ((isset($jobdata['BewerbungUrl'])) && (!empty($jobdata['BewerbungUrl']))) {
-		   $res['applicationContact']['url'] = sanitize_url($jobdata['BewerbungUrl']);
-		   $res['directApply'] = true;
-		   
+	    $acontact = $this->get_interamt_application_contact($jobdata);
+	    if (!empty($acontact['url'])) {
+		$res['applicationContact']['url'] = $acontact['url'];
 	    }
+	    if (!empty($acontact['email'])) {
+		$res['applicationContact']['email'] = $acontact['email'];
+	    }
+	    if (!empty($acontact['email_subject'])) {
+		$res['applicationContact']['email_subject'] = $acontact['email_subject'];
+	    }
+	    if (isset($acontact['directApply'])) {
+		$res['directApply'] = $acontact['directApply'];
+	    }
+	    
+	    
+	 
 		
 		
 	    if (isset($jobdata['ExtAnsprechpartner'])) {
@@ -189,8 +199,8 @@ class Interamt extends Provider {
 		    $res['employmentUnit']['name'] = $res['applicationContact']['name'];
 		}
 		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail']))) {
-			$res['applicationContact']['email'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
-			$res['employmentUnit']['email'] = $res['applicationContact']['email'];
+			
+			$res['employmentUnit']['email'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
 		}
 		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']))) {
 			$res['applicationContact']['faxNumber'] =  $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']);
@@ -355,12 +365,7 @@ class Interamt extends Provider {
 	      $res['totalJobOpenings'] = $jobdata['AnzahlStellen'];
 	}
 	 
-	if ((isset($jobdata['Kennung'])) && (!empty($jobdata['Kennung']))) {
-	    // Kennung enthält bei Interamt einen Betreff für Bewerbungen
-	    // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden. 
-	      $res['applicationContact']['email_subject'] = $jobdata['Kennung'];
-	}
-
+	
 	return $res;
     }
      
@@ -632,8 +637,131 @@ class Interamt extends Provider {
 	 
      } 
      
+     
+     // Interamt kennt zwar eine Application-URl in dem Feld "BewerbungUrl",
+     // allerdings ist dieser nur besetzt,w enn man den Bewerbungsprozess bei Interamt durchführt.
+     // Bewerbungsinformationen werden daher in der Regel im Text der Ausschreibung ergänzt.
+     // Diese Funktion soll versuchen, die URl bzw. die E-Mail zur Bewerbung zur ermitteln.
+     // 
+     // returns array with keys 'url' , 'email', 'directApply' and 'email_subject' 
+  
+     
+     private function get_interamt_application_contact($jobdata) {
 
-    
+	 $res['url'] = '';
+	 $res['email'] = '';
+	 $res['directApply'] = false;
+	 $res['email_subject'] = '';
+	 
+	 if ((isset($jobdata['BewerbungUrl'])) && (!empty($jobdata['BewerbungUrl']))) {
+	     // nevertheless, look into the desired field...
+	    if (filter_var($jobdata['BewerbungUrl'], FILTER_VALIDATE_URL) !== FALSE) {
+		$res['url'] = $jobdata['BewerbungUrl'];
+	    } elseif (is_email($jobdata['BewerbungUrl'])) {
+		$res['email'] = $jobdata['BewerbungUrl'];
+	    }
+	 }
+	 
+	 if ((empty($res['url'])) && (empty($res['email']))) {
+	     // try to negotiate it from the description
+	     
+	     // we splut the text into parts followed by the usual keywords and take the last one
+	     // to look for an email or url.
+	     $textparts = preg_split('/(Bewerbung|bewerben|apply|Application)\b/i', $jobdata['Beschreibung']);
+	     $lastpart = $textparts[array_key_last($textparts)];
+	     
+	     $lookforurl = $this->get_interamt_application_url_by_text($lastpart);
+	     if (!empty($lookforurl)) {
+		 $res['url'] = $lookforurl;
+	     }
+	     // also use the text for geting the email subject, if we need it later 
+	     $lookformail = $this->get_interamt_application_mail_by_text($lastpart);
+	     if (!empty($lookformail)) {
+		 $res['email'] = $lookformail;
+	     }
+	     
+	     
+	     
+	    $res['email_subject'] = $this->get_application_subject_by_text($lastpart);
+	 }
+	 
+	 
+	 
+	if ((isset($jobdata['Kennung'])) && (!empty($jobdata['Kennung']))) {
+	    // Kennung enthält bei Interamt einen Betreff für Bewerbungen
+	    // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden. 
+	    // this will overwrite the previous negotiated text
+	      $res['email_subject'] = $jobdata['Kennung'];
+	}
+
+
+	
+	if ((!empty($res['url'])) || (!empty($res['email']))) {
+	   $res['directApply'] = true;  
+	}
+	
+	// if every negotiation fails, we try to use the contact mail adress
+	// as fallback for the email
+	if ((empty($res['email'])) && (isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail']))) {
+	    $res['email'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
+	}  
+	    
+	return $res;
+	 
+	 
+     }
+     
+     
+     
+          // searchs for an URL in the text and returns the first hit
+     private function get_interamt_application_url_by_text($text) {
+	$res = '';
+	if (!empty($text)) { 
+	    preg_match_all('/<a href="([a-z0-9\/:\-\.\?\+]+)">([^<>]+)<\/a>/i', $text, $output_array);
+	 
+	    if (!empty($output_array)) {
+		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
+		 
+		    if (filter_var($output_array[1][0], FILTER_VALIDATE_URL) !== FALSE) {
+			$res = $output_array[1][0];
+		    }
+		}
+	    }
+	}
+	return $res; 
+     }
+      // searchs for an URL in the text and returns the first hit
+     private function get_interamt_application_mail_by_text($text) {
+	$res = '';
+	if (!empty($text)) { 
+	    preg_match_all('/<a href="mailto:([@a-z0-9\/:\-\.]+)">([^<>]+)<\/a>/i', $text, $output_array);
+	 
+	    if (!empty($output_array)) {
+		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
+		    if (is_email($output_array[1][0])) {
+			$res = $output_array[1][0];
+		    }
+		}
+	    }
+	    
+	    if (empty($res)) {
+		// look in case the email is written as text in <strong> instead of <a>...
+		 preg_match_all('/<strong>([a-z0-9\-\.]+@[a-z0-9\-\.]+)<\/strong>/i', $text, $output_array);
+	 
+		if (!empty($output_array)) {
+		    if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
+			if (is_email($output_array[1][0])) {
+			    $res = $output_array[1][0];
+			}
+		    }
+		}
+	    }
+	}
+
+	return $res; 
+     }
+     
+
 }
 
   
