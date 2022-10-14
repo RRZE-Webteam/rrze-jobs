@@ -61,7 +61,7 @@ class Cache  {
 	    return $value;
 	}
     }
-    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '') {	
+    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '', $cachetimeoverwrite = 0 ) {	
 	if (empty($content)) {
 	    return false;
 	}
@@ -88,7 +88,13 @@ class Cache  {
 	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);
 	    $transient_name .= '_'.$format;
 	}
+	
 	$cachetime = $this->constants['Transient_Seconds'];
+	if ((!empty($cachetimeoverwrite)) && (intval($cachetimeoverwrite)>0)) {
+	    $cachetime = $cachetimeoverwrite;
+	}
+	
+
 	
 	set_transient( $transient_name, $content, $cachetime);
 	return true;

@@ -17,7 +17,9 @@ class Interamt extends Provider {
 	 $this->api_url	    = 'https://interamt.de/koop/app/webservice_v2';
 	 $this->url	    = 'https://interamt.de/';
 	 $this->name	    = "Interamt";
-	 $this->cachetime   =  3 * HOUR_IN_SECONDS;
+	 $this->cachetime   =  2 * HOUR_IN_SECONDS;
+	 $this->cachetime_list   = $this->cachetime;
+	 $this->cachetime_single   =  4 * HOUR_IN_SECONDS;
 	 $this->uriparameter = '';
 	 $this->request_args = array(
 		'timeout'     => 45,
@@ -543,7 +545,15 @@ class Interamt extends Provider {
 	
 	
 	$cache = new Cache();
-	$cache->set_cachetime($this->cachetime);
+	
+	$cachetime = $this->cachetime;
+	if ($method == 'get_list') {
+	    $cachetime = $this->cachetime_list;
+	} elseif ($method == 'get_single') {
+	    $cachetime = $this->cachetime_single;
+	}
+	
+	$cache->set_cachetime($cachetime);
 	$org = '';
 	if (isset($params[$method]['partner'])) {
 	    $org = $params[$method]['partner'];
@@ -551,7 +561,8 @@ class Interamt extends Provider {
 	$id = '';
 	if (isset($params[$method]['id'])) {
 	    $id = $params[$method]['id'];
-	} 
+	}  
+	
 	$cachedout = $cache->get_cached_job('Interamt',$org,$id,$method);
 	if ($cachedout) {
 	    return $cachedout;
