@@ -1,8 +1,8 @@
 <?php
 /**
- * Interamt 
+ * BITE 
  * 
- * Created on : 14.09.2022
+ * Created on : 18.10.2022
  */
 
 namespace RRZE\Jobs\Provider;
@@ -11,7 +11,7 @@ defined('ABSPATH') || exit;
 use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
 
-class Interamt extends Provider { 
+class BITE extends Provider { 
 
     public function __construct() {
 	 $this->api_url	    = 'https://interamt.de/koop/app/webservice_v2';
@@ -24,15 +24,21 @@ class Interamt extends Provider {
 	 $this->request_args = array(
 		'timeout'     => 45,
 		'redirection' => 5,
+		'headers' => [
+                    'Content-Type' => 'application/json',
+                    'BAPI-Token' => '',  // API-KEY
+                ],
+		 'sslverify' => true
+	     
 	    );
-	 
+
 	 // defines all required parameters for defined request method
 	 $this->required_fields = array(
 	     'get_list'	=> array(
-		 'partner'	=> 'number'
+		 'apikey'	=> 'string'
 	     ),
 	     'get_single'	=> array(
-		 'id'	=> 'number'
+		 'apikey'	=> 'string'
 	     )
 	 );
 	 
@@ -563,16 +569,17 @@ class Interamt extends Provider {
 	}
 	
 	$cache->set_cachetime($cachetime);
-	$org = '';
-	if (isset($params[$method]['partner'])) {
-	    $org = $params[$method]['partner'];
+
+	if (isset($params[$method]['apikey'])) {
+	    $apikey = $params[$method]['apikey'];
 	} 
-	$id = '';
-	if (isset($params[$method]['id'])) {
-	    $id = $params[$method]['id'];
+	if ((isset($params[$method]['id'])) && (!isset($params[$method]['apikey']))) {
+	    $apikey = $params[$method]['id'];
 	}  
-	
-	$cachedout = $cache->get_cached_job('Interamt',$org,$id,$method);
+	if (isset($apikey)) {
+	    $this->request_args['headers']['BAPI-Token'] = $apikey;
+	}
+	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
 	if ($cachedout) {
 	    return $cachedout;
 	}
@@ -593,7 +600,7 @@ class Interamt extends Provider {
                     'content'	=> $content,
               ];
 	     
-	     $cache->set_cached_job('Interamt',$org,$id,$method, $aRet);
+	     $cache->set_cached_job('BITE',$id,'',$method, $aRet);
 	     
 	     return $aRet;
 	  }

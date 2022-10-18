@@ -250,7 +250,7 @@ class Shortcode {
 	    
 	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
-//		echo Helper::get_html_var_dump($newdata);
+		echo Helper::get_html_var_dump($newdata);
 		$parserdata['num'] = count($newdata['positions']);
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
 		
