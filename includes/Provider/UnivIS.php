@@ -712,7 +712,7 @@ class UnivIS extends Provider {
 				 $value = sanitize_text_field($value);
 				break;
 			    case 'lang':
-				 $value = $this->sanitize_univis_lang($value);
+				 $value = $this->sanitize_lang($value);
 				break;
 			    case 'start':
 				 $value = $this->sanitize_univis_jobstart($value);	
@@ -1201,27 +1201,7 @@ class UnivIS extends Provider {
      
      
      
-     // check for the position language tag
-     private function sanitize_univis_lang($lang) {
-	 $res = 'de';
-	 if (empty($lang)) {
-	     return $res;
-	 }
-	 switch($lang) {
-	     case 'de':
-	     case 'en':
-	     case 'es':
-	     case 'fr':
-	     case 'zh':
-	     case 'ru':
-		 $res = $lang;
-		 break;
-	     default:
-		 $res = 'de';
-	 }
-	 
-	 return $res;
-     }
+    
      
      
      // check for select value of group and translate into the desired long form

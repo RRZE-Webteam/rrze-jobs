@@ -156,15 +156,18 @@ class Shortcode {
 		$params['Interamt']['get_list']['partner'] =  $this->options['rrze-jobs-access_orgids_interamt'];
         } 
 	if (!empty($this->options['rrze-jobs-access_bite_apikey'])) {
-		$params['BITE']['get_list']['apikey'] =  $this->options['rrze-jobs-access_bite_apikey'];
-		$params['BITE']['get_single']['apikey'] =  $this->options['rrze-jobs-access_bite_apikey'];
+		$params['BITE']['request-header']['headers']['BAPI-Token'] =  $this->options['rrze-jobs-access_bite_apikey'];
         } 
 	
 	 // In case the org id was given as a parameter, overwrite the default from backend
 	if (!empty($orgids)) {
 	    $params['UnivIS']['get_list']['department'] = $orgids;
 	    $params['Interamt']['get_list']['partner'] = $orgids;   
-	}
+	    
+	    
+	    $params['BITE']['request-header']['headers']['BAPI-Token'] = $orgids;   
+	} 
+	
 	
 
 	$positions->set_params($params);
@@ -247,10 +250,10 @@ class Shortcode {
 	} else {
 	    // list
     
-	    
+	    echo Helper::get_html_var_dump($newdata);
 	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
-		echo Helper::get_html_var_dump($newdata);
+		
 		$parserdata['num'] = count($newdata['positions']);
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
 		

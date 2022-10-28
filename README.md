@@ -13,8 +13,17 @@ GITHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 ## Autor
 RRZE-Webteam , http://www.rrze.fau.de
 
-## Copryright
+## Copyright
 GNU General Public License (GPL) Version 2
+
+## Verwendete Drittquellen
+
+### Parsedown
+
+http://parsedown.org
+The MIT License (MIT)
+Copyright (c) 2013-2018 Emanuil Rusev, erusev.com
+
 
 ## Verwendung
 

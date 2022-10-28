@@ -10,13 +10,16 @@ namespace RRZE\Jobs\Provider;
 defined('ABSPATH') || exit;
 use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
+use RRZE\Jobs\Helper;
 
 class BITE extends Provider { 
 
     public function __construct() {
-	 $this->api_url	    = 'https://interamt.de/koop/app/webservice_v2';
-	 $this->url	    = 'https://interamt.de/';
-	 $this->name	    = "Interamt";
+	 $this->api_url	    = 'https://api.b-ite.io/v1/jobpostings';
+	 //   list: https://api.b-ite.io/v1/jobpostings
+	 // single: https://api.b-ite.io/v1/jobpostings/
+	 $this->url	    = 'https://www.b-ite.com/';
+	 $this->name	    = "BITE";
 	 $this->cachetime   =  2 * HOUR_IN_SECONDS;
 	 $this->cachetime_list   = $this->cachetime;
 	 $this->cachetime_single   =  4 * HOUR_IN_SECONDS;
@@ -34,12 +37,8 @@ class BITE extends Provider {
 
 	 // defines all required parameters for defined request method
 	 $this->required_fields = array(
-	     'get_list'	=> array(
-		 'apikey'	=> 'string'
-	     ),
-	     'get_single'	=> array(
-		 'apikey'	=> 'string'
-	     )
+	     'get_list'	=> array( ),
+	     'get_single'	=> array( 'id'	=> 'string' )
 	 );
 	 
 	 
@@ -59,9 +58,9 @@ class BITE extends Provider {
 	 // First we make a simple Mapping by an array with fields, that match 
 	 // as they are
 	
-	if (isset($data['Stellenangebote'])) {	    
+	if (isset($data['entries'])) {	    
 	    // in a list request we get all jobs in the array Stellenangebote
-	     foreach ($data['Stellenangebote'] as $num => $job) {
+	     foreach ($data['entries'] as $num => $job) {
 		 if (is_array($job)) {	    
 		    $newpositions['JobPosting'][$num] = $this->generate_schema_values($job);
 		    $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
@@ -87,11 +86,11 @@ class BITE extends Provider {
      // all fields that remain are new or was not mapped to schema and
      // may be used to other purpuses
      private function add_remaining_non_schema_fields($jobdata) {
-	$known_fields = array("StellenBezeichnung", "Stellenbezeichnung", "Behoerde", "Id", "Bezahlung", "Plz", "Ort", 
-	    "DatumBesetzungZum", "DatumOeffentlichAusschreiben", "TarifEbeneVon", "TarifEbeneBis", "DatumBewerbungsfrist",
-	    "BesoldungGruppeBis", "BesoldungGruppeVon", "Studiengaenge", 
-	    "BewerbungUrl", "Aufgabenbereiche", "WochenarbeitszeitBeamter", "WochenarbeitszeitArbeitnehmer", "StellenangebotBehoerde",
-	    "BeschaeftigungBereichBundesland", "HomepageBehoerde", "Einsatzort", "BeschaeftigungDauer", "BefristetFuer", "Teilzeit", "ExtAnsprechpartner");
+	$known_fields = array("assignees", "hash", "emailTemplate", "jobSite", 
+	    "subsidiary", "content", "seo");
+	    // keynames we already used in schema values or which we dont need anyway
+	
+	
 	$providerfield = array();
 	
 	foreach ($jobdata as $name => $value) {
@@ -116,161 +115,129 @@ class BITE extends Provider {
 
 	 
 	
-	 // datePosted
-	  if (isset($jobdata['Daten']["Eingestellt"])) {
-	       $res['datePosted'] = $jobdata['Daten']["Eingestellt"];
+	
+	  // description
+	  $desc = '';
+	  if ((isset($jobdata['custom']['einleitung'])) && (!empty($jobdata['custom']['einleitung']))) {
+	      $desc .= $jobdata['custom']['einleitung'];
 	  }
-	  if (($jobdata['DatumOeffentlichAusschreiben']) && (!empty($jobdata['DatumOeffentlichAusschreiben']))) {
-	       $res['datePosted'] = $jobdata['DatumOeffentlichAusschreiben'];
+	  if ((isset($jobdata['custom']['aufgaben'])) && (!empty($jobdata['custom']['aufgaben']))) {
+	      $desc .= $jobdata['custom']['aufgaben'];
+	  }
+	  if ((isset($jobdata['custom']['stellenzusatz'])) && (!empty($jobdata['custom']['stellenzusatz']))) {
+	      $desc .= $jobdata['custom']['stellenzusatz'];
 	  }
 	  
-	  // description
-	  $res['description'] = $jobdata['Beschreibung'];
+	  $res['description'] = $desc;
+	  
+	  
+	   if ((isset($jobdata['custom']['profil'])) && (!empty($jobdata['custom']['profil']))) {	        
+		$res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+		$res['qualifications'] .= $jobdata['custom']['profil'];	     
+	   }
+	    if ((isset($jobdata['custom']['job_experience'])) && (!empty($jobdata['custom']['job_experience']))) {	        
+		$res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
+		$res['qualifications'] .= $jobdata['custom']['job_experience'];	     
+	   }
+	   
+	   if ((isset($jobdata['custom']['job_qualifications_nth'])) && (!empty($jobdata['custom']['job_qualifications_nth']))) {	        
+		$res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+		$res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];	     
+	   }
+	  
+
+	   
+	$res['disambiguatingDescription'] = '';
+	if ((isset($jobdata['custom']['wir_bieten'])) && (!empty($jobdata['custom']['wir_bieten']))) {	        
+	      $res['disambiguatingDescription'] = $jobdata['custom']['wir_bieten'];
+	}
+	  
+
 	  
 	  // title
-	  if ((isset($jobdata['StellenBezeichnung'])) && (!empty($jobdata['StellenBezeichnung']))) {
-	       $res['title'] = $jobdata['StellenBezeichnung'];
-	  } elseif (isset($jobdata['Stellenbezeichnung'])) {
-	       $res['title'] = $jobdata['Stellenbezeichnung'];
+	  if ((isset($jobdata['title'])) && (!empty($jobdata['title']))) {
+	       $res['title'] = $jobdata['title'];
 	  }
 	 
 	  
 	   // identifier
-	  $res['identifier'] = $jobdata['Id'];
+	  $res['identifier'] = $jobdata['identification'];
 	 
-	  // validThrough
-	  if (isset($jobdata['Daten']["Bewerbungsfrist"])) {
-	       $res['validThrough'] = $jobdata['Daten']["Bewerbungsfrist"];
+	 
+	 // employmentType
+	  $typeliste = array();
+	  if ((isset($jobdata['seo'])) && (isset($jobdata['seo']['employmentType']))) {
+	  //    $typeliste = $jobdata['seo']['employmentType'];
+	      foreach ($jobdata['seo']['employmentType'] as $val) {
+		  if (!empty($val)) {
+		      $typeliste[] = strtoupper($val);
+		  }
+	      }
 	  }
-	  if ((isset($jobdata['DatumBewerbungsfrist'])) && (!empty($jobdata['DatumBewerbungsfrist']))) {
-	      $res['validThrough'] = $jobdata['DatumBewerbungsfrist'];
-	  }
-	  
-	  
-	  
-	  
-	// 'jobStartDate'	=> 'start', 
-	// jobImmediateStart
+	 
+	 $res['employmentType'] = $typeliste;
 
-	    if (isset($jobdata['DatumBesetzungZum'])) {
-		$res['jobStartDate'] = $jobdata['DatumBesetzungZum'];
-	    }
+	    //  muss aber einen oder mehrere der folgenden
+	    // Werte enthalten:
+	    /*
+		FULL_TIME
+		PART_TIME
+		CONTRACTOR
+		TEMPORARY
+		INTERN
+		VOLUNTEER
+		PER_DIEM
+		OTHER
+	    */
+	    // Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
+	    
 	 
-	  
-	   // estimatedSalary  (type: MonetaryAmount)
-	    // aus vonbesold und bisbesold   generieren
-	    if (isset($jobdata['Bezahlung']))  {
-		if ((isset($jobdata['Bezahlung']['Besoldung'])) && (!empty($jobdata['Bezahlung']['Besoldung']))) {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL(jobdata['Bezahlung']['Besoldung']);
-		}
-		if ((isset($jobdata['Bezahlung']['Entgelt'])) && (!empty($jobdata['Bezahlung']['Entgelt']))) {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['Bezahlung']['Entgelt']);
-		}
-	    }
-	   if ((isset($jobdata['TarifEbeneVon'])) && (!empty($jobdata['TarifEbeneVon']))) {
-	        if (isset($jobdata['TarifEbeneBis'])) {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['TarifEbeneVon'],$jobdata['TarifEbeneBis']);
-		} else {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['TarifEbeneVon']);
-		}
-	   } elseif ((isset($jobdata['BesoldungGruppeVon'])) && (!empty($jobdata['BesoldungGruppeVon']))) {
-	       if (isset($jobdata['BesoldungGruppeBis'])) {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['BesoldungGruppeVon'],$jobdata['BesoldungGruppeBis']);
-		} else {
-		    $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['BesoldungGruppeVon']);
-		}
-	   }	   
-  
-	  
+	  // Gruppe / Kategorie der Stelle  
+	if ((isset($jobdata['custom']['zuordnung'])) && (!empty($jobdata['custom']['zuordnung']))) {
+	    $res['occupationalCategory'] = $jobdata['custom']['zuordnung'];
+	}
 	
-
-	    $acontact = $this->get_interamt_application_contact($jobdata);
-	    if (!empty($acontact['url'])) {
-		$res['applicationContact']['url'] = $acontact['url'];
-	    }
-	    if (!empty($acontact['email'])) {
-		$res['applicationContact']['email'] = $acontact['email'];
-	    }
-	    if (!empty($acontact['email_subject'])) {
-		$res['applicationContact']['email_subject'] = $acontact['email_subject'];
-	    }
-	    if (isset($acontact['directApply'])) {
-		$res['directApply'] = $acontact['directApply'];
-	    }
-	    
-	    
-	 
-		
-		
-	    if (isset($jobdata['ExtAnsprechpartner'])) {
-		$res['applicationContact']['contactType'] = __('Contact for application','rrze-jobs');
-		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerNachname'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerNachname']))) {
-		    
-		    if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerVorname'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerVorname']))) {
-			$res['applicationContact']['name'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerVorname'].' '.$jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerNachname'];
-		    } else {
-			$res['applicationContact']['name'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerNachname'];
+	
+	
+	
+	  if (isset($jobdata['active']) && ($jobdata['active']==true)  && (isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
+	       // datePosted
+	       $res['datePosted'] = $jobdata['channels']['channel0']['from'];
+	         // validThrough
+	       $res['validThrough'] = $jobdata['channels']['channel0']['to'];
+	       
+	       if (isset($jobdata['channels']['channel0']['application'])) {
+		   $res['applicationContact']['url'] = $jobdata['channels']['channel0']['application'];
+	       }
+	         if (isset($jobdata['channels']['channel0']['email'])) {
+		   $res['applicationContact']['email'] = $jobdata['channels']['channel0']['email'];
+		    if (isset($jobdata['custom']['ausschreibungskennziffer'])) {
+			$res['applicationContact']['email_subject'] = $jobdata['custom']['ausschreibungskennziffer'];
 		    }
-		    
-		    $res['employmentUnit']['name'] = $res['applicationContact']['name'];
-		}
-		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail']))) {
-			
-			$res['employmentUnit']['email'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
-		}
-		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']))) {
-			$res['applicationContact']['faxNumber'] =  $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']);
-			$res['employmentUnit']['faxNumber'] = $res['applicationContact']['faxNumber'];
-		}
-		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon']))) {
-			$res['applicationContact']['telephone'] =  $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon']);
-			$res['employmentUnit']['telephone'] = $res['applicationContact']['telephone'];
-		}
-		if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse']))) {
-			$res['applicationContact']['street'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse'];
-			$res['employmentUnit']['street'] = $res['applicationContact']['street'];
-		}
+		   
+		   
+	       }
+	       $res['directApply'] = true;
+	  }
+	
+	
+	
+	    
+	    if (isset($jobdata['custom']['place_of_employment_street'])) {
+		$res['jobLocation']['address']['streetAddress'] = $jobdata['custom']['place_of_employment_street'];
+		 if (isset($jobdata['custom']['place_of_employment_house_number'])) {
+		    $res['jobLocation']['address']['streetAddress'] .= ' '.$jobdata['custom']['place_of_employment_house_number'];
+		 }
 	    }
-	    
-	    
-	    
-	    
-	 // hiringOrganization   (type: Organzsation)
-	    // aus orgunit und oder orgname generieren	    
-	    // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
-	 
-	    
-	    if ((isset($jobdata['Behoerde'])) && (!empty($jobdata['Behoerde']))) {
-		$res['employmentUnit']['name'] = $jobdata['Behoerde'];
-		$res['hiringOrganization']['name'] = $jobdata['Behoerde'];
-	    } elseif ((isset($jobdata['StellenangebotBehoerde'])) && (!empty($jobdata['StellenangebotBehoerde']))) {
-		$res['employmentUnit']['name'] = $jobdata['StellenangebotBehoerde'];
-		$res['hiringOrganization']['name'] = $jobdata['StellenangebotBehoerde'];
+	    if (isset($jobdata['custom']['place_of_employment_postcode'])) {
+		 $res['jobLocation']['address']['postalCode'] = $jobdata['custom']['place_of_employment_postcode'];
 	    }
-	    if ((isset($jobdata['HomepageBehoerde'])) && (!empty($jobdata['HomepageBehoerde']))) {
-		$res['employmentUnit']['url'] = $jobdata['HomepageBehoerde'];
-		$res['hiringOrganization']['url'] = sanitize_url($jobdata['HomepageBehoerde']);
-	    }
-	    
-	    
 	   
-
-	    
-	    if (isset($jobdata['Plz'])) {
-		$res['jobLocation']['address']['postalCode'] = $jobdata['Plz'];
-	    } elseif (isset($jobdata['Einsatzort']['EinsatzortPLZ'])) {
-		$res['jobLocation']['address']['postalCode'] = $jobdata['Einsatzort']['EinsatzortPLZ'];
+	    if (isset($jobdata['custom']['place_of_employment_city'])) {
+		 $res['jobLocation']['address']['addressLocality'] = $jobdata['custom']['place_of_employment_city'];
 	    }
-	    if (isset($jobdata['Ort'])) {
-		$res['jobLocation']['address']['addressLocality'] = $jobdata['Ort'];
-	    } elseif (isset($jobdata['Einsatzort']['EinsatzortOrt'])) {
-		$res['jobLocation']['address']['postalCode'] = $jobdata['Einsatzort']['EinsatzortOrt'];
-	    }
-	    
-	    if ((isset($jobdata['BeschaeftigungBereichBundesland'])) && (!empty($jobdata['BeschaeftigungBereichBundesland']))) {
-		$res['jobLocation']['address']['addressRegion'] = $jobdata['BeschaeftigungBereichBundesland'];
-	    }
-	    
+	  
+    
 	    
 	    if (!isset($res['jobLocation']['address']['addressRegion'])) {
 		$res['jobLocation']['address']['addressRegion'] = __('Bavaria','rrze-jobs');
@@ -295,50 +262,39 @@ class BITE extends Provider {
 		 */
 	    
 	
-	 
-	 // employmentType
-	  $typeliste = array();
-	 if (!empty($jobdata['Teilzeit'])) {
-	     if ($jobdata['Teilzeit'] == 'Vollzeit') {
-		  $res['text_workingtime'] = __('Full time', 'rrze-jobs');		
-		 $typeliste[] = 'FULL_TIME';
-	     } else {
-		  $res['text_workingtime'] = __('Part time', 'rrze-jobs');
-		 $typeliste[] = 'PART_TIME';
-	     }
-	 }
-	 			 
 
-	 
-	 
-	  if ((!empty($jobdata['BeschaeftigungDauer'])) || (isset($jobdata['BeschaeftigungDauer'])) ){
-	     if (($jobdata['BeschaeftigungDauer'] == 'befristet') || (!empty($jobdata['BeschaeftigungDauer']))) {
-		 $typeliste[] = 'TEMPORARY';
-		 $res['text_befristet'] = __('Temporary employment','rrze-jobs');
-	     }
-	 } 
-	if ((isset($jobdata['BefristetFuer'])) && (!empty($jobdata['BefristetFuer']))) {  
-	      $res['text_befristet'] = __('Temporary employment until','rrze-jobs').' '.$jobdata['BefristetFuer']. " ".__('monthes','rrze-jobs');
-	}
+	 // hiringOrganization   (type: Organzsation)
+	    // aus orgunit und oder orgname generieren	    
+	    // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
+	    if (isset($jobdata['custom']['hiringorganization'])) {
+		if (isset($jobdata['custom']['hiringorganization']['title'])) {
+		    $res['employmentUnit']['name'] = $jobdata['custom']['hiringorganization']['title'];
+		    $res['hiringOrganization']['name'] = $jobdata['custom']['hiringorganization']['title'];
+		}
+		if (isset($jobdata['custom']['hiringorganization']['url'])) {
+		    $res['employmentUnit']['url'] = $jobdata['custom']['hiringorganization']['url'];
+		    $res['hiringOrganization']['url'] = $jobdata['custom']['hiringorganization']['url'];
+		}
+	    }
+	    if (isset($jobdata['custom']['contact_email'])) {
+		$res['employmentUnit']['email'] = $jobdata['custom']['contact_email'];
+	    } 
+	    if (isset($jobdata['custom']['contact_tel'])) {
+		$res['employmentUnit']['telephone'] = $jobdata['custom']['contact_tel'];
+	    } 
 
-	 
-	 $res['employmentType'] = $typeliste;
-
-	 
-	    // aus type2 bestimmt, muss aber einen oder mehrere der folgenden
-	    // Werte enthalten:
-	    /*
-		FULL_TIME
-		PART_TIME
-		CONTRACTOR
-		TEMPORARY
-		INTERN
-		VOLUNTEER
-		PER_DIEM
-		OTHER
-	    */
-	    // Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
 	    
+	    
+	    
+	    $res['estimatedSalary'] = '';
+	
+	  if ((empty($res['estimatedSalary'])) && (isset($jobdata['custom']['festbetrag'])) && (!empty($jobdata['custom']['festbetrag']))) {
+	       $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['custom']['festbetrag']);
+	  }
+	
+
+	
+
 	
 	 // workHours
 	  // wenn type4 gesetzt (Vormittags / nachmittags)
@@ -347,40 +303,20 @@ class BITE extends Provider {
 	    // 'sd':  Schichtdienst
 	    // 'bd':  Bereitsschaftsdienst
 	    // + wstunden
-	$res['workHours'] = '';
-	 
-	if ((isset($jobdata['WochenarbeitszeitArbeitnehmer'])) && (!empty($jobdata['WochenarbeitszeitArbeitnehmer'])))  {
-	      $res['workHours'] = $jobdata['WochenarbeitszeitArbeitnehmer'].' '.__('hours per week','rrze-jobs');
-	} elseif ((isset($jobdata['WochenarbeitszeitBeamter'])) && (!empty($jobdata['WochenarbeitszeitBeamter']))) {
-	     $res['workHours'] = $jobdata['WochenarbeitszeitBeamter'].' '.__('hours per week','rrze-jobs');
+	$res['workHours'] = '';	 
+	
+	
+	if ((isset($jobdata['custom']['job_workhours'])) && (!empty($jobdata['custom']['job_workhours'])))  {
+	     $res['workHours'] = $jobdata['custom']['job_workhours'].' '.__('hours per week','rrze-jobs');
 	}
-
-	  
-	 
-	// Gruppe / Kategorie der Stelle  
-	if ((isset($jobdata['Aufgabenbereiche'])) && (!empty($jobdata['Aufgabenbereiche']))) {
-	    $res['occupationalCategory'] = $jobdata['Aufgabenbereiche'];
-	}
-	
-	
-	
-	if ((isset($jobdata['Studiengaenge'])) && (is_array($jobdata['Studiengaenge']))) {
-	    $qualification = '';
-	    foreach ($jobdata['Studiengaenge'] as $num => $studium) {
-		if (!empty($qualification)) {
-		    $qualification .= ', ';
-		}
-		$qualification .= $studium['Studiengang'].' ('.$studium['AbschlussStudium'].')';
-		
+	if ((isset($jobdata['custom']['workhours'])) && (!empty($jobdata['custom']['workhours'])))  {
+	    if (!empty($res['workHours'])) {
+		$res['workHours'] .= ', ';
 	    }
-	    $res['qualifications'] = '<p>'.$qualification.'</p>';
-	    
+	    $res['workHours'] .= $jobdata['custom']['workhours'];
 	}
-	  
-	if ((isset($jobdata['AnzahlStellen'])) && ($jobdata['AnzahlStellen'] > 0)) {
-	      $res['totalJobOpenings'] = $jobdata['AnzahlStellen'];
-	}
-	 
+  
+
 	
 	return $res;
     }
@@ -402,7 +338,7 @@ class BITE extends Provider {
 	      return $aRet;
 	 }
 	 $response = $this->get_data("get_list", $params);
-	 
+
 	 if ($response['valid'] == true) {
 	     
 	     // After i got the list from interamt, i have to get the detail 
@@ -412,26 +348,26 @@ class BITE extends Provider {
 	     
 	     $singleparams = $params;
 	     
-	     if ((isset($response['content']['Anzahltreffer']) && ((intval($response['content']['Anzahltreffer']) > 0)))) {
+	     if ((isset($response['content']['total']) && ((intval($response['content']['total']) > 0)))) {
 		 
 		 
-		 if (isset($response['content']['Stellenangebote'])) {
-		    foreach ($response['content']['Stellenangebote'] as $num => $pos) {
-			$singleparams['get_single']['id'] = $pos['Id']; 
+		 if (isset($response['content']['entries'])) {
+		    foreach ($response['content']['entries'] as $num => $pos) {
+			$singleparams['get_single']['id'] = $pos['id']; 
 			
 			$singledata = $this->get_single($singleparams, false);
 			
 			if ($singledata['valid'] == true) {
-			    $response['content']['Stellenangebote'][$num] = $singledata['content'];
+			    $response['content']['entries'][$num] = $singledata['content'];
 			}
-			
+			break;
 		    }
 		 }
 		  
 	     
 
 	     
-	   } elseif ((isset($response['content']['Anzahltreffer']) && ((intval($response['content']['Anzahltreffer']) == 0)))) {
+	   } elseif ((isset($response['content']['total']) && ((intval($response['content']['total']) == 0)))) {
 		   $aRet = [
                     'valid' => false,
                     'error' => 'No entry',
@@ -470,12 +406,18 @@ class BITE extends Provider {
 	 
 
 	 $response = $this->get_data("get_single", $params);
-	 
+
 	 if ($response['valid'] === true) {
-	     
-	     if ((is_array($response['content'])) && (!empty($response['content']))) {
-		 
-		 
+	      if ((is_array($response['content'])) && (isset($response['content']['code'])) && ($response['content']['code'] >= 400)) {
+		    $aRet = [
+                    'valid' => false,
+		    'code'  => $response['content']['code'],
+		    'error' => $response['content']['messsage'],
+		    'params_given'   => $params,
+                    'content' => ''
+		];
+		return $aRet;
+	      } elseif ((is_array($response['content'])) && (!empty($response['content']))) {
 		$response['content'] = $this->sanitize_sourcedata($response['content']);  
 		if ($parse) {
 		    $response['content'] = $this->map_to_schema($response['content']);
@@ -512,9 +454,13 @@ class BITE extends Provider {
 	     
 	     if ((!empty($uriname)) && (!empty($urivalue))) {
 		 if (!empty($uri)) {
-		     $uri .= '&';
+		     $uri .= '/';
 		 }
-		 $uri .= $uriname.'='.$urivalue;
+		 if ($uriname == 'id') {
+		      $uri .= $urivalue;
+		 } else {
+		     $uri .= $uriname.'/'.$urivalue;
+		 }
 	     }
 	 }
 	 
@@ -549,15 +495,43 @@ class BITE extends Provider {
 	     return $diff;
 	 }
 	 
+	 if ((!isset($params['request-header']['headers']['BAPI-Token'])) || (empty($params['request-header']['headers']['BAPI-Token']))) {
+	     return $this->request_args; 
+	 }
+	 
 	 
 	return true;
     }
     
+    // update and returns the request args
+    private function get_request_args($params) {
+	if ((isset($params)) && (isset($params['request-header']))) {
+	    // $params['request-header']['headers']['BAPI-Token']
+	    foreach ($params['request-header'] as $name => $value) {
+		if (is_array($value)) {
+		    foreach ($value as $subname => $subval) {
+			$this->request_args[$name][$subname] = $subval;
+		    }
+		} else {
+		    
+		    $this->request_args[$name] = $value;
+		}
+		
+	    }
+	}
+	return $this->request_args;
+    }
+    
+    
+   
     // get the raw data from provider by a a method and parameters
+    // https://api.b-ite.io/docs/#/jobpostings/get_jobpostings
     public function get_data($method = 'get_list', $params) { 
 	$uri = $this->get_uri($method,$params);
-	$url = $this->api_url.'?'.$uri;
-	
+	$url = $this->api_url;
+	if ($uri) {
+	    $url .= '/'.$uri;
+	}
 	
 	$cache = new Cache();
 	
@@ -570,37 +544,68 @@ class BITE extends Provider {
 	
 	$cache->set_cachetime($cachetime);
 
-	if (isset($params[$method]['apikey'])) {
-	    $apikey = $params[$method]['apikey'];
-	} 
+	$id = '';
 	if ((isset($params[$method]['id'])) && (!isset($params[$method]['apikey']))) {
-	    $apikey = $params[$method]['id'];
+	    $id = $params[$method]['id'];
 	}  
-	if (isset($apikey)) {
-	    $this->request_args['headers']['BAPI-Token'] = $apikey;
+	if (empty($id)) {
+		if (isset($params['request-header']['headers']['BAPI-Token'])) {
+	//	    $id = $params['request-header']['headers']['BAPI-Token'];
+		}	    
 	}
-	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
-	if ($cachedout) {
-	    return $cachedout;
-	}
-	$remote_get    = wp_safe_remote_get( $url , $this->request_args);
+
 	
-	if ( is_wp_error( $remote_get ) ) {	
+	$request_args = $this->get_request_args($params);
+	
+//	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
+//	if ($cachedout) {
+//	    return $cachedout;
+//	}
+
+    
+	if ($method == 'get_list') {
+		$filter = '{
+		    "filter": {
+			"standard": {  "active": true }
+		    }
+		  }';
+
+		  $post_args = $request_args;
+		  $post_args['body'] = $filter;
+		  $url .= '/search';
+
+		 $remote_get    =  wp_safe_remote_post($url, $post_args);
+	} else {
+		$remote_get    = wp_safe_remote_get( $url , $request_args);
+	}	
+
+
+	if ( is_wp_error( $remote_get ) ) {	 
 		 $aRet = [
                     'valid' => false,
                     'content' => $remote_get->get_error_message()
                 ];
 		return $aRet;
          } else {
-	     $content = json_decode($remote_get["body"], true);
+	     $content = json_decode($remote_get["body"], true);	     
+	      if (isset($content['code']) && ($content['code'] >= 400)) {
+		  $aRet = [
+                    'valid' => false,
+                    'error' => $content['message'],
+		    'code'   => $content['code'],
+		    'params_given'   => $params,
+		    'content'	=> ''
+                ];
+		return $aRet;
+	     }
 	     
 	     $aRet = [
 		    'request'	=> $url,
                     'valid'	=> true,
-                    'content'	=> $content,
+                    'content'	=> $content
               ];
-	     
-	     $cache->set_cached_job('BITE',$id,'',$method, $aRet);
+	          
+	//     $cache->set_cached_job('BITE',$id,'',$method, $aRet);
 	     
 	     return $aRet;
 	  }
@@ -616,29 +621,22 @@ class BITE extends Provider {
 	 if (empty($data)) {
 	     return false;
 	 }
-	 if (isset($data['Stellenangebote'])) {
+	 
+	 if (isset($data['entries'])) {
 	     // wird bei der Indexabfrage geliefert
-	     foreach ($data['Stellenangebote'] as $num => $job) {
+	     foreach ($data['entries'] as $num => $job) {
 		 if (is_array($job)) {
 		    foreach ($job as $name => $value) {
 			switch($name) {
 
-			    case 'StellenBezeichnung':
-			    case 'Behoerde':
-			    case 'Ort':
-				 $value = sanitize_text_field($value);
+			    case 'id':
+				$value = $this->sanitize_bite_id($value);
 				break;
-			    case 'Id':
-			    case 'AnzahlStellen':
-				$value = $this->sanitize_type('number',$value);	
-				break;
-			    case 'url':
-				$value = sanitize_url($value);	
-				break;
+			  
 
 			}
 			
-			$data['Stellenangebote'][$num][$name] = $value;
+			$data['entries'][$num][$name] = $value;
 		    }
 
 		    
@@ -649,39 +647,89 @@ class BITE extends Provider {
 	       foreach ($data as $key => $value) {
 		   if (!is_array($value)) {
 			switch($key) {
-			    case 'Kennung':
-			    case 'Stellenbezeichnung':
-			    case 'StellenangebotBehoerde':
-			    case 'BeschaeftigungsBereichBundesland':
-			    case 'Aufgabenbereiche':
-			    case 'Fachrichtung':
-			    case 'Teilzeit':
-			    case 'TarifEbeneVon':
-			     case 'TarifEbeneBis':
-			     case 'BesoldungGruppeVon':
-			     case 'BesoldungGruppeBis':   
-				 $value = sanitize_text_field($value);
-				 break;
-			    case 'Beschreibung':
-				 $value = $this->sanitize_html_field($value);
-				 break;
-			     case 'BewerbungUrl':
-				 $value = sanitize_url($value);	
-				 break;
-			    case 'DatumLetzteAenderung':
-			    case 'DatumOeffentlichAusschreiben':
-			    case 'DatumBewerbungsfrist':
-			    case 'DatumBesetzungZum':
-				  $value = $this->sanitize_dates($value);	
-				 break;
-			    case 'Id':
-			    case 'AnzahlStellen':	
-				 $value = $this->sanitize_type('number',$value);	
-				 break;
+			    case 'job_intern':
+			    case 'befristung':
+			    case'active':
+				$value = $this->sanitize_bool($value);
+				break;
+				
+			    case 'id':
+				$value = $this->sanitize_bite_id($value);
+				break;
+			
+			    case 'anr':	
+				$value = $this->sanitize_type('number',$value);		
+				break;
+			    
+			    case 'aufgaben':
+			    case 'einleitung':
+			    case 'stellenzusatz':
+			    case 'profil':
+			    case 'job_qualifications_nth':
+			    case 'job_experience':
+			    case 'wir_bieten':
+			    case 'description':
+			    case 'abschlusstext':
+				$value = $this->sanitize_markdown_field($value);
+				break;
+			     case 'hiringorganization':
+				$value = $this->sanitize_custom_org($value);
+				break;
+			
+			    case 'workhours':
+				$value = $this->sanitize_bite_arbeitszeit($value);
+				break;
+			    
+			    case 'job_limitation_reason':
+				$value = $this->sanitize_bite_limitation_reason($value);
+				break;
+			    
+			    case 'zuordnung':
+				$value = $this->sanitize_bite_group($value);
+				break; 
+			    case 'job_limitation_duration':
+				$value = $this->sanitize_type('number',$value);		
+				break; 
+			
+			    case 'jobstartdate':
+				 $value = $this->sanitize_dates($value);	
+				break;
+			    
+			    case 'employmenttype':
+				 $value = $this->sanitize_bite_employmenttype($value);	
+				break;
+			    case 'beschaeftigungsumfang':
+				 $value = $this->sanitize_bite_beschaeftigungsumfang($value);	
+				break;	
+			    
+			    case 'identification':
+			    case 'ausschreibungskennziffer':
+				 $value = $this->sanitize_bite_kennziffer($value);	
+				break;
+				
+			    case 'locale':
+			    case 'jobposting_language':
+				$value = $this->sanitize_lang($value);
+				break;    
+			   
 
 			     default:
 				     $value = sanitize_text_field($value);
 			}
+		   } else {
+		       
+		       switch($key) {
+			   case 'location':
+			   case 'custom': 
+				$value = $this->sanitize_sourcedata($value);
+				break;
+			   case 'content':
+			   case 'channels':
+				break;
+			    default:
+				$value = $this->sanitize_sourcedata($value);    
+			    
+		       }
 		   }
 		   $data[$key] = $value;
 	       }
@@ -692,129 +740,154 @@ class BITE extends Provider {
      } 
      
      
-     // Interamt kennt zwar eine Application-URl in dem Feld "BewerbungUrl",
-     // allerdings ist dieser nur besetzt,w enn man den Bewerbungsprozess bei Interamt durchführt.
-     // Bewerbungsinformationen werden daher in der Regel im Text der Ausschreibung ergänzt.
-     // Diese Funktion soll versuchen, die URl bzw. die E-Mail zur Bewerbung zur ermitteln.
-     // 
-     // returns array with keys 'url' , 'email', 'directApply' and 'email_subject' 
-  
      
-     private function get_interamt_application_contact($jobdata) {
-
-	 $res['url'] = '';
-	 $res['email'] = '';
-	 $res['directApply'] = false;
-	 $res['email_subject'] = '';
+     // sanitize der Kennziffer
+     private function sanitize_bite_kennziffer($key) {
+	 $key = preg_replace('/[^A-Za-z0-9\-]+$/i', '', $key);
+	 return $key;
+     }
+     
+     
+        // check for valid bite ids
+     private function sanitize_bite_id($key) {
+	 $key = preg_replace('/[^A-Za-z0-9\-]+$/i', '', $key);
+	 return $key;
+     }
+     
+     // employment type aus custom.employmenttype , nicht aus seo
+     private function sanitize_bite_employmenttype($value) {
+	 $options = array(
+	     	 'unlimited'    => __('unlimited','rrze-jobs'),
+		 'temporary'    => __('temporary', 'rrze-jobs')
+	 );
+	 if (!empty($value)) {
+	     $value = trim(strtolower($value));
+	     
+	     
+	     if (isset($options[$value])) {
+		 return $options[$value];
+	     } else {
+		 // es kann sein, dass hier leider nicht die Keys übergeben wurden, sondern der lange String.
+		  $value = sanitize_text_field($value);
+		  return $value;
+	     }
+	 }
+	 return '';
 	 
-	 if ((isset($jobdata['BewerbungUrl'])) && (!empty($jobdata['BewerbungUrl']))) {
-	     // nevertheless, look into the desired field...
-	    if (filter_var($jobdata['BewerbungUrl'], FILTER_VALIDATE_URL) !== FALSE) {
-		$res['url'] = $jobdata['BewerbungUrl'];
-	    } elseif (is_email($jobdata['BewerbungUrl'])) {
-		$res['email'] = $jobdata['BewerbungUrl'];
-	    }
+     }
+     
+      // employment type aus custom.beschaeftigungsumfang , nicht aus seo
+     private function sanitize_bite_beschaeftigungsumfang($value) {
+	 $options = array(
+		'01_vollzeit'    =>  __('Full time', 'rrze-jobs'),
+		 'teil'    =>  __('Part time', 'rrze-jobs')
+	 );
+	 if (!empty($value)) {
+	     $value = trim(strtolower($value));
+	     
+	     
+	     if (isset($options[$value])) {
+		 return $options[$value];
+	     } else {
+		 // es kann sein, dass hier leider nicht die Keys übergeben wurden, sondern der lange String.
+		  $value = sanitize_text_field($value);
+		  return $value;
+	     }
+	 }
+	 return '';
+	 
+     }
+     
+     
+        // ubersetze die Auswahlliste für die optionale Begründung befrister Stellen
+     private function sanitize_bite_limitation_reason($value) {
+	  $options = array(
+		 'vertr' => __('Replacement', 'rrze-jobs'), // 'Vertretung',
+		 'schwanger' => __('Maternity leave replacement', 'rrze-jobs'), // 'Mutterschutzvertretung', 
+		 'eltern' => __('Maternity/parental leave replacement', 'rrze-jobs'), // 'Mutterschutz- / Elternzeitvertretung',
+		 'forsch' => __('Limited research project', 'rrze-jobs'), // 'befristetes Forschungsvorhaben',
+	         'projekt' => __('Project', 'rrze-jobs'), // Projekt
+		 'krankh' => __('Sickness replacement', 'rrze-jobs'), // 'befristetes Krankheitsvertretung',
+		 'zeitb'  => __('Temporary officials', 'rrze-jobs'), // 'Beamtenschaft auf Zeit'
+	      
+	 );
+	  
+	   
+	 
+	  
+	 if (!empty($value)) {
+	     $value = trim(strtolower($value));
+	     
+	     
+	     if (isset($options[$value])) {
+		 return $options[$value];
+	     } else {
+		 // es kann sein, dass hier leider nicht die Keys übergeben wurden, sondern der lange String.
+		  $value = sanitize_text_field($value);
+		  return $value;
+	     }
+	 }
+	 return '';
+     }
+     
+     
+     // ubersetze die Auswahlliste für die ARbeitszeiten
+     private function sanitize_bite_arbeitszeit($value) {
+	 $options = array(
+	     	 'nach_vereinbarung'    =>  __('By arrangement', 'rrze-jobs'),
+		 'vormittags'    =>  __('Morning times', 'rrze-jobs'),
+		 'nachmittags'    =>  __('Afternoon times', 'rrze-jobs')
+	 );
+	 if (!empty($value)) {
+	     $value = trim(strtolower($value));
+	     if (isset($options[$value])) {
+		 return $options[$value];
+	     }
+	 }
+	 return '';
+	 	
+     }
+     
+     
+     // check for select value of group and translate into the desired long form
+     private function sanitize_bite_group($group) {
+	 $res = '';
+	 if (empty($group)) {
+	     return $res;
+	 }
+	 switch($group) {
+	     case 'wiss':
+		 $res = __('Research & Teaching', 'rrze-jobs');
+		 break;
+	     case 'verw':
+	     case 'tech':
+	     case 'pflege':
+	     case 'arb':
+	     case 'n-wiss':
+		 $res = __('Technology & Administration', 'rrze-jobs');
+		 break;
+	     case 'azubi':
+		 $res = __('Trainee', 'rrze-jobs');
+		 break;
+	     
+	     case 'hiwi':
+		 $res = __('Student assistants', 'rrze-jobs');
+		 break;
+	     
+	     case 'aush':
+	     case 'other':
+		 $res = __('Other', 'rrze-jobs');
+		  break;
+	      
+	     default:
+		 $res = __('Other', 'rrze-jobs');
 	 }
 	 
-	 if ((empty($res['url'])) && (empty($res['email']))) {
-	     // try to negotiate it from the description
-	     
-	     // we splut the text into parts followed by the usual keywords and take the last one
-	     // to look for an email or url.
-	     $textparts = preg_split('/(Bewerbung|bewerben|apply|Application)\b/i', $jobdata['Beschreibung']);
-	     $lastpart = $textparts[array_key_last($textparts)];
-	     
-	     $lookforurl = $this->get_interamt_application_url_by_text($lastpart);
-	     if (!empty($lookforurl)) {
-		 $res['url'] = $lookforurl;
-	     }
-	     // also use the text for geting the email subject, if we need it later 
-	     $lookformail = $this->get_interamt_application_mail_by_text($lastpart);
-	     if (!empty($lookformail)) {
-		 $res['email'] = $lookformail;
-	     }
-	     
-	     
-	     
-	    $res['email_subject'] = $this->get_application_subject_by_text($lastpart);
-	 }
-	 
-	 
-	 
-	if ((isset($jobdata['Kennung'])) && (!empty($jobdata['Kennung']))) {
-	    // Kennung enthält bei Interamt einen Betreff für Bewerbungen
-	    // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden. 
-	    // this will overwrite the previous negotiated text
-	      $res['email_subject'] = $jobdata['Kennung'];
-	}
-
-
-	
-	if ((!empty($res['url'])) || (!empty($res['email']))) {
-	   $res['directApply'] = true;  
-	}
-	
-	// if every negotiation fails, we try to use the contact mail adress
-	// as fallback for the email
-	if ((empty($res['email'])) && (isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail']))) {
-	    $res['email'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
-	}  
-	    
-	return $res;
-	 
-	 
+	 return $res;
      }
      
      
-     
-          // searchs for an URL in the text and returns the first hit
-     private function get_interamt_application_url_by_text($text) {
-	$res = '';
-	if (!empty($text)) { 
-	    preg_match_all('/<a href="([a-z0-9\/:\-\.\?\+]+)">([^<>]+)<\/a>/i', $text, $output_array);
-	 
-	    if (!empty($output_array)) {
-		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		 
-		    if (filter_var($output_array[1][0], FILTER_VALIDATE_URL) !== FALSE) {
-			$res = $output_array[1][0];
-		    }
-		}
-	    }
-	}
-	return $res; 
-     }
-      // searchs for an URL in the text and returns the first hit
-     private function get_interamt_application_mail_by_text($text) {
-	$res = '';
-	if (!empty($text)) { 
-	    preg_match_all('/<a href="mailto:([@a-z0-9\/:\-\.]+)">([^<>]+)<\/a>/i', $text, $output_array);
-	 
-	    if (!empty($output_array)) {
-		if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-		    if (is_email($output_array[1][0])) {
-			$res = $output_array[1][0];
-		    }
-		}
-	    }
-	    
-	    if (empty($res)) {
-		// look in case the email is written as text in <strong> instead of <a>...
-		 preg_match_all('/<strong>([a-z0-9\-\.]+@[a-z0-9\-\.]+)<\/strong>/i', $text, $output_array);
-	 
-		if (!empty($output_array)) {
-		    if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
-			if (is_email($output_array[1][0])) {
-			    $res = $output_array[1][0];
-			}
-		    }
-		}
-	    }
-	}
 
-	return $res; 
-     }
-     
 
 }
 

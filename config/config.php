@@ -215,6 +215,14 @@ function getFields() {
                 'type' => 'text',
                 'default' => __("Necessary qualifications", 'rrze-jobs'),
             ],
+	     [
+                'name' => 'job_headline_qualifications_experience',
+                'label' =>__('Label for','rrze-jobs').' '.__("Optional experience", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Optional experiences", 'rrze-jobs'),
+            ],
+
             [
                 'name' => 'job_headline_qualifications_optional',
                 'label' => __('Label for','rrze-jobs').' '.__("Desirable qualifications", 'rrze-jobs'),

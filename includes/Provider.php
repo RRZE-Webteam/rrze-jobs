@@ -11,13 +11,15 @@ namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Jobs\Parsedown;
+use RRZE\Jobs\OrgData;
 
 class Provider {
     var $name;
     var $version;
     var $url; 
 
-    public $systems = [ "UnivIS", "Interamt" ];
+    public $systems = [ "UnivIS", "Interamt", "BITE" ];
     private $common_methods = ["get_list", "get_single"];
     
     
@@ -66,6 +68,8 @@ class Provider {
     }
     
     
+    
+    
     // merge all positions from different provider, if there are more as one
     public function merge_positions() {
 	if ((!isset($this->positions)) || (empty($this->positions))) {
@@ -75,6 +79,7 @@ class Provider {
 	$res = array();
 	$positionlist = array();
 	$truecounter = 0;
+	$poscounter = 0;
 	
 	foreach ($this->positions as $providername => $provider) {
 	    if (isset($provider['request'])) {
@@ -87,8 +92,11 @@ class Provider {
 		if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {		    
 		    foreach ($provider['content']['JobPosting'] as $num => $posdata) {
 			  $res['positions'][] = $posdata;
+			  $poscounter++;
 		    }
-		}   
+		} else {
+	//	    $res['unused-data'][$providername] = $provider['content'];
+		} 
 	    } else {
 		 $res['status'][$providername]['error'] = $provider['error'];
 		 $res['status'][$providername]['code'] = $provider['code'];
@@ -104,7 +112,9 @@ class Provider {
 	} else {
 	    $res['valid'] = false;
 	}  
-	if (count($this->positions) > 1) {
+	
+
+	if ((count($this->positions) > 1) && ($poscounter > 0)) {
 	    // check for duplicate posts
 	    
 	    // a job is duplicate if all the folowing fields together are 
@@ -238,8 +248,79 @@ class Provider {
 	 }
 	 return $value;
      }
+         
+    // sanitize boolean thingis
+    public function sanitize_bool($value) {
+	
+	if (is_bool($value) === true) {
+	    return $value;
+	}
+	
+	if ((!isset($value)) || (empty($value))) {
+	     return false;
+	}
+	
+	
+	$val = strtolower($value);
+	
+	if (strpos($val, 'ja') !== false 
+		|| strpos($val, 'yes') !== false 
+		|| strpos($val, '1') !== false ) {
+		return true;
+
+	}
+	return false;
+     }
      
      
+     // sanitize org numbers to their name, if know.
+     // TODO: this needs a translation table, thats dependend on the customer
+     public function sanitize_custom_org($value) {
+	 $value = sanitize_text_field($value);
+	 
+	 $orgdata = new OrgData();
+	 
+	 $orginfo = $orgdata->get_org($value);
+	 if ($orginfo !== false) {
+	     return $orginfo; // $orginfo['title'];
+	 }
+	 
+	 return $value;
+     }
+     
+    // sanitize markdown text input
+     public function sanitize_markdown_field($dateinput) {
+	 // first translate input into markdown, then sanitize with html sanitizer
+	 $Parsedown = new Parsedown();
+	 
+	$dateinput = preg_replace('/\\$/m', '', $dateinput);
+
+	 $html = $Parsedown->text($dateinput);
+	 return $this->sanitize_html_field($html);
+	 
+     }
+     
+     // check for the language tag
+     public function sanitize_lang($lang) {
+	 $res = 'de';
+	 if (empty($lang)) {
+	     return $res;
+	 }
+	 switch($lang) {
+	     case 'de':
+	     case 'en':
+	     case 'es':
+	     case 'fr':
+	     case 'zh':
+	     case 'ru':
+		 $res = $lang;
+		 break;
+	     default:
+		 $res = 'de';
+	 }
+	 
+	 return $res;
+     }
     // sanitize html text input
      public function sanitize_html_field($dateinput) {
 	$allowed_html = array(
@@ -275,7 +356,9 @@ class Provider {
      public function sanitize_dates($dateinput) {
 	$res = '';
 	if (!empty($dateinput)) {
-	    if (preg_match("/\d{4}-\d{2}-\d{2}\s*$/", $dateinput, $parts)) {
+	    if (preg_match("/(\d{4}-\d{2}-\d{2})T([0-9:]+)/", $dateinput, $parts)) {
+		$dateinput = $parts[1];
+	    } elseif (preg_match("/\d{4}-\d{2}-\d{2}\s*$/", $dateinput, $parts)) {
                 $dateinput = $parts[0];
             } elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $dateinput, $parts)) {
                 $dateinput = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
@@ -283,9 +366,10 @@ class Provider {
 		$dateinput = '20'.$parts[3] . '-' . $parts[2] . '-' . $parts[1];
 	    } elseif (preg_match("/(\d{4}-\d{2}-\d{2}) ([0-9:]+)/", $dateinput, $parts)) {
 		 $dateinput = $parts[1] . ' '.$parts[2];
-	    }
+	     }
 
 	    $res = date('d.m.Y', strtotime($dateinput));
+	    
 	  //  $res = $dateinput;
 	}
 	return $res;
