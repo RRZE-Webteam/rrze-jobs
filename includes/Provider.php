@@ -293,7 +293,7 @@ class Provider {
 	 // first translate input into markdown, then sanitize with html sanitizer
 	 $Parsedown = new Parsedown();
 	 
-	$dateinput = preg_replace('/\\$/m', '', $dateinput);
+	$dateinput = preg_replace('/\\\s*$/m', ' ', $dateinput);
 
 	 $html = $Parsedown->text($dateinput);
 	 return $this->sanitize_html_field($html);
@@ -341,10 +341,19 @@ class Provider {
 	    'li'  => array(),
 	    'dl'  => array(),
 	    'dd'  => array(),
-	    'dt'  => array() 
+	    'dt'  => array(),
+	     'h3'  => array(), 
+	     'h4'  => array(),
+	     'h5'  => array(), 
+	     'h6'  => array() 
 	);
+	// before we remove all unwanted html, we search for h1 and h2 to map
+	// them to h3.
+	$dateinput = preg_replace('/<h(1|2)\s*([^>]*)>/m', '<h3>', $dateinput);
+	$dateinput = preg_replace('/<\/h(1|2)>/m', '</h3>', $dateinput);
 	$value = wp_kses($dateinput,$allowed_html);
-	
+
+
 	$value = preg_replace('/<\/p>[\s\t\n\r]+<p>/i', '</p><p>', $value);
 	$value = preg_replace('/<p>[\s\t\n\r]+<\/p>/i', '', $value);
 	$value = trim($value);

@@ -161,20 +161,52 @@ class BITE extends Provider {
 	 
 	  
 	   // identifier
-	  $res['identifier'] = $jobdata['identification'];
-	 
-	 
+	  $res['identifier'] = $jobdata['id'];
+	  if (isset($jobdata['custom']['identification'])) {
+	    $res['identifier'] = $jobdata['custom']['identification'];
+	  }
+	  
 	 // employmentType
 	  $typeliste = array();
+	  $beschaeftigungsumfang = '';
 	  if ((isset($jobdata['seo'])) && (isset($jobdata['seo']['employmentType']))) {
 	  //    $typeliste = $jobdata['seo']['employmentType'];
 	      foreach ($jobdata['seo']['employmentType'] as $val) {
 		  if (!empty($val)) {
-		      $typeliste[] = strtoupper($val);
+		      $val =  strtoupper($val);
+		      $typeliste[] = $val;
+		      
+		      if ($val == 'FULL_TIME') {
+			  if (!empty($beschaeftigungsumfang)) {
+			      $beschaeftigungsumfang = ', ';
+			  }
+			  $beschaeftigungsumfang = __('Full time', 'rrze-jobs');
+		      }
+		      if ($val == 'PART_TIME') {
+			  if (!empty($beschaeftigungsumfang)) {
+			      $beschaeftigungsumfang = ', ';
+			  }
+			  $beschaeftigungsumfang = __('Part time', 'rrze-jobs');
+		      }
+		      if ($val == 'TEMPORARY') {
+			   $res['text_befristet'] = __('Temporary employment','rrze-jobs');
+		      }
+		      
+		      
+		      
 		  }
 	      }
 	  }
+	 if (!empty($beschaeftigungsumfang)) {
+	       $res['text_workingtime']  = $beschaeftigungsumfang;
+	 }
 	 
+	 if ((isset($jobdata['custom']['beschaeftigungsumfang'])) && (!empty($jobdata['custom']['beschaeftigungsumfang']))) {
+	     $res['text_workingtime'] = $jobdata['custom']['beschaeftigungsumfang'];
+	 }
+
+	  
+	  
 	 $res['employmentType'] = $typeliste;
 
 	    //  muss aber einen oder mehrere der folgenden
@@ -200,23 +232,27 @@ class BITE extends Provider {
 	
 	
 	
-	  if (isset($jobdata['active']) && ($jobdata['active']==true)  && (isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
+	  if ((isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
 	       // datePosted
 	       $res['datePosted'] = $jobdata['channels']['channel0']['from'];
 	         // validThrough
 	       $res['validThrough'] = $jobdata['channels']['channel0']['to'];
 	       
-	       if (isset($jobdata['channels']['channel0']['application'])) {
-		   $res['applicationContact']['url'] = $jobdata['channels']['channel0']['application'];
+	       if (isset($jobdata['channels']['channel0']['route']['application'])) {
+		   $res['applicationContact']['url'] = $jobdata['channels']['channel0']['route']['application'];
 	       }
-	         if (isset($jobdata['channels']['channel0']['email'])) {
-		   $res['applicationContact']['email'] = $jobdata['channels']['channel0']['email'];
+	         if (isset($jobdata['channels']['channel0']['route']['email'])) {
+		   $res['applicationContact']['email'] = $jobdata['channels']['channel0']['route']['email'];
 		    if (isset($jobdata['custom']['ausschreibungskennziffer'])) {
 			$res['applicationContact']['email_subject'] = $jobdata['custom']['ausschreibungskennziffer'];
 		    }
 		   
 		   
 	       }
+	         if (isset($jobdata['channels']['channel0']['route']['posting'])) {
+		   $res['url'] = $jobdata['channels']['channel0']['route']['posting'];
+	       }
+	       
 	       $res['directApply'] = true;
 	  }
 	
@@ -307,7 +343,13 @@ class BITE extends Provider {
 	
 	
 	if ((isset($jobdata['custom']['job_workhours'])) && (!empty($jobdata['custom']['job_workhours'])))  {
-	     $res['workHours'] = $jobdata['custom']['job_workhours'].' '.__('hours per week','rrze-jobs');
+	    
+	    if (preg_match_all('/^[0-9,\.]+$/i', $jobdata['custom']['job_workhours'], $output_array)) {
+		$res['workHours'] = $jobdata['custom']['job_workhours'].' '.__('hours per week','rrze-jobs');
+	    } else {
+		$res['workHours'] = $jobdata['custom']['job_workhours'];
+	    }
+	     
 	}
 	if ((isset($jobdata['custom']['workhours'])) && (!empty($jobdata['custom']['workhours'])))  {
 	    if (!empty($res['workHours'])) {
@@ -316,7 +358,24 @@ class BITE extends Provider {
 	    $res['workHours'] .= $jobdata['custom']['workhours'];
 	}
   
+	if (isset($jobdata['custom']['jobstartdate'])) {
+	    
+	    if ($jobdata['custom']['jobstartdate'] == "-1") {
+		$res['jobImmediateStart'] = true;
+		$res['jobStartDate'] = __('As soon as possible','rrze-jobs');
+	    }
+	    
+	    $res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
+	}
 
+
+	if (isset($jobdata['custom']['befristung']) && ($jobdata['custom']['befristung'] == true )  ) {
+	    if ((!empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration'])) ){
+		$res['text_befristet'] = __('Temporary employment until','rrze-jobs').' '.$jobdata['custom']['job_limitation_duration']. " ".__('monthes','rrze-jobs');
+	    }
+	}
+	
+	
 	
 	return $res;
     }
@@ -356,10 +415,13 @@ class BITE extends Provider {
 			$singleparams['get_single']['id'] = $pos['id']; 
 			
 			$singledata = $this->get_single($singleparams, false);
-			
 			if ($singledata['valid'] == true) {
 			    $response['content']['entries'][$num] = $singledata['content'];
 			}
+			
+			echo "<pre>".var_dump($singledata)."</pre>";
+			 echo Helper::get_html_var_dump($singledata);
+			//DEBUG break
 			break;
 		    }
 		 }
@@ -417,8 +479,19 @@ class BITE extends Provider {
                     'content' => ''
 		];
 		return $aRet;
-	      } elseif ((is_array($response['content'])) && (!empty($response['content']))) {
+	      } elseif ((is_array($response['content'])) && (!empty($response['content']))) {	  
 		$response['content'] = $this->sanitize_sourcedata($response['content']);  
+		if ((!isset($response['content']['active'])) || ($response['content']['active'] == false)) {
+		    $aRet = [
+			'valid' => false,
+			'code'  => 401,
+			 'error' => 'Entry not active',
+			'params_given'   => $params,
+			'content' => ''
+		    ];
+		    return $aRet;
+		}
+		
 		if ($parse) {
 		    $response['content'] = $this->map_to_schema($response['content']);
 		}
@@ -692,7 +765,7 @@ class BITE extends Provider {
 				break; 
 			
 			    case 'jobstartdate':
-				 $value = $this->sanitize_dates($value);	
+				 $value = $this->sanitize_bite_jobstartdate($value);	
 				break;
 			    
 			    case 'employmenttype':
@@ -702,6 +775,7 @@ class BITE extends Provider {
 				 $value = $this->sanitize_bite_beschaeftigungsumfang($value);	
 				break;	
 			    
+			    case 'identifier':
 			    case 'identification':
 			    case 'ausschreibungskennziffer':
 				 $value = $this->sanitize_bite_kennziffer($value);	
@@ -739,18 +813,36 @@ class BITE extends Provider {
 	 
      } 
      
+     // sanitize start date
+     // normally we would use a sanitizing for a date. 
+     // But due to wishes of customers, they want to insert also
+     // text like "schnellstmöglich" or so...
+     
+     private function sanitize_bite_jobstartdate($date) {
+	  if (preg_match("/(\d{4}-\d{2}-\d{2})T([0-9:]+)/", $date, $parts)) {
+	      // ok, it looks like a normal date format. Therefor we use the default sanitized
+	      
+	      return $this->sanitize_dates($date);
+	  }
+	  if (preg_match_all('/(schnellstmöglich|sofort|nächstmöglich|as soon|asap)/i', $date, $output_array)) {
+	      return "-1";
+	  }
+	  //ok, maybe its just text, so we sanitize it as text
+	  return sanitize_text_field($date);
+	  
+     }
      
      
      // sanitize der Kennziffer
      private function sanitize_bite_kennziffer($key) {
-	 $key = preg_replace('/[^A-Za-z0-9\-]+$/i', '', $key);
+	 $key = preg_replace('/[^a-z0-9\-]+/i', '', $key);
 	 return $key;
      }
      
      
         // check for valid bite ids
      private function sanitize_bite_id($key) {
-	 $key = preg_replace('/[^A-Za-z0-9\-]+$/i', '', $key);
+	 $key = preg_replace('/[^A-Za-z0-9\-]+/i', '', $key);
 	 return $key;
      }
      
@@ -780,7 +872,8 @@ class BITE extends Provider {
      private function sanitize_bite_beschaeftigungsumfang($value) {
 	 $options = array(
 		'01_vollzeit'    =>  __('Full time', 'rrze-jobs'),
-		 'teil'    =>  __('Part time', 'rrze-jobs')
+		'02_teilzeit'    =>  __('Part time', 'rrze-jobs'),
+		'03_voll_teilzeit'    =>  __('Full or part time', 'rrze-jobs')
 	 );
 	 if (!empty($value)) {
 	     $value = trim(strtolower($value));
@@ -811,10 +904,7 @@ class BITE extends Provider {
 		 'zeitb'  => __('Temporary officials', 'rrze-jobs'), // 'Beamtenschaft auf Zeit'
 	      
 	 );
-	  
-	   
-	 
-	  
+	  	  
 	 if (!empty($value)) {
 	     $value = trim(strtolower($value));
 	     
@@ -839,10 +929,14 @@ class BITE extends Provider {
 		 'nachmittags'    =>  __('Afternoon times', 'rrze-jobs')
 	 );
 	 if (!empty($value)) {
-	     $value = trim(strtolower($value));
-	     if (isset($options[$value])) {
-		 return $options[$value];
+	     $keyvalue = trim(strtolower($value));
+	     if (isset($options[$keyvalue])) {
+		 return $options[$keyvalue];
 	     }
+	     
+	     // ok, maybe another manual input text, so we just sanitize it as text
+	     $value = sanitize_text_field($value);
+	     return $value;
 	 }
 	 return '';
 	 	
