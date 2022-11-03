@@ -87,7 +87,8 @@ class BITE extends Provider {
      // may be used to other purpuses
      private function add_remaining_non_schema_fields($jobdata) {
 	$known_fields = array("assignees", "hash", "emailTemplate", "jobSite", 
-	    "subsidiary", "content", "seo");
+	    "subsidiary", "content", "seo", "title", "location", "custom", 
+	    "description", "locale", "identification", "keywords");
 	    // keynames we already used in schema values or which we dont need anyway
 	
 	
@@ -147,9 +148,8 @@ class BITE extends Provider {
 	  
 
 	   
-	$res['disambiguatingDescription'] = '';
 	if ((isset($jobdata['custom']['wir_bieten'])) && (!empty($jobdata['custom']['wir_bieten']))) {	        
-	      $res['disambiguatingDescription'] = $jobdata['custom']['wir_bieten'];
+	      $res['jobBenefits'] = $jobdata['custom']['wir_bieten'];
 	}
 	  
 
@@ -162,8 +162,8 @@ class BITE extends Provider {
 	  
 	   // identifier
 	  $res['identifier'] = $jobdata['id'];
-	  if (isset($jobdata['custom']['identification'])) {
-	    $res['identifier'] = $jobdata['custom']['identification'];
+	  if (isset($jobdata['identification'])) {
+	    $res['identifier'] = $jobdata['identification'];
 	  }
 	  
 	 // employmentType
@@ -234,9 +234,11 @@ class BITE extends Provider {
 	
 	  if ((isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
 	       // datePosted
-	       $res['datePosted'] = $jobdata['channels']['channel0']['from'];
+	       $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel0']['from']);
 	         // validThrough
-	       $res['validThrough'] = $jobdata['channels']['channel0']['to'];
+	       $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel0']['to']);
+		// Notice: We validate the dates here, cause it might be possible, that we need the original
+	        // time on other functions. So we dont want to remove it in the sanitize-function
 	       
 	       if (isset($jobdata['channels']['channel0']['route']['application'])) {
 		   $res['applicationContact']['url'] = $jobdata['channels']['channel0']['route']['application'];
@@ -251,6 +253,8 @@ class BITE extends Provider {
 	       }
 	         if (isset($jobdata['channels']['channel0']['route']['posting'])) {
 		   $res['url'] = $jobdata['channels']['channel0']['route']['posting'];
+		   $res['sameAs'] = $jobdata['channels']['channel0']['route']['posting'];
+		   
 	       }
 	       
 	       $res['directApply'] = true;
@@ -322,8 +326,74 @@ class BITE extends Provider {
 	    
 	    
 	    
-	    $res['estimatedSalary'] = '';
+	  $res['estimatedSalary'] = '';
 	
+	  
+	  if ((isset($jobdata['custom']['estimatedsalary'])) && (!empty($jobdata['custom']['estimatedsalary']))) {
+	      if (is_array($jobdata['custom']['estimatedsalary'])) {
+		$salary = $to = $from = '';		
+		if (count($jobdata['custom']['estimatedsalary'])> 1) {
+		       $sortarray = $jobdata['custom']['estimatedsalary'];
+		       natsort($sortarray);
+		        $from = array_shift($sortarray);
+			$to  = end($sortarray);
+
+		} else {
+		    $from = array_shift($jobdata['custom']['estimatedsalary']);		     
+		}  
+		 
+		$from = $this->sanitize_tvl($from);
+		$to = $this->sanitize_tvl($to);
+
+		$res['estimatedSalary']  = $this->get_Salary_by_TVL($from, $to);  
+		  
+		 
+	      } else {
+		  $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['custom']['estimatedsalary']);
+	      }
+	    }
+	    
+	    if ((isset($jobdata['custom']['entgelt_ar'])) && (!empty($jobdata['custom']['entgelt_ar']))) {
+	      if (is_array($jobdata['custom']['entgelt_ar'])) {
+		$salary = $to = $from = '';		
+		if (count($jobdata['custom']['entgelt_ar'])> 1) {
+		       $sortarray = $jobdata['custom']['entgelt_ar'];
+		       natsort($sortarray);
+		        $from = array_shift($sortarray);
+			$to  = end($sortarray);
+
+		} else {
+		    $from = array_shift($jobdata['custom']['entgelt_ar']);		     
+		}  
+		 
+		$from = $this->sanitize_besoldung($from);
+		$to = $this->sanitize_besoldung($to);
+		
+		
+		if (empty($res['estimatedSalary'])) {
+		    $res['estimatedSalary']  = $this->get_Salary_by_TVL($from, $to);  
+		}  else {
+		    $res['estimatedSalary']["value"]["value"] .= ', '.$from;
+		    $res['estimatedSalary']["stringvalue"] .= ', '.$from;
+		    if (!empty($to)) {
+			$res['estimatedSalary']["value"]["value"] .= ' - '.$to;
+			$res['estimatedSalary']["stringvalue"] .= ' &mdash; '.$to;
+		    }
+		    
+		}
+		 
+	      } else {
+		  if (empty($res['estimatedSalary'])) {
+		    $res['estimatedSalary'] =  $this->get_Salary_by_TVL($jobdata['custom']['entgelt_ar']);
+		  } else {
+		      $res['estimatedSalary']["value"]["value"] .= ', '.$jobdata['custom']['entgelt_ar'];
+		      $res['estimatedSalary']["stringvalue"] = $res['estimatedSalary']["value"]["value"] ;
+		  }
+	      }
+	  }
+
+	  
+	  
 	  if ((empty($res['estimatedSalary'])) && (isset($jobdata['custom']['festbetrag'])) && (!empty($jobdata['custom']['festbetrag']))) {
 	       $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['custom']['festbetrag']);
 	  }
@@ -333,12 +403,13 @@ class BITE extends Provider {
 
 	
 	 // workHours
-	  // wenn type4 gesetzt (Vormittags / nachmittags)
-	    // ausserdem, wenn gesetzt: 
-	    // 'nd':  Nachtdienst
-	    // 'sd':  Schichtdienst
-	    // 'bd':  Bereitsschaftsdienst
-	    // + wstunden
+	  // wenn job_workhours gesetzt  (=Wann wird gearbeitet und optional wieviel Stunden, wenn Zahlenwert)
+	  // zzgl. workhours (Vormittags / nachmittags), wenn gesetzt, kann ggf. zätzlich zur STundenzahl als job_workhours gesetzt sein
+	    // ausserdem, wenn framework gesetzt: 
+	    //  Nachtdienst
+	    //  Schichtdienst
+	    //   Bereitsschaftsdienst
+
 	$res['workHours'] = '';	 
 	
 	
@@ -358,22 +429,57 @@ class BITE extends Provider {
 	    $res['workHours'] .= $jobdata['custom']['workhours'];
 	}
   
+	
+	if ((isset($jobdata['custom']['framework'])) && (!empty($jobdata['custom']['framework']))) {
+	    $workspec = '';
+	    foreach ($jobdata['custom']['framework'] as $worktyp) {
+		switch($worktyp) {
+		    case 'bereitschaftsdienst':
+		    case 'rufbereitschaft':
+			$workspec .= ', '.__('On-call duty','rrze-jobs');
+			break;
+		    case 'schichtdienst':
+			$workspec .= ', '.__('Shift work','rrze-jobs');
+			break;
+		    case 'nachtdienst':
+			$workspec .= ', '.__('Night duty','rrze-jobs');
+			break;
+		    
+		}
+	    }
+	    if (!empty($workspec)) {
+		$res['workHours'] .= $workspec;
+	    }
+	}
+	
+	  
+	
+	
+	
 	if (isset($jobdata['custom']['jobstartdate'])) {
 	    
 	    if ($jobdata['custom']['jobstartdate'] == "-1") {
 		$res['jobImmediateStart'] = true;
 		$res['jobStartDate'] = __('As soon as possible','rrze-jobs');
+	    } else {
+		$res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
 	    }
 	    
-	    $res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
+	   
 	}
 
 
 	if (isset($jobdata['custom']['befristung']) && ($jobdata['custom']['befristung'] == true )  ) {
 	    if ((!empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration'])) ){
-		$res['text_befristet'] = __('Temporary employment until','rrze-jobs').' '.$jobdata['custom']['job_limitation_duration']. " ".__('monthes','rrze-jobs');
+		$res['text_befristet'] = __('Temporary employment','rrze-jobs').', '.$jobdata['custom']['job_limitation_duration']. " ".__('monthes','rrze-jobs');
 	    }
 	}
+	
+	
+	if (isset($jobdata['keywords'])) {
+	    $res['text_keywords'] = $this->get_array_as_string($jobdata['keywords']);
+	}
+
 	
 	
 	
@@ -406,26 +512,25 @@ class BITE extends Provider {
 	     
 	     
 	     $singleparams = $params;
-	     
+
 	     if ((isset($response['content']['total']) && ((intval($response['content']['total']) > 0)))) {
 		 
-		 
+		 $entries = array();
 		 if (isset($response['content']['entries'])) {
 		    foreach ($response['content']['entries'] as $num => $pos) {
 			$singleparams['get_single']['id'] = $pos['id']; 
 			
 			$singledata = $this->get_single($singleparams, false);
 			if ($singledata['valid'] == true) {
-			    $response['content']['entries'][$num] = $singledata['content'];
+			//    $response['content']['entries'][$num] = $singledata['content'];		    
+			    $entries[] = $singledata['content'];
 			}
 			
-			echo "<pre>".var_dump($singledata)."</pre>";
-			 echo Helper::get_html_var_dump($singledata);
-			//DEBUG break
-			break;
+
 		    }
 		 }
-		  
+		 $response['content']['entries'] = $entries;
+		 $response['content']['public'] = count($entries);
 	     
 
 	     
@@ -492,6 +597,20 @@ class BITE extends Provider {
 		    return $aRet;
 		}
 		
+		if ((isset($content['content']['channels'])) && (isset($content['content']['channels']['channel0']))) {
+		    $public = $this->is_public_by_dates($content['content']['channels']['channel0']['from'], $content['content']['channels']['channel0']['to']);
+		    if ($public == false) {
+			 $aRet = [
+			'valid' => false,
+			'code'  => 401,
+			 'error' => 'Entry not active',
+			'params_given'   => $params,
+			'content' => ''
+		    ];
+		    return $aRet;
+		    }
+		}
+		
 		if ($parse) {
 		    $response['content'] = $this->map_to_schema($response['content']);
 		}
@@ -499,7 +618,7 @@ class BITE extends Provider {
 		  $aRet = [
                     'valid' => false,
 		    'code'  => 404,
-		     'error' => 'No entry',
+		    'error' => 'No entry',
 		    'params_given'   => $params,
                     'content' => ''
 		];
@@ -517,26 +636,27 @@ class BITE extends Provider {
      public function get_uri($method = 'get_list', $params) {
 	 $uri = $this->uriparameter;
 	 
-	 foreach ($params[$method] as $name => $value) {
-	     $type = 'string';
-	     if (isset($this->required_fields[$method][$name])) {
-		$type =  $this->required_fields[$method][$name];
-	     } 
-	     $urivalue = $this->sanitize_type($type, $value);
-	     $uriname = $this->sanitize_type('key', $name);
-	     
-	     if ((!empty($uriname)) && (!empty($urivalue))) {
-		 if (!empty($uri)) {
-		     $uri .= '/';
-		 }
-		 if ($uriname == 'id') {
-		      $uri .= $urivalue;
-		 } else {
-		     $uri .= $uriname.'/'.$urivalue;
-		 }
-	     }
+	 if (isset($params[$method])) {
+	    foreach ($params[$method] as $name => $value) {
+		$type = 'string';
+		if (isset($this->required_fields[$method][$name])) {
+		   $type =  $this->required_fields[$method][$name];
+		} 
+		$urivalue = $this->sanitize_type($type, $value);
+		$uriname = $this->sanitize_type('key', $name);
+
+		if ((!empty($uriname)) && (!empty($urivalue))) {
+		    if (!empty($uri)) {
+			$uri .= '/';
+		    }
+		    if ($uriname == 'id') {
+			 $uri .= $urivalue;
+		    } else {
+			$uri .= $uriname.'/'.$urivalue;
+		    }
+		}
+	    }
 	 }
-	 
 	 return $uri;
      }
      
@@ -630,10 +750,10 @@ class BITE extends Provider {
 	
 	$request_args = $this->get_request_args($params);
 	
-//	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
-//	if ($cachedout) {
-//	    return $cachedout;
-//	}
+	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
+	if ($cachedout) {
+	    return $cachedout;
+	}
 
     
 	if ($method == 'get_list') {
@@ -647,7 +767,7 @@ class BITE extends Provider {
 		  $post_args['body'] = $filter;
 		  $url .= '/search';
 
-		 $remote_get    =  wp_safe_remote_post($url, $post_args);
+		 $remote_get   =  wp_safe_remote_post($url, $post_args);
 	} else {
 		$remote_get    = wp_safe_remote_get( $url , $request_args);
 	}	
@@ -672,13 +792,29 @@ class BITE extends Provider {
 		return $aRet;
 	     }
 	     
+	     
+	    if ((isset($content['channels'])) && (isset($content['channels']['channel0']))) {
+		$public = $this->is_public_by_dates($content['channels']['channel0']['from'], $content['channels']['channel0']['to']);
+		if ($public == false) {
+		    $aRet = [
+			'valid' => false,
+			'code'  => 401,
+			 'error' => 'Entry not active',
+			'params_given'   => $params,
+			'content'	=> ''
+		    ];
+		    return $aRet;
+
+		}
+	    }
+	     
 	     $aRet = [
 		    'request'	=> $url,
                     'valid'	=> true,
                     'content'	=> $content
               ];
 	          
-	//     $cache->set_cached_job('BITE',$id,'',$method, $aRet);
+	     $cache->set_cached_job('BITE',$id,'',$method, $aRet);
 	     
 	     return $aRet;
 	  }
@@ -686,6 +822,18 @@ class BITE extends Provider {
 	
      }
 
+     // prüft ob der Eintrag lt. Channel-Eintrag öffentlich anzeigbar ist
+     private function is_public_by_dates($fromdate, $todate) {
+	if(strtotime($todate) > time()) {
+	   // we did not reach end date
+	    if(strtotime($fromdate) < time()) {
+		# publication begin is in the past		
+		return true;
+	    }
+	}
+	return false;
+     }
+     
      
      // Some data source use own formats in text fields (like markdown or 
      // univis text format) or source defined selectors or values 
@@ -716,7 +864,7 @@ class BITE extends Provider {
 		 }
 	     }
 	 } else {
-		// Bei der Direkten Abfrage einer Stelle wird alles auf oberester Ebene geliefert
+		// Bei der Direkten Abfrage einer Stelle wird alles auf oberster Ebene geliefert
 	       foreach ($data as $key => $value) {
 		   if (!is_array($value)) {
 			switch($key) {
@@ -787,8 +935,8 @@ class BITE extends Provider {
 				break;    
 			   
 
-			     default:
-				     $value = sanitize_text_field($value);
+			//     default:
+			//	     $value = sanitize_text_field($value);
 			}
 		   } else {
 		       
@@ -799,6 +947,13 @@ class BITE extends Provider {
 				break;
 			   case 'content':
 			   case 'channels':
+			   case 'seo':
+			   case 'estimatedsalary':
+			   case 'entgelt_ar':
+			   case 'keywords':    
+			   case 'framework':    
+			   case 'bite_pa_data':
+			       
 				break;
 			    default:
 				$value = $this->sanitize_sourcedata($value);    

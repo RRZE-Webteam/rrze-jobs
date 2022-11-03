@@ -388,7 +388,10 @@ class UnivIS extends Provider {
 	      if (!empty($res['workHours'])) {
 		  $res['workHours'] .= ', ';
 	      }
-	      $res['workHours'] .= __('Night duty','rrze-jobs');
+	      $res['workHours'] .= __('Shift work','rrze-jobs');
+	      // In Absprache mit Ch. Schmidt vom 2.11. soll es nur noch
+	      // Schichtdienst/Shift work und On Call Duty geben
+	//      $res['workHours'] .= __('Night duty','rrze-jobs');
 	}
 	if ((isset($jobdata['sd'])) && ($jobdata['sd']===true)) {
 	      if (!empty($res['workHours'])) {

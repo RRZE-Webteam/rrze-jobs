@@ -237,7 +237,15 @@ function getFields() {
                 'type' => 'text',
                 'default' => __("Supplementary description", 'rrze-jobs'),
             ],
+	    [
+                'name' => 'job_headline_jobBenefits',
+                'label' => __('Label for','rrze-jobs').' '.__("Job Benefits", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Job Benefits", 'rrze-jobs'),
+            ],
 	   
+	    
 	    [
                 'name' => 'job_headline_jobStartDate',
                 'label' => __('Label for','rrze-jobs').' '.__("Job start date", 'rrze-jobs'),

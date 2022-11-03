@@ -192,9 +192,7 @@ class Shortcode {
 	if ($query == 'get_single') {
 	    // single job
 	    $content = '';
-	//    $content .= "look for ".$jobid;
-	//     echo Helper::get_html_var_dump($newdata);
-	 //   return $content;
+
 
 	    if ($newdata['valid']===true) {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
@@ -238,10 +236,7 @@ class Shortcode {
 		    return $this->get_errormsg($newdata);	
 		}
 	    } else {
-		   echo Helper::get_html_var_dump($newdata);
-		  $errortext = "Empty content from template by asking for job id: ".$jobid;
-//		  $errortext .= Helper::get_html_var_dump($newdata);
-		  
+		  $errortext = "Empty content from template by asking for job id: ".$jobid;		  
 		 return $this->get_errormsg( $newdata, $errortext,'Error: No content');	
 		
 	    }
@@ -250,7 +245,7 @@ class Shortcode {
 	} else {
 	    // list
     
-	    echo Helper::get_html_var_dump($newdata);
+
 	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
 		

@@ -494,15 +494,18 @@ class Provider {
 	 if (!empty($bisbesold)) {
             if (!empty($vonbesold) && ($vonbesold != $bisbesold)) {
                $value = $vonbesold . ' - ' . $bisbesold;
+	       $htmlvalue = $vonbesold . ' &mdash; ' . $bisbesold;
             } else {
                $value = $bisbesold;
+	       $htmlvalue = $value;
             }
         } elseif (!empty($vonbesold)) {
            $value = $vonbesold;
+	   $htmlvalue = $value;
         }
 	
 	$res["currency"] =  "EUR";
-	$res["stringvalue"] =  $value;
+	$res["stringvalue"] =  $htmlvalue;
 	$res["value"]["@type"] =  "Text";
 	$res["value"]["value"] =  $value;
 	$res["value"]["unitText"] =  "MONTH";
@@ -511,7 +514,51 @@ class Provider {
 
     }
     
-    public function get_empoymentType_as_string($type) {
+    
+    // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
+    // und formatiert den in eine einheitliche Form
+    public function sanitize_tvl($entgeld) {
+	$res = '';
+	if (!empty($entgeld)) { 
+	    if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
+		if (isset($output_array[2])) {
+		    $gruppe = $output_array[2];
+		    $gruppe = intval($gruppe);
+		    $res = 'TV-L E '.$gruppe;
+		} else {
+		    // irgendwas anderes, was wir nicht interpretieren können..
+		    // => behalte es, wie es ist.
+		    $res = $entgeld;
+		}
+	    }
+	    
+	}
+	return $res;
+    }
+    
+     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
+    // und formatiert den in eine einheitliche Form
+    public function sanitize_besoldung($entgeld) {
+	$res = '';
+	if (!empty($entgeld)) { 
+	    if (preg_match('/^(a|b|c|w|r|aw)\s*([0-9]+)$/i', $entgeld, $output_array)) {
+		if (isset($output_array[2])) {
+		    $gruppe = $output_array[2];
+		    $gruppe = intval($gruppe);
+		    $res = strtoupper($output_array[1]).' '.$gruppe;
+		} else {
+		    // irgendwas anderes, was wir nicht interpretieren können..
+		    // => behalte es, wie es ist.
+		    $res = $entgeld;
+		}
+	    }
+	    
+	}
+	return $res;
+    }
+    
+    
+     public function get_array_as_string($type) {
 	if (is_array($type)) {
 	    $res = '';
 	    foreach ($type as $i) {
@@ -525,6 +572,10 @@ class Provider {
 	} else {
 	    return strval($type);
 	}
+    }
+    
+    public function get_empoymentType_as_string($type) {
+	return $this->get_array_as_string($type);
     }
 	    
      // create the url for apply

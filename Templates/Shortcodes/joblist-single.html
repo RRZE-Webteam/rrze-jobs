@@ -3,6 +3,7 @@
     <meta itemprop="datePosted" content="{{=datePosted}}"><meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
     <meta itemprop="employmentType" content="{{=employmentType}}">
     {{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
+    {{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
     <article>
 	<div itemprop="description">
 	{{=description}}
@@ -20,7 +21,13 @@
 	<div itemprop="disambiguatingDescription">
 	    {{=disambiguatingDescription}}
 	</div>
-	{{/disambiguatingDescription}}
+	{{/disambiguatingDescription}}	
+	{{jobBenefits}}
+	<h3>{{=const.title_jobBenefits}}</h3>
+	<div itemprop="jobBenefits">
+	    {{=jobBenefits}}
+	</div>
+	{{/jobBenefits}}
 
 	{{const.text_jobnotice}}
 	[alert]

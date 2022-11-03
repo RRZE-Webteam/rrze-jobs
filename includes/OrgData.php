@@ -9,7 +9,7 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
-const RRZE_TEXTDOMAIN = 'rrze-jobs';
+// const RRZE_TEXTDOMAIN = 'rrze-jobs';
 
 class OrgData {
     
