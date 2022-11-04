@@ -223,7 +223,7 @@ class OrgData {
 	    ),
 	    '1311310000' => array(
 		    'title'	    => __('Institut für Medizininformatik, Biometrie und Epidemiologie', RRZE_TEXTDOMAIN),
-		    'url'	    => __('http://www.imbe.med.uni-erlangen.de/', RRZE_TEXTDOMAIN),
+		    'url'	    => __('https://www.imbe.med.uni-erlangen.de/', RRZE_TEXTDOMAIN),
 		    'parent'	    => '1311000000'
 	    ),
 	    '1311320000' => array(
@@ -233,7 +233,7 @@ class OrgData {
 	    ),
 	    '1311330000' => array(
 		    'title'	    => __('Institut für Rechtsmedizin', RRZE_TEXTDOMAIN),
-		    'url'	    => __('http://www.recht.med.uni-erlangen.de/', RRZE_TEXTDOMAIN),
+		    'url'	    => __('https://www.recht.med.uni-erlangen.de/', RRZE_TEXTDOMAIN),
 		    'parent'	    => '1311000000'
 	    ),
 	    '1311340000' => array(

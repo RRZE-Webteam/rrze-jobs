@@ -306,6 +306,8 @@ class Provider {
 	 if (empty($lang)) {
 	     return $res;
 	 }
+	 $lang = strtolower($lang);
+	 
 	 switch($lang) {
 	     case 'de':
 	     case 'en':
@@ -314,6 +316,9 @@ class Provider {
 	     case 'zh':
 	     case 'ru':
 		 $res = $lang;
+		 break;
+	     case 'eng':
+		 $res = 'en';
 		 break;
 	     default:
 		 $res = 'de';
@@ -337,6 +342,7 @@ class Provider {
 	    'br' => array(), 
 	    'p' => array(), 
 	    'strong' => array(),
+	    'ol'  => array(),
 	    'ul'  => array(),
 	    'li'  => array(),
 	    'dl'  => array(),

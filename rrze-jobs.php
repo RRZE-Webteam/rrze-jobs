@@ -28,7 +28,7 @@ require_once 'config/config.php';
 
 use RRZE\Jobs\Main;
 
-const RRZE_PHP_VERSION = '7.3';
+const RRZE_PHP_VERSION = '7.4';
 const RRZE_WP_VERSION = '6.0';
 const RRZE_TEXTDOMAIN = 'rrze-jobs';
 const RRZE_PLUGIN_FILE = __FILE__;

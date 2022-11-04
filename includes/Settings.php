@@ -208,8 +208,7 @@ class Settings
      * Gibt die Einstellungen zurück.
      * @return array
      */
-    public function getOptions()
-    {
+    public function getOptions() {
         $defaults = $this->defaultOptions();
 
         $options = (array) get_option($this->optionName);
@@ -226,8 +225,7 @@ class Settings
      * @param string  $default default text if it's not found
      * @return string
      */
-    public function getOption($section, $name, $default = '')
-    {
+    public function getOption($section, $name, $default = '') {
         $option = $section . '_' . $name;
 
         if (isset($this->options[$option])) {
@@ -241,8 +239,7 @@ class Settings
      * Sanitize-Callback für die Optionen.
      * @return mixed
      */
-    public function sanitizeOptions($options)
-    {
+    public function sanitizeOptions($options) {
         if (!$options) {
             return $options;
         }
@@ -263,8 +260,7 @@ class Settings
      * @param string $key Option-Key
      * @return mixed string oder (bool) false
      */
-    protected function getSanitizeCallback($key = '')
-    {
+    protected function getSanitizeCallback($key = '') {
         if (empty($key)) {
             return false;
         }
@@ -286,8 +282,7 @@ class Settings
      * Einstellungsbereiche als Registerkarte anzeigen.
      * Zeigt alle Beschriftungen der Einstellungsbereiche als Registerkarte an.
      */
-    public function showTabs()
-    {
+    public function showTabs() {
         $html = '<h1>' . $this->settingsMenu['title'] . '</h1>' . PHP_EOL;
 
         if (count($this->settingsSections) < 2) {
@@ -316,8 +311,7 @@ class Settings
      * Anzeigen der Einstellungsbereiche.
      * Zeigt für jeden Einstellungsbereich das entsprechende Formular an.
      */
-    public function showSections()
-    {
+    public function showSections() {
         foreach ($this->settingsSections as $section) {
             if ($section['id'] != $this->currentTab) {
                 continue;
@@ -376,8 +370,7 @@ class Settings
     /**
      * Initialisierung und Registrierung der Bereiche und Felder.
      */
-    public function adminInit()
-    {
+    public function adminInit() {
         // Hinzufügen von Einstellungsbereichen
         foreach ($this->settingsSections as $section) {
             if (isset($section['desc']) && !empty($section['desc'])) {
@@ -438,8 +431,7 @@ class Settings
      * Hinzufügen der Optionen-Seite
      * @return void
      */
-    public function adminMenu()
-    {
+    public function adminMenu() {
         $this->optionsPage = add_options_page(
             $this->settingsMenu['page_title'],
             $this->settingsMenu['menu_title'],
@@ -454,8 +446,7 @@ class Settings
     /**
      * Registerkarten einstellen
      */
-    protected function setTabs()
-    {
+    protected function setTabs() {
         foreach ($this->settingsSections as $key => $val) {
             if ($key == 0) {
                 $this->defaultTab = $val['id'];
@@ -470,8 +461,7 @@ class Settings
      * Enqueue Skripte und Style
      * @return void
      */
-    public function adminEnqueueScripts()
-    {
+    public function adminEnqueueScripts() {
         //   wp_register_script('icons-settings', plugins_url('assets/js/icons.min.js', plugin_basename($this->pluginFile)));
         //   wp_enqueue_script('icons-settings');
         wp_enqueue_script('jquery');
@@ -481,8 +471,7 @@ class Settings
      * Gibt die Feldbeschreibung des Einstellungsfelds zurück.
      * @param array   $args Argumente des Einstellungsfelds
      */
-    public function getFieldDescription($args)
-    {
+    public function getFieldDescription($args) {
         if (!empty($args['desc'])) {
             $desc = sprintf('<p class="description">%s</p>', $args['desc']);
         } else {

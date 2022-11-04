@@ -5,7 +5,7 @@ namespace RRZE\Jobs;
 defined('ABSPATH') || exit;
 use function RRZE\Jobs\Config\getShortcodeSettings;
 
-use RRZE\Jobs\Job;
+
 use RRZE\Jobs\Cache;
 use RRZE\Jobs\Template;
 // use RRZE\Jobs\Provider;
@@ -82,6 +82,7 @@ class Shortcode {
             'order',
             'fallback_apply',
             'link_only',
+	    
         ];
 
         foreach ($aAtts as $att) {
@@ -102,7 +103,9 @@ class Shortcode {
 
 	$search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
 	
-	$output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
+	$link_only = (!empty($atts['link_only']) ? true : false);
+	
+//	$output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
 	
 	$fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_text_field($atts['fallback_apply']) : '');
 	// TODO: check if Mailadress or URL
@@ -110,7 +113,7 @@ class Shortcode {
 	
 	$positions = new Provider();
 
-	
+	/*
 	if (($output_format == 'embedded') && !empty($_GET['job'])) {
 	   $format = 'embedded';
 	   $jobnr = (int) $_GET['job'] - 1;
@@ -118,6 +121,10 @@ class Shortcode {
 	} else {
 	   $format = 'default';
 	}
+	 *   Disabled yet
+	 */
+	
+	
 	if (!empty($search_provider)) {
 	    $aProvider = explode(',', $search_provider);
 	    $filterprovider = '';
@@ -162,21 +169,14 @@ class Shortcode {
 	 // In case the org id was given as a parameter, overwrite the default from backend
 	if (!empty($orgids)) {
 	    $params['UnivIS']['get_list']['department'] = $orgids;
-	    $params['Interamt']['get_list']['partner'] = $orgids;   
-	    
-	    
+	    $params['Interamt']['get_list']['partner'] = $orgids;       
 	    $params['BITE']['request-header']['headers']['BAPI-Token'] = $orgids;   
 	} 
 	
 	
 
-	$positions->set_params($params);
-	
-	
-	// echo "SEARCH: $search_provider<br>";
-
+	$positions->set_params($params);	
 	$positions->get_positions($search_provider, $query);
-
 	$newdata = $positions->merge_positions();
 	
 
@@ -196,6 +196,10 @@ class Shortcode {
 
 	    if ($newdata['valid']===true) {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
+		if ($link_only) {
+		    $template = plugin()->getPath() . 'Templates/Shortcodes/single-job-linkonly.html';
+		}
+		
 		$data['const'] = $strings;	
 		$parserdata['num'] = 1;
 		$content = '';
@@ -212,12 +216,8 @@ class Shortcode {
 			    $data['const'] = $strings;
 			    $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
 			    $data['applicationContact']['url'] = $positions->get_apply_url($data,$fallback_apply);
-			   
-			    
-			    $data = $this->ParseDataVars($data);
-
-			    
-			    
+			   	    
+			    $data = $this->ParseDataVars($data);			    
 			    $content .= Template::getContent($template, $data);
 			}
 		}
@@ -251,9 +251,14 @@ class Shortcode {
 		
 		$parserdata['num'] = count($newdata['positions']);
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
+		if ($link_only) {
+		   
+		   $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
+
+		}
 		
-		foreach ($newdata['positions'] as $num => $data) {
-		    
+		
+		foreach ($newdata['positions'] as $num => $data) {		    
 		    $hidethis = $this->hideinternal($data);
 		    
 		    if ($hidethis) {
@@ -262,8 +267,7 @@ class Shortcode {
 			
 		    } else {
 			$data['const'] = $strings;
-			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);	
-			
+			$data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);				
 			$data['applicationContact']['url'] = $positions->get_apply_url($data,$fallback_apply);
 			
 		
@@ -275,9 +279,11 @@ class Shortcode {
 		}
 		
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+		if ($link_only) {
+		   $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
+		}
 	    } else {
 		$parserdata['errormsg'] = __('No jobs found.','rrze-jobs');
-	//	$parserdata['errormsg'] .= Helper::get_html_var_dump($newdata);
 		$parserdata['errortitle'] = __('Error','rrze-jobs');
 		$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
 	    }

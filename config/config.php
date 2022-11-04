@@ -436,10 +436,11 @@ function getFields() {
             ],
 	]
     ];
-
+  return $aFields;
     // add fields defined in map (Job.php)
-    $jobOutput = new Job();
-    $map_template = $jobOutput->getMap('bite', true);
+  //  $jobOutput = new Job();
+ //   $map_template = $jobOutput->getMap('bite', true);
+    /*
     $aHideFields = [
         'job_id',
         'job_intern',
@@ -460,8 +461,8 @@ function getFields() {
             ];
         }
     }
-    return $aFields;
-
+  
+*/
 }
 
 /**
