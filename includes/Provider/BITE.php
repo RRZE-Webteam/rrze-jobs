@@ -87,8 +87,9 @@ class BITE extends Provider {
      // may be used to other purpuses
      private function add_remaining_non_schema_fields($jobdata) {
 	$known_fields = array("assignees", "hash", "emailTemplate", "jobSite", 
-	    "subsidiary", "content", "seo", "title", "location", "custom", 
+	    "subsidiary", "content", "seo", "title", "location", "custom",
 	    "description", "locale", "identification", "keywords");
+
 	    // keynames we already used in schema values or which we dont need anyway
 	
 	
@@ -162,9 +163,15 @@ class BITE extends Provider {
 	  
 	   // identifier
 	  $res['identifier'] = $jobdata['id'];
-	  if (isset($jobdata['identification'])) {
-	    $res['identifier'] = $jobdata['identification'];
+
+	  if (!empty($jobdata['ausschreibungskennziffer'])) {
+		$res['identifier'] = $jobdata['ausschreibungskennziffer'];
+	  } elseif (!empty($jobdata['identification'])) {
+		$res['identifier'] = $jobdata['identification'];
 	  }
+	  
+	  
+	  
 	  
 	 // employmentType
 	  $typeliste = array();
@@ -282,9 +289,32 @@ class BITE extends Provider {
 	    if (!isset($res['jobLocation']['address']['addressRegion'])) {
 		$res['jobLocation']['address']['addressRegion'] = __('Bavaria','rrze-jobs');
 	    }
-	      if (!isset($res['jobLocation']['address']['addressCountry'])) {
+	    if (!isset($res['jobLocation']['address']['addressCountry'])) {
 		$res['jobLocation']['address']['addressCountry'] = 'DE';
 	    }
+	    
+
+	    // fallback to defaults in standard array location
+	    
+		if (empty( $res['jobLocation']['address']['streetAddress']) && (isset($jobdata['location']['street']))) {
+		    $res['jobLocation']['address']['streetAddress'] = $jobdata['location']['street'];
+		    if (isset($jobdata['location']['houseNumber'])) {
+			 $res['jobLocation']['address']['streetAddress'] .= ' '.$jobdata['location']['houseNumber'];
+		    } 
+		    
+		}
+		if (empty($res['jobLocation']['address']['postalCode']) && (isset($jobdata['location']['postCode']))) {
+		     $res['jobLocation']['address']['postalCode'] = $jobdata['location']['postCode'];
+		}
+		if (empty($res['jobLocation']['address']['addressLocality']) && (isset($jobdata['location']['city']))) {
+		     $res['jobLocation']['address']['addressLocality'] = $jobdata['location']['city'];
+		}
+		if (empty($res['jobLocation']['address']['addressCountry']) && (isset($jobdata['location']['country']))) {
+		     $res['jobLocation']['address']['addressCountry'] = $jobdata['location']['country'];
+		}
+		
+		
+	    
 	    
 	    // jobLocation (type: Place)
 	    // Achtung: Für Google muss die Property addressCountry (DE) enthalten sein. 
@@ -307,14 +337,20 @@ class BITE extends Provider {
 	    // aus orgunit und oder orgname generieren	    
 	    // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
 	    if (isset($jobdata['custom']['hiringorganization'])) {
-		if (isset($jobdata['custom']['hiringorganization']['title'])) {
-		    $res['employmentUnit']['name'] = $jobdata['custom']['hiringorganization']['title'];
-		    $res['hiringOrganization']['name'] = $jobdata['custom']['hiringorganization']['title'];
+		if (is_string($jobdata['custom']['hiringorganization'])) {
+		    $res['hiringOrganization']['name'] = $jobdata['custom']['hiringorganization'];
+		    $res['employmentUnit']['name'] = $jobdata['custom']['hiringorganization'];
+		} else {
+		    if (isset($jobdata['custom']['hiringorganization']['title'])) {
+			$res['employmentUnit']['name'] = $jobdata['custom']['hiringorganization']['title'];
+			$res['hiringOrganization']['name'] = $jobdata['custom']['hiringorganization']['title'];
+		    }
+		    if (isset($jobdata['custom']['hiringorganization']['url'])) {
+			$res['employmentUnit']['url'] = $jobdata['custom']['hiringorganization']['url'];
+			$res['hiringOrganization']['url'] = $jobdata['custom']['hiringorganization']['url'];
+		    }
 		}
-		if (isset($jobdata['custom']['hiringorganization']['url'])) {
-		    $res['employmentUnit']['url'] = $jobdata['custom']['hiringorganization']['url'];
-		    $res['hiringOrganization']['url'] = $jobdata['custom']['hiringorganization']['url'];
-		}
+		
 	    }
 	    if (isset($jobdata['custom']['contact_email'])) {
 		$res['employmentUnit']['email'] = $jobdata['custom']['contact_email'];
@@ -322,8 +358,14 @@ class BITE extends Provider {
 	    if (isset($jobdata['custom']['contact_tel'])) {
 		$res['employmentUnit']['telephone'] = $jobdata['custom']['contact_tel'];
 	    } 
+	     if (isset($jobdata['custom']['contact_name'])) {
+		$res['employmentUnit']['name'] = $jobdata['custom']['contact_name'];
+	    } 
 
-	    
+	    if (isset($jobdata['custom']['06c_schluss'])) {
+		// Kontaktstring aus der UTN
+		$res['applicationContact']['description'] = $jobdata['custom']['06c_schluss'];
+	     }
 	    
 	    
 	  $res['estimatedSalary'] = '';
@@ -743,13 +785,14 @@ class BITE extends Provider {
 	}  
 	if (empty($id)) {
 		if (isset($params['request-header']['headers']['BAPI-Token'])) {
-	//	    $id = $params['request-header']['headers']['BAPI-Token'];
+		    $id = $params['request-header']['headers']['BAPI-Token'];
 		}	    
 	}
 
 	
-	$request_args = $this->get_request_args($params);
 	
+	$request_args = $this->get_request_args($params);
+	// echo Helper::get_html_var_dump($request_args);
 	$cachedout = $cache->get_cached_job('BITE',$id,'',$method);
 	if ($cachedout) {
 	    return $cachedout;
@@ -890,6 +933,9 @@ class BITE extends Provider {
 			    case 'job_experience':
 			    case 'wir_bieten':
 			    case 'description':
+			    case '06b_schluss':
+			    case '06c_schluss':
+			    case '06_schluss':	
 			    case 'abschlusstext':
 				$value = $this->sanitize_markdown_field($value);
 				break;

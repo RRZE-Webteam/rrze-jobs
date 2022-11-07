@@ -36,7 +36,7 @@
 	{{/const.text_jobnotice}}
 	
     </article>
-    <aside aria-label="{{=const.title_keyfacts}}">
+       <aside aria-label="{{=const.title_keyfacts}}">
 
 	<p>
 	{{applicationContact.url}}
@@ -63,9 +63,11 @@
 		<th>{{=const.title_title}}</th>
 		<td itemprop="title">{{=title}}</td>
 	    </tr>
-		<th>{{=const.title_jobStartDate}}</th>
+	    {{jobStartDate}}
+	    <th>{{=const.title_jobStartDate}}</th>
 		<td itemprop="jobStartDate">{{=jobStartDate}}</td>
 	    </tr>	
+	    {{/jobStartDate}}
 	     <tr>
 		<th>{{=const.title_Location}}</th>		
 		<td>
@@ -73,14 +75,15 @@
 		    <span itemprop="jobLocation" itemscope="" itemtype="http://schema.org/Place">
 			<span itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
 			    <meta itemprop="name" content="{{=hiringOrganization.name}}">
-			    {{jobLocation.address.streetAddress}}<meta itemprop="streetAddress" content="{{=jobLocation.address.streetAddress}}">{{/jobLocation.address.streetAddress}}
-			    {{jobLocation.address.postalCode}}<meta itemprop="postalCode" content="{{=jobLocation.address.postalCode}}">{{/jobLocation.address.postalCode}}
-			    {{jobLocation.address.addressLocality}}<br><span itemprop="address" >{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
+			    {{jobLocation.address.streetAddress}}<span itemprop="streetAddress">{{=jobLocation.address.streetAddress}}</span><br>{{/jobLocation.address.streetAddress}}
+			    {{jobLocation.address.postalCode}}<span itemprop="postalCode">{{=jobLocation.address.postalCode}}</span> {{/jobLocation.address.postalCode}}
+			    {{jobLocation.address.addressLocality}}<span itemprop="address" >{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
 			    {{jobLocation.address.addressRegion}}<meta itemprop="addressRegion" content="{{=jobLocation.address.addressRegion}}">{{/jobLocation.address.addressRegion}}
 			</span>
 		    </span>
 		</td>
 	    </tr> 
+	    {{estimatedSalary.stringvalue}}
 		<th>{{=const.title_payment}}</th>
 		<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
 		    <meta itemprop="currency" content="EUR">
@@ -90,6 +93,7 @@
 		    </span>
 		</td>
 	    </tr>
+	    {{/estimatedSalary.stringvalue}}
 	    {{text_workingtime}}
 	    <tr>
 		<th>{{=const.title_workingtime}}</th>
@@ -108,12 +112,15 @@
 		<td>{{=text_befristet}}</td>
 	    </tr>
 	    {{/text_befristet}}
-	    <tr>
+	    <tr>		
 		<th>{{=const.title_contact}}</th>
-		<td>{{=applicationContact.name}}
+		<td>
+		    {{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}} 
+		    {{=employmentUnit.name}}
 		    <ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
 		    {{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>{{/employmentUnit.email}}
 		    {{employmentUnit.telephone}}<li>Telefon: <span itemprop="telephone">{{=employmentUnit.telephone}}</span></li>{{/employmentUnit.telephone}}
+		    {{/applicationContact.description}} 
 		    </ul>
 		</td>
 	    </tr>

@@ -173,7 +173,6 @@ class Shortcode {
 	    $params['BITE']['request-header']['headers']['BAPI-Token'] = $orgids;   
 	} 
 	
-	
 
 	$positions->set_params($params);	
 	$positions->get_positions($search_provider, $query);
@@ -260,6 +259,8 @@ class Shortcode {
 		
 		foreach ($newdata['positions'] as $num => $data) {		    
 		    $hidethis = $this->hideinternal($data);
+		    
+		//    echo Helper::get_html_var_dump($data);
 		    
 		    if ($hidethis) {
 			   // Ignore/hide this position in display
