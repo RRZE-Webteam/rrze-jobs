@@ -100,7 +100,18 @@ class Shortcode {
 
         // orgids => attribute orgids or attribute orgid or fetch from settings page
         $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
+	
+	// parameter bite-apikey  for setting an api key by pars
+        $bite_apikey = (!empty($atts['bite-apikey']) ? sanitize_text_field($atts['bite-apikey']) : '');
+	
+	// parameter univis-orgid  for setting the univis org id
+        $univis_orgid = (!empty($atts['univis-orgid']) ? sanitize_text_field($atts['univis-orgid']) : '');
+	
+	// parameter interamt-id  for setting the univis org id
+        $interamt_id = (!empty($atts['interamt-id']) ? sanitize_text_field($atts['interamt-id']) : '');
+	
 
+	// filter provider
 	$search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
 	
 	$link_only = (!empty($atts['link_only']) ? true : false);
@@ -114,6 +125,11 @@ class Shortcode {
 	$positions = new Provider();
 
 	/*
+	 * TODO: QR-Code new.
+	 *  Please use the JS solution like we are using in FAU Einrichtungen theme
+	 *  and remove the big library here..
+	 * 
+	 * 
 	if (($output_format == 'embedded') && !empty($_GET['job'])) {
 	   $format = 'embedded';
 	   $jobnr = (int) $_GET['job'] - 1;
@@ -123,6 +139,8 @@ class Shortcode {
 	}
 	 *   Disabled yet
 	 */
+	
+	
 	
 	
 	if (!empty($search_provider)) {
@@ -153,6 +171,7 @@ class Shortcode {
 	if ($jobid) {
 	    $params['UnivIS']['get_single']['id'] = $jobid;
 	    $params['Interamt']['get_single']['id'] =$jobid;
+	    $params['BITE']['get_single']['id'] =$jobid;
 	    $query = 'get_single';	    
 	}
 	
@@ -167,13 +186,29 @@ class Shortcode {
         } 
 	
 	 // In case the org id was given as a parameter, overwrite the default from backend
+	// orgid will work on all identifier, anyway which provider
+	
 	if (!empty($orgids)) {
 	    $params['UnivIS']['get_list']['department'] = $orgids;
-	    $params['Interamt']['get_list']['partner'] = $orgids;       
+	    $params['Interamt']['get_list']['partner'] = $orgids;    
 	    $params['BITE']['request-header']['headers']['BAPI-Token'] = $orgids;   
 	} 
 	
+	// special keys and ids für provider, in case they are not the same
+	if (!empty($bite_apikey )) {
+	    $params['BITE']['request-header']['headers']['BAPI-Token'] = $bite_apikey;   
+	}
+	if (!empty($univis_orgid)) {
+	    $params['UnivIS']['get_list']['department'] = $univis_orgid;
+	    $params['UnivIS']['get_single']['department'] = $univis_orgid;
+	} 
+	if (!empty($interamt_id)) {
+	    $params['Interamt']['get_list']['partner'] = $interamt_id;
+	    $params['Interamt']['get_single']['partner'] = $interamt_id;
+	} 
 
+	
+	
 	$positions->set_params($params);	
 	$positions->get_positions($search_provider, $query);
 	$newdata = $positions->merge_positions();
@@ -192,7 +227,7 @@ class Shortcode {
 	    // single job
 	    $content = '';
 
-
+  
 	    if ($newdata['valid']===true) {
 		$template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
 		if ($link_only) {
@@ -243,7 +278,7 @@ class Shortcode {
 	    
 	} else {
 	    // list
-    
+    	
 
 	    if (($newdata['valid']===true) && (!empty($newdata['positions']))) {
 		$parserdata['joblist'] = '';
@@ -274,7 +309,6 @@ class Shortcode {
 		
 			$data = $this->ParseDataVars($data);
 			$parserdata['joblist'] .= Template::getContent($template, $data);
-			
 		    }
 
 		}

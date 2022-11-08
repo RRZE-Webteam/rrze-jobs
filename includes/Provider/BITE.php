@@ -163,6 +163,7 @@ class BITE extends Provider {
 	  
 	   // identifier
 	  $res['identifier'] = $jobdata['id'];
+	  $res['id'] = $jobdata['id'];
 
 	  if (!empty($jobdata['ausschreibungskennziffer'])) {
 		$res['identifier'] = $jobdata['ausschreibungskennziffer'];
@@ -812,7 +813,9 @@ class BITE extends Provider {
 
 		 $remote_get   =  wp_safe_remote_post($url, $post_args);
 	} else {
+	    
 		$remote_get    = wp_safe_remote_get( $url , $request_args);
+		
 	}	
 
 
@@ -835,8 +838,10 @@ class BITE extends Provider {
 		return $aRet;
 	     }
 	     
-	     
+
 	    if ((isset($content['channels'])) && (isset($content['channels']['channel0']))) {
+		
+		
 		$public = $this->is_public_by_dates($content['channels']['channel0']['from'], $content['channels']['channel0']['to']);
 		if ($public == false) {
 		    $aRet = [
