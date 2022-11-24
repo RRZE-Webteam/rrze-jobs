@@ -395,7 +395,7 @@ class Interamt extends Provider {
               ];
 	      return $aRet;
 	 }
-	 $response = $this->get_data("get_list", $params);
+	 $response = $this->get_data($params, "get_list");
 	 
 	 if ($response['valid'] == true) {
 	     
@@ -463,7 +463,7 @@ class Interamt extends Provider {
 	 }
 	 
 
-	 $response = $this->get_data("get_single", $params);
+	 $response = $this->get_data($params, "get_single");
 	 
 	 if ($response['valid'] === true) {
 	     
@@ -493,7 +493,7 @@ class Interamt extends Provider {
 
      
      // Generate URI for request
-     public function get_uri($method = 'get_list', $params) {
+     public function get_uri($params, $method = 'get_list') {
 	 $uri = $this->uriparameter;
 	 
 	 foreach ($params[$method] as $name => $value) {
@@ -501,8 +501,8 @@ class Interamt extends Provider {
 	     if (isset($this->required_fields[$method][$name])) {
 		$type =  $this->required_fields[$method][$name];
 	     } 
-	     $urivalue = $this->sanitize_type($type, $value);
-	     $uriname = $this->sanitize_type('key', $name);
+	     $urivalue = $this->sanitize_type($value, $type);
+	     $uriname = $this->sanitize_type($name, 'key');
 	     
 	     if ((!empty($uriname)) && (!empty($urivalue))) {
 		 if (!empty($uri)) {
@@ -529,7 +529,7 @@ class Interamt extends Provider {
 	    foreach ($params[$method] as $name => $value) {
 		if (isset($this->required_fields[$method][$name])) {
 		    $type =  $this->required_fields[$method][$name];
-		    $urivalue = $this->sanitize_type($type, $value);
+		    $urivalue = $this->sanitize_type($value, $type);
 		     if (!empty($urivalue)) {
 			 $found[$name] = $urivalue;		
 		     }
@@ -548,8 +548,8 @@ class Interamt extends Provider {
     }
     
     // get the raw data from provider by a a method and parameters
-    public function get_data($method = 'get_list', $params) { 
-	$uri = $this->get_uri($method,$params);
+    public function get_data($params, $method = 'get_list') { 
+	$uri = $this->get_uri($params, $method);
 	$url = $this->api_url.'?'.$uri;
 	
 	
@@ -623,7 +623,7 @@ class Interamt extends Provider {
 				break;
 			    case 'Id':
 			    case 'AnzahlStellen':
-				$value = $this->sanitize_type('number',$value);	
+				$value = $this->sanitize_type($value, 'number');	
 				break;
 			    case 'url':
 				$value = sanitize_url($value);	
@@ -669,7 +669,7 @@ class Interamt extends Provider {
 				 break;
 			    case 'Id':
 			    case 'AnzahlStellen':	
-				 $value = $this->sanitize_type('number',$value);	
+				 $value = $this->sanitize_type($value, 'number');	
 				 break;
 
 			     default:
