@@ -867,6 +867,7 @@ class BITE extends Provider
                         case '06_schluss':
                         case 'abschlusstext':
                             $value = $this->sanitize_markdown_field($value);
+                            $value = $this->deleteDefaults($value);
                             break;
                         case 'hiringorganization':
                             $value = $this->sanitize_custom_org($value);
@@ -940,6 +941,25 @@ class BITE extends Provider
 
         return $data;
 
+    }
+
+
+
+    private function deleteDefaults($value){
+        $aDelete = [
+            'Hier steht dann die Beschreibung',
+            'Hier steht dann die Einleitung',
+            'Hier Infos über erforderliche Qualifikationen',
+            'Hier Infos über wünschenswerte Qualifikationen',
+            'Hier Infos über w&uuml;nschenswerte Qualifikationen',
+            'Hier gibts ergänzende Bemerkungen',
+            'Hier gibts erg&auml;nzende Bemerkungen',
+            'Berufserfahrung ist wichtig....',
+        ];
+
+        $value = str_replace($aDelete, '', $value);
+
+        return $value;
     }
 
     // sanitize start date

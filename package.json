@@ -1,6 +1,6 @@
 {
   "name": "rrze-jobs",
-  "version": "3.4.22",
+  "version": "3.4.23",
   "description": "Embedding job offers from job portal apis via shortcode",
   "main": "rrze-jobs.php",
   "textdomain": "rrze-jobs",
