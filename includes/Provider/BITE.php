@@ -867,7 +867,7 @@ class BITE extends Provider
                         case '06_schluss':
                         case 'abschlusstext':
                             $value = $this->sanitize_markdown_field($value);
-                            $value = $this->deleteDefaults($value);
+                            // $value = $this->deleteDefaults($value);
                             break;
                         case 'hiringorganization':
                             $value = $this->sanitize_custom_org($value);

@@ -20,7 +20,7 @@ class Provider
     public $url;
 
     public $systems = ["UnivIS", "Interamt", "BITE"];
-    private $common_methods = ["get_list", "get_single"];
+    public $common_methods = ["get_list", "get_single"];
 
     public function __construct()
     {
