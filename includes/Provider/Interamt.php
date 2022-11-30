@@ -138,6 +138,9 @@ class Interamt extends Provider
         // job_id (needed by FAU-Jobportal)
         $res['job_id'] = $jobdata['Id'];
 
+        // intern (needed by FAU-Jobportal)
+        $res['intern'] = false; // Interamt does not deliver internal jobs
+
         // validThrough
         if (isset($jobdata['Daten']["Bewerbungsfrist"])) {
             $res['validThrough'] = $jobdata['Daten']["Bewerbungsfrist"];
