@@ -120,6 +120,9 @@ class UnivIS extends Provider
         // identifier
         $res['identifier'] = $jobdata['id'];
 
+        // job_id (needed by FAU-Jobportal)
+        $res['job_id'] = $jobdata['id']; 
+
         // validThrough
         $res['validThrough'] = $jobdata['enddate'];
 

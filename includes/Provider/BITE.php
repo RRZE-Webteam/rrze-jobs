@@ -151,7 +151,11 @@ class BITE extends Provider
 
         // identifier
         $res['identifier'] = $jobdata['id'];
+
         $res['id'] = $jobdata['id'];
+
+        // job_id (needed by FAU-Jobportal)
+        $res['job_id'] = $jobdata['Id']; 
 
         if (!empty($jobdata['ausschreibungskennziffer'])) {
             $res['identifier'] = $jobdata['ausschreibungskennziffer'];
