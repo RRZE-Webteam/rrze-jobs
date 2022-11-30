@@ -198,8 +198,10 @@ class UnivIS extends Provider
 
         // estimatedSalary  (type: MonetaryAmount)
         // aus vonbesold und bisbesold   generieren
-        if (isset($jobdata['vonbesold']) || isset($jobdata['vonbesold'])) {
-            $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
+        if (isset($jobdata['vonbesold']) || isset($jobdata['bisbesold'])) {
+            $vonBesold = (!empty($jobdata['vonbesold']) ? $jobdata['vonbesold'] : '');
+            $bisBesold = (!empty($jobdata['bisbesold']) ? $jobdata['bisbesold'] : '');            
+            $res['estimatedSalary'] = $this->get_Salary_by_TVL($vonBesold, $bisBesold);
         }
 
         // hiringOrganization   (type: Organzsation)
