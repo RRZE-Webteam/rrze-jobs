@@ -34,13 +34,16 @@ class UnivIS extends Provider
             'get_single' => array(
                 'id' => 'number',
             ),
+            'get_all' => array(
+                'group' => 'string',
+            ),
         );
 
     }
 
     // which methods do we serve
     public $methods = array(
-        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter",
+        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter", "get_all",
     );
 
     // map univis field names and entries to schema standard
@@ -494,6 +497,35 @@ class UnivIS extends Provider
     }
 
     // make request for a positions list and return it as array
+    public function get_all($params)
+    {
+        $check = $this->required_parameter("get_all", $params);
+
+        if (is_array($check)) {
+            $aRet = [
+                'valid' => false,
+                'code' => 405,
+                'error' => $check,
+                'params_given' => $params,
+                'content' => '',
+            ];
+
+            return $aRet;
+        }
+        $response = $this->get_data($params, "get_all");
+
+        if ($response['valid'] == true) {
+            $response['content'] = $this->sanitize_sourcedata($response['content']);
+            $response['content'] = $this->map_to_schema($response['content']);
+
+        }
+
+        return $response;
+
+    }
+
+
+    // make request for a positions list and return it as array
     public function get_list($params)
     {
         $check = $this->required_parameter("get_list", $params);
@@ -517,7 +549,6 @@ class UnivIS extends Provider
         }
 
         return $response;
-
     }
 
     public function get_single($params)
@@ -631,7 +662,7 @@ class UnivIS extends Provider
         } else {
             $content = json_decode($remote_get["body"], true);
 
-            if (strpos($content, 'keine passenden ') === false) {
+            if (!is_array($content) && strpos($content, 'keine passenden ') === false) {
                 $aRet = [
                     'valid' => false,
                     'error' => 'No entry',
