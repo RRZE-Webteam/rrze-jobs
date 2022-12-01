@@ -34,7 +34,7 @@ class UnivIS extends Provider
             'get_single' => array(
                 'id' => 'number',
             ),
-            'get_all' => array(
+            'get_group' => array(
                 'group' => 'string',
             ),
         );
@@ -43,7 +43,7 @@ class UnivIS extends Provider
 
     // which methods do we serve
     public $methods = array(
-        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter", "get_all",
+        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter", "get_group",
     );
 
     // map univis field names and entries to schema standard
@@ -133,6 +133,8 @@ class UnivIS extends Provider
         // contains out of template (headlines) + content from
         // desc2 (Notwendige Qualifikation:)
         // desc3 ( Wünschenswerte Qualifikation:)
+
+        $res['qualifications'] = '';
 
         if ((isset($jobdata['desc2'])) && (!empty($jobdata['desc2']))) {
 
@@ -277,9 +279,9 @@ class UnivIS extends Provider
         }
         //    $res['contact'] = $contactpersondata;
 
-        if (!empty($contactpersondata)) {
+        if (!empty($contactpersondata) && !empty($contactpersondata['workLocation']['address'])) {
             $res['jobLocation']['address'] = $contactpersondata['workLocation']['address'];
-        } elseif (!empty($persondata)) {
+        } elseif (!empty($persondata) && !empty($persondata['workLocation']['address'])) {
             $res['jobLocation']['address'] = $persondata['workLocation']['address'];
         }
         if (!isset($res['jobLocation']['address']['addressRegion'])) {
@@ -434,13 +436,21 @@ class UnivIS extends Provider
 
                     if ($person['key'] == $key) {
                         $res['email'] = $person['location'][0]['email'];
-                        $res['telephone'] = $person['location'][0]['tel'];
+
+                        if (isset($person['location'][0]['tel'])) {
+                            $res['telephone'] = $person['location'][0]['tel'];
+                        }
+
                         if (isset($person['location'][0]['fax'])) {
                             $res['faxNumber'] = $person['location'][0]['fax'];
                         }
 
                         $res['familyName'] = $person['lastname'];
-                        $res['givenName'] = $person['firstname'];
+
+                        if (isset($person['firstname'])){
+                            $res['givenName'] = $person['firstname'];
+                        }
+
                         $res['worksFor'] = $person['orgname'];
                         if (isset($person['gender'])) {
                             $res['gender'] = $person['gender'];
@@ -454,11 +464,18 @@ class UnivIS extends Provider
                             $res['name'] = $person['title'];
                             $res['name'] .= ' ';
                         }
-                        $res['name'] .= $person['firstname'] . ' ' . $person['lastname'];
+                        $res['name'] .= (!empty($person['firstname']) ? $person['firstname'] . ' ' : '') . $person['lastname'];
                         $res['workLocation']['name'] = $person['orgname'];
-                        $res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
-                        $res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
-                        $res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
+
+                        if (isset($person['location'][0]['street'])) {
+                            $res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
+                        }
+
+                        if (isset($person['location'][0]['ort'])) {
+                            $res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
+                            $res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
+                        }
+
 
                         // $res['orig'] =  $person;
                     }
@@ -505,9 +522,9 @@ class UnivIS extends Provider
     }
 
     // make request for a positions list and return it as array
-    public function get_all($params)
+    public function get_group($params)
     {
-        $check = $this->required_parameter("get_all", $params);
+        $check = $this->required_parameter("get_group", $params);
 
         if (is_array($check)) {
             $aRet = [
@@ -520,7 +537,7 @@ class UnivIS extends Provider
 
             return $aRet;
         }
-        $response = $this->get_data($params, "get_all");
+        $response = $this->get_data($params, "get_group");
 
         if ($response['valid'] == true) {
             $response['content'] = $this->sanitize_sourcedata($response['content']);
