@@ -22,7 +22,7 @@ class Shortcode
     private $count = 0;
     private $settings = '';
     private $pluginname = '';
-    private $options = [];
+    static $options = [];
     private $jobOutput = '';
     private $logo_url;
 
@@ -43,7 +43,7 @@ class Shortcode
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
-        $this->options = $settings->getOptions();
+        self::$options = $settings->getOptions();
         $this->logo_url = (has_custom_logo() ? wp_get_attachment_url(get_theme_mod('custom_logo')) : RRZE_JOBS_LOGO);
         add_action('init', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
@@ -167,7 +167,7 @@ class Shortcode
                     $ret['status'][$provider]['valid'] = false;
                     $ret['valid'] = false;
 
-                    return $this->get_errormsg($ret);
+                    return self::get_errormsg($ret);
                 }
             }
         }
@@ -182,14 +182,14 @@ class Shortcode
             $query = 'get_single';
         }
 
-        if (!empty($this->options['rrze-jobs-access_orgids_univis'])) {
-            $params['UnivIS']['get_list']['department'] =  $this->options['rrze-jobs-access_orgids_univis'];
+        if (!empty(self::$options['rrze-jobs-access_orgids_univis'])) {
+            $params['UnivIS']['get_list']['department'] =  self::$options['rrze-jobs-access_orgids_univis'];
         }
-        if (!empty($this->options['rrze-jobs-access_orgids_interamt'])) {
-            $params['Interamt']['get_list']['partner'] =  $this->options['rrze-jobs-access_orgids_interamt'];
+        if (!empty(self::$options['rrze-jobs-access_orgids_interamt'])) {
+            $params['Interamt']['get_list']['partner'] =  self::$options['rrze-jobs-access_orgids_interamt'];
         }
-        if (!empty($this->options['rrze-jobs-access_bite_apikey'])) {
-            $params['BITE']['request-header']['headers']['BAPI-Token'] =  $this->options['rrze-jobs-access_bite_apikey'];
+        if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
+            $params['BITE']['request-header']['headers']['BAPI-Token'] =  self::$options['rrze-jobs-access_bite_apikey'];
         }
 
         // In case the org id was given as a parameter, overwrite the default from backend
@@ -222,7 +222,7 @@ class Shortcode
 
 
         if ($newdata['valid'] === false) {
-            return $this->get_errormsg($newdata);
+            return self::get_errormsg($newdata);
         }
 
 
@@ -251,19 +251,17 @@ class Shortcode
                         // Ignore/hide this position in display
                         $ret['status'][$num]['code'] = 403;
                         $ret['status'][$num]['valid'] = false;
-                        return $this->get_errormsg($ret);
+                        return self::get_errormsg($ret);
                     } else {
 
                         $data['const'] = $strings;
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
 
-                        $data = $this->ParseDataVars($data);
+                        $data = self::ParseDataVars($data);
                         $content .= Template::getContent($template, $data);
                     }
                 }
-
-
 
                 $content = do_shortcode($content);
 
@@ -274,11 +272,11 @@ class Shortcode
                     return $content;
                 } else {
                     $errortext = "Empty content from template by asking for job id: " . $jobid;
-                    return $this->get_errormsg($newdata);
+                    return self::get_errormsg($newdata);
                 }
             } else {
                 $errortext = "Empty content from template by asking for job id: " . $jobid;
-                return $this->get_errormsg($newdata, $errortext, 'Error: No content');
+                return self::get_errormsg($newdata, $errortext, 'Error: No content');
             }
         } else {
             // list
@@ -310,7 +308,7 @@ class Shortcode
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
 
 
-                        $data = $this->ParseDataVars($data);
+                        $data = self::ParseDataVars($data);
                         $parserdata['joblist'] .= Template::getContent($template, $data);
                     }
                 }
@@ -326,7 +324,7 @@ class Shortcode
             }
             if (!is_readable($template)) {
                 $errortext .=  "Templatefile $template not readable!!";
-                return $this->get_errormsg($parserdata, $errortext, 'Template Error');
+                return self::get_errormsg($parserdata, $errortext, 'Template Error');
             }
 
             $parserdata['const'] = $strings;
@@ -339,13 +337,13 @@ class Shortcode
                 return $content;
             } else {
                 $errortext .=  "Empty content from template $template";
-                return $this->get_errormsg($parserdata, $errortext, 'Output Error');
+                return self::get_errormsg($parserdata, $errortext, 'Output Error');
             }
         }
 
         $errortext =  "Unknown shortcode handling";
         //	$errortext .=  Helper::get_html_var_dump($parserdata);
-        return $this->get_errormsg($parserdata, $errortext);
+        return self::get_errormsg($parserdata, $errortext);
     }
 
 
@@ -366,7 +364,7 @@ class Shortcode
     private function hideinternal($data)
     {
         if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)) {
-            if ((isset($this->options['rrze-jobs-misc_hide_internal_jobs'])) && ($this->options['rrze-jobs-misc_hide_internal_jobs'] === false)) {
+            if ((isset(self::$options['rrze-jobs-misc_hide_internal_jobs'])) && (self::$options['rrze-jobs-misc_hide_internal_jobs'] === false)) {
                 return false;
             }
 
@@ -379,16 +377,16 @@ class Shortcode
             }
 
             if (is_user_logged_in()) {
-                if ($this->options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true) {
+                if (self::$options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true) {
                     return false;
                 }
             }
 
 
 
-            if ((isset($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) && (!empty($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts']))) {
+            if ((isset(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) && (!empty(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']))) {
 
-                $required_hosts = trim($this->options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
+                $required_hosts = trim(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
                 $hosts = preg_split("/[\s,\n]+/", $required_hosts);
                 $ret = true;
                 foreach ($hosts as $h) {
@@ -409,7 +407,7 @@ class Shortcode
      * Erroroutput for Shortcode calls
      */
 
-    private function get_errormsg($parserdata, $text = '', $title = '')
+    public static function get_errormsg($parserdata, $text = '', $title = '')
     {
 
 
@@ -418,8 +416,8 @@ class Shortcode
         foreach ($parserdata['status'] as $provider) {
 
             $errortextfield = 'rrze-jobs-labels_job_errortext_' . $provider['code'];
-            if (isset($this->options[$errortextfield])) {
-                $errormsg = $this->options[$errortextfield];
+            if (isset(self::$options[$errortextfield])) {
+                $errormsg = self::$options[$errortextfield];
             } else {
                 $errormsg = $provider['error'];
             }
@@ -449,7 +447,7 @@ class Shortcode
         }
 
 
-        if ((empty($parserdata['errormsg']))  || ((isset($this->options['rrze-jobs-labels_job_errortext_display'])) && ($this->options['rrze-jobs-labels_job_errortext_display'] == false))) {
+        if ((empty($parserdata['errormsg']))  || ((isset(self::$options['rrze-jobs-labels_job_errortext_display'])) && (self::$options['rrze-jobs-labels_job_errortext_display'] == false))) {
             $content =  "<!--  ";
             $content .= " Code: " . $parserdata['errorcode'] . "; Msg: " . $parserdata['errormsg'];
             $content .= " -->";
@@ -474,7 +472,7 @@ class Shortcode
     }
 
     // replace Parse Variables in values itself outside the parser
-    private function ParseDataVars($data)
+    public static function ParseDataVars($data)
     {
         $searchfields = $data['const'];
         $replacefields = array("description", "qualifications", "disambiguatingDescription", "text_jobnotice");
@@ -492,10 +490,10 @@ class Shortcode
         return $data;
     }
     // get the Labels from the options 
-    private function get_labels()
+    public static function get_labels()
     {
         $res = array();
-        foreach ($this->options as $name => $value) {
+        foreach (self::$options as $name => $value) {
             $pos = strpos($name, 'rrze-jobs-labels_job_headline_');
             if (($pos !== false) && ($pos == 0)) {
                 preg_match('/rrze-jobs-labels_job_headline_([a-z0-9\-_]*)/i', $name, $output_array);
