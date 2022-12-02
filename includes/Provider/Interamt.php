@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Interamt 
- * 
+ * Interamt
+ *
  * Created on : 14.09.2022
  */
 
@@ -10,48 +10,47 @@ namespace RRZE\Jobs\Provider;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
+use RRZE\Jobs\Provider;
 
 class Interamt extends Provider
 {
 
     public function __construct()
     {
-        $this->api_url        = 'https://interamt.de/koop/app/webservice_v2';
-        $this->url        = 'https://interamt.de/';
-        $this->name        = "Interamt";
-        $this->cachetime   =  2 * HOUR_IN_SECONDS;
-        $this->cachetime_list   = $this->cachetime;
-        $this->cachetime_single   =  4 * HOUR_IN_SECONDS;
+        $this->api_url = 'https://interamt.de/koop/app/webservice_v2';
+        $this->url = 'https://interamt.de/';
+        $this->name = "Interamt";
+        $this->cachetime = 2 * HOUR_IN_SECONDS;
+        $this->cachetime_list = $this->cachetime;
+        $this->cachetime_single = 4 * HOUR_IN_SECONDS;
         $this->uriparameter = '';
         $this->request_args = array(
-            'timeout'     => 45,
+            'timeout' => 45,
             'redirection' => 5,
         );
 
         // defines all required parameters for defined request method
         $this->required_fields = array(
-            'get_list'    => array(
-                'partner'    => 'number'
+            'get_list' => array(
+                'partner' => 'number',
             ),
-            'get_single'    => array(
-                'id'    => 'number'
-            )
+            'get_single' => array(
+                'id' => 'number',
+            ),
         );
     }
 
-    // which methods do we serve 
+    // which methods do we serve
     public $methods = array(
-        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter"
+        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter",
     );
-
 
     // map univis field names and entries to schema standard
     public function map_to_schema($data)
     {
         $newpositions = array();
-        // First we make a simple Mapping by an array with fields, that match 
+        // First we make a simple Mapping by an array with fields, that match
         // as they are
 
         if (isset($data['Stellenangebote'])) {
@@ -74,7 +73,6 @@ class Interamt extends Provider
         return $data;
     }
 
-
     // go through the provider data stream and diff it from the fields
     // we already map to schema.
     // all fields that remain are new or was not mapped to schema and
@@ -86,7 +84,7 @@ class Interamt extends Provider
             "DatumBesetzungZum", "DatumOeffentlichAusschreiben", "TarifEbeneVon", "TarifEbeneBis", "DatumBewerbungsfrist",
             "BesoldungGruppeBis", "BesoldungGruppeVon", "Studiengaenge",
             "BewerbungUrl", "Aufgabenbereiche", "WochenarbeitszeitBeamter", "WochenarbeitszeitArbeitnehmer", "StellenangebotBehoerde",
-            "BeschaeftigungBereichBundesland", "HomepageBehoerde", "Einsatzort", "BeschaeftigungDauer", "BefristetFuer", "Teilzeit", "ExtAnsprechpartner"
+            "BeschaeftigungBereichBundesland", "HomepageBehoerde", "Einsatzort", "BeschaeftigungDauer", "BefristetFuer", "Teilzeit", "ExtAnsprechpartner",
         );
         $providerfield = array();
 
@@ -99,19 +97,16 @@ class Interamt extends Provider
         return $providerfield;
     }
 
-    // some missing schema fields can be generated automatically 
+    // some missing schema fields can be generated automatically
     private function generate_schema_values($jobdata)
     {
         // Paramas:
         // $jobdata - one single jobarray
 
-
         $res = array();
 
         // the following schema fields are not set in univis data,
         // but they can be evaluated from others
-
-
 
         // datePosted
         if (isset($jobdata['Daten']["Eingestellt"])) {
@@ -131,7 +126,6 @@ class Interamt extends Provider
             $res['title'] = $jobdata['Stellenbezeichnung'];
         }
 
-
         // identifier
         $res['identifier'] = $jobdata['Id'];
 
@@ -149,16 +143,12 @@ class Interamt extends Provider
             $res['validThrough'] = $jobdata['DatumBewerbungsfrist'];
         }
 
-
-
-
-        // 'jobStartDate'	=> 'start', 
+        // 'jobStartDate'    => 'start',
         // jobImmediateStart
 
         if (isset($jobdata['DatumBesetzungZum'])) {
             $res['jobStartDate'] = $jobdata['DatumBesetzungZum'];
         }
-
 
         // estimatedSalary  (type: MonetaryAmount)
         // aus vonbesold und bisbesold   generieren
@@ -184,9 +174,6 @@ class Interamt extends Provider
             }
         }
 
-
-
-
         $acontact = $this->get_interamt_application_contact($jobdata);
         if (!empty($acontact['url'])) {
             $res['applicationContact']['url'] = $acontact['url'];
@@ -200,10 +187,6 @@ class Interamt extends Provider
         if (isset($acontact['directApply'])) {
             $res['directApply'] = $acontact['directApply'];
         }
-
-
-
-
 
         if (isset($jobdata['ExtAnsprechpartner'])) {
             $res['applicationContact']['contactType'] = __('Contact for application', 'rrze-jobs');
@@ -222,26 +205,22 @@ class Interamt extends Provider
                 $res['employmentUnit']['email'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
             }
             if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']))) {
-                $res['applicationContact']['faxNumber'] =  $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']);
+                $res['applicationContact']['faxNumber'] = $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefax']);
                 $res['employmentUnit']['faxNumber'] = $res['applicationContact']['faxNumber'];
             }
             if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon']))) {
-                $res['applicationContact']['telephone'] =  $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon']);
+                $res['applicationContact']['telephone'] = $this->sanitize_telefon($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerTelefon']);
                 $res['employmentUnit']['telephone'] = $res['applicationContact']['telephone'];
             }
             if ((isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse']))) {
-                $res['applicationContact']['street'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse'];
+                $res['applicationContact']['street'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerStrasse'];
                 $res['employmentUnit']['street'] = $res['applicationContact']['street'];
             }
         }
 
-
-
-
         // hiringOrganization   (type: Organzsation)
-        // aus orgunit und oder orgname generieren	    
+        // aus orgunit und oder orgname generieren
         // Der Inhalt (Ansprechperson) contact geht hier in contactpoint mit ein
-
 
         if ((isset($jobdata['Behoerde'])) && (!empty($jobdata['Behoerde']))) {
             $res['employmentUnit']['name'] = $jobdata['Behoerde'];
@@ -254,10 +233,6 @@ class Interamt extends Provider
             $res['employmentUnit']['url'] = $jobdata['HomepageBehoerde'];
             $res['hiringOrganization']['url'] = sanitize_url($jobdata['HomepageBehoerde']);
         }
-
-
-
-
 
         if (isset($jobdata['Plz'])) {
             $res['jobLocation']['address']['postalCode'] = $jobdata['Plz'];
@@ -274,7 +249,6 @@ class Interamt extends Provider
             $res['jobLocation']['address']['addressRegion'] = $jobdata['BeschaeftigungBereichBundesland'];
         }
 
-
         if (!isset($res['jobLocation']['address']['addressRegion'])) {
             $res['jobLocation']['address']['addressRegion'] = __('Bavaria', 'rrze-jobs');
         }
@@ -283,21 +257,19 @@ class Interamt extends Provider
         }
 
         // jobLocation (type: Place)
-        // Achtung: Für Google muss die Property addressCountry (DE) enthalten sein. 
+        // Achtung: Für Google muss die Property addressCountry (DE) enthalten sein.
         /* "jobLocation": {
-			"@type": "Place",
-			"address": {
-			  "@type": "PostalAddress",
-			  "streetAddress": "555 Clancy St",   aus acontact.location.street
-			  "addressLocality": "Detroit",	 aus acontact.location.ort ohne plz
-			  "addressRegion": "MI",	defaults Bayern
-			  "postalCode": "48201",     aus acontact.location.ort nur plz
-			  "addressCountry": "US"    defaults auf DE
-			}
-		      }
-		 */
-
-
+        "@type": "Place",
+        "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "555 Clancy St",   aus acontact.location.street
+        "addressLocality": "Detroit",     aus acontact.location.ort ohne plz
+        "addressRegion": "MI",    defaults Bayern
+        "postalCode": "48201",     aus acontact.location.ort nur plz
+        "addressCountry": "US"    defaults auf DE
+        }
+        }
+         */
 
         // employmentType
         $typeliste = array();
@@ -311,9 +283,6 @@ class Interamt extends Provider
             }
         }
 
-
-
-
         if ((!empty($jobdata['BeschaeftigungDauer'])) || (isset($jobdata['BeschaeftigungDauer']))) {
             if (($jobdata['BeschaeftigungDauer'] == 'befristet') || (!empty($jobdata['BeschaeftigungDauer']))) {
                 $typeliste[] = 'TEMPORARY';
@@ -324,28 +293,25 @@ class Interamt extends Provider
             $res['text_befristet'] = __('Temporary employment until', 'rrze-jobs') . ' ' . $jobdata['BefristetFuer'] . " " . __('monthes', 'rrze-jobs');
         }
 
-
         $res['employmentType'] = $typeliste;
-
 
         // aus type2 bestimmt, muss aber einen oder mehrere der folgenden
         // Werte enthalten:
         /*
-		FULL_TIME
-		PART_TIME
-		CONTRACTOR
-		TEMPORARY
-		INTERN
-		VOLUNTEER
-		PER_DIEM
-		OTHER
-	    */
+        FULL_TIME
+        PART_TIME
+        CONTRACTOR
+        TEMPORARY
+        INTERN
+        VOLUNTEER
+        PER_DIEM
+        OTHER
+         */
         // Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
-
 
         // workHours
         // wenn type4 gesetzt (Vormittags / nachmittags)
-        // ausserdem, wenn gesetzt: 
+        // ausserdem, wenn gesetzt:
         // 'nd':  Nachtdienst
         // 'sd':  Schichtdienst
         // 'bd':  Bereitsschaftsdienst
@@ -358,14 +324,10 @@ class Interamt extends Provider
             $res['workHours'] = $jobdata['WochenarbeitszeitBeamter'] . ' ' . __('hours per week', 'rrze-jobs');
         }
 
-
-
-        // Gruppe / Kategorie der Stelle  
+        // Gruppe / Kategorie der Stelle
         if ((isset($jobdata['Aufgabenbereiche'])) && (!empty($jobdata['Aufgabenbereiche']))) {
             $res['occupationalCategory'] = $jobdata['Aufgabenbereiche'];
         }
-
-
 
         if ((isset($jobdata['Studiengaenge'])) && (is_array($jobdata['Studiengaenge']))) {
             $qualification = '';
@@ -382,11 +344,8 @@ class Interamt extends Provider
             $res['totalJobOpenings'] = $jobdata['AnzahlStellen'];
         }
 
-
         return $res;
     }
-
-
 
     // make request for a positions list and return it as array
     public function get_list($params)
@@ -396,10 +355,10 @@ class Interamt extends Provider
         if (is_array($check)) {
             $aRet = [
                 'valid' => false,
-                'code'    => 405,
+                'code' => 405,
                 'error' => $check,
-                'params_given'   => $params,
-                'content' => ''
+                'params_given' => $params,
+                'content' => '',
             ];
             return $aRet;
         }
@@ -407,15 +366,13 @@ class Interamt extends Provider
 
         if ($response['valid'] == true) {
 
-            // After i got the list from interamt, i have to get the detail 
+            // After i got the list from interamt, i have to get the detail
             // data from each single job in an additional request, cause the
             // list doesnt contains the details
-
 
             $singleparams = $params;
 
             if ((isset($response['content']['Anzahltreffer']) && ((intval($response['content']['Anzahltreffer']) > 0)))) {
-
 
                 if (isset($response['content']['Stellenangebote'])) {
                     foreach ($response['content']['Stellenangebote'] as $num => $pos) {
@@ -432,14 +389,12 @@ class Interamt extends Provider
                 $aRet = [
                     'valid' => false,
                     'error' => 'No entry',
-                    'code'   => 404,
-                    'params_given'   => $params,
-                    'content'    => ''
+                    'code' => 404,
+                    'params_given' => $params,
+                    'content' => '',
                 ];
                 return $aRet;
             }
-
-
 
             $response['content'] = $this->sanitize_sourcedata($response['content']);
             $response['content'] = $this->map_to_schema($response['content']);
@@ -448,7 +403,6 @@ class Interamt extends Provider
         return $response;
     }
 
-
     public function get_single($params, $parse = true)
     {
         $check = $this->required_parameter("get_single", $params);
@@ -456,21 +410,19 @@ class Interamt extends Provider
         if (is_array($check) && count($check) > 0) {
             $aRet = [
                 'valid' => false,
-                'code'  => 405,
+                'code' => 405,
                 'error' => $check,
-                'params_given'   => $params,
-                'content' => ''
+                'params_given' => $params,
+                'content' => '',
             ];
             return $aRet;
         }
-
 
         $response = $this->get_data($params, "get_single");
 
         if ($response['valid'] === true) {
 
             if ((is_array($response['content'])) && (!empty($response['content']))) {
-
 
                 $response['content'] = $this->sanitize_sourcedata($response['content']);
                 if ($parse) {
@@ -479,10 +431,10 @@ class Interamt extends Provider
             } else {
                 $aRet = [
                     'valid' => false,
-                    'code'  => 404,
+                    'code' => 404,
                     'error' => 'No entry',
-                    'params_given'   => $params,
-                    'content' => ''
+                    'params_given' => $params,
+                    'content' => '',
                 ];
                 return $aRet;
             }
@@ -490,9 +442,6 @@ class Interamt extends Provider
 
         return $response;
     }
-
-
-
 
     // Generate URI for request
     public function get_uri($params, $method = 'get_list')
@@ -502,7 +451,7 @@ class Interamt extends Provider
         foreach ($params[$method] as $name => $value) {
             $type = 'string';
             if (isset($this->required_fields[$method][$name])) {
-                $type =  $this->required_fields[$method][$name];
+                $type = $this->required_fields[$method][$name];
             }
             $urivalue = $this->sanitize_type($value, $type);
             $uriname = $this->sanitize_type($name, 'key');
@@ -518,8 +467,7 @@ class Interamt extends Provider
         return $uri;
     }
 
-
-    // Methode prüft, ob für einen Request mit einer definiertem Methode alle 
+    // Methode prüft, ob für einen Request mit einer definiertem Methode alle
     // notwendigen Parameter vorhanden sind
     // Returns true if all required parameters are set.
     // Otherwise it returns an array with the missing parameters
@@ -532,7 +480,7 @@ class Interamt extends Provider
         } else {
             foreach ($params[$method] as $name => $value) {
                 if (isset($this->required_fields[$method][$name])) {
-                    $type =  $this->required_fields[$method][$name];
+                    $type = $this->required_fields[$method][$name];
                     $urivalue = $this->sanitize_type($value, $type);
                     if (!empty($urivalue)) {
                         $found[$name] = $urivalue;
@@ -547,7 +495,6 @@ class Interamt extends Provider
             return $diff;
         }
 
-
         return true;
     }
 
@@ -556,7 +503,6 @@ class Interamt extends Provider
     {
         $uri = $this->get_uri($params, $method);
         $url = $this->api_url . '?' . $uri;
-
 
         $cache = new Cache();
 
@@ -577,25 +523,27 @@ class Interamt extends Provider
             $id = $params[$method]['id'];
         }
 
-        $cachedout = $cache->get_cached_job('Interamt', $org, $id, $method);
-        if ($cachedout) {
-            return $cachedout;
+        if ($this->use_cache) {
+            $cachedout = $cache->get_cached_job('Interamt', $org, $id, $method);
+            if ($cachedout) {
+                return $cachedout;
+            }
         }
-        $remote_get    = wp_safe_remote_get($url, $this->request_args);
+        $remote_get = wp_safe_remote_get($url, $this->request_args);
 
         if (is_wp_error($remote_get)) {
             $aRet = [
                 'valid' => false,
-                'content' => $remote_get->get_error_message()
+                'content' => $remote_get->get_error_message(),
             ];
             return $aRet;
         } else {
             $content = json_decode($remote_get["body"], true);
 
             $aRet = [
-                'request'    => $url,
-                'valid'    => true,
-                'content'    => $content,
+                'request' => $url,
+                'valid' => true,
+                'content' => $content,
             ];
 
             $cache->set_cached_job('Interamt', $org, $id, $method, $aRet);
@@ -604,10 +552,9 @@ class Interamt extends Provider
         }
     }
 
-
-    // Some data source use own formats in text fields (like markdown or 
-    // univis text format) or source defined selectors or values 
-    // which has to be translatet in a general form (HTML). 
+    // Some data source use own formats in text fields (like markdown or
+    // univis text format) or source defined selectors or values
+    // which has to be translatet in a general form (HTML).
     public function sanitize_sourcedata($data)
     {
         if (empty($data)) {
@@ -684,14 +631,12 @@ class Interamt extends Provider
         return $data;
     }
 
-
     // Interamt kennt zwar eine Application-URl in dem Feld "BewerbungUrl",
     // allerdings ist dieser nur besetzt,w enn man den Bewerbungsprozess bei Interamt durchführt.
     // Bewerbungsinformationen werden daher in der Regel im Text der Ausschreibung ergänzt.
     // Diese Funktion soll versuchen, die URl bzw. die E-Mail zur Bewerbung zur ermitteln.
-    // 
-    // returns array with keys 'url' , 'email', 'directApply' and 'email_subject' 
-
+    //
+    // returns array with keys 'url' , 'email', 'directApply' and 'email_subject'
 
     private function get_interamt_application_contact($jobdata)
     {
@@ -703,7 +648,7 @@ class Interamt extends Provider
 
         if ((isset($jobdata['BewerbungUrl'])) && (!empty($jobdata['BewerbungUrl']))) {
             // nevertheless, look into the desired field...
-            if (filter_var($jobdata['BewerbungUrl'], FILTER_VALIDATE_URL) !== FALSE) {
+            if (filter_var($jobdata['BewerbungUrl'], FILTER_VALIDATE_URL) !== false) {
                 $res['url'] = $jobdata['BewerbungUrl'];
             } elseif (is_email($jobdata['BewerbungUrl'])) {
                 $res['email'] = $jobdata['BewerbungUrl'];
@@ -722,27 +667,21 @@ class Interamt extends Provider
             if (!empty($lookforurl)) {
                 $res['url'] = $lookforurl;
             }
-            // also use the text for geting the email subject, if we need it later 
+            // also use the text for geting the email subject, if we need it later
             $lookformail = $this->get_interamt_application_mail_by_text($lastpart);
             if (!empty($lookformail)) {
                 $res['email'] = $lookformail;
             }
 
-
-
             $res['email_subject'] = $this->get_application_subject_by_text($lastpart);
         }
 
-
-
         if ((isset($jobdata['Kennung'])) && (!empty($jobdata['Kennung']))) {
             // Kennung enthält bei Interamt einen Betreff für Bewerbungen
-            // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden. 
+            // Dieser String kann bei Bewerbungen über E-Mail für den Mail-Subject verwendet werden.
             // this will overwrite the previous negotiated text
             $res['email_subject'] = $jobdata['Kennung'];
         }
-
-
 
         if ((!empty($res['url'])) || (!empty($res['email']))) {
             $res['directApply'] = true;
@@ -751,13 +690,11 @@ class Interamt extends Provider
         // if every negotiation fails, we try to use the contact mail adress
         // as fallback for the email
         if ((empty($res['email'])) && (isset($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'])) && (!empty($jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail']))) {
-            $res['email'] =  $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
+            $res['email'] = $jobdata['ExtAnsprechpartner']['ExtAnsprechpartnerEMail'];
         }
 
         return $res;
     }
-
-
 
     // searchs for an URL in the text and returns the first hit
     private function get_interamt_application_url_by_text($text)
@@ -769,7 +706,7 @@ class Interamt extends Provider
             if (!empty($output_array)) {
                 if ((isset($output_array[1])) && (isset($output_array[1][0]))) {
 
-                    if (filter_var($output_array[1][0], FILTER_VALIDATE_URL) !== FALSE) {
+                    if (filter_var($output_array[1][0], FILTER_VALIDATE_URL) !== false) {
                         $res = $output_array[1][0];
                     }
                 }

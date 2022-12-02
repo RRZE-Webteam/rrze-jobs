@@ -13,6 +13,7 @@ use RRZE\Jobs\Provider;
 
 class BITE extends Provider
 {
+    
 
     public function __construct()
     {
@@ -155,7 +156,7 @@ class BITE extends Provider
         $res['id'] = $jobdata['id'];
 
         // job_id (needed by FAU-Jobportal)
-        $res['job_id'] = $jobdata['id']; 
+        $res['job_id'] = $jobdata['id'];
 
         // intern (needed by FAU-Jobportal)
         $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
@@ -731,11 +732,12 @@ class BITE extends Provider
 
         $request_args = $this->get_request_args($params);
         // echo Helper::get_html_var_dump($request_args);
-        $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
-        if ($cachedout) {
-            return $cachedout;
+        if ($this->use_cache) {
+            $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
+            if ($cachedout) {
+                return $cachedout;
+            }
         }
-
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
@@ -950,9 +952,8 @@ class BITE extends Provider
 
     }
 
-
-
-    private function deleteDefaults($value){
+    private function deleteDefaults($value)
+    {
         $aDelete = [
             'Hier steht dann die Beschreibung',
             'Hier steht dann die Einleitung',
@@ -968,7 +969,7 @@ class BITE extends Provider
 
         // return '' if $value contains a paragraph only
         $check = str_replace('<p></p>', '', trim($value));
-        if (empty($check)){
+        if (empty($check)) {
             return $check;
         }
 

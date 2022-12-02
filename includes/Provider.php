@@ -22,8 +22,11 @@ class Provider
     public $systems = ["UnivIS", "Interamt", "BITE"];
     public $common_methods = ["get_list", "get_single"];
 
-    public function __construct()
+    public $use_cache;
+
+    public function __construct($use_cache = true)
     {
+        $this->use_cache = $use_cache;
         $this->positions = array();
         $this->lastcheck = '';
         $this->params = array();
@@ -143,11 +146,11 @@ class Provider
                         if (strpos($field, ".") !== false) {
                             $fieldnames = explode(".", $field);
 
-                            if (isset($fieldnames[2])) {
+                            if (isset($fieldnames[3]) && isset($pos[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]]) && isset($pos2[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]])) {
                                 if ($pos[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]] == $pos2[$fieldnames[0]][$fieldnames[1]][$fieldnames[3]]) {
                                     $matchnum++;
                                 }
-                            } elseif (isset($fieldnames[1])) {
+                            } elseif (isset($fieldnames[1]) && isset($pos[$fieldnames[0]][$fieldnames[1]]) && isset($pos2[$fieldnames[0]][$fieldnames[1]])) {
                                 if ($pos[$fieldnames[0]][$fieldnames[1]] == $pos2[$fieldnames[0]][$fieldnames[1]]) {
                                     $matchnum++;
                                 }

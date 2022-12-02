@@ -540,7 +540,7 @@ class UnivIS extends Provider
 
             return $aRet;
         }
-        $response = $this->get_data($params, "get_group", false);
+        $response = $this->get_data($params, "get_group");
 
         if ($response['valid'] == true) {
             $response['content'] = $this->sanitize_sourcedata($response['content']);
@@ -656,7 +656,7 @@ class UnivIS extends Provider
     }
 
     // get the raw data from provider by a a method and parameters
-    public function get_data($params, $method = 'get_list', $use_cache = true)
+    public function get_data($params, $method = 'get_list')
     {
         $uri = $this->get_uri($params, $method);
         $url = $this->api_url . '?' . $uri;
@@ -671,7 +671,7 @@ class UnivIS extends Provider
         if (isset($params[$method]['id'])) {
             $id = $params[$method]['id'];
         }
-        if ($use_cache) {
+        if ($this->use_cache) {
             $cachedout = $cache->get_cached_job('UnivIS', $org, $id, $method);
             if ($cachedout) {
                 return $cachedout;
