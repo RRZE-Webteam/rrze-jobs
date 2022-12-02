@@ -966,7 +966,7 @@ class BITE extends Provider
 
         $value = str_replace($aDelete, '', $value);
 
-        // empty $value if there is a paragraph only
+        // return '' if $value contains a paragraph only
         $check = str_replace('<p></p>', '', trim($value));
         if (empty($check)){
             return $check;

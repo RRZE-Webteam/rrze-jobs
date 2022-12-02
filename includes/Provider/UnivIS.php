@@ -121,7 +121,7 @@ class UnivIS extends Provider
         $res['identifier'] = $jobdata['id'];
 
         // job_id (needed by FAU-Jobportal)
-        $res['job_id'] = $jobdata['id']; 
+        $res['job_id'] = $jobdata['id'];
 
         // intern (needed by FAU-Jobportal)
         $res['intern'] = (!empty($jobdata['intern']) ? true : false);
@@ -208,7 +208,7 @@ class UnivIS extends Provider
         // aus vonbesold und bisbesold   generieren
         if (isset($jobdata['vonbesold']) || isset($jobdata['bisbesold'])) {
             $vonBesold = (!empty($jobdata['vonbesold']) ? $jobdata['vonbesold'] : '');
-            $bisBesold = (!empty($jobdata['bisbesold']) ? $jobdata['bisbesold'] : '');            
+            $bisBesold = (!empty($jobdata['bisbesold']) ? $jobdata['bisbesold'] : '');
             $res['estimatedSalary'] = $this->get_Salary_by_TVL($vonBesold, $bisBesold);
         }
 
@@ -435,7 +435,9 @@ class UnivIS extends Provider
                 if (is_array($person)) {
 
                     if ($person['key'] == $key) {
-                        $res['email'] = $person['location'][0]['email'];
+                        if (isset($person['location'][0]['email'])){
+                            $res['email'] = $person['location'][0]['email'];
+                        }
 
                         if (isset($person['location'][0]['tel'])) {
                             $res['telephone'] = $person['location'][0]['tel'];
@@ -447,11 +449,13 @@ class UnivIS extends Provider
 
                         $res['familyName'] = $person['lastname'];
 
-                        if (isset($person['firstname'])){
+                        if (isset($person['firstname'])) {
                             $res['givenName'] = $person['firstname'];
                         }
 
-                        $res['worksFor'] = $person['orgname'];
+                        if (isset($person['orgname'])){
+                            $res['worksFor'] = $person['orgname'];
+                        }
                         if (isset($person['gender'])) {
                             $res['gender'] = $person['gender'];
                         }
@@ -475,7 +479,6 @@ class UnivIS extends Provider
                             $res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
                             $res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
                         }
-
 
                         // $res['orig'] =  $person;
                     }
@@ -537,7 +540,7 @@ class UnivIS extends Provider
 
             return $aRet;
         }
-        $response = $this->get_data($params, "get_group");
+        $response = $this->get_data($params, "get_group", false);
 
         if ($response['valid'] == true) {
             $response['content'] = $this->sanitize_sourcedata($response['content']);
@@ -548,7 +551,6 @@ class UnivIS extends Provider
         return $response;
 
     }
-
 
     // make request for a positions list and return it as array
     public function get_list($params)
@@ -654,7 +656,7 @@ class UnivIS extends Provider
     }
 
     // get the raw data from provider by a a method and parameters
-    public function get_data($params, $method = 'get_list')
+    public function get_data($params, $method = 'get_list', $use_cache = true)
     {
         $uri = $this->get_uri($params, $method);
         $url = $this->api_url . '?' . $uri;
@@ -669,9 +671,11 @@ class UnivIS extends Provider
         if (isset($params[$method]['id'])) {
             $id = $params[$method]['id'];
         }
-        $cachedout = $cache->get_cached_job('UnivIS', $org, $id, $method);
-        if ($cachedout) {
-            return $cachedout;
+        if ($use_cache) {
+            $cachedout = $cache->get_cached_job('UnivIS', $org, $id, $method);
+            if ($cachedout) {
+                return $cachedout;
+            }
         }
         $remote_get = wp_safe_remote_get($url, $this->request_args);
 
