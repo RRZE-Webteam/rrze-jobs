@@ -460,7 +460,9 @@ class UnivIS extends Provider
                             $res['gender'] = $person['gender'];
                         }
 
-                        $res['identifier'] = $person['id'];
+                        if (isset($person['id'])){
+                            $res['identifier'] = $person['id'];
+                        }
 
                         $res['name'] = '';
                         if ((isset($res['title'])) && (!empty($res['title']))) {
@@ -469,7 +471,10 @@ class UnivIS extends Provider
                             $res['name'] .= ' ';
                         }
                         $res['name'] .= (!empty($person['firstname']) ? $person['firstname'] . ' ' : '') . $person['lastname'];
-                        $res['workLocation']['name'] = $person['orgname'];
+
+                        if (isset($person['orgname'])){
+                            $res['workLocation']['name'] = $person['orgname'];
+                        }
 
                         if (isset($person['location'][0]['street'])) {
                             $res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
