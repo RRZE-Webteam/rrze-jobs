@@ -874,7 +874,7 @@ class BITE extends Provider
                         case '06_schluss':
                         case 'abschlusstext':
                             $value = $this->sanitize_markdown_field($value);
-                            // $value = $this->deleteDefaults($value);
+                            $value = $this->deleteDefaults($value);
                             break;
                         case 'hiringorganization':
                             $value = $this->sanitize_custom_org($value);
@@ -965,6 +965,12 @@ class BITE extends Provider
         ];
 
         $value = str_replace($aDelete, '', $value);
+
+        // empty $value if there is a paragraph only
+        $check = str_replace('<p></p>', '', trim($value));
+        if (empty($check)){
+            return $check;
+        }
 
         return $value;
     }
