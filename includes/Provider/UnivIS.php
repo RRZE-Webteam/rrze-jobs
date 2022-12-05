@@ -28,14 +28,14 @@ class UnivIS extends Provider
 
         // defines all required parameters for defined request method
         $this->required_fields = array(
+            'get_group' => array(
+                'group' => 'uriparam',
+            ),
             'get_list' => array(
                 'department' => 'uriparam',
             ),
             'get_single' => array(
                 'id' => 'number',
-            ),
-            'get_group' => array(
-                'group' => 'string',
             ),
         );
 
@@ -43,7 +43,7 @@ class UnivIS extends Provider
 
     // which methods do we serve
     public $methods = array(
-        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter", "get_group",
+        "get_group", "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter",
     );
 
     // map univis field names and entries to schema standard
@@ -435,7 +435,7 @@ class UnivIS extends Provider
                 if (is_array($person)) {
 
                     if ($person['key'] == $key) {
-                        if (isset($person['location'][0]['email'])){
+                        if (isset($person['location'][0]['email'])) {
                             $res['email'] = $person['location'][0]['email'];
                         }
 
@@ -453,14 +453,14 @@ class UnivIS extends Provider
                             $res['givenName'] = $person['firstname'];
                         }
 
-                        if (isset($person['orgname'])){
+                        if (isset($person['orgname'])) {
                             $res['worksFor'] = $person['orgname'];
                         }
                         if (isset($person['gender'])) {
                             $res['gender'] = $person['gender'];
                         }
 
-                        if (isset($person['id'])){
+                        if (isset($person['id'])) {
                             $res['identifier'] = $person['id'];
                         }
 
@@ -472,7 +472,7 @@ class UnivIS extends Provider
                         }
                         $res['name'] .= (!empty($person['firstname']) ? $person['firstname'] . ' ' : '') . $person['lastname'];
 
-                        if (isset($person['orgname'])){
+                        if (isset($person['orgname'])) {
                             $res['workLocation']['name'] = $person['orgname'];
                         }
 
@@ -545,16 +545,28 @@ class UnivIS extends Provider
 
             return $aRet;
         }
-        $response = $this->get_data($params, "get_group");
 
-        if ($response['valid'] == true) {
-            $response['content'] = $this->sanitize_sourcedata($response['content']);
-            $response['content'] = $this->map_to_schema($response['content']);
+        $aGroups = (!empty($params['get_group']['group']) ? explode(',', $params['get_group']['group']) : []);
 
+        foreach ($aGroups as $group) {
+            $params['get_group']['group'] = $group;
+            $responseGroup = $this->get_data($params, "get_group");
+
+            if ($responseGroup['valid'] == true) {
+                $responseGroup['content'] = $this->sanitize_sourcedata($responseGroup['content']);
+                $responseGroup['content'] = $this->map_to_schema($responseGroup['content']);
+
+                if (!empty($response['content'])) {
+                    $response['content']['JobPosting'] = array_merge($response['content']['JobPosting'], $responseGroup['content']['JobPosting']);
+                }
+            }
+
+            if (empty($response)) {
+                $response = $responseGroup;
+            }
         }
 
         return $response;
-
     }
 
     // make request for a positions list and return it as array
@@ -669,19 +681,24 @@ class UnivIS extends Provider
         $cache = new Cache();
         $cache->set_cachetime($this->cachetime);
         $org = '';
+
         if (isset($params[$method]['department'])) {
             $org = preg_replace('/[^0-9,]/', '', $params[$method]['department']);
         }
+
         $id = '';
+
         if (isset($params[$method]['id'])) {
             $id = $params[$method]['id'];
         }
+        
         if ($this->use_cache) {
             $cachedout = $cache->get_cached_job('UnivIS', $org, $id, $method);
             if ($cachedout) {
                 return $cachedout;
             }
         }
+
         $remote_get = wp_safe_remote_get($url, $this->request_args);
 
         if (is_wp_error($remote_get)) {

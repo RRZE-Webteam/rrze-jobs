@@ -39,6 +39,7 @@ class BITE extends Provider
 
         // defines all required parameters for defined request method
         $this->required_fields = array(
+            'get_group' => array(),
             'get_list' => array(),
             'get_single' => array('id' => 'string'),
         );
@@ -47,7 +48,7 @@ class BITE extends Provider
 
     // which methods do we serve
     public $methods = array(
-        "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter",
+        "get_group", "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter",
     );
 
     // map univis field names and entries to schema standard
@@ -478,6 +479,12 @@ class BITE extends Provider
         }
 
         return $res;
+    }
+
+    // needed for FAU-Jobporal
+    public function get_group($params)
+    {
+        return $this->get_list($params);
     }
 
     // make request for a positions list and return it as array
