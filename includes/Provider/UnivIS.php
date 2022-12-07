@@ -21,6 +21,8 @@ class UnivIS extends Provider
         $this->name = "UnivIS";
         $this->cachetime = 3 * HOUR_IN_SECONDS;
         $this->uriparameter = 'search=positions&closed=0&show=json';
+
+        https://univis.uni-erlangen.de/prg?search=positions&closed=0&show=json&id=90671499
         $this->request_args = array(
             'timeout' => 45,
             'redirection' => 5,
@@ -1230,7 +1232,8 @@ class UnivIS extends Provider
                     || strpos($val, 'bald') !== false
                     || strpos($val, 'glich') !== false
                     || strpos($val, 'asap') !== false
-                    || strpos($val, 'a.s.a.p.') !== false) {
+                    || strpos($val, 'a.s.a.p.') !== false
+                    || strpos($val, 'immediately') !== false) {
                     // sofort, ab sofort, baldmöglich, baldmöglichst, zum nächstmöglichen Zeitpunkt, nächstmöglich, frühst möglich, frühestmöglich, asap, a.s.a.p.
                     $res = '0';
                 } else {
