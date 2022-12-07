@@ -1194,13 +1194,13 @@ class UnivIS extends Provider
             // field might contain a date - if it contains a date, it must be in english format
             if (preg_match("/\d{4}-\d{2}-\d{2}/", $start, $parts)) {
                 $res = $parts[0];
-                $res = date('d.m.Y', strtotime($res));
+                $res = date('Y-m-d', strtotime($res));
             } elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $start, $parts)) {
                 $res = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-                $res = date('d.m.Y', strtotime($res));
+                $res = date('Y-m-d', strtotime($res));
             } elseif (preg_match("/(\d{2}).(\d{2}).(\d{2})\s*$/", $start, $parts)) {
                 $res = '20' . $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-                $res = date('d.m.Y', strtotime($res));
+                $res = date('Y-m-d', strtotime($res));
 
             } else {
                 $res = sanitize_text_field($start);
@@ -1245,7 +1245,7 @@ class UnivIS extends Provider
             $res = "-1";
         } else {
             // Convert date 'job_start'
-            $res = date('d.m.Y', strtotime($res));
+            $res = date('Y-m-d', strtotime($res));
         }
 
         return $res;
