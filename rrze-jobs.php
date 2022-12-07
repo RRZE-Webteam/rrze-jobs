@@ -4,7 +4,7 @@
 Plugin Name:     RRZE Jobs
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 Description:     Embedding job offers from job portal apis via shortcode
-Version:         3.4.19
+Version:         3.4.40
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v3
@@ -28,21 +28,22 @@ require_once 'config/config.php';
 
 use RRZE\Jobs\Main;
 
-const RRZE_PHP_VERSION = '7.3';
-const RRZE_WP_VERSION = '5.9';
-
+const RRZE_PHP_VERSION = '7.4';
+const RRZE_WP_VERSION = '6.0';
+const RRZE_TEXTDOMAIN = 'rrze-jobs';
 const RRZE_PLUGIN_FILE = __FILE__;
 
 // Automatische Laden von Klassen.
 spl_autoload_register(function ($class) {
     $prefix = __NAMESPACE__;
-    $base_dir = __DIR__ . '/includes/';
+    $base_dir = __DIR__ . '/includes';
 
+    
     $len = strlen($prefix);
     if (strncmp($prefix, $class, $len) !== 0) {
         return;
     }
-
+    
     $relative_class = substr($class, $len);
     $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
 
@@ -61,16 +62,14 @@ add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
 /**
  * Einbindung der Sprachdateien.
  */
-function load_textdomain()
-{
+function load_textdomain() {
     load_plugin_textdomain('rrze-jobs', false, sprintf('%s/languages/', dirname(plugin_basename(__FILE__))));
 }
 
 /**
  * Überprüft die minimal erforderliche PHP- u. WP-Version.
  */
-function system_requirements()
-{
+function system_requirements() {
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
         /* Übersetzer: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version */
@@ -85,8 +84,7 @@ function system_requirements()
 /**
  * Wird durchgeführt, nachdem das Plugin aktiviert wurde.
  */
-function activation()
-{
+function activation() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
 
@@ -105,15 +103,25 @@ function activation()
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
-function deactivation()
-{
+function deactivation() {
     // Hier können die Funktionen hinzugefügt werden, die
     // bei der Deaktivierung des Plugins aufgerufen werden müssen.
     // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
 
     // delete_option(Options::get_option_name());
 }
+/**
+ * Instantiate Plugin class.
+ * @return object Plugin
+ */
+function plugin() {
+    static $instance;
+    if (null === $instance) {
+        $instance = new Plugin(__FILE__);
+    }
 
+    return $instance;
+}
 /**
  * Wird durchgeführt, nachdem das WP-Grundsystem hochgefahren
  * und alle Plugins eingebunden wurden.
@@ -121,7 +129,7 @@ function deactivation()
 function loaded() {
     // Sprachdateien werden eingebunden.
     load_textdomain();
-
+    plugin()->loaded();
     // Überprüft die minimal erforderliche PHP- u. WP-Version.
     if ($error = system_requirements()) {
         include_once ABSPATH . 'wp-admin/includes/plugin.php';

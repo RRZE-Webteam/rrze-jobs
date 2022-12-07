@@ -3,7 +3,6 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
-use function RRZE\Jobs\Config\getShortcodeSettings;
 use function RRZE\Jobs\Config\getConstants;
 
 use RRZE\Jobs\Job;
@@ -15,9 +14,7 @@ class Cache  {
     protected $pluginFile;
     private $settings = '';
     
-    public function __construct($pluginFile, $settings) {
-        $this->pluginFile = $pluginFile;
-        $this->settings = $settings;
+    public function __construct() {
 	$this->constants = getConstants();
     }
 
@@ -25,7 +22,14 @@ class Cache  {
 	return true;
     }
     
-    public function get_cached_job($provider = '', $provider_orgid = '', $jobid = '') {
+    public function set_cachetime($time) {
+	if ((isset($time)) && (intval($time) > 0)) {
+	    $this->constants['Transient_Seconds'] = $time;
+	}
+	return $this->constants['Transient_Seconds'];
+    }
+    
+    public function get_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default') {
 	$prefix = $this->constants['Transient_Prefix'];
 	if (empty($provider)) {
 	    $provider = 'noprovider';
@@ -44,6 +48,11 @@ class Cache  {
 	    $jobid = preg_replace('/[^a-z0-9]+/i', '', $jobid);
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
+	if ($format !== 'default') {
+	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);
+	    
+	    $transient_name .= '_'.$format;
+	}
 	$value = get_transient( $transient_name );
 	
 	if ( false === $value ) {
@@ -52,7 +61,7 @@ class Cache  {
 	    return $value;
 	}
     }
-    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $content = '') {	
+    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '', $cachetimeoverwrite = 0 ) {	
 	if (empty($content)) {
 	    return false;
 	}
@@ -75,7 +84,17 @@ class Cache  {
 	    $jobid = preg_replace('/[^a-z0-9]+/i', '', $jobid);
 	}
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
+	if ($format !== 'default') {
+	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);
+	    $transient_name .= '_'.$format;
+	}
+	
 	$cachetime = $this->constants['Transient_Seconds'];
+	if ((!empty($cachetimeoverwrite)) && (intval($cachetimeoverwrite)>0)) {
+	    $cachetime = $cachetimeoverwrite;
+	}
+	
+
 	
 	set_transient( $transient_name, $content, $cachetime);
 	return true;

@@ -2,8 +2,76 @@
 /* Shortcode CSS
 /*----------------------------------------------------------------------------*/
 
+.rrze-jobs {
+    --min-width-aside: 300px;
+    --gap-width: 30px;
+}
+
 .rrze-jobs-single {
-    .standard-btn {
-	margin-bottom: 0;
+    display: block;
+    @media (min-width: 1024px) {
+	 display: grid;
+	 gap: var(--gap-width, 30px);
+	 grid-template-columns: 1fr var(--min-width-aside, 300px);
     }
+   
+
+    article {
+	display: block;
+    }
+    
+    aside {
+	display: block;
+	@media (min-width: 1024px) {
+	    border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
+	    padding-left: 15px;
+	}
+	
+	span {
+	    font-size: inherit;
+	    line-height: inherit;
+	}
+    }
+    
+    @media (min-width: 600px) {
+	table.rrze-jobs-single-keyfacts {
+	    background: transparent;
+	    border: none;
+
+	    tr {
+		 border: none;
+	    }
+	    th, td {
+		display: inline-block;
+		width: 100%;
+	    }
+	    th {
+		vertical-align: top;
+		border: none;
+		background: transparent;
+		padding: 0;
+		font-size: 0.9em;
+	    }
+	    td {
+		vertical-align: top;
+		border: none;
+		background: transparent;	    
+		padding: 0 0 1em 1em;
+
+
+		ul {
+		    margin: 0; 
+		    li {
+			list-style: inside disc;
+			font-size: inherit;
+			line-height: inherit;
+		    }
+		}
+	    }
+	} 
+    }
+
+    
+    
+    
 }

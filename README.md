@@ -13,8 +13,17 @@ GITHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 ## Autor
 RRZE-Webteam , http://www.rrze.fau.de
 
-## Copryright
+## Copyright
 GNU General Public License (GPL) Version 2
+
+## Verwendete Drittquellen
+
+### Parsedown
+
+http://parsedown.org
+The MIT License (MIT)
+Copyright (c) 2013-2018 Emanuil Rusev, erusev.com
+
 
 ## Verwendung
 
@@ -25,7 +34,6 @@ Parameter:
 |**provider**|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|univis|provider="bite"|
 |**orgids**|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
 |**jobid**|optional|optional|optional|Zahl||jobid="123"|
-|**internal**|optional|optional|wird ignoriert|"only" => ausschliesslich interne Stellenanzeigen ausgeben<br />"include" => interne und nicht-interne Stellenanzeigen ausgeben<br />"exclude" => ausschliesslich nicht-interne Stellenanzeigen ausgeben|exclude|internal="include"<br />internal="only"|
 |**limit**|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
 |**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsbeginn, -ende oder Arbeitsbeginn|job_title|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
 |**order**|optional|optional|optional|Auf- oder absteigende Sortierung|DESC|order="ASC" (aufsteigend)<br />order="DESC" (absteigend)|
@@ -40,7 +48,6 @@ Beispiele:
 ```html
 
 [jobs provider="bite"]
-[jobs provider="bite" link_only="1"]
 
 [jobs provider="bite" jobid="123456"]
 [jobs provider="interamt" jobid="123456"]
@@ -48,8 +55,6 @@ Beispiele:
 
 [jobs provider="univis" orgids="123456, 98765, 454587"]
 [jobs provider="univis" orgids="123456" limit="8"]
-[jobs provider="univis" orgids="123456" limit="12" internal="include"]
-[jobs provider="univis" internal="only"]
 
 [jobs provider="interamt jobid="123456" fallback_apply="bewerbung@domain.tld"]
 [jobs provider="univis" jobid="123456" fallback_apply="https://domain.tld/bewerbungsformular"]

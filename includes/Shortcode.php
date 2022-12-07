@@ -3,15 +3,16 @@
 namespace RRZE\Jobs;
 
 defined('ABSPATH') || exit;
+
 use function RRZE\Jobs\Config\getShortcodeSettings;
+use RRZE\Jobs\Template;
 
-use RRZE\Jobs\Job;
-use RRZE\Jobs\Cache;
-
+// use RRZE\Jobs\Provider;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-class Shortcode {
+class Shortcode
+{
     private $provider = '';
     private $map_template = [];
     private $jobid = 0;
@@ -19,7 +20,7 @@ class Shortcode {
     private $count = 0;
     private $settings = '';
     private $pluginname = '';
-    private $options = [];
+    static $options = [];
     private $jobOutput = '';
     private $logo_url;
 
@@ -33,68 +34,40 @@ class Shortcode {
     /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct($settings) {
+    public function __construct($pluginFile, $settings)
+    {
+        $this->pluginFile = $pluginFile;
+
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
         $this->settings = getShortcodeSettings();
         $this->pluginname = $this->settings['block']['blockname'];
-        $this->options = $settings->getOptions();
-        $this->jobOutput = new Job();
+        self::$options = $settings->getOptions();
         $this->logo_url = (has_custom_logo() ? wp_get_attachment_url(get_theme_mod('custom_logo')) : RRZE_JOBS_LOGO);
         add_action('init', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
         add_action('init', [$this, 'initGutenberg']);
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
-	
+
         if (!is_plugin_active('fau-jobportal/fau-jobportal.php')) {
             add_shortcode('jobs', [$this, 'shortcodeOutput']);
-	    add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
+            add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
         }
     }
 
     /**
      * Enqueue der Skripte.
      */
-    public function enqueue_scripts() {
+    public function enqueue_scripts()
+    {
         wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
         if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.css')) {
             wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.css');
         }
     }
 
-    private function getDescription(&$map) {
-        $description = '';
-        $aFields = [
-            'job_headline_task' => 'job_description',
-            'job_headline_qualifications' => 'job_qualifications',
-            'job_headline_qualifications_nth' => 'job_qualifications_nth',
-            'job_headline_remarks' => 'job_benefits',
-        ];
-
-        switch ($this->provider) {
-            case 'bite':
-            case 'univis':
-                foreach ($aFields as $label => $field) {
-                    $description .= (!empty($map[$field]) ? '<h4>' . strip_tags($this->options['rrze-jobs-labels_' . $label]) . '</h4><p>' . $map[$field] . '</p>' : '');
-                }
-
-                $description =
-                    (!empty($map['job_description_introduction']) ? '<p>' . $map['job_description_introduction'] . '</p>' : '')
-                    . ($this->provider == 'bite' && !empty($map['job_description_introduction_added']) ? '<p>' . $map['job_description_introduction_added'] . '</p>' : '')
-                    . (!empty($map['job_title']) ? '<h3>' . $map['job_title'] . '</h3>' : '')
-                    . $description;
-                break;
-            case 'interamt':
-                $description = !empty($map['job_description']) ? $map['job_description'] : $map['job_title'];
-                break;
-        }
-
-        $description = str_replace('"', '', $description);
-
-        return $description;
-    }
-
-    private function sortArrayByField($myArray, $fieldname, $order)  {
+    private function sortArrayByField($myArray, $fieldname, $order)
+    {
         if (!empty($this->order)) {
             usort($myArray, function ($a, $b) use ($fieldname, $order) {
                 return ($this->order == 'ASC' ? strtolower($a[$fieldname]) <=> strtolower($b[$fieldname]) : strtolower($b[$fieldname]) <=> strtolower($a[$fieldname]));
@@ -103,14 +76,15 @@ class Shortcode {
         return $myArray;
     }
 
-    private function setAtts($atts)  {
+    private function setAtts($atts)
+    {
         $aAtts = [
             'limit',
             'orderby',
             'order',
-            'internal',
             'fallback_apply',
             'link_only',
+
         ];
 
         foreach ($aAtts as $att) {
@@ -118,616 +92,405 @@ class Shortcode {
         }
     }
 
-    public function shortcodeOutput($atts)  {
-        $output = '';
-        $this->count = 0;
+    public function shortcodeOutput($atts)
+    {
 
+        $this->count = 0;
         $this->setAtts($atts);
 
-	
-	// set jobid from attribute jobid or GET-parameter jobid
-        $this->jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : 0));
+        // set jobid from attribute jobid or GET-parameter jobid
+        $jobid = (!empty($atts['jobid']) ? sanitize_text_field($atts['jobid']) : (!empty($_GET['jobid']) ? sanitize_text_field($_GET['jobid']) : ''));
 
         // orgids => attribute orgids or attribute orgid or fetch from settings page
         $orgids = (!empty($atts['orgids']) ? sanitize_text_field($atts['orgids']) : (!empty($atts['orgid']) ? sanitize_text_field($atts['orgid']) : ''));
-	
-        // provider <== attribute or GET-parameter or config
-        $this->provider = (!empty($atts['provider']) ? $atts['provider'] : (!empty($_GET['provider']) ? sanitize_text_field($_GET['provider']) : $this->options['provider']));
 
-	$cache = new Cache($this->pluginFile, $this->settings);
-	$cachedout = $cache->get_cached_job($this->provider,$orgids,$this->jobid);
-	if ($cachedout) {
-	    wp_enqueue_style('rrze-elements');
-	    wp_enqueue_style('rrze-jobs-css');
+        // parameter bite-apikey  for setting an api key by pars
+        $bite_apikey = (!empty($atts['bite-apikey']) ? sanitize_text_field($atts['bite-apikey']) : '');
 
-	    return $cachedout;
-	} 
-	
-	
-        // multi-provider given f.e. "bite, interamt" or "univis,interamt,bite    , unknownProvider"
-        $aProvider = explode(',', $this->provider);
-        array_walk($aProvider, function (&$val) {
-            $val = trim(strtolower(sanitize_text_field($val)));
-        });
+        // parameter univis-orgid  for setting the univis org id
+        $univis_orgid = (!empty($atts['univis-orgid']) ? sanitize_text_field($atts['univis-orgid']) : '');
 
-        foreach ($aProvider as $provider) {
-            $this->provider = $provider;
-            $this->map_template = $this->jobOutput->getMap($provider);
+        // parameter interamt-id  for setting the univis org id
+        $interamt_id = (!empty($atts['interamt-id']) ? sanitize_text_field($atts['interamt-id']) : '');
 
-            if (!$orgids) {
-                if (!empty($this->options['rrze-jobs-access_orgids_' . $provider])) {
-                    $orgids = $this->options['rrze-jobs-access_orgids_' .$provider];
+        // filter provider
+        $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
+
+        $link_only = (!empty($atts['link_only']) ? true : false);
+
+        //    $output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
+
+        $fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_text_field($atts['fallback_apply']) : '');
+        // TODO: check if Mailadress or URL
+        // If Mail, check if there is a subject we can add, depending of job
+
+        $positions = new Provider();
+
+        /*
+         * TODO: QR-Code new.
+         *  Please use the JS solution like we are using in FAU Einrichtungen theme
+         *  and remove the big library here..
+         *
+         *
+        if (($output_format == 'embedded') && !empty($_GET['job'])) {
+        $format = 'embedded';
+        $jobnr = (int) $_GET['job'] - 1;
+        $format .= '-'.$jobnr;
+        } else {
+        $format = 'default';
+        }
+         *   Disabled yet
+         */
+
+        if (!empty($search_provider)) {
+            $aProvider = explode(',', $search_provider);
+            $filterprovider = '';
+            foreach ($aProvider as $provider) {
+                $input = $provider;
+                $provider = trim(strtolower(sanitize_text_field($provider)));
+
+                $validprovider = $positions->is_valid_provider($provider);
+                if ($validprovider !== false) {
+                    $search_provider = $validprovider;
+                    break;
+                } else {
+                    $ret['status'][$provider]['code'] = 400;
+                    $ret['status'][$provider]['error'] = __('Invalid provider', 'rrze-jobs') . ' ' . $provider;
+                    $ret['status'][$provider]['valid'] = false;
+                    $ret['valid'] = false;
+
+                    return self::get_errormsg($ret);
                 }
             }
+        }
 
-            if (!empty($orgids)) {
-                $this->aOrgIDs = explode(',', $orgids);
-            }
+        $query = 'get_list';
+        $params = array();
+        if ($jobid) {
+            $params['UnivIS']['get_single']['id'] = $jobid;
+            $params['Interamt']['get_single']['id'] = $jobid;
+            $params['BITE']['get_single']['id'] = $jobid;
+            $query = 'get_single';
+        }
 
-            if ($provider != 'bite' && empty($this->aOrgIDs) && !$this->jobid) {
-                return '<p>' . __('Please provide an organisation or job ID!', 'rrze-jobs') . '</p>';
-            }
+        if (!empty(self::$options['rrze-jobs-access_orgids_univis'])) {
+            $params['UnivIS']['get_list']['department'] = self::$options['rrze-jobs-access_orgids_univis'];
+        }
+        if (!empty(self::$options['rrze-jobs-access_orgids_interamt'])) {
+            $params['Interamt']['get_list']['partner'] = self::$options['rrze-jobs-access_orgids_interamt'];
+        }
+        if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
+        }
 
-            if (($orgids || $provider == 'bite') && !$this->jobid) {
-                $output .= $this->get_all_jobs();
+        // In case the org id was given as a parameter, overwrite the default from backend
+        // orgid will work on all identifier, anyway which provider
+
+        if (!empty($orgids)) {
+            $params['UnivIS']['get_list']['department'] = $orgids;
+            $params['Interamt']['get_list']['partner'] = $orgids;
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = $orgids;
+        }
+
+        // special keys and ids für provider, in case they are not the same
+        if (!empty($bite_apikey)) {
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = $bite_apikey;
+        }
+        if (!empty($univis_orgid)) {
+            $params['UnivIS']['get_list']['department'] = $univis_orgid;
+            $params['UnivIS']['get_single']['department'] = $univis_orgid;
+        }
+        if (!empty($interamt_id)) {
+            $params['Interamt']['get_list']['partner'] = $interamt_id;
+            $params['Interamt']['get_single']['partner'] = $interamt_id;
+        }
+
+        $positions->set_params($params);
+        $positions->get_positions($search_provider, $query);
+        $newdata = $positions->merge_positions();
+
+        if ($newdata['valid'] === false) {
+            return self::get_errormsg($newdata);
+        }
+
+        $parserdata = array();
+        $strings = $this->get_labels();
+
+        if ($query == 'get_single') {
+            // single job
+            $content = '';
+
+            if ($newdata['valid'] === true) {
+                $template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
+                if ($link_only) {
+                    $template = plugin()->getPath() . 'Templates/Shortcodes/single-job-linkonly.html';
+                }
+
+                $data['const'] = $strings;
+                $parserdata['num'] = 1;
+                $content = '';
+
+                foreach ($newdata['positions'] as $num => $data) {
+                    $hidethis = $this->hideinternal($data);
+                    if ($hidethis) {
+                        // Ignore/hide this position in display
+                        $ret['status'][$num]['code'] = 403;
+                        $ret['status'][$num]['valid'] = false;
+                        return self::get_errormsg($ret);
+                    } else {
+
+                        $data['const'] = $strings;
+                        $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
+                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
+
+                        $data = self::ParseDataVars($data);
+                        $content .= Template::getContent($template, $data);
+                    }
+                }
+
+                $content = do_shortcode($content);
+
+                if (!empty($content)) {
+                    wp_enqueue_style('rrze-elements');
+                    wp_enqueue_style('rrze-jobs-css');
+
+                    return $content;
+                } else {
+                    $errortext = "Empty content from template by asking for job id: " . $jobid;
+                    return self::get_errormsg($newdata);
+                }
             } else {
-                $output = $this->get_single_job();
+                $errortext = "Empty content from template by asking for job id: " . $jobid;
+                return self::get_errormsg($newdata, $errortext, 'Error: No content');
             }
-        }
-	
-	$cache->set_cached_job($this->provider,$orgids,$this->jobid, $output);
-	
-        wp_enqueue_style('rrze-elements');
-        wp_enqueue_style('rrze-jobs-css');
-
-        return $output;
-    }
-
-    private function get_sidebar(&$map)  {
-        $sidebar = '';
-        $application_button_link = '';
-        $mailto = '';
-
-        if (!empty($map['application_email'])) {
-            $application_button_link = $map['application_email'];
-            $mailto = 'mailto:';
-        } elseif (!empty($map['application_link']) && strpos($map['application_link'], 'http') !== false) {
-            preg_match('#\bhttps?://[^,\s()<>]+(?:\([\w\d]+\)|([^,[:punct:]\s]|/))#', $map['application_link'], $match);
-            if (empty($match[0])) {
-                $application_button_link = $match[0];
-            }
-        }
-
-        if (empty($map['employer_district'])) {
-            $map['employer_district'] = RRZE_JOBS_ADDRESS_REGION;
-        }
-
-        if ($application_button_link != '') {
-            $sidebar .= do_shortcode('<div>[button link="' . $mailto . $application_button_link . '" width="full"]' . $this->options['rrze-jobs-labels_sidebar_application_button'] . '[/button]</div>');
-        }
-
-        $sidebar .= '<div class="rrze-jobs-single-application"><dl>';
-        if (!empty($map['application_end'])) {
-            $sidebar .= '<dt>' . __('Application deadline', 'rrze-jobs') . '</dt>'
-                . '<dd itemprop="validThrough" content="' . $map['application_end'] . '">' . $map['application_end'] . '</dd>';
-        }
-        if (!empty($map['job_type'])) {
-            $sidebar .= '<dt>' . __('Reference', 'rrze-jobs') . '</dt>' . '<dd>' . $map['job_type'] . '</dd>';
-        }
-
-        if (!empty($map['application_link']) && $this->options['rrze-jobs-labels_sidebar_show_application_link'] == 'on') {
-            $sidebar .= '<dt>' . $this->options['rrze-jobs-labels_sidebar_headline_application'] . '</dt>';
-            $sidebar .= '<dd>' . $map['application_link'] . '</dd>';
-        }
-        $sidebar .= '</dl></div>';
-        $sidebar .= '<div class="rrze-jobs-single-keyfacts"><dl>';
-        $sidebar .= '<h3>' . __('Details', 'rrze-jobs') . '</h3>'
-        . '<dt>' . __('Job title', 'rrze-jobs') . '</dt><dd itemprop="title">' . $map['job_title'] . '</dd>';
-        if (!empty($map['job_start'])) {
-            $sidebar .= '<dt>' . __('Job start', 'rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . $map['job_start'] . '</dd>';
-        } elseif ($this->provider == 'bite') {
-            // BITE delivers no field named "job_start" if "nächstmöglichen Zeitpunkt" is meant
-            $sidebar .= '<dt>' . __('Job start', 'rrze-jobs') . '</dt><dd itemprop="jobStartDate">' . __('nächstmöglichen Zeitpunkt', 'rrze_jobs') . '</dd>';
-        }
-        $sidebar .= '<dt>' . __('Deployment location', 'rrze-jobs') . '</dt>';
-        if (!empty($map['employer_organization'])) {
-            $sidebar .= '<dd itemprop="hiringOrganization" itemscope itemtype="http://schema.org/Organization">' . $map['employer_organization'] . '<br />';
-        }
-        if (!empty($map['employer_street'])) {
-            $sidebar .= $map['employer_street'] . '<br />';
-        }
-        if (!empty($map['employer_postalcode'])) {
-            $sidebar .= $map['employer_postalcode'] . ' ';
-        }
-        if (!empty($map['employer_organization'])) {
-            $sidebar .= '<meta itemprop="name" content="' . $map['employer_organization'] . '" />
-            <meta itemprop="logo" content="' . $this->logo_url . '" />';
-        }
-        $sidebar .= '</dd>';
-        $sidebar .= '<span itemprop="jobLocation" itemscope itemtype="http://schema.org/Place" >'
-        . '<meta itemprop="logo" content="' . $this->logo_url . '" />'
-            . '<span itemprop="address" itemscope itemtype="http://schema.org/PostalAddress">';
-        if (!empty($map['employer_organization'])) {
-            $sidebar .= '<meta itemprop="name" content="' . $map['employer_organization'] . '" />';
-        }
-        $sidebar .= (!empty($map['contact_street']) ? '<meta itemprop="streetAddress" content="' . $map['contact_street'] . '" />' : '');
-        $sidebar .= (!empty($map['contact_postalcode']) ? '<meta itemprop="postalCode" content="' . $map['contact_postalcode'] . '" />' : '');
-        $sidebar .= (!empty($map['contact_city']) ? '<meta itemprop="addressLocality" content="' . $map['contact_city'] . '" />' : '');
-        $sidebar .= (!empty($map['employer_district']) ? '<meta itemprop="addressRegion" content="' . $map['employer_district'] . '" />' : '');
-        $sidebar .= (!empty($map['contact_link']) ? '<meta itemprop="url" content="' . $map['contact_link'] . '" />' : '');
-        $sidebar .= '</span></span>';
-
-        if (!empty($map['job_salary'])) {
-            $sidebar .= '<dt>' . __('Payment', 'rrze-jobs') . '</dt><dd itemprop="estimatedSalary">' . $map['job_salary'] . '</dd>';
-        }
-        if (!empty($map['job_employmenttype_txt'])) {
-            $sidebar .= '<dt>' . __('Part-time / full-time', 'rrze-jobs') . '</dt><dd>' . $map['job_employmenttype_txt'] . '</dd><meta itemprop="employmentType" content="' . $map['job_employmenttype_schema'] . '" /></dd>';
-        }
-
-        if (!empty($map['job_workhours'])) {
-            if (is_string($map['job_workhours']) === false) {
-                $map['job_workhours'] = floatval(str_replace(',', '.', $map['job_workhours'])) . ' h';
-            }
-            $sidebar .= '<dt>' . __('Weekly working hours', 'rrze-jobs') . '</dt><dd itemprop="workHours">' . $map['job_workhours'] . '</dd>';
-        }
-
-        if ((!empty($map['job_limitation']) && $map['job_limitation'] == 'befristet') || (!empty($map['job_limitation_duration']))) {
-            $map['job_limitation_duration'] .= (is_numeric($map['job_limitation_duration']) ? ' ' . __('Months', 'rrze-jobs') : '');
-            $sidebar .= '<dt>' . __('Limitation', 'rrze-jobs') . '</dt><dd>' . $map['job_limitation_duration'] . '</dd>';
-            $sidebar .= (!empty($map['job_limitation_reason']) ? '<dt>' . __('Reason for the limitation', 'rrze-jobs') . '</dt><dd>' . $map['job_limitation_reason'] . '</dd>' : '');
-        }
-
-        if (!empty($map['contact_lastname'])) {
-            $sidebar .= '<dt>' . __('Contact for further information', 'rrze-jobs') . '</dt>'
-                . '<dd>' . (!empty($map['contact_title']) ? $map['contact_title'] . ' ' : '') . (!empty($map['contact_firstname']) ? $map['contact_firstname'] . ' ' : '') . (!empty($map['contact_lastname']) ? $map['contact_lastname'] : '');
-            if ((!empty($map['contact_tel']))) {
-                $sidebar .= '<br />' . __('Phone', 'rrze-jobs') . ': ' . $map['contact_tel'];
-            }
-            if (!empty($map['contact_mobile'])) {
-                $sidebar .= '<br />' . __('Mobile', 'rrze-jobs') . ': ' . $map['contact_mobile'];
-            }
-            if (!empty($map['contact_email'])) {
-                $sidebar .= '<br />' . __('E-Mail', 'rrze-jobs') . ': <a href="mailto:' . $map['contact_email'] . '">' . $map['contact_email'] . '</a>';
-            }
-            $sidebar .= '</dd>';
-        }
-        $sidebar .= '</dl>';
-
-        $sidebar .= '<div><meta itemprop="datePosted" content="' . $map['job_date_posted'] . '" />'
-        . (!empty($map['job_education']) ? '<meta itemprop="educationRequirements" content="' . wp_strip_all_tags($map['job_education']) . '" />' : '')
-        . (!empty($map['job_unit']) ? '<meta itemprop="employmentUnit" content="' . wp_strip_all_tags($map['job_unit']) . '" />' : '')
-        . (!empty($map['job_experience']) ? '<meta itemprop="experienceRequirements" content="' . wp_strip_all_tags($map['job_experience']) . '" />' : '')
-        . (!empty($map['job_benefits']) ? '<meta itemprop="jobBenefits" content="' . wp_strip_all_tags($map['job_benefits']) . '" />' : '')
-        . (!empty($map['job_category']) ? '<meta itemprop="occupationalCategory" content="' . wp_strip_all_tags($map['job_category']) . '" />' : '')
-        . (!empty($map['job_qualifications']) ? '<meta itemprop="qualifications" content="' . wp_strip_all_tags($map['job_qualifications']) . '" />' : '')
-        . '<meta itemprop="url" content="' . get_permalink() . '?jobid=' . $map['job_id'] . '" />'
-            . '</div>';
-        $sidebar .= '</div>';
-
-        return $sidebar;
-    }
-
-    private static function checkDates(&$content)  {
-        if (empty($content['channels']['channel0']['from']) || empty($content['channels']['channel0']['to'])) {
-            return true;
-        }
-        $now = date("Y-m-d H:i:s");
-        $from = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['from'])); // 2022-01-19T23:01:00+00:00
-        $to = date("Y-m-d H:i:s", strtotime($content['channels']['channel0']['to'])); // 2022-01-21T23:01:00+00:00
-
-        if (($from <= $now) && ($to >= $now)) {
-            return true;
         } else {
+            // list
+
+            if (($newdata['valid'] === true) && (!empty($newdata['positions']))) {
+                $parserdata['joblist'] = '';
+
+                $parserdata['num'] = count($newdata['positions']);
+                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
+                if ($link_only) {
+
+                    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
+                }
+
+                foreach ($newdata['positions'] as $num => $data) {
+                    $hidethis = $this->hideinternal($data);
+
+                    //    echo Helper::get_html_var_dump($data);
+
+                    if ($hidethis) {
+                        // Ignore/hide this position in display
+                        // Also do not give an error message like at single display
+
+                    } else {
+                        $data['const'] = $strings;
+                        $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
+                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
+
+                        $data = self::ParseDataVars($data);
+                        $parserdata['joblist'] .= Template::getContent($template, $data);
+                    }
+                }
+
+                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+                if ($link_only) {
+                    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
+                }
+            } else {
+                $parserdata['errormsg'] = __('No jobs found.', 'rrze-jobs');
+                $parserdata['errortitle'] = __('Error', 'rrze-jobs');
+                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
+            }
+            if (!is_readable($template)) {
+                $errortext .= "Templatefile $template not readable!!";
+                return self::get_errormsg($parserdata, $errortext, 'Template Error');
+            }
+
+            $parserdata['const'] = $strings;
+            $content = Template::getContent($template, $parserdata);
+            $content = do_shortcode($content);
+            if (!empty($content)) {
+                wp_enqueue_style('rrze-elements');
+                wp_enqueue_style('rrze-jobs-css');
+
+                return $content;
+            } else {
+                $errortext .= "Empty content from template $template";
+                return self::get_errormsg($parserdata, $errortext, 'Output Error');
+            }
+        }
+
+        $errortext = "Unknown shortcode handling";
+        //    $errortext .=  Helper::get_html_var_dump($parserdata);
+        return self::get_errormsg($parserdata, $errortext);
+    }
+
+    private static function isIPinRange($fromIP, $toIP, $myIP)
+    {
+        $min = ip2long($fromIP);
+        $max = ip2long($toIP);
+        $needle = ip2long($myIP);
+
+        return (($needle >= $min) and ($needle <= $max));
+    }
+
+    public static function isInternAllowed()
+    {
+        $remoteIP = $_SERVER['REMOTE_ADDR'];
+        $remoteAdr = gethostbyaddr($remoteIP);
+
+        // TODO: Move this into constant arrays instead of hard codet values
+        // IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
+        if (self::isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) || self::isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)) {
             return false;
         }
+
+        // if user is loggend in and setting "show internal for admins" is chosen
+        if (is_user_logged_in() && (self::$options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true)) {
+            return true;
+        }
+
+        // if user surfs within our network (hosts are defined in settings)
+        if (!empty(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) {
+            $required_hosts = trim(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
+            $aAllowedHosts = preg_split("/[\s,\n]+/", $required_hosts);
+            $ret = false;
+            foreach ($aAllowedHosts as $host) {
+                if ((strpos($remoteAdr, $host) !== false)) {
+                    $ret = true;
+                    break;
+                }
+            }
+
+            return $ret;
+        }
+
+        return false;
     }
 
-    private static function isValid(&$content) {
-
-        if (isset($content['active'])) {
-            if ($content['active']) {
-                return self::checkDates($content);
-            } else {
+    // check if the position is internal and has to be ignored by current user host
+    /* IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
+     */
+    private function hideinternal($data)
+    {
+        if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)) {
+            if ((isset(self::$options['rrze-jobs-misc_hide_internal_jobs'])) && (self::$options['rrze-jobs-misc_hide_internal_jobs'] === false)) {
                 return false;
             }
-        } else {
-            return self::checkDates($content);
+
+            return !self::isInternAllowed();
+
         }
+        return false;
     }
-
-    private function getResponse($sType, $sParam = null) {
-        $aRet = [
-            'valid' => false,
-            'content' => '',
-        ];
-
-        $aGetArgs = [];
-
-        if (($this->provider == 'bite') && (!empty($this->options['rrze-jobs-access_apiKey']))) {
-            $aGetArgs = [
-                'headers' => [
-                    'Content-Type' => 'application/json',
-                    'BAPI-Token' => $this->options['rrze-jobs-access_apiKey'],
-                ],
-		'sslverify' => true
-            ];
-        }
-
-        $api_url = $this->jobOutput->getURL($this->provider, $sType) . $sParam;	
-	$remote_get    = wp_safe_remote_get( $api_url, $aGetArgs);
-	
-	if ( is_wp_error( $remote_get ) ) {	
-		 $aRet = [
-                    'valid' => false,
-                    'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $remote_get->get_error_message() . '</p>',
-                ];
-		return $aRet;
-         } else {
-		$content = json_decode($remote_get["body"], true);
-	  }
-	
-
-      
-
-        if ($this->provider == 'bite') {
-            if (!empty($content['code'])) {
-                $aRet = [
-                    'valid' => false,
-                    'content' => '<p>' . __('Error', 'rrze_jobs') . ' ' . $content['code'] . ' : ' . $content['type'] . ' - ' . $content['message'] . '</p>',
-                ];
-            } elseif (self::isValid($content)) {
-                $aRet = [
-                    'valid' => true,
-                    'content' => $content,
-                ];
-            } else {
-                $aRet = [
-                    'valid' => false,
-                    'content' => '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>',
-                ];
-            }
-        } else {
-            if (!$content) {
-                $aRet = [
-                    'valid' => false,
-                    'content' => '<p>' . ($sType == 'single' ? __('This job offer is not available', 'rrze-jobs') : __('Cannot connect to API at the moment.', 'rrze-jobs')) . '</p>',
-                ];
-            } else {
-                $aRet = [
-                    'valid' => true,
-                    'content' => $content,
-                ];
-            }
-        }
-
-        return $aRet;
-    }
-
-    private function makeLink(&$item, $key)  {
-        $item = '<li class=".rrze-jobs-bite-li"><a class=".rrze-jobs-bite-link" href="' . $item . '">' . $key . '</a></li>';
-    }
-
-    private function get_all_jobs($debug = false)  {
-        $output = '';
-        $aResponseByAPI = [];
-        $aPersons = [];
-        $aMaps = [];
-
-        // BITE
-        if ($this->provider == 'bite') {
-            if ($this->link_only) {
-                // return just as a list of links to jobpostings
-                // 1. get JobsIDs
-                $aResponseByAPI = $this->getResponse('list');
-	//	echo "LISTOUT: ". Helper::get_html_var_dump($aResponseByAPI);
-		
-                if (!$aResponseByAPI['valid']) {
-                    return $aResponseByAPI['content'];
-                }
-
-                $aLink = [];
-
-                foreach ($aResponseByAPI['content']['entries'] as $entry) {
-                    $aResponseByAPI = $this->getResponse('single', $entry['id']);
-                    if (!$aResponseByAPI['valid']) {
-                        // let's skip this entry, there might be valid ones
-                        continue;
-                    }
-
-                    $job_title = $aResponseByAPI['content']['title'];
-                    $link = $aResponseByAPI['content']['channels']['channel0']['route']['posting'];
-                    $aLink[$job_title] = $link;
-                }
-
-                if (!empty($aLink)) {
-                    array_walk($aLink, [$this, 'makeLink']);
-                    return '<ul class=".rrze-jobs-bite-ul">' . implode('', $aLink) . '</ul>';
-                } else {
-                    if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
-                        return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
-                    }
-                }
-            } else {
-                // 1. get JobsIDs
-                $aResponseByAPIJobIDs = $this->getResponse('list');
-	//    echo "LISTOUT: ". Helper::get_html_var_dump($aResponseByAPIJobIDs);
-                if (!$aResponseByAPIJobIDs['valid']) {
-                    return $aResponseByAPIJobIDs['content'];
-                }
-
-                foreach ($aResponseByAPIJobIDs['content']['entries'] as $entry) {
-                    // 2. get actual job
-                    $aResponseByAPI = $this->getResponse('single', $entry['id']);
-	//	    echo "SINGLEOUT: ". Helper::get_html_var_dump($aResponseByAPI);
-                    if (!$aResponseByAPI['valid']) {
-                        // let's skip this entry, there might be valid ones
-                        continue;
-                    }
-
-                    $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aResponseByAPI['content'], $aPersons, $this->internal, $this->options);
-                    if ($aJob['valid']) {
-                        $aMaps[] = $aJob['data'];
-                    }
-                }
-            }
-        } else {
-            // Interamt + UnivIS
-            foreach ($this->aOrgIDs as $orgid) {
-                $orgid = trim($orgid);
-
-                // Check if orgid is an integer and ignore if not (we don't output a message because there might be more than one orgid) - fun-fact: Interamt delivers their complete database entries if orgid contains characters
-                if (strval($orgid) !== strval(intval($orgid))) {
-                    continue;
-                }
-
-                $aResponseByAPI = $this->getResponse('list', $orgid);
-
-                if (!$aResponseByAPI['valid']) {
-                    return $aResponseByAPI['content'];
-                }
-
-                if ($this->provider == 'interamt') {
-                    $node = 'Stellenangebote';
-                } elseif ($this->provider = 'univis') {
-                    $node = 'Position';
-                    if (!empty($aResponseByAPI['content']['Person'])) {
-                        $aPersons = $this->jobOutput->getUnivisPersons($aResponseByAPI['content']['Person']);
-                    }
-                }
-
-                switch ($this->provider) {
-                    case 'interamt':
-                    case 'univis':
-                        if (empty($aResponseByAPI['content'][$node])) {
-                            continue 2; // continue the foreach loop
-                        }
-                        $aRawData = $aResponseByAPI['content'][$node];
-                        break;
-                    case 'bite':
-                        $aRawData = $aResponseByAPI['content'];
-                        break;
-                }
-
-                // Loop through jobs
-                if (!empty($aRawData)) {
-                    foreach ($aRawData as $aSingleRawData) {
-                        if ($this->provider == 'interamt') {
-                            // Interamt is different: 1. call returns IDs, 2. call fetches data for single job by ID
-                            $aResponseByAPI = $this->getResponse('single', $aSingleRawData['Id']);
-                            if ($aResponseByAPI['valid']) {
-                                $aJobRawData = $aResponseByAPI['content'];
-                            }
-                        } else {
-                            // UnivIS
-                            $aJobRawData = $aSingleRawData;
-                        }
-
-                        $aJob = $this->jobOutput->fillMap($this->provider, $this->map_template, $aJobRawData, $aPersons, $this->internal, $this->options);
-
-                        if ($aJob['valid']) {
-                            $aMaps[] = $aJob['data'];
-                        }
-                    }
-                }
-            }
-        }
-
-        /*
-         * Ausgabe für Public Displays
-         *
-         * $_GET['job] defines, which job in the list is to be shown, f.e. ?format=embedded&job=2 shows the second job, if there is one otherwise an image
-         */
-
-        if (!empty($_GET['format']) && ($_GET['format'] == 'embedded') && !empty($_GET['job'])) {
-            $jobnr = (int) $_GET['job'] - 1;
-
-            usort($aMaps, function ($a, $b) {
-                return strcmp($a['job_id'], $b['job_id']);
-            });
-
-            if ((count($aMaps) > 0) && (!empty($aMaps[$jobnr]['job_id']))) {
-                $this->jobid = $aMaps[$jobnr]['job_id'];
-                return $this->get_single_job();
-            } else {
-                return '<img src="' . plugin_dir_url(__DIR__) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
-            }
-            return;
-        }
-
-        /*
-         * Normale Ausgabe
-         */
-        if (count($aMaps) > 0) {
-            // check if orderby contains a valid fieldname
-            if (!empty($this->orderby) && !array_key_exists($this->orderby, $this->map_template)) {
-                $correct_vals = implode(', ', array_keys($this->map_template));
-                return '<p>' . __('Parameter "orderby" is not correct. Please use one of the following values: ', 'rrze-jobs') . $correct_vals;
-            }
-
-            $aMaps = $this->sortArrayByField($aMaps, $this->orderby, $this->order);
-
-            $shortcode_items = '';
-            foreach ($aMaps as $map) {
-                // If parameter "limit" is reached stop output
-                if (($this->limit > 0) && ($this->count >= $this->limit)) {
-                    break 1;
-                }
-
-                $shortcode_item_inner = '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-                $shortcode_item_inner .= do_shortcode('[three_columns_two]<div itemprop="description">' . $this->getDescription($map) . '</div>[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar($map) . '[/three_columns_one_last][divider]');
-
-                if (!empty($this->options['rrze-jobs-labels_job_notice'])) {
-                    $shortcode_item_inner .= '<hr /><div>' . strip_tags($this->options['rrze-jobs-labels_job_notice'], '<p><a><br><br /><b><strong><i><em>') . '</div>';
-                }
-
-                $shortcode_item_inner .= '</div>';
-                $shortcode_items .= do_shortcode('[collapse title="' . $map['job_title'] . '" name="' . substr($this->provider, 0, 1) . $map['job_id'] . '"]' . $shortcode_item_inner . '[/collapse]');
-                $this->count++;
-            }
-        }
-
-        if (!empty($_GET['format']) && $_GET['format'] == 'embedded') {
-            if (count($aMaps) > 0) {
-                return $this->getPublicDisplayList($aMaps);
-            } else {
-                return '<img src="' . plugin_dir_url(__DIR__) . 'assets/img/jobs-rrze-517x120.png" class="default-image">';
-            }
-        }
-
-        if ($this->count == 0) {
-            if (!empty($this->options['rrze-jobs-labels_no_jobs_message'])) {
-                return '<p>' . $this->options['rrze-jobs-labels_no_jobs_message'] . '</a></p>';
-            } else {
-                return '<p>' . __('API does not return any data.', 'rrze-jobs') . '</a></p>';
-            }
-        }
-
-        return do_shortcode('[collapsibles expand-all-link="true"]' . $shortcode_items . '[/collapsibles]');
-    }
-
-    public function get_single_job()  {
-        $output = '';
-        $aPersons = [];
-        $aResponseByAPI = $this->getResponse('single', $this->jobid);
-
-        if (!$aResponseByAPI['valid']) {
-            return $aResponseByAPI['content'];
-        }
-
-        switch ($this->provider) {
-            case 'bite':
-            case 'interamt':
-                $job = $aResponseByAPI['content'];
-                break;
-            case 'univis':
-                $job = $aResponseByAPI['content']['Position'][0];
-                $aPersons = $this->jobOutput->getUnivisPersons($aResponseByAPI['content']['Person']);
-                $aPersons = $aPersons[$job['acontact']];
-                break;
-        }
-
-        // job not found => exit
-        if (empty($job)) {
-            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
-        }
-
-        $map = $this->jobOutput->fillMap($this->provider, $this->map_template, $job, $aPersons, $this->internal, $this->options);
-
-        if (empty($map) || !$map['valid']) {
-            return '<p>' . __('This job offer is not available', 'rrze-jobs') . '</p>';
-        }else{
-            $map = $map['data'];
-        }
-
-        if ($this->provider == 'univis') {
-            foreach ($aPersons as $key => $val) {
-                $map[$key] = $val;
-            }
-        }
-
-        $description = $this->getDescription($map);
-        $description = '<div itemprop="description" class="rrze-jobs-single-description">' . $description . '</div>';
-
-        $output = '';
-        $output .= '<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting">';
-        $output .= do_shortcode('[three_columns_two]' . $description . '[/three_columns_two]' . '[three_columns_one_last]' . $this->get_sidebar($map) . '[/three_columns_one_last][divider]');
-
-        // display job_notice
-        if (empty($_GET['format']) && !empty($this->options['rrze-jobs-labels_job_notice'])) {
-            $output .= '<hr /><div>' . strip_tags($this->options['rrze-jobs-labels_job_notice'], '<p><a><br><br /><b><strong><i><em>') . '</div>';
-        }
-        $output .= '</div>';
-
-        return $output;
-    }
-
     /*
-     * getPublicDisplayList
-     *      returns '' if there is no job or more than 3
-     *      2 jobs in 2 column HTML
-     *      3 jobs in 3 column HTML
+     * Erroroutput for Shortcode calls
      */
-    private function getPublicDisplayList($aMaps = [])
+
+    public static function get_errormsg($parserdata, $text = '', $title = '')
     {
-        $output = '';
-        $last = '';
 
-        $jobs_page_url = get_permalink($this->options['rrze-jobs-labels_jobs_page']);
+        $parserdata['errormsg'] = $parserdata['errorcode'] = $parserdata['errortitle'] = '';
 
-        foreach ($aMaps as $k => $map) {
+        foreach ($parserdata['status'] as $provider) {
 
-            // if there are more than 3 jobs return ''
-            if ($k > 2) {
-                return $output;
-            }
-            $result = [];
-            preg_match('/<ul\>(.*?)<\/ul\>/m', $map["job_description"], $result);
-            if (!empty($result)) {
-                $teaser = '<h3>' . __('Tasks', 'rrze-jobs') . ':</h3><ul class="job-tasks">' . $result[1] . '</ul>';
+            $errortextfield = 'rrze-jobs-labels_job_errortext_' . $provider['code'];
+            if (isset(self::$options[$errortextfield])) {
+                $errormsg = self::$options[$errortextfield];
             } else {
-                preg_match('/<p\>(.*?)<\/p\>/m', $map["job_description"], $result);
-                if (!empty($result)) {
-                    $teaser = '<h3>' . __('Tasks', 'rrze-jobs') . ':</h3><p class="job-tasks">' . $result[1] . '</p>';
-                } else {
-                    $teaser = $map["job_description"];
+                $errormsg = $provider['error'];
+            }
+            if (!empty($parserdata['errormsg'])) {
+                $parserdata['errormsg'] .= ', ';
+            }
+            $parserdata['errormsg'] .= $errormsg;
+
+            if (!empty($parserdata['errorcode'])) {
+                $parserdata['errorcode'] .= ', ';
+            }
+            $parserdata['errorcode'] .= $provider['code'];
+
+            if (!empty($parserdata['errortitle'])) {
+                $parserdata['errortitle'] .= ', ';
+            }
+            $parserdata['errortitle'] .= __('Error', 'rrze-jobs') . ' ' . $provider['code'];
+        }
+
+        if (!empty($text)) {
+            $parserdata['errormsg'] = $text;
+        }
+
+        if (!empty($title)) {
+            $parserdata['errortitle'] = $title;
+        }
+
+        if ((empty($parserdata['errormsg'])) || ((isset(self::$options['rrze-jobs-labels_job_errortext_display'])) && (self::$options['rrze-jobs-labels_job_errortext_display'] == false))) {
+            $content = "<!--  ";
+            $content .= " Code: " . $parserdata['errorcode'] . "; Msg: " . $parserdata['errormsg'];
+            $content .= " -->";
+
+            return $content;
+        }
+
+        $template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
+        $content = Template::getContent($template, $parserdata);
+        $content = do_shortcode($content);
+
+        if (!empty($content)) {
+            wp_enqueue_style('rrze-elements');
+            wp_enqueue_style('rrze-jobs-css');
+            return $content;
+        } else {
+            $content = "<!-- Error on creating errormessage for shortcode call -->";
+            return $content;
+        }
+    }
+
+    // replace Parse Variables in values itself outside the parser
+    public static function ParseDataVars($data)
+    {
+        $searchfields = $data['const'];
+        $replacefields = array("description", "qualifications", "disambiguatingDescription", "text_jobnotice");
+        foreach ($replacefields as $r) {
+            if (isset($data[$r])) {
+                foreach ($searchfields as $name => $value) {
+                    $pos = strpos($name, 'title_');
+                    if (($pos !== false) && ($pos == 0)) {
+                        $searchval = '/{{=const.' . $name . '}}/i';
+                        $data[$r] = preg_replace($searchval, $value, $data[$r]);
+                    }
                 }
             }
-
-            $job_item = "<h2>" . $map['job_title'] . "</h2>";
-            $job_item .= $teaser;
-            $job_item .= '<p>';
-            if (!empty($map['job_start'])) {
-                $job_item .= '<span class="label">' . __('Job start', 'rrze-jobs') . ':</span> ' . $map['job_start'];
+        }
+        return $data;
+    }
+    // get the Labels from the options
+    public static function get_labels()
+    {
+        $res = array();
+        foreach (self::$options as $name => $value) {
+            $pos = strpos($name, 'rrze-jobs-labels_job_headline_');
+            if (($pos !== false) && ($pos == 0)) {
+                preg_match('/rrze-jobs-labels_job_headline_([a-z0-9\-_]*)/i', $name, $output_array);
+                if (!empty($output_array)) {
+                    $keyname = 'title_' . $output_array[1];
+                    $res[$keyname] = $value;
+                }
             }
-            if (!empty($map['application_end'])) {
-                $job_item .= '<br /><span class="label">' . __('Application deadline', 'rrze-jobs') . ':</span> ' . $map['application_end'];
-            }
-            if (!empty($map['job_employmenttype_txt'])) {
-                $job_item .= '<br /><span class="label">' . __('Part-time / full-time', 'rrze-jobs') . ':</span> ' . $map['job_employmenttype_txt'];
-            }
-            if (!empty($map['job_salary'])) {
-                $job_item .= '<br /><span class="label">' . __('Payment', 'rrze-jobs') . '</span>: ' . $map['job_salary'];
-            }
-
-            $job_item .= '<p><img src="' . plugin_dir_url(__FILE__) . 'qrcode.php?url=' . $jobs_page_url . '&collapse=' . substr($this->provider, 0, 1) . $map['job_id'] . '"></p>';
-
-            if ($k == (count($aMaps) - 1) || $k > 1) {
-                $last = '_last';
-            }
-            switch (count($aMaps)) {
-                case 1:
-                    $output .= $job_item;
-                    break;
-                case 2:
-                    $output .= do_shortcode('[two_columns_one' . $last . ']' . $job_item . '[/two_columns_one' . $last . ']');
-                    break;
-                default:
-                    $output .= do_shortcode('[three_columns_one' . $last . ']' . $job_item . '[/three_columns_one' . $last . ']');
-                    break;
+            $pos = strpos($name, 'rrze-jobs-labels_job_defaulttext_');
+            if (($pos !== false) && ($pos == 0)) {
+                preg_match('/rrze-jobs-labels_job_defaulttext_([a-z0-9\-_]*)/i', $name, $output_array);
+                if (!empty($output_array)) {
+                    $keyname = 'text_' . $output_array[1];
+                    $res[$keyname] = $value;
+                }
             }
         }
 
-        return $output;
+        return $res;
     }
 
     public function isGutenberg()
@@ -761,11 +524,13 @@ class Shortcode {
         wp_localize_script($editor_script, $this->settings['block']['blockname'] . 'Config', $this->settings);
 
         // register block
-        register_block_type($this->settings['block']['blocktype'], array(
-            'editor_script' => $editor_script,
-            'render_callback' => [$this, 'shortcodeOutput'],
-            'attributes' => $this->settings,
-        )
+        register_block_type(
+            $this->settings['block']['blocktype'],
+            array(
+                'editor_script' => $editor_script,
+                'render_callback' => [$this, 'shortcodeOutput'],
+                'attributes' => $this->settings,
+            )
         );
     }
 
@@ -809,7 +574,7 @@ class Shortcode {
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
-        <?php
+<?php
 }
 
     public function addMCEButtons($pluginArray)
