@@ -431,6 +431,10 @@ class UnivIS extends Provider {
 	      $res['disambiguatingDescription'] .= '<p>'.$jobdata['desc4'].'</p>';
 	    
 	}  
+	
+	if (!empty($jobdata['desc5'])) {
+	      $res['disambiguatingDescription'] .= '<p>'.$jobdata['desc5'].' '.$jobdata['title'].'</p>';
+	}  
 	  
 	return $res;
     }
