@@ -5,10 +5,8 @@ namespace RRZE\Jobs;
 defined('ABSPATH') || exit;
 
 use function RRZE\Jobs\Config\getShortcodeSettings;
-
-
-use RRZE\Jobs\Cache;
 use RRZE\Jobs\Template;
+
 // use RRZE\Jobs\Provider;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -68,8 +66,6 @@ class Shortcode
         }
     }
 
-
-
     private function sortArrayByField($myArray, $fieldname, $order)
     {
         if (!empty($this->order)) {
@@ -117,13 +113,12 @@ class Shortcode
         // parameter interamt-id  for setting the univis org id
         $interamt_id = (!empty($atts['interamt-id']) ? sanitize_text_field($atts['interamt-id']) : '');
 
-
         // filter provider
         $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
 
         $link_only = (!empty($atts['link_only']) ? true : false);
 
-        //	$output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
+        //    $output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
 
         $fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_text_field($atts['fallback_apply']) : '');
         // TODO: check if Mailadress or URL
@@ -132,23 +127,20 @@ class Shortcode
         $positions = new Provider();
 
         /*
-	 * TODO: QR-Code new.
-	 *  Please use the JS solution like we are using in FAU Einrichtungen theme
-	 *  and remove the big library here..
-	 * 
-	 * 
-	if (($output_format == 'embedded') && !empty($_GET['job'])) {
-	   $format = 'embedded';
-	   $jobnr = (int) $_GET['job'] - 1;
-	   $format .= '-'.$jobnr;
-	} else {
-	   $format = 'default';
-	}
-	 *   Disabled yet
-	 */
-
-
-
+         * TODO: QR-Code new.
+         *  Please use the JS solution like we are using in FAU Einrichtungen theme
+         *  and remove the big library here..
+         *
+         *
+        if (($output_format == 'embedded') && !empty($_GET['job'])) {
+        $format = 'embedded';
+        $jobnr = (int) $_GET['job'] - 1;
+        $format .= '-'.$jobnr;
+        } else {
+        $format = 'default';
+        }
+         *   Disabled yet
+         */
 
         if (!empty($search_provider)) {
             $aProvider = explode(',', $search_provider);
@@ -172,7 +164,6 @@ class Shortcode
             }
         }
 
-
         $query = 'get_list';
         $params = array();
         if ($jobid) {
@@ -183,13 +174,13 @@ class Shortcode
         }
 
         if (!empty(self::$options['rrze-jobs-access_orgids_univis'])) {
-            $params['UnivIS']['get_list']['department'] =  self::$options['rrze-jobs-access_orgids_univis'];
+            $params['UnivIS']['get_list']['department'] = self::$options['rrze-jobs-access_orgids_univis'];
         }
         if (!empty(self::$options['rrze-jobs-access_orgids_interamt'])) {
-            $params['Interamt']['get_list']['partner'] =  self::$options['rrze-jobs-access_orgids_interamt'];
+            $params['Interamt']['get_list']['partner'] = self::$options['rrze-jobs-access_orgids_interamt'];
         }
         if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
-            $params['BITE']['request-header']['headers']['BAPI-Token'] =  self::$options['rrze-jobs-access_bite_apikey'];
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
         }
 
         // In case the org id was given as a parameter, overwrite the default from backend
@@ -214,26 +205,20 @@ class Shortcode
             $params['Interamt']['get_single']['partner'] = $interamt_id;
         }
 
-
-
         $positions->set_params($params);
         $positions->get_positions($search_provider, $query);
         $newdata = $positions->merge_positions();
-
 
         if ($newdata['valid'] === false) {
             return self::get_errormsg($newdata);
         }
 
-
         $parserdata = array();
         $strings = $this->get_labels();
-
 
         if ($query == 'get_single') {
             // single job
             $content = '';
-
 
             if ($newdata['valid'] === true) {
                 $template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
@@ -281,7 +266,6 @@ class Shortcode
         } else {
             // list
 
-
             if (($newdata['valid'] === true) && (!empty($newdata['positions']))) {
                 $parserdata['joblist'] = '';
 
@@ -291,7 +275,6 @@ class Shortcode
 
                     $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
                 }
-
 
                 foreach ($newdata['positions'] as $num => $data) {
                     $hidethis = $this->hideinternal($data);
@@ -306,7 +289,6 @@ class Shortcode
                         $data['const'] = $strings;
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
-
 
                         $data = self::ParseDataVars($data);
                         $parserdata['joblist'] .= Template::getContent($template, $data);
@@ -323,7 +305,7 @@ class Shortcode
                 $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
             }
             if (!is_readable($template)) {
-                $errortext .=  "Templatefile $template not readable!!";
+                $errortext .= "Templatefile $template not readable!!";
                 return self::get_errormsg($parserdata, $errortext, 'Template Error');
             }
 
@@ -336,17 +318,15 @@ class Shortcode
 
                 return $content;
             } else {
-                $errortext .=  "Empty content from template $template";
+                $errortext .= "Empty content from template $template";
                 return self::get_errormsg($parserdata, $errortext, 'Output Error');
             }
         }
 
-        $errortext =  "Unknown shortcode handling";
-        //	$errortext .=  Helper::get_html_var_dump($parserdata);
+        $errortext = "Unknown shortcode handling";
+        //    $errortext .=  Helper::get_html_var_dump($parserdata);
         return self::get_errormsg($parserdata, $errortext);
     }
-
-
 
     private static function isIPinRange($fromIP, $toIP, $myIP)
     {
@@ -357,6 +337,39 @@ class Shortcode
         return (($needle >= $min) and ($needle <= $max));
     }
 
+    public static function isInternAllowed()
+    {
+        $remoteIP = $_SERVER['REMOTE_ADDR'];
+        $remoteAdr = gethostbyaddr($remoteIP);
+
+        // TODO: Move this into constant arrays instead of hard codet values
+        // IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
+        if (self::isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) || self::isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)) {
+            return false;
+        }
+
+        // if user is loggend in and setting "show internal for admins" is chosen
+        if (is_user_logged_in() && (self::$options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true)) {
+            return true;
+        }
+
+        // if user surfs within our network (hosts are defined in settings)
+        if (!empty(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) {
+            $required_hosts = trim(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
+            $aAllowedHosts = preg_split("/[\s,\n]+/", $required_hosts);
+            $ret = false;
+            foreach ($aAllowedHosts as $host) {
+                if ((strpos($remoteAdr, $host) !== false)) {
+                    $ret = true;
+                    break;
+                }
+            }
+
+            return $ret;
+        }
+
+        return false;
+    }
 
     // check if the position is internal and has to be ignored by current user host
     /* IP-Range der Public Displays (dürfen interne Jobs nicht anzeigen): 10.26.24.0/24 und 10.26.25.0/24
@@ -368,38 +381,8 @@ class Shortcode
                 return false;
             }
 
-            $remoteIP = $_SERVER['REMOTE_ADDR'];
-            $remoteAdr = gethostbyaddr($remoteIP);
+            return !self::isInternAllowed();
 
-            // TODO: Move this into constant arrays instead of hard codet values
-            if ($this->isIPinRange('10.26.24.0', '10.26.24.24', $remoteIP) || $this->isIPinRange('10.26.25.0', '10.26.25.24', $remoteIP)) {
-                return true;
-            }
-
-            if (is_user_logged_in()) {
-                if (self::$options['rrze-jobs-misc_hide_internal_jobs_notforadmins'] == true) {
-                    return false;
-                }
-            }
-
-
-
-            if ((isset(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts'])) && (!empty(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']))) {
-
-                $required_hosts = trim(self::$options['rrze-jobs-misc_hide_internal_jobs_required_hosts']);
-                $hosts = preg_split("/[\s,\n]+/", $required_hosts);
-                $ret = true;
-                foreach ($hosts as $h) {
-                    if ((strpos($remoteAdr, $h) !== false)) {
-                        $ret = false;
-                        break;
-                    }
-                }
-
-                return $ret;
-            }
-
-            return true;
         }
         return false;
     }
@@ -410,8 +393,7 @@ class Shortcode
     public static function get_errormsg($parserdata, $text = '', $title = '')
     {
 
-
-        $parserdata['errormsg'] = $parserdata['errorcode'] =  $parserdata['errortitle'] = '';
+        $parserdata['errormsg'] = $parserdata['errorcode'] = $parserdata['errortitle'] = '';
 
         foreach ($parserdata['status'] as $provider) {
 
@@ -431,7 +413,6 @@ class Shortcode
             }
             $parserdata['errorcode'] .= $provider['code'];
 
-
             if (!empty($parserdata['errortitle'])) {
                 $parserdata['errortitle'] .= ', ';
             }
@@ -446,16 +427,13 @@ class Shortcode
             $parserdata['errortitle'] = $title;
         }
 
-
-        if ((empty($parserdata['errormsg']))  || ((isset(self::$options['rrze-jobs-labels_job_errortext_display'])) && (self::$options['rrze-jobs-labels_job_errortext_display'] == false))) {
-            $content =  "<!--  ";
+        if ((empty($parserdata['errormsg'])) || ((isset(self::$options['rrze-jobs-labels_job_errortext_display'])) && (self::$options['rrze-jobs-labels_job_errortext_display'] == false))) {
+            $content = "<!--  ";
             $content .= " Code: " . $parserdata['errorcode'] . "; Msg: " . $parserdata['errormsg'];
             $content .= " -->";
 
             return $content;
         }
-
-
 
         $template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
         $content = Template::getContent($template, $parserdata);
@@ -466,7 +444,7 @@ class Shortcode
             wp_enqueue_style('rrze-jobs-css');
             return $content;
         } else {
-            $content =  "<!-- Error on creating errormessage for shortcode call -->";
+            $content = "<!-- Error on creating errormessage for shortcode call -->";
             return $content;
         }
     }
@@ -489,7 +467,7 @@ class Shortcode
         }
         return $data;
     }
-    // get the Labels from the options 
+    // get the Labels from the options
     public static function get_labels()
     {
         $res = array();
@@ -512,14 +490,8 @@ class Shortcode
             }
         }
 
-
-
-
         return $res;
     }
-
-
-
 
     public function isGutenberg()
     {
@@ -592,7 +564,7 @@ class Shortcode
             }
         }
         $shortcode = '[' . $this->pluginname . ' ' . $shortcode . ']';
-?>
+        ?>
         <script type='text/javascript'>
             tmp = [{
                 'name': <?php echo json_encode($this->pluginname); ?>,
@@ -603,7 +575,7 @@ class Shortcode
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
 <?php
-    }
+}
 
     public function addMCEButtons($pluginArray)
     {
