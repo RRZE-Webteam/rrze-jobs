@@ -238,8 +238,13 @@ class Shortcode
                         $ret['status'][$num]['valid'] = false;
                         return self::get_errormsg($ret);
                     } else {
-
                         $data['const'] = $strings;
+
+                        // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
+                        if ($data['jobStartDate'] != 'So bald wie möglich.'){
+                            $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
+                        }
+                        
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
 

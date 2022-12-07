@@ -385,7 +385,7 @@ class Provider
                 $dateinput = $parts[1] . ' ' . $parts[2];
             }
 
-            $res = date('d.m.Y', strtotime($dateinput));
+            $res = date('Y-m-d', strtotime($dateinput));
 
             //  $res = $dateinput;
         }
