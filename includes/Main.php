@@ -17,15 +17,15 @@ class Main
     /**
      * Main-Klasse wird instanziiert.
      */
-    public function __construct($pluginFile)
+
+     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
 
-
-        remove_filter('the_content', 'wpautop');
-        add_filter('the_content', 'wpautop', 12);
+        // remove_filter('the_content', 'wpautop');
+        // add_filter('the_content', 'wpautop', 12);
         // add_filter( 'the_content', 'wpautop' , 99 );	    
-        add_filter('the_content', 'shortcode_unautop', 100);
+        // add_filter('the_content', 'shortcode_unautop', 100);
     }
 
     public function onLoaded()
