@@ -10,6 +10,7 @@ namespace RRZE\Jobs\Provider;
 defined('ABSPATH') || exit;
 use RRZE\Jobs\Cache;
 use RRZE\Jobs\Provider;
+use RRZE\Jobs\Main;
 
 class UnivIS extends Provider
 {
@@ -423,9 +424,10 @@ class UnivIS extends Provider
 
         }
 
-        if (!empty($jobdata['desc5'])) {
-            $res['disambiguatingDescription'] .= '<p>'.$jobdata['desc5'].' '.$jobdata['title'].'</p>';
-        }  
+        // if (!empty($jobdata['desc5'])) {
+        //     $res['disambiguatingDescription'] .= '<p>' . $jobdata['desc5'] . ' ' . $jobdata['title'] . '</p>';
+        //     $res['disambiguatingDescription'] = parent::sanitize_html_field($res['disambiguatingDescription']);
+        // }  
 
         return $res;
     }
