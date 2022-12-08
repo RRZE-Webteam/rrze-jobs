@@ -245,6 +245,7 @@ class Shortcode
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
+                        $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
                         $data['validThrough'] = date('d.m.Y', strtotime($data['validThrough']));
                         
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
@@ -302,6 +303,7 @@ class Shortcode
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
+                        $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
                         $data['validThrough'] = date('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);

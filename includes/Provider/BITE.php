@@ -22,9 +22,9 @@ class BITE extends Provider
         // single: https://api.b-ite.io/v1/jobpostings/
         $this->url = 'https://www.b-ite.com/';
         $this->name = "BITE";
-        $this->cachetime = 2 * HOUR_IN_SECONDS;
+        $this->cachetime = 1 * HOUR_IN_SECONDS;
         $this->cachetime_list = $this->cachetime;
-        $this->cachetime_single = 4 * HOUR_IN_SECONDS;
+        $this->cachetime_single = 2 * HOUR_IN_SECONDS;
         $this->uriparameter = '';
         $this->request_args = array(
             'timeout' => 45,

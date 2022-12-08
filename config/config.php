@@ -325,12 +325,19 @@ function getFields() {
                 'type' => 'line',
             ],     
 	    
-	    [
+            [
                 'name' => 'job_headline_jobnotice',
                 'label' => __('Label for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
                 'default' => __("Notice", 'rrze-jobs'),
+            ],
+            [
+                'name' => 'job_headline_releasedate',
+                'label' => __('Label for','rrze-jobs').' '.__("Release date", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Release date", 'rrze-jobs'),
             ],
             [
                 'name' => 'job_defaulttext_jobnotice',

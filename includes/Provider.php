@@ -530,6 +530,7 @@ class Provider
             if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
                 if (isset($output_array[2])) {
                     $gruppe = $output_array[2];
+                    $gruppe = preg_replace('/^0/', '', $gruppe);
                     $res = 'TV-L E ' . $gruppe;
                 } else {
                     // irgendwas anderes, was wir nicht interpretieren können..
