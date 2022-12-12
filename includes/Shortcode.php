@@ -245,8 +245,9 @@ class Shortcode
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
+                        $data['datePosted' ] = date('Y-m-d', strtotime($data['datePosted']));
                         $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
-                        $data['validThrough'] = date('d.m.Y', strtotime($data['validThrough']));
+                        $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
                         
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
@@ -303,8 +304,9 @@ class Shortcode
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
+                        $data['datePosted' ] = date('Y-m-d', strtotime($data['datePosted']));
                         $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
-                        $data['validThrough'] = date('d.m.Y', strtotime($data['validThrough']));
+                        $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);

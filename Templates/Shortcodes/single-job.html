@@ -2,6 +2,7 @@
 <div class="rrze-jobs">
 	<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
 		<meta itemprop="datePosted" content="{{=datePosted}}">
+		<meta itemprop="validThrough" content="{{=validThrough}}">
 		<meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
 		<meta itemprop="employmentType" content="{{=employmentType}}">
 		{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
@@ -57,7 +58,7 @@
 				{{/applicationContact.url}}
 			</p>
 			<p class="notice-validThrough">
-				<strong class="title">{{=const.title_validThrough}}:</strong> <span class="validThrough" itemprop="validThrough">{{=validThrough}}</span>
+				<strong class="title">{{=const.title_validThrough}}:</strong> <span class="validThrough">{{=validThrough_DE}}</span>
 			</p>
 
 
