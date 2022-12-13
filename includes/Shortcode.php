@@ -398,9 +398,6 @@ class Shortcode
     private function hideinternal($data)
     {
         if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)) {
-            if ((isset(self::$options['rrze-jobs-misc_hide_internal_jobs'])) && (self::$options['rrze-jobs-misc_hide_internal_jobs'] === false)) {
-                return false;
-            }
 
             return !self::isInternAllowed();
 
