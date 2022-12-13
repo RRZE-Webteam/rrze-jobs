@@ -295,6 +295,7 @@ class Provider
         $Parsedown = new Parsedown();
 
         $dateinput = preg_replace('/\\\s*$/m', ' ', $dateinput);
+        $dateinput = nl2br($dateinput);
 
         $html = $Parsedown->text($dateinput);
         return $this->sanitize_html_field($html);

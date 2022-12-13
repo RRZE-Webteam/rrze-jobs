@@ -116,8 +116,8 @@ class BITE extends Provider
 
         // description
         $desc = '';
-        if ((isset($jobdata['custom']['einleitung'])) && (!empty($jobdata['custom']['einleitung']))) {
-            $desc .= $jobdata['custom']['einleitung'];
+        if ((isset($jobdata['custom']['einleitungstext'])) && (!empty($jobdata['custom']['einleitungstext']))) {
+            $desc .= $jobdata['custom']['einleitungstext'];
         }
         if ((isset($jobdata['custom']['aufgaben'])) && (!empty($jobdata['custom']['aufgaben']))) {
             $desc .= $jobdata['custom']['aufgaben'];
@@ -128,21 +128,29 @@ class BITE extends Provider
 
         $res['description'] = $desc;
 
-        if ((isset($jobdata['custom']['profil'])) && (!empty($jobdata['custom']['profil']))) {
-            $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+        if (!empty($jobdata['custom']['profil'])) {
+            if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+                $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+            }else{
+                $res['qualifications'] = '';
+            }
             $res['qualifications'] .= $jobdata['custom']['profil'];
         }
-        if ((isset($jobdata['custom']['job_experience'])) && (!empty($jobdata['custom']['job_experience']))) {
-            $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
+        if (!empty($jobdata['custom']['job_experience'])) {
+            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
+            }
             $res['qualifications'] .= $jobdata['custom']['job_experience'];
         }
 
-        if ((isset($jobdata['custom']['job_qualifications_nth'])) && (!empty($jobdata['custom']['job_qualifications_nth']))) {
-            $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+        if (!empty($jobdata['custom']['job_qualifications_nth'])) {
+            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_experience'])){
+                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+            }
             $res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
         }
 
-        if ((isset($jobdata['custom']['wir_bieten'])) && (!empty($jobdata['custom']['wir_bieten']))) {
+        if (!empty($jobdata['custom']['wir_bieten'])) {
             $res['jobBenefits'] = $jobdata['custom']['wir_bieten'];
         }
 
@@ -861,17 +869,14 @@ class BITE extends Provider
                         case 'active':
                             $value = $this->sanitize_bool($value);
                             break;
-
                         case 'id':
                             $value = $this->sanitize_bite_id($value);
                             break;
-
                         case 'anr':
                             $value = $this->sanitize_type($value, 'number');
                             break;
-
                         case 'aufgaben':
-                        case 'einleitung':
+                        case 'einleitungstext':
                         case 'stellenzusatz':
                         case 'profil':
                         case 'job_qualifications_nth':
