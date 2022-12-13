@@ -26,8 +26,7 @@ class Provider
 
     public function __construct($use_cache = true)
     {
-        // $this->use_cache = $use_cache;
-        $this->use_cache = false;
+        $this->use_cache = $use_cache;
         $this->positions = array();
         $this->lastcheck = '';
         $this->params = array();
