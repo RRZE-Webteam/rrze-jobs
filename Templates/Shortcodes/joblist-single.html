@@ -1,131 +1,139 @@
 [collapse title="{{=title}}" name="{{=identifier}}"]
 <div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
-    <meta itemprop="datePosted" content="{{=datePosted}}"><meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
-    <meta itemprop="employmentType" content="{{=employmentType}}">
-    {{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
-    {{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
-    <article>
-	<div itemprop="description">
-	{{=description}}
-	</div>
+<article>
+	<meta itemprop="datePosted" content="{{=datePosted}}">
+	<meta itemprop="validThrough" content="{{=validThrough}}">
+	<meta itemprop="occupationalCategory" content="{{=occupationalCategory}}">
+	<meta itemprop="employmentType" content="{{=employmentType}}">
+	{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
+	{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
+		<div itemprop="description">
+			{{=description}}
+		</div>
 
-	{{qualifications}}
-	{{const.title_qualifications}}<h3>{{=const.title_qualifications}}</h3>{{/const.title_qualifications}}
-	<div itemprop="qualifications">   
-	    {{=qualifications}}
-	</div>
-	{{/qualifications}}
+		{{qualifications}}
+		{{const.title_qualifications}}<h3>{{=const.title_qualifications}}</h3>{{/const.title_qualifications}}
+		<div itemprop="qualifications">
+			{{=qualifications}}
+		</div>
+		{{/qualifications}}
 
-	{{disambiguatingDescription}}
-	<h3>{{=const.title_disambiguatingDescription}}</h3>
-	<div itemprop="disambiguatingDescription">
-	    {{=disambiguatingDescription}}
-	</div>
-	{{/disambiguatingDescription}}	
-	{{jobBenefits}}
-	<h3>{{=const.title_jobBenefits}}</h3>
-	<div itemprop="jobBenefits">
-	    {{=jobBenefits}}
-	</div>
-	{{/jobBenefits}}
+		{{disambiguatingDescription}}
+		<h3>{{=const.title_disambiguatingDescription}}</h3>
+		<div itemprop="disambiguatingDescription">{{=disambiguatingDescription}}</div>
+		{{/disambiguatingDescription}}
+		{{jobBenefits}}
+		<h3>{{=const.title_jobBenefits}}</h3>
+		<div itemprop="jobBenefits">
+			{{=jobBenefits}}
+		</div>
+		{{/jobBenefits}}
 
-	{{const.text_jobnotice}}
-	[alert]
-	<h3>{{=const.title_jobnotice}}</h3>
-	{{=const.text_jobnotice}}
-	[/alert]
-	{{/const.text_jobnotice}}
-	
-    </article>
-    <aside aria-label="{{=const.title_keyfacts}}">
+		{{const.text_jobnotice}}
+		[alert]
+		<h3>{{=const.title_jobnotice}}</h3>
+		{{=const.text_jobnotice}}
+		[/alert]
+		{{/const.text_jobnotice}}
 
-	<p>
-	{{applicationContact.url}}
-	<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
-	{{:applicationContact.url}}
-	{{applicationContact.email}}
-	<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}"><span>{{=const.title_application_button}}</span></a>
-	{{:applicationContact.email}}	
-	
-	{{applicationContact.description}}
-	<strong>{{=applicationContact.description}}</strong>
-	{{/applicationContact.description}}
-	{{/applicationContact.email}}	
-	{{/applicationContact.url}}
-	</p>
-	<p class="notice-validThrough">
-	    <strong class="title">{{=const.title_validThrough}}:</strong>
-	    <span class="validThrough" itemprop="validThrough">{{=validThrough}}</span>
-	</p> 
-	    
-	    
-	<table  class="rrze-jobs-single-keyfacts">	
-	    <tr>
-		<th>{{=const.title_title}}</th>
-		<td itemprop="title">{{=title}}</td>
-	    </tr>
-	    {{jobStartDate}}
-	    <th>{{=const.title_jobStartDate}}</th>
-		<td itemprop="jobStartDate">{{=jobStartDate}}</td>
-	    </tr>	
-	    {{/jobStartDate}}
-	     <tr>
-		<th>{{=const.title_Location}}</th>		
-		<td>
-		    <span itemprop="hiringOrganization" itemscope="" itemtype="http://schema.org/Organization"><span itemprop="name" >{{=hiringOrganization.name}}</span></span>
-		    <span itemprop="jobLocation" itemscope="" itemtype="http://schema.org/Place">
-			<span itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
-			    <meta itemprop="name" content="{{=hiringOrganization.name}}">
-			    {{jobLocation.address.streetAddress}}<span itemprop="streetAddress">{{=jobLocation.address.streetAddress}}</span><br>{{/jobLocation.address.streetAddress}}
-			    {{jobLocation.address.postalCode}}<span itemprop="postalCode">{{=jobLocation.address.postalCode}}</span> {{/jobLocation.address.postalCode}}
-			    {{jobLocation.address.addressLocality}}<span itemprop="address" >{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
-			    {{jobLocation.address.addressRegion}}<meta itemprop="addressRegion" content="{{=jobLocation.address.addressRegion}}">{{/jobLocation.address.addressRegion}}
-			</span>
-		    </span>
-		</td>
-	    </tr> 
-	    {{estimatedSalary.stringvalue}}
-		<th>{{=const.title_payment}}</th>
-		<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
-		    <meta itemprop="currency" content="EUR">
-		    <span itemprop="value"  itemtype="http://schema.org/QuantitativeValue">
-			<meta itemprop="uniText" content="MONTH">
-			<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
-		    </span>
-		</td>
-	    </tr>
-	    {{/estimatedSalary.stringvalue}}
-	    {{text_workingtime}}
-	    <tr>
-		<th>{{=const.title_workingtime}}</th>
-		<td>{{=text_workingtime}}</td>
-	    </tr>
-	    {{/text_workingtime}}
-	    {{workHours}}
-	    <tr>
-		<th>{{=const.title_workHours}}</th> 
-		<td itemprop="workHours">{{=workHours}}</td>
-	    </tr>
-	    {{/workHours}}
-	    {{text_befristet}}
-	    <tr>
-		<th>{{=const.title_befristet}}</th>
-		<td>{{=text_befristet}}</td>
-	    </tr>
-	    {{/text_befristet}}
-	    <tr>		
-		<th>{{=const.title_contact}}</th>
-		<td>
-		    {{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}} 
-		    {{=employmentUnit.name}}
-		    <ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
-		    {{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>{{/employmentUnit.email}}
-		    {{employmentUnit.telephone}}<li>Telefon: <span itemprop="telephone">{{=employmentUnit.telephone}}</span></li>{{/employmentUnit.telephone}}
-		    {{/applicationContact.description}} 
-		    </ul>
-		</td>
-	    </tr>
-	</table>
-   </aside>  
+		{{const.title_releasedate}}<p><em>{{=const.title_releasedate}}: {{=releaseDate}}</em></p>{{/const.title_releasedate}}
+	</article>
+	<aside aria-label="{{=const.title_keyfacts}}">
+
+		<p>
+			{{applicationContact.url}}
+			<a class="standard-btn full-btn primary-btn"
+				href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
+			{{:applicationContact.url}}
+			{{applicationContact.email}}
+			<a class="standard-btn full-btn primary-btn"
+				href="mailto:{{=applicationContact.email}}"><span>{{=const.title_application_button}}</span></a>
+			{{:applicationContact.email}}
+
+			{{applicationContact.description}}
+			<strong>{{=applicationContact.description}}</strong>
+			{{/applicationContact.description}}
+			{{/applicationContact.email}}
+			{{/applicationContact.url}}
+		</p>
+		<p class="notice-validThrough">
+			<strong class="title">{{=const.title_validThrough}}:</strong> <span class="validThrough">{{=validThrough_DE}}</span>
+		</p>
+
+
+		<table class="rrze-jobs-single-keyfacts">
+			<tr>
+				<th>{{=const.title_title}}</th>
+				<td itemprop="title">{{=title}}</td>
+			</tr>
+			{{jobStartDate}}
+			<th>{{=const.title_jobStartDate}}</th>
+			<td itemprop="jobStartDate">{{=jobStartDate}}</td>
+			</tr>
+			{{/jobStartDate}}
+			<tr>
+				<th>{{=const.title_Location}}</th>
+				<td>
+					<span itemprop="hiringOrganization" itemscope="" itemtype="http://schema.org/Organization"><span
+							itemprop="name">{{=hiringOrganization.name}}</span></span>
+					<span itemprop="jobLocation" itemscope="" itemtype="http://schema.org/Place">
+						<span itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
+							<meta itemprop="name" content="{{=hiringOrganization.name}}">
+							{{jobLocation.address.streetAddress}}<br><span itemprop="streetAddress">{{=jobLocation.address.streetAddress}}</span>{{/jobLocation.address.streetAddress}}
+							{{jobLocation.address.addressLocality}}<br>{{jobLocation.address.postalCode}}<span itemprop="postalCode">{{=jobLocation.address.postalCode}}</span>{{/jobLocation.address.postalCode}} <span itemprop="address">{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
+							{{jobLocation.address.addressRegion}}
+							<meta itemprop="addressRegion" content="{{=jobLocation.address.addressRegion}}">
+							{{/jobLocation.address.addressRegion}}
+						</span>
+					</span>
+				</td>
+			</tr>
+			{{estimatedSalary.stringvalue}}
+			<th>{{=const.title_payment}}</th>
+			<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
+				<meta itemprop="currency" content="EUR">
+				<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
+					<meta itemprop="uniText" content="MONTH">
+					<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
+				</span>
+			</td>
+			</tr>
+			{{/estimatedSalary.stringvalue}}
+			{{text_workingtime}}
+			<tr>
+				<th>{{=const.title_workingtime}}</th>
+				<td>{{=text_workingtime}}</td>
+			</tr>
+			{{/text_workingtime}}
+			{{workHours}}
+			<tr>
+				<th>{{=const.title_workHours}}</th>
+				<td itemprop="workHours">{{=workHours}}</td>
+			</tr>
+			{{/workHours}}
+			{{text_befristet}}
+			<tr>
+				<th>{{=const.title_befristet}}</th>
+				<td>{{=text_befristet}}</td>
+			</tr>
+			{{/text_befristet}}
+			<tr>
+				<th>{{=const.title_contact}}</th>
+				<td>
+					{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
+					{{=employmentUnit.name}}
+					<ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
+						{{employmentUnit.email}}<li>E-Mail: <a itemprop="email"
+								href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
+						{{/employmentUnit.email}}
+						{{employmentUnit.telephone}}<li>Telefon: <span
+								itemprop="telephone">{{=employmentUnit.telephone}}</span></li>
+						{{/employmentUnit.telephone}}
+						{{/applicationContact.description}}
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</aside>
 </div>
 [/collapse]

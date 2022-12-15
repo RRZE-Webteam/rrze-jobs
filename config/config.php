@@ -116,11 +116,11 @@ function getSections() {
             'title' => __('Layout', 'rrze-jobs'),
             'desc' => __('Here you can set the headings and captions for each section in the job posting.', 'rrze-jobs'),
         ],
-        [
-            'id' => 'rrze-jobs-fields',
-            'title' => __('Data fields', 'rrze-jobs'),
-            'desc' => __('These fields are supplied by the interfaces (Interamt, UnivIS, BITE).<br />You can set a default value for each field that is output in the job offer.<br />Leave the <strong>field empty</strong> , so that the value obtained from the interface can be used.', 'rrze-jobs'),
-        ],
+        // [
+        //     'id' => 'rrze-jobs-fields',
+        //     'title' => __('Data fields', 'rrze-jobs'),
+        //     'desc' => __('These fields are supplied by the interfaces (Interamt, UnivIS, BITE).<br />You can set a default value for each field that is output in the job offer.<br />Leave the <strong>field empty</strong> , so that the value obtained from the interface can be used.', 'rrze-jobs'),
+        // ],
 	[
             'id' => 'rrze-jobs-misc',
             'title' => __('Misc', 'rrze-jobs'),
@@ -325,12 +325,19 @@ function getFields() {
                 'type' => 'line',
             ],     
 	    
-	    [
+            [
                 'name' => 'job_headline_jobnotice',
                 'label' => __('Label for','rrze-jobs').' '.__("Notice", 'rrze-jobs'),
                 'desc' => '',
                 'type' => 'text',
                 'default' => __("Notice", 'rrze-jobs'),
+            ],
+            [
+                'name' => 'job_headline_releasedate',
+                'label' => __('Label for','rrze-jobs').' '.__("Release date", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'text',
+                'default' => __("Release date", 'rrze-jobs'),
             ],
             [
                 'name' => 'job_defaulttext_jobnotice',
