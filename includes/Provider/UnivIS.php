@@ -10,6 +10,7 @@ namespace RRZE\Jobs\Provider;
 defined('ABSPATH') || exit;
 use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
+use RRZE\Jobs\Helper;
 
 class UnivIS extends Provider { 
 
@@ -207,8 +208,15 @@ class UnivIS extends Provider {
  
 	 // estimatedSalary  (type: MonetaryAmount)
 	    // aus vonbesold und bisbesold   generieren
-	    if (isset($jobdata['vonbesold']) || isset($jobdata['vonbesold'])) {
-		$res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['vonbesold'], $jobdata['bisbesold']);
+	    if (isset($jobdata['vonbesold']) || isset($jobdata['bisbesold'])) {
+		$von = $bis = '';
+		if (!empty($jobdata['vonbesold'])) {
+		    $von = $jobdata['vonbesold'];
+		}
+		if (!empty($jobdata['bisbesold'])) {
+		    $bis = $jobdata['bisbesold'];
+		}
+		$res['estimatedSalary'] = $this->get_Salary_by_TVL($von, $bis);
 	    }
 	   	    
 	    
@@ -433,7 +441,11 @@ class UnivIS extends Provider {
 	}  
 	
 	if (!empty($jobdata['desc5'])) {
-	      $res['disambiguatingDescription'] .= '<p>'.$jobdata['desc5'].' '.$jobdata['title'].'</p>';
+	    // Die Einleitung geht in ein die employerOverview
+	    // https://schema.org/employerOverview
+
+            $res['employerOverview']  = $jobdata['desc5'];
+
 	}  
 	  
 	return $res;
@@ -583,9 +595,10 @@ class UnivIS extends Provider {
 	     if (isset($this->required_fields[$method][$name])) {
 		$type =  $this->required_fields[$method][$name];
 	     } 
-	     $urivalue = $this->sanitize_type($type, $value);
-	     $uriname = $this->sanitize_type('key', $name);
 	     
+	     $urivalue = $this->sanitize_type($value, $type);
+	     $uriname = $this->sanitize_type($name, 'key');
+
 	     if ((!empty($uriname)) && (!empty($urivalue))) {
 		 $uri .= '&'.$uriname.'='.$urivalue;
 	     }
@@ -608,7 +621,7 @@ class UnivIS extends Provider {
 	    foreach ($params[$method] as $name => $value) {
 		if (isset($this->required_fields[$method][$name])) {
 		    $type =  $this->required_fields[$method][$name];
-		    $urivalue = $this->sanitize_type($type, $value);
+		    $urivalue = $this->sanitize_type($value, $type);
 		     if (!empty($urivalue)) {
 			 $found[$name] = $urivalue;		
 		     }
@@ -732,10 +745,10 @@ class UnivIS extends Provider {
 				 $value = $this->sanitize_univis_befristet($value);	
 				break; 
 			    case 'wstunden':
-				$value = $this->sanitize_type('float',$value);	
+				$value = $this->sanitize_type($value, 'float');	
 				break;
 			    case 'id':
-				$value = $this->sanitize_type('number',$value);	
+				$value = $this->sanitize_type($value, 'number');	
 				break;
 			    case 'key':
 			    case 'acontact':
@@ -774,6 +787,10 @@ class UnivIS extends Provider {
 				$value = $this->sanitize_univis_boolean($value);
 				break;
 				
+			    case 'vonbesold':
+			    case 'bisbesold':
+				$value = $this->sanitize_tvl($value);
+				break;
 				
 			    default:
 				$value = sanitize_text_field($value);

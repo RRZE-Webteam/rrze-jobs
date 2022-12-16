@@ -524,9 +524,9 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_tvl($entgeld)
-    {
+    public function sanitize_tvl($entgeld) {
         $res = '';
+	
         if (!empty($entgeld)) {
             if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
                 if (isset($output_array[2])) {
@@ -536,7 +536,8 @@ class Provider
                 } else {
                     // irgendwas anderes, was wir nicht interpretieren können..
                     // => behalte es, wie es ist.
-                    $res = $entgeld;
+                    $res = $entgeld;	    
+		  
                 }
             }
 

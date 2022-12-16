@@ -61,7 +61,7 @@ class Cache  {
 	    return $value;
 	}
     }
-    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '', $cachetimeoverwrite = 0 ) {	
+    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content , $cachetimeoverwrite = 0 ) {	
 	if (empty($content)) {
 	    return false;
 	}
