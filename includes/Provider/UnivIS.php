@@ -32,7 +32,10 @@ class UnivIS extends Provider {
 	     ),
 	     'get_single'	=> array(
 		 'id'	=> 'number'
-	     )
+	     ),
+	     'get_group' => array(
+                'group' => 'uriparam',
+            )
 	 );
 	 
 	 
@@ -42,7 +45,7 @@ class UnivIS extends Provider {
      
      // which methods do we serve 
      public $methods = array(
-	    "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter"
+	    "get_group", "get_list", "get_single", "map_to_schema", "get_uri", "required_parameter"
 	 );
      
           
@@ -121,6 +124,12 @@ class UnivIS extends Provider {
 	   // identifier
 	  $res['identifier'] = $jobdata['id'];
 	 
+	   // job_id (needed by FAU-Jobportal)
+	    $res['job_id'] = $jobdata['id'];
+	
+	   // intern (needed by FAU-Jobportal)
+	   $res['intern'] = (!empty($jobdata['intern']) ? true : false);
+	
 	  // validThrough
 	  $res['validThrough'] = $jobdata['enddate'];
 	  
@@ -527,7 +536,44 @@ class UnivIS extends Provider {
 	return $res; 
      }
      
-     
+     // make request for a positions list and return it as array
+    public function get_group($params) {
+        $check = $this->required_parameter("get_group", $params);
+
+        if (is_array($check)) {
+            $aRet = [
+                'valid' => false,
+                'code' => 405,
+                'error' => $check,
+                'params_given' => $params,
+                'content' => '',
+            ];
+
+            return $aRet;
+        }
+
+        $aGroups = (!empty($params['get_group']['group']) ? explode(',', $params['get_group']['group']) : []);
+
+        foreach ($aGroups as $group) {
+            $params['get_group']['group'] = $group;
+            $responseGroup = $this->get_data($params, "get_group");
+
+            if ($responseGroup['valid'] == true) {
+                $responseGroup['content'] = $this->sanitize_sourcedata($responseGroup['content']);
+                $responseGroup['content'] = $this->map_to_schema($responseGroup['content']);
+
+                if (!empty($response['content'])) {
+                    $response['content']['JobPosting'] = array_merge($response['content']['JobPosting'], $responseGroup['content']['JobPosting']);
+                }
+            }
+
+            if (empty($response)) {
+                $response = $responseGroup;
+            }
+        }
+
+        return $response;
+    }
    
      
      
@@ -545,7 +591,7 @@ class UnivIS extends Provider {
               ];
 	      return $aRet;
 	 }
-	 $response = $this->get_data("get_list", $params);
+	 $response = $this->get_data($params, "get_list");
 	 
 	 if ($response['valid'] == true) {
 	     $response['content'] = $this->sanitize_sourcedata($response['content']);   
@@ -573,7 +619,7 @@ class UnivIS extends Provider {
 	 }
 	 
 
-	 $response = $this->get_data("get_single", $params);
+	 $response = $this->get_data($params, "get_single");
 	 
 	 if ($response['valid'] == true) {
 	     $response['content'] = $this->sanitize_sourcedata($response['content']);  
@@ -587,7 +633,7 @@ class UnivIS extends Provider {
 
      
      // Generate URI for request
-     public function get_uri($method = 'get_list', $params) {
+     public function get_uri($params, $method = 'get_list') {
 	 $uri = $this->uriparameter;
 	 
 	 foreach ($params[$method] as $name => $value) {
@@ -640,8 +686,8 @@ class UnivIS extends Provider {
     }
     
     // get the raw data from provider by a a method and parameters
-    public function get_data($method = 'get_list', $params) { 
-	$uri = $this->get_uri($method,$params);
+    public function get_data($params, $method = 'get_list') {
+	$uri = $this->get_uri($params, $method);
 	$url = $this->api_url.'?'.$uri;
 	
 	
