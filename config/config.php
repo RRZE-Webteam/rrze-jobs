@@ -84,6 +84,25 @@ function getShortcodeSettings() {
             'default' => false,
             'checked' => false,
         ],
+	'category' => [
+	    // filter for occupationalCategory
+	    'field_type' => 'select',
+            'values' => [
+                'wiss'	=> __('Research & Teaching', 'rrze-jobs'),
+		'n-wiss'    => __('Technology & Administration', 'rrze-jobs'),
+		'azubi'=>  __('Trainee', 'rrze-jobs'),
+		'hiwi'	=> __('Student assistants', 'rrze-jobs'),
+		'prof'	=> __('Professorships', 'rrze-jobs'),
+		'other' =>  __('Other', 'rrze-jobs'),
+		''  =>  __('No filter', 'rrze-jobs')
+            ],
+            'default' => '',
+            'label' => __('Filter by occupationalCategory', 'rrze-jobs'),
+            'type' => 'string',
+	]
+	
+	
+ 
     ];
 }
 

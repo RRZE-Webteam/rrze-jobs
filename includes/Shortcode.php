@@ -76,14 +76,14 @@ class Shortcode
         return $myArray;
     }
 
-    private function setAtts($atts)
-    {
+    private function setAtts($atts) {
         $aAtts = [
             'limit',
             'orderby',
             'order',
             'fallback_apply',
             'link_only',
+	    'category'
 
         ];
 
@@ -92,8 +92,7 @@ class Shortcode
         }
     }
 
-    public function shortcodeOutput($atts)
-    {
+    public function shortcodeOutput($atts)  {
 
         $this->count = 0;
         $this->setAtts($atts);
@@ -116,6 +115,10 @@ class Shortcode
         // filter provider
         $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
 
+        // optional search for jobs with the given category in occupationalCategory
+        $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
+	$search_category = strtolower($search_category);
+	
         $link_only = (!empty($atts['link_only']) ? true : false);
 
         //    $output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
@@ -284,7 +287,7 @@ class Shortcode
 
                     $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
                 }
-
+		$listjobs = 0;
                 foreach ($newdata['positions'] as $num => $data) {
                     $hidethis = $this->hideinternal($data);
 
@@ -295,6 +298,17 @@ class Shortcode
                         // Also do not give an error message like at single display
 
                     } else {
+			if (!empty($data['orig_occupationalCategory'])) {
+			    
+			}
+			if ((!empty($search_category)) && (!empty($data['orig_occupationalCategory']))) {
+			    $jobcategory = $positions->map_occupationalCategory($data['orig_occupationalCategory']);
+			    if ($search_category !== $jobcategory) {
+				continue;
+			    }
+			}
+	
+			
                         $data['const'] = $strings;
 
                         // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
@@ -310,16 +324,22 @@ class Shortcode
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
-
+			
                         $data = self::ParseDataVars($data);
                         $parserdata['joblist'] .= Template::getContent($template, $data);
+			$listjobs++;
                     }
                 }
-
-                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
-                if ($link_only) {
-                    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
-                }
+		if ($listjobs > 0) {
+		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+		    if ($link_only) {
+			$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
+		    }
+		} else {
+		    $parserdata['errormsg'] = __('No jobs found.', 'rrze-jobs');
+		    $parserdata['errortitle'] = __('Error', 'rrze-jobs');
+		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
+		}
             } else {
                 $parserdata['errormsg'] = __('No jobs found.', 'rrze-jobs');
                 $parserdata['errortitle'] = __('Error', 'rrze-jobs');

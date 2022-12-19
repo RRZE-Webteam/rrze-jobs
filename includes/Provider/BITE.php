@@ -12,12 +12,12 @@ use RRZE\Jobs\Cache;
 use RRZE\Jobs\Helper;
 use RRZE\Jobs\Provider;
 
-class BITE extends Provider
-{
+class BITE extends Provider {
     
 
-    public function __construct()
-    {
+    public function __construct($use_cache = true) {
+        $this->use_cache = $use_cache;
+
         $this->api_url = 'https://api.b-ite.io/v1/jobpostings';
         //   list: https://api.b-ite.io/v1/jobpostings
         // single: https://api.b-ite.io/v1/jobpostings/
@@ -27,6 +27,7 @@ class BITE extends Provider
         $this->cachetime_list = $this->cachetime;
         $this->cachetime_single = 2 * HOUR_IN_SECONDS;
         $this->uriparameter = '';
+	
         $this->request_args = array(
             'timeout' => 45,
             'redirection' => 5,
@@ -271,9 +272,13 @@ class BITE extends Provider
         // Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
 
         // Gruppe / Kategorie der Stelle
-        if ((isset($jobdata['custom']['zuordnung'])) && (!empty($jobdata['custom']['zuordnung']))) {
+        if (!empty($jobdata['custom']['zuordnung'])) {
             $res['occupationalCategory'] = $jobdata['custom']['zuordnung'];
         }
+	if (!empty($jobdata['custom']['orig_occupationalCategory'])) {
+	    $res['orig_occupationalCategory'] = $jobdata['custom']['orig_occupationalCategory'];
+	}
+	
 
         if ((isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
             // datePosted
@@ -824,10 +829,11 @@ class BITE extends Provider
        
         if ($this->use_cache) {
             $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
-            if ($cachedout) {
+            if ($cachedout) {		
                 return $cachedout;
-            }
-        }
+	    }
+	}
+	
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
@@ -876,6 +882,9 @@ class BITE extends Provider
                         'params_given' => $params,
                         'content' => '',
                     ];
+		    $cache->set_cached_job('BITE', $id, '', $method, $aRet);
+		    // Notice: I will cache this too, cause even if the data is skipped, 
+		    // we dont want to get it loaded every time if we get new data from the stream
                     return $aRet;
 
                 }
@@ -888,7 +897,6 @@ class BITE extends Provider
             ];
 
             $cache->set_cached_job('BITE', $id, '', $method, $aRet);
-
             return $aRet;
         }
 
@@ -986,7 +994,9 @@ class BITE extends Provider
                             break;
 
                         case 'zuordnung':
-                            $value = $this->sanitize_bite_group($value);
+			    $data['orig_occupationalCategory'] = $value;
+                            $value = $this->sanitize_occupationalCategory($value);
+			    
                             break;
                         case 'job_limitation_duration':
                             $value = $this->sanitize_type($value, 'number');
@@ -1200,42 +1210,6 @@ class BITE extends Provider
 
     }
 
-    // check for select value of group and translate into the desired long form
-    private function sanitize_bite_group($group)
-    {
-        $res = '';
-        if (empty($group)) {
-            return $res;
-        }
-        switch ($group) {
-            case 'wiss':
-                $res = __('Research & Teaching', 'rrze-jobs');
-                break;
-            case 'verw':
-            case 'tech':
-            case 'pflege':
-            case 'arb':
-            case 'n-wiss':
-                $res = __('Technology & Administration', 'rrze-jobs');
-                break;
-            case 'azubi':
-                $res = __('Trainee', 'rrze-jobs');
-                break;
-
-            case 'hiwi':
-                $res = __('Student assistants', 'rrze-jobs');
-                break;
-
-            case 'aush':
-            case 'other':
-                $res = __('Other', 'rrze-jobs');
-                break;
-
-            default:
-                $res = __('Other', 'rrze-jobs');
-        }
-
-        return $res;
-    }
+   
 
 }

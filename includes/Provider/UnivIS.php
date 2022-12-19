@@ -85,7 +85,7 @@ class UnivIS extends Provider {
 		    'vonbesold', 'bisbesold',
 		    'nd', 'sd', 'bd', 'wstunden',
 		    'orgname', 'orgunit', 'orgunit_en',
-		    'group', 'orig_group'
+		    'group', 'orig_occupationalCategory'
 	    );
 	$providerfield = array();
 	
@@ -351,6 +351,8 @@ class UnivIS extends Provider {
 	     if ($jobdata['orig_group'] == 'azubi') {
 		 $typeliste[] = 'INTERN';
 	     }
+	     
+	     $res['orig_occupationalCategory'] = $jobdata['orig_group'];
 	 }
 
 	 
@@ -719,7 +721,7 @@ class UnivIS extends Provider {
          } else {
 	     $content = json_decode($remote_get["body"], true);
 	     
-	     if (strpos($content, 'keine passenden ') === false ) {
+	     if (!is_array($content) && strpos($content, 'keine passenden ') === false) {
 		  $aRet = [
                     'valid' => false,
                     'error' => 'No entry',
@@ -770,7 +772,8 @@ class UnivIS extends Provider {
 			    
 			    case 'group':
 				$data['Position'][$num]['orig_group'] = $value;
-				$value = $this->sanitize_univis_group($value);
+				$value = $this->sanitize_occupationalCategory($value);
+				
 				break;
 			    
 			    case 'orgname':
@@ -1272,48 +1275,7 @@ class UnivIS extends Provider {
      
      
     
-     
-     
-     // check for select value of group and translate into the desired long form
-     private function sanitize_univis_group($group) {
-	 $res = '';
-	 if (empty($group)) {
-	     return $res;
-	 }
-	 switch($group) {
-	     case 'wiss':
-		 $res = __('Research & Teaching', 'rrze-jobs');
-		 break;
-	     case 'verw':
-	     case 'tech':
-	     case 'pflege':
-	     case 'arb':
-		 $res = __('Technology & Administration', 'rrze-jobs');
-		 break;
-	     case 'azubi':
-		 $res = __('Trainee', 'rrze-jobs');
-		 break;
-	     
-	     case 'hiwi':
-		 $res = __('Student assistants', 'rrze-jobs');
-		 break;
-	     
-	     case 'aush':
-	     case 'other':
-		 $res = __('Other', 'rrze-jobs');
-		  break;
-	      
-	     default:
-		 $res = __('Other', 'rrze-jobs');
-	 }
-	 
-	 return $res;
-     }
-     
-
-
-   
-     
+          
      
      // Translate UnivIS Text Input in HTML
      private function sanitize_univis_textfeld($txt) {

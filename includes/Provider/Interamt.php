@@ -13,11 +13,11 @@ defined('ABSPATH') || exit;
 use RRZE\Jobs\Cache;
 use RRZE\Jobs\Provider;
 
-class Interamt extends Provider
-{
+class Interamt extends Provider {
 
-    public function __construct()
-    {
+    public function __construct($use_cache = true) {
+        $this->use_cache = $use_cache;
+
         $this->api_url = 'https://interamt.de/koop/app/webservice_v2';
         $this->url = 'https://interamt.de/';
         $this->name = "Interamt";
