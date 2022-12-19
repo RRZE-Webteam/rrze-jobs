@@ -86,20 +86,39 @@ class BITE extends Provider {
     // we already map to schema.
     // all fields that remain are new or was not mapped to schema and
     // may be used to other purpuses
-    private function add_remaining_non_schema_fields($jobdata)
-    {
+    private function add_remaining_non_schema_fields($jobdata) {
         $known_fields = array("assignees", "hash", "emailTemplate", "jobSite",
             "subsidiary", "content", "seo", "title", "location", "custom",
             "description", "locale", "identification", "keywords");
 
+	$known_custom_fields = array("einleitung", "03_aufgaben_profil", "interessiert", 
+	    "sie_haben_fragen", "einleitungstext", "aufgaben", "stellenzusatz", "profil",
+	    "job_experience", "job_qualifications_nth", "angebot", "wir_bieten", 
+	    "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung", 
+	    "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
+	    "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
+	    "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar", 
+	    "job_limitation_duration", "abschlusstext", "06_schluss",
+	    "estimatedsalary", "framework", "jobstartdate",  "job_workhours", "workHours", "befristung", 
+	    "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
+	    "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
+	    "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper");
+	
         // keynames we already used in schema values or which we dont need anyway
 
         $providerfield = array();
 
         foreach ($jobdata as $name => $value) {
-            if (!in_array($name, $known_fields)) {
+            if (($name != 'custom') && (!in_array($name, $known_fields))) {
                 $providerfield[$name] = $value;
-            }
+            } elseif ($name == 'custom') {
+		
+		foreach ($value as $subname => $subval) {
+		  if (!in_array($subname, $known_custom_fields)) {
+			$providerfield[$subname] = $subval;
+		    }
+		}
+	    }
         }
 
         return $providerfield;
@@ -140,7 +159,9 @@ class BITE extends Provider {
 	     if (!empty($jobdata['custom']['sie_haben_fragen'])) {
 		   $res['disambiguatingDescription'] .= "\n\n".$jobdata['custom']['sie_haben_fragen'];
 	     }
-	     
+	    if (!empty($jobdata['custom']['06_schluss'])) {
+		   $res['text_jobnotice'] = $jobdata['custom']['06_schluss'];
+	    }
 		    
 		   
 		   
@@ -182,7 +203,9 @@ class BITE extends Provider {
 		$res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
 	    }
 
-	     
+	    if (!empty($jobdata['custom']['abschlusstext'])) {
+		   $res['text_jobnotice'] = $jobdata['custom']['abschlusstext'];
+	    }
 	}
 	
 
@@ -210,7 +233,16 @@ class BITE extends Provider {
         $res['job_id'] = $jobdata['id'];
 
         // intern (needed by FAU-Jobportal)
-        $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
+     //   $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
+	
+	if (!empty($jobdata['custom']['intern'])) {
+	    $res['intern'] = ((!empty($jobdata['custom']['intern']) && $jobdata['custom']['intern'] === true) ? true : false);
+	} elseif (!empty($jobdata['custom']['job_intern'])) {
+	    $res['intern'] = ((!empty($jobdata['custom']['job_intern']) && $jobdata['custom']['job_intern'] === true) ? true : false);
+	} else {
+	    $res['intern'] = false;
+	}
+	
 
         if (!empty($jobdata['ausschreibungskennziffer'])) {
             $res['identifier'] = $jobdata['ausschreibungskennziffer'];
@@ -630,10 +662,10 @@ class BITE extends Provider {
             }
 
             $response['content'] = $this->sanitize_sourcedata($response['content']);
+	    
             $response['content'] = $this->map_to_schema($response['content']);
-
         }
-
+	
         return $response;
 
     }

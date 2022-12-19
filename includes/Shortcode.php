@@ -185,6 +185,7 @@ class Shortcode
         if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
             $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
         }
+	
 
         // In case the org id was given as a parameter, overwrite the default from backend
         // orgid will work on all identifier, anyway which provider
@@ -310,7 +311,10 @@ class Shortcode
 	
 			
                         $data['const'] = $strings;
-
+			
+			if ((isset(self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice'])) && (self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice']) && (!empty( $data['text_jobnotice' ]))) {
+			    $data['const']['text_jobnotice' ] = $data['text_jobnotice'];
+			}
                         // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
                         if (empty($data['jobStartDate'])){
                             $data['jobStartDate'] = 'So bald wie möglich.';

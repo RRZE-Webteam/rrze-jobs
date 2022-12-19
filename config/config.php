@@ -365,6 +365,18 @@ function getFields() {
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
 	     [
+                'name' => 'job_usedefaulttext_jobnotice',
+                'label' => __('Job Notices from job provider', 'rrze-jobs'),
+                'desc' => __('Use the text from the provider and not the above text for additional notices. (Currently from BITE only).', 'rrze-jobs'),
+                'type' => 'radio',
+                'default' => false,
+		'options'   => array(
+		    true  => __('Use text from provider if given', 'rrze-jobs'),
+		    false  => __('Use above text', 'rrze-jobs'),
+		)
+            ],
+	    
+	     [
                 'name' => 'job_errortext_display',
                 'label' => __('Errormessages', 'rrze-jobs'),
                 'desc' => __('In case of errors or in case that no job was found, you can switch off the errormessages.', 'rrze-jobs'),
@@ -456,6 +468,8 @@ function getFields() {
                 'default' => 'uni-erlangen.de, fau.de',
 		
             ],
+	    
+	    
 	]
     ];
   return $aFields;
