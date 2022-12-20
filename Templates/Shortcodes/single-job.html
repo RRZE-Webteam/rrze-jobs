@@ -8,28 +8,33 @@
 		{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
 		{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
 		<article>
+		    {{employerOverview}}
+		    <div itemprop="employerOverview">
+			    {{=employerOverview}}
+		    </div>
+		    <h3>{{=const.title_description}}</h3>
+		    {{/employerOverview}}
 			<div itemprop="description">
 				{{=description}}
 			</div>
-
 
 			{{const.title_qualifications}}<h3>{{=const.title_qualifications}}</h3>{{/const.title_qualifications}}
 			<div itemprop="qualifications">
 				{{=qualifications}}
 			</div>
-
-			{{disambiguatingDescription}}
-			<h3>{{=const.title_disambiguatingDescription}}</h3>
-			<div itemprop="disambiguatingDescription">
-				{{=disambiguatingDescription}}
-			</div>
-			{{/disambiguatingDescription}}
 			{{jobBenefits}}
 			<h3>{{=const.title_jobBenefits}}</h3>
 			<div itemprop="jobBenefits">
 				{{=jobBenefits}}
 			</div>
 			{{/jobBenefits}}
+			{{disambiguatingDescription}}
+			<h3>{{=const.title_disambiguatingDescription}}</h3>
+			<div itemprop="disambiguatingDescription">
+				{{=disambiguatingDescription}}
+			</div>
+			{{/disambiguatingDescription}}
+			
 			{{const.text_jobnotice}}
 			[alert]
 			<h3>{{=const.title_jobnotice}}</h3>

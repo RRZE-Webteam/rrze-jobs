@@ -61,7 +61,7 @@ class Cache  {
 	    return $value;
 	}
     }
-    public function set_cached_job($provider = '', $provider_orgid = '', $jobid = '', $format = 'default', $content = '', $cachetimeoverwrite = 0 ) {	
+    public function set_cached_job($provider, $provider_orgid, $jobid, $format, $content, $cachetimeoverwrite = 0 ) {	
 	if (empty($content)) {
 	    return false;
 	}
@@ -83,6 +83,10 @@ class Cache  {
 	} else {
 	    $jobid = preg_replace('/[^a-z0-9]+/i', '', $jobid);
 	}
+	if (empty($format)) {
+	    $format = 'default';
+	} 
+	
 	$transient_name = $prefix.'_'.$provider.'_'.$provider_orgid.'_'.$jobid;
 	if ($format !== 'default') {
 	    $format = preg_replace('/[^a-z0-9]+/i', '', $format);

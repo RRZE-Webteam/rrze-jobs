@@ -9,14 +9,15 @@ namespace RRZE\Jobs\Provider;
 
 defined('ABSPATH') || exit;
 use RRZE\Jobs\Cache;
+use RRZE\Jobs\Helper;
 use RRZE\Jobs\Provider;
 
-class BITE extends Provider
-{
+class BITE extends Provider {
     
 
-    public function __construct()
-    {
+    public function __construct($use_cache = true) {
+        $this->use_cache = $use_cache;
+
         $this->api_url = 'https://api.b-ite.io/v1/jobpostings';
         //   list: https://api.b-ite.io/v1/jobpostings
         // single: https://api.b-ite.io/v1/jobpostings/
@@ -26,6 +27,7 @@ class BITE extends Provider
         $this->cachetime_list = $this->cachetime;
         $this->cachetime_single = 2 * HOUR_IN_SECONDS;
         $this->uriparameter = '';
+	
         $this->request_args = array(
             'timeout' => 45,
             'redirection' => 5,
@@ -84,20 +86,39 @@ class BITE extends Provider
     // we already map to schema.
     // all fields that remain are new or was not mapped to schema and
     // may be used to other purpuses
-    private function add_remaining_non_schema_fields($jobdata)
-    {
+    private function add_remaining_non_schema_fields($jobdata) {
         $known_fields = array("assignees", "hash", "emailTemplate", "jobSite",
             "subsidiary", "content", "seo", "title", "location", "custom",
             "description", "locale", "identification", "keywords");
 
+	$known_custom_fields = array("einleitung", "03_aufgaben_profil", "interessiert", 
+	    "sie_haben_fragen", "einleitungstext", "aufgaben", "stellenzusatz", "profil",
+	    "job_experience", "job_qualifications_nth", "angebot", "wir_bieten", 
+	    "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung", 
+	    "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
+	    "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
+	    "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar", 
+	    "job_limitation_duration", "abschlusstext", "06_schluss",
+	    "estimatedsalary", "framework", "jobstartdate",  "job_workhours", "workHours", "befristung", 
+	    "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
+	    "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
+	    "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper");
+	
         // keynames we already used in schema values or which we dont need anyway
 
         $providerfield = array();
 
         foreach ($jobdata as $name => $value) {
-            if (!in_array($name, $known_fields)) {
+            if (($name != 'custom') && (!in_array($name, $known_fields))) {
                 $providerfield[$name] = $value;
-            }
+            } elseif ($name == 'custom') {
+		
+		foreach ($value as $subname => $subval) {
+		  if (!in_array($subname, $known_custom_fields)) {
+			$providerfield[$subname] = $subval;
+		    }
+		}
+	    }
         }
 
         return $providerfield;
@@ -111,51 +132,95 @@ class BITE extends Provider
 
         $res = array();
 
+	
+	// Cause several customer might use different custom fields but also
+	// same fields but in different way, I insert here a switch.
+	// default ist the custom settings of the FAU.
+	
+	$customer = $this->get_customer($jobdata);
+	
         // the following schema fields are not set in univis data,
         // but they can be evaluated from others
 
-        // description
-        $desc = '';
-        if ((isset($jobdata['custom']['einleitungstext'])) && (!empty($jobdata['custom']['einleitungstext']))) {
-            $desc .= $jobdata['custom']['einleitungstext'];
-        }
-        if ((isset($jobdata['custom']['aufgaben'])) && (!empty($jobdata['custom']['aufgaben']))) {
-            $desc .= $jobdata['custom']['aufgaben'];
-        }
-        if ((isset($jobdata['custom']['stellenzusatz'])) && (!empty($jobdata['custom']['stellenzusatz']))) {
-            $desc .= $jobdata['custom']['stellenzusatz'];
-        }
+      
+	if ($customer == 'utn') {
+	    if (!empty($jobdata['custom']['einleitung'])) {
+		$res['employerOverview']  = $jobdata['custom']['einleitung'].' '. $jobdata['title'];
+	    }
+	     // description
+	    if  (!empty($jobdata['custom']['03_aufgaben_profil'])) {
+	       $res['description'] = $jobdata['custom']['03_aufgaben_profil'];
+	    }
+	    // disambiguatingDescription
+	     if (!empty($jobdata['custom']['interessiert'])) {
+		$res['disambiguatingDescription'] = $jobdata['custom']['interessiert'];
+	     }
+	     
+	     if (!empty($jobdata['custom']['sie_haben_fragen'])) {
+		   $res['disambiguatingDescription'] .= "\n\n".$jobdata['custom']['sie_haben_fragen'];
+	     }
+	    if (!empty($jobdata['custom']['06_schluss'])) {
+		   $res['text_jobnotice'] = $jobdata['custom']['06_schluss'];
+	    }
+		    
+		   
+		   
+	} else {
+	    // Die Einleitung geht in ein die employerOverview
+	    // https://schema.org/employerOverview
+	    if (!empty($jobdata['custom']['einleitungstext'])) {
+		$res['employerOverview']  = $jobdata['custom']['einleitungstext'];
+	    }
+	      // description
+	     if (!empty($jobdata['custom']['aufgaben'])) {
+	       $res['description'] = $jobdata['custom']['aufgaben'];
+	    } 
+	       // disambiguatingDescription
+	    if (!empty($jobdata['custom']['stellenzusatz'])) {
+		$res['disambiguatingDescription'] = $jobdata['custom']['stellenzusatz'];
+	     }
+	    
+	     
+	    if (!empty($jobdata['custom']['profil'])) {
+		if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+		    $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+		}else{
+		    $res['qualifications'] = '';
+		}
+		$res['qualifications'] .= $jobdata['custom']['profil'];
+	    }
+	    if (!empty($jobdata['custom']['job_experience'])) {
+		if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+		    $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
+		}
+		$res['qualifications'] .= $jobdata['custom']['job_experience'];
+	    }
 
-        $res['description'] = $desc;
+	    if (!empty($jobdata['custom']['job_qualifications_nth'])) {
+		if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_experience'])){
+		    $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+		}
+		$res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
+	    }
 
-        if (!empty($jobdata['custom']['profil'])) {
-            if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
-                $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
-            }else{
-                $res['qualifications'] = '';
-            }
-            $res['qualifications'] .= $jobdata['custom']['profil'];
-        }
-        if (!empty($jobdata['custom']['job_experience'])) {
-            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_qualifications_nth'])){
-                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
-            }
-            $res['qualifications'] .= $jobdata['custom']['job_experience'];
-        }
+	    if (!empty($jobdata['custom']['abschlusstext'])) {
+		   $res['text_jobnotice'] = $jobdata['custom']['abschlusstext'];
+	    }
+	}
+	
 
-        if (!empty($jobdata['custom']['job_qualifications_nth'])) {
-            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_experience'])){
-                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
-            }
-            $res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
-        }
 
-        if (!empty($jobdata['custom']['wir_bieten'])) {
+
+
+        // jobBenefits
+        if (!empty($jobdata['custom']['angebot'])) {
+            $res['jobBenefits'] = $jobdata['custom']['angebot'];
+        } elseif (!empty($jobdata['custom']['wir_bieten'])) {
             $res['jobBenefits'] = $jobdata['custom']['wir_bieten'];
         }
 
         // title
-        if ((isset($jobdata['title'])) && (!empty($jobdata['title']))) {
+        if (!empty($jobdata['title'])) {
             $res['title'] = $jobdata['title'];
         }
 
@@ -168,7 +233,16 @@ class BITE extends Provider
         $res['job_id'] = $jobdata['id'];
 
         // intern (needed by FAU-Jobportal)
-        $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
+     //   $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
+	
+	if (!empty($jobdata['custom']['intern'])) {
+	    $res['intern'] = ((!empty($jobdata['custom']['intern']) && $jobdata['custom']['intern'] === true) ? true : false);
+	} elseif (!empty($jobdata['custom']['job_intern'])) {
+	    $res['intern'] = ((!empty($jobdata['custom']['job_intern']) && $jobdata['custom']['job_intern'] === true) ? true : false);
+	} else {
+	    $res['intern'] = false;
+	}
+	
 
         if (!empty($jobdata['ausschreibungskennziffer'])) {
             $res['identifier'] = $jobdata['ausschreibungskennziffer'];
@@ -230,9 +304,13 @@ class BITE extends Provider
         // Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
 
         // Gruppe / Kategorie der Stelle
-        if ((isset($jobdata['custom']['zuordnung'])) && (!empty($jobdata['custom']['zuordnung']))) {
+        if (!empty($jobdata['custom']['zuordnung'])) {
             $res['occupationalCategory'] = $jobdata['custom']['zuordnung'];
         }
+	if (!empty($jobdata['custom']['orig_occupationalCategory'])) {
+	    $res['orig_occupationalCategory'] = $jobdata['custom']['orig_occupationalCategory'];
+	}
+	
 
         if ((isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
             // datePosted
@@ -465,7 +543,7 @@ class BITE extends Provider
             }
         }
 
-        if (isset($jobdata['custom']['jobstartdate'])) {
+        if (!empty($jobdata['custom']['jobstartdate'])) {
 
             if ($jobdata['custom']['jobstartdate'] == "-1") {
                 $res['jobImmediateStart'] = true;
@@ -489,6 +567,40 @@ class BITE extends Provider
         return $res;
     }
 
+    
+    // get the customer for the jobdata
+    private function get_customer($data) {
+	
+	// cause there is no useable identifier (['custom']['hiringorganization']) wont do it, 
+	// cause at FAU we use it for the orgunits and at UTN fpr the whole org)
+	// i create s switch by the known custom fields
+	
+	$customerer_fields = array(
+	  'fau'	    => ["zuordnung", "aufgaben", "einleitungstext", "angebot", "profil", "stellenzusatz"],
+	  'utn'	    => ["einleitung", "01_introduction", "02_addition","03_aufgaben_profil", "03_qualifications", "04_Interested", "05_questions", "sie_haben_fragen", "interessiert", "06_schluss"]
+	);
+	
+	
+	$found = '';
+	foreach ($customerer_fields as $customer => $fields) {
+	    $cnt_c = 0;
+	    foreach ($fields as $name) {
+		if (isset($data['custom'][$name])) {
+		    $cnt_c++;
+		}
+	    }
+	    if ($cnt_c == count($fields)) {
+		$found = $customer;
+		break;
+	    }
+	    
+	}
+	return $found;
+	
+	
+	
+    }
+    
     // needed for FAU-Jobporal
     public function get_group($params)
     {
@@ -550,10 +662,10 @@ class BITE extends Provider
             }
 
             $response['content'] = $this->sanitize_sourcedata($response['content']);
+	    
             $response['content'] = $this->map_to_schema($response['content']);
-
         }
-
+	
         return $response;
 
     }
@@ -746,13 +858,14 @@ class BITE extends Provider
         }
 
         $request_args = $this->get_request_args($params);
-        // echo Helper::get_html_var_dump($request_args);
+       
         if ($this->use_cache) {
             $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
-            if ($cachedout) {
+            if ($cachedout) {		
                 return $cachedout;
-            }
-        }
+	    }
+	}
+	
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
@@ -801,6 +914,9 @@ class BITE extends Provider
                         'params_given' => $params,
                         'content' => '',
                     ];
+		    $cache->set_cached_job('BITE', $id, '', $method, $aRet);
+		    // Notice: I will cache this too, cause even if the data is skipped, 
+		    // we dont want to get it loaded every time if we get new data from the stream
                     return $aRet;
 
                 }
@@ -813,7 +929,6 @@ class BITE extends Provider
             ];
 
             $cache->set_cached_job('BITE', $id, '', $method, $aRet);
-
             return $aRet;
         }
 
@@ -875,8 +990,10 @@ class BITE extends Provider
                         case 'anr':
                             $value = $this->sanitize_type($value, 'number');
                             break;
+			case 'angebot':
                         case 'aufgaben':
                         case 'einleitungstext':
+			case 'einleitung':
                         case 'stellenzusatz':
                         case 'profil':
                         case 'job_qualifications_nth':
@@ -887,6 +1004,12 @@ class BITE extends Provider
                         case '06c_schluss':
                         case '06_schluss':
                         case 'abschlusstext':
+			case 'interessiert':
+			case 'sie_haben_fragen':
+			case '03_aufgaben_profil':
+			case '03_qualifications':
+			case '01_introduction':
+			case '05_questions':
                             $value = $this->sanitize_markdown_field($value);
                             $value = $this->deleteDefaults($value);
                             break;
@@ -903,12 +1026,14 @@ class BITE extends Provider
                             break;
 
                         case 'zuordnung':
-                            $value = $this->sanitize_bite_group($value);
+			    $data['orig_occupationalCategory'] = $value;
+                            $value = $this->sanitize_occupationalCategory($value);
+			    
                             break;
                         case 'job_limitation_duration':
                             $value = $this->sanitize_type($value, 'number');
                             break;
-
+			case '02_addition':
                         case 'jobstartdate':
                             $value = $this->sanitize_bite_jobstartdate($value);
                             break;
@@ -1117,42 +1242,6 @@ class BITE extends Provider
 
     }
 
-    // check for select value of group and translate into the desired long form
-    private function sanitize_bite_group($group)
-    {
-        $res = '';
-        if (empty($group)) {
-            return $res;
-        }
-        switch ($group) {
-            case 'wiss':
-                $res = __('Research & Teaching', 'rrze-jobs');
-                break;
-            case 'verw':
-            case 'tech':
-            case 'pflege':
-            case 'arb':
-            case 'n-wiss':
-                $res = __('Technology & Administration', 'rrze-jobs');
-                break;
-            case 'azubi':
-                $res = __('Trainee', 'rrze-jobs');
-                break;
-
-            case 'hiwi':
-                $res = __('Student assistants', 'rrze-jobs');
-                break;
-
-            case 'aush':
-            case 'other':
-                $res = __('Other', 'rrze-jobs');
-                break;
-
-            default:
-                $res = __('Other', 'rrze-jobs');
-        }
-
-        return $res;
-    }
+   
 
 }

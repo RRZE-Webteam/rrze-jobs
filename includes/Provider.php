@@ -329,6 +329,8 @@ class Provider
 
         return $res;
     }
+    
+    
     // sanitize html text input
     public function sanitize_html_field($dateinput)
     {
@@ -497,7 +499,7 @@ class Provider
     {
 
         $res = array();
-        $value = '';
+        $value = $htmlvalue = '';
 
         if (!empty($bisbesold)) {
             if (!empty($vonbesold) && ($vonbesold != $bisbesold)) {
@@ -524,9 +526,9 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_tvl($entgeld)
-    {
+    public function sanitize_tvl($entgeld) {
         $res = '';
+	
         if (!empty($entgeld)) {
             if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
                 if (isset($output_array[2])) {
@@ -536,7 +538,8 @@ class Provider
                 } else {
                     // irgendwas anderes, was wir nicht interpretieren können..
                     // => behalte es, wie es ist.
-                    $res = $entgeld;
+                    $res = $entgeld;	    
+		  
                 }
             }
 
@@ -633,4 +636,84 @@ class Provider
         }
         return $res;
     }
+    
+    // check for select value of group and translate into the desired long form
+    public function sanitize_occupationalCategory($group) {
+        $res = '';
+        if (empty($group)) {
+            return $res;
+        }
+        switch ($group) {
+            case 'wiss':
+                $res = __('Research & Teaching', 'rrze-jobs');
+                break;
+            case 'verw':
+            case 'tech':
+            case 'pflege':
+            case 'arb':
+            case 'n-wiss':
+                $res = __('Technology & Administration', 'rrze-jobs');
+                break;
+            case 'azubi':
+                $res = __('Trainee', 'rrze-jobs');
+                break;
+
+            case 'hiwi':
+                $res = __('Student assistants', 'rrze-jobs');
+                break;
+	    case 'prof':
+		$res = __('Professorships', 'rrze-jobs');    
+		break;
+            case 'aush':
+            case 'other':
+                $res = __('Other', 'rrze-jobs');
+                break;
+
+            default:
+                $res = __('Other', 'rrze-jobs');
+        }
+
+        return $res;
+    }
+    
+    public function map_occupationalCategory($group) {
+        $res = '';
+        if (empty($group)) {
+            return $res;
+        }
+	$group = strtolower($group);
+	
+        switch ($group) {
+            case 'wiss':
+                $res = 'wiss';
+                break;
+            case 'verw':
+            case 'tech':
+            case 'pflege':
+            case 'arb':
+            case 'n-wiss':
+                $res = 'n-wiss';	
+                break;
+            case 'azubi':
+                $res = 'azubi';	
+                break;
+
+            case 'hiwi':
+                $res = 'hiwi';
+                break;
+	    case 'prof':
+		$res = 'prof';
+		break;
+            case 'aush':
+            case 'other':
+                $res = 'other';
+                break;
+
+            default:
+                $res = '';
+        }
+
+        return $res;	
+    }
+    
 }

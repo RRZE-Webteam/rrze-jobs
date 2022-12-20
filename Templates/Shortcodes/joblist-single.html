@@ -7,6 +7,13 @@
 	<meta itemprop="employmentType" content="{{=employmentType}}">
 	{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
 	{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
+	
+		{{employerOverview}}
+		<div itemprop="employerOverview">
+			{{=employerOverview}}
+		</div>
+		<h3>{{=const.title_description}}</h3>
+		{{/employerOverview}}
 		<div itemprop="description">
 			{{=description}}
 		</div>
@@ -17,18 +24,17 @@
 			{{=qualifications}}
 		</div>
 		{{/qualifications}}
-
-		{{disambiguatingDescription}}
-		<h3>{{=const.title_disambiguatingDescription}}</h3>
-		<div itemprop="disambiguatingDescription">{{=disambiguatingDescription}}</div>
-		{{/disambiguatingDescription}}
 		{{jobBenefits}}
 		<h3>{{=const.title_jobBenefits}}</h3>
 		<div itemprop="jobBenefits">
 			{{=jobBenefits}}
 		</div>
 		{{/jobBenefits}}
-
+		{{disambiguatingDescription}}
+		<h3>{{=const.title_disambiguatingDescription}}</h3>
+		<div itemprop="disambiguatingDescription">{{=disambiguatingDescription}}</div>
+		{{/disambiguatingDescription}}
+	
 		{{const.text_jobnotice}}
 		[alert]
 		<h3>{{=const.title_jobnotice}}</h3>

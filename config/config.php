@@ -84,6 +84,25 @@ function getShortcodeSettings() {
             'default' => false,
             'checked' => false,
         ],
+	'category' => [
+	    // filter for occupationalCategory
+	    'field_type' => 'select',
+            'values' => [
+                'wiss'	=> __('Research & Teaching', 'rrze-jobs'),
+		'n-wiss'    => __('Technology & Administration', 'rrze-jobs'),
+		'azubi'=>  __('Trainee', 'rrze-jobs'),
+		'hiwi'	=> __('Student assistants', 'rrze-jobs'),
+		'prof'	=> __('Professorships', 'rrze-jobs'),
+		'other' =>  __('Other', 'rrze-jobs'),
+		''  =>  __('No filter', 'rrze-jobs')
+            ],
+            'default' => '',
+            'label' => __('Filter by occupationalCategory', 'rrze-jobs'),
+            'type' => 'string',
+	]
+	
+	
+ 
     ];
 }
 
@@ -116,11 +135,7 @@ function getSections() {
             'title' => __('Layout', 'rrze-jobs'),
             'desc' => __('Here you can set the headings and captions for each section in the job posting.', 'rrze-jobs'),
         ],
-        // [
-        //     'id' => 'rrze-jobs-fields',
-        //     'title' => __('Data fields', 'rrze-jobs'),
-        //     'desc' => __('These fields are supplied by the interfaces (Interamt, UnivIS, BITE).<br />You can set a default value for each field that is output in the job offer.<br />Leave the <strong>field empty</strong> , so that the value obtained from the interface can be used.', 'rrze-jobs'),
-        // ],
+      
 	[
             'id' => 'rrze-jobs-misc',
             'title' => __('Misc', 'rrze-jobs'),
@@ -350,6 +365,18 @@ function getFields() {
 <p>Ausgeschriebene Stellen sind grundsätzlich teilzeitfähig, es sei denn, im Ausschreibungstext erfolgt ein anderweitiger Hinweis.</p>',
             ],
 	     [
+                'name' => 'job_usedefaulttext_jobnotice',
+                'label' => __('Job Notices from job provider', 'rrze-jobs'),
+                'desc' => __('Use the text from the provider and not the above text for additional notices. (Currently from BITE only).', 'rrze-jobs'),
+                'type' => 'radio',
+                'default' => false,
+		'options'   => array(
+		    true  => __('Use text from provider if given', 'rrze-jobs'),
+		    false  => __('Use above text', 'rrze-jobs'),
+		)
+            ],
+	    
+	     [
                 'name' => 'job_errortext_display',
                 'label' => __('Errormessages', 'rrze-jobs'),
                 'desc' => __('In case of errors or in case that no job was found, you can switch off the errormessages.', 'rrze-jobs'),
@@ -441,6 +468,8 @@ function getFields() {
                 'default' => 'uni-erlangen.de, fau.de',
 		
             ],
+	    
+	    
 	]
     ];
   return $aFields;
