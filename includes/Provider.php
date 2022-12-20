@@ -499,7 +499,7 @@ class Provider
     {
 
         $res = array();
-        $value = '';
+        $value = $htmlvalue = '';
 
         if (!empty($bisbesold)) {
             if (!empty($vonbesold) && ($vonbesold != $bisbesold)) {

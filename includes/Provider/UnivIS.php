@@ -14,7 +14,8 @@ use RRZE\Jobs\Helper;
 
 class UnivIS extends Provider { 
 
-    public function __construct() {
+     public function __construct($use_cache = true) {
+        $this->use_cache = $use_cache;
 	 $this->api_url	    = 'https://univis.uni-erlangen.de/prg';
 	 $this->url	    = 'https://univis.uni-erlangen.de/';
 	 $this->name	    = "UnivIS";
@@ -139,7 +140,7 @@ class UnivIS extends Provider {
 	    // contains out of template (headlines) + content from  
 	    // desc2 (Notwendige Qualifikation:)
 	    // desc3 ( Wünschenswerte Qualifikation:)
-	 
+	 $res['qualifications'] = '';
 	 if ((isset($jobdata['desc2'])) && (!empty($jobdata['desc2']))) {
 	     
 	     // 
@@ -147,10 +148,8 @@ class UnivIS extends Provider {
 	    //  $res['qualifications'] = '<p><strong>'.__("Your profile (necessary)", 'rrze-jobs').':</strong></p>';
 	     $res['qualifications'] .= $jobdata['desc2'];
 	 }
-	 if ((isset($jobdata['desc3'])) && (!empty($jobdata['desc3']))) {
-	//     if (!empty($res['qualifications'])) {
-	//	 $res['qualifications'] .= "<br>\n";
-	//     }
+	 if (!empty($jobdata['desc3'])) {
+
 	     // {{=const.title_qualifications}}
 	     $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
 	    // $res['qualifications'] .= '<p><strong>'.__("Your profile (desired)", 'rrze-jobs').':</strong></p>';
@@ -299,9 +298,9 @@ class UnivIS extends Provider {
 	//    $res['contact'] = $contactpersondata;
 	    
 	    
-	    if (!empty($contactpersondata)) {
+	    if (!empty($contactpersondata['workLocation']['address'])) {
 		$res['jobLocation']['address'] = $contactpersondata['workLocation']['address'];
-	    } elseif (!empty($persondata)) {
+	    } elseif (!empty($persondata['workLocation']['address'])) {
 		$res['jobLocation']['address'] = $persondata['workLocation']['address'];
 	    }
 	    if (!isset($res['jobLocation']['address']['addressRegion'])) {
@@ -472,28 +471,47 @@ class UnivIS extends Provider {
 		 if (is_array($person)) {
 		     
 		     if ($person['key'] == $key) {
-			$res['email'] = $person['location'][0]['email'];
-			$res['telephone'] = $person['location'][0]['tel'];
-			if (isset($person['location'][0]['fax']))
+			if (!empty($person['location'][0]['email'])) {
+			    $res['email'] = $person['location'][0]['email'];
+			}
+			if (!empty($person['location'][0]['tel'])) {
+			    $res['telephone'] = $person['location'][0]['tel'];
+			}
+			if (isset($person['location'][0]['fax'])) {
 			    $res['faxNumber'] = $person['location'][0]['fax'];
-			$res['familyName'] = $person['lastname'];
-			$res['givenName'] = $person['firstname'];
-			$res['worksFor'] = $person['orgname'];
+			}
+			if (!empty($person['lastname'])) {
+			    $res['familyName'] = $person['lastname'];
+			}
+			if (!empty($person['firstname'])) {
+			    $res['givenName'] = $person['firstname'];
+			}
+			if (!empty($person['orgname'])) {
+			    $res['worksFor'] = $person['orgname'];
+			}
 			if (isset ($person['gender']))
 			    $res['gender'] = $person['gender'];
-			$res['identifier'] = $person['id'];
-
+			
+			if (!empty($person['id'])) {
+			    $res['identifier'] = $person['id'];
+			}
 			$res['name'] = '';
-			if  ((isset($res['title'])) && (!empty($res['title']))) {
+			if  (!empty($res['title'])) {
 			    $res['honorificPrefix'] = $person['title'];
 			    $res['name'] = $person['title'];
 			    $res['name'] .= ' ';
 			} 
 			$res['name'] .= $person['firstname']. ' '.$person['lastname'];
-			$res['workLocation']['name'] =  $person['orgname'];
-			$res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
-			$res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
-			$res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
+			if (!empty($person['orgname'])) {
+			    $res['workLocation']['name'] =  $person['orgname'];
+			}
+			if (!empty($person['location'][0]['street'])) {
+			    $res['workLocation']['address']['streetAddress'] = $person['location'][0]['street'];
+			}
+			if (!empty($person['location'][0]['ort'])) {
+			    $res['workLocation']['address']['addressLocality'] = preg_replace('/([0-9\s]+)/i', '', $person['location'][0]['ort']);
+			    $res['workLocation']['address']['postalCode'] = preg_replace('/([^0-9]+)/i', '', $person['location'][0]['ort']);
+			}
 			
 			
 			// $res['orig'] =  $person;
@@ -702,11 +720,17 @@ class UnivIS extends Provider {
 	$id = '';
 	if (isset($params[$method]['id'])) {
 	    $id = $params[$method]['id'];
-	} 
-	$cachedout = $cache->get_cached_job('UnivIS',$org,$id,$method);
-	if ($cachedout) {
-	    return $cachedout;
+	} elseif ($method== "get_group") {
+	    $id =  $params['get_group']['group'];
 	}
+	
+
+	if ($this->use_cache) {
+            $cachedout = $cache->get_cached_job('UnivIS', $org, $id, $method);
+            if ($cachedout) {
+                return $cachedout;
+            }
+        }
 	$remote_get    = wp_safe_remote_get( $url , $this->request_args);
 	
 	if ( is_wp_error( $remote_get ) ) {	
@@ -809,19 +833,19 @@ class UnivIS extends Provider {
 				break;
 			    case 'type1':
 				$data['Position'][$num]['orig_type1'] = $value;
-				$value = $this->sanitize_univis_typen('type1',$value);	
+				$value = $this->sanitize_univis_typen($value, 'type1');	
 				break;
 			    case 'type2':
 				$data['Position'][$num]['orig_type2'] = $value;
-				$value = $this->sanitize_univis_typen('type2',$value);	
+				$value = $this->sanitize_univis_typen($value, 'type2');	
 				break;
 			    case 'type3':
 				$data['Position'][$num]['orig_type3'] = $value;
-				$value = $this->sanitize_univis_typen('type3',$value);	
+				$value = $this->sanitize_univis_typen($value, 'type3');	
 				break;
 			    case 'type4':
 				$data['Position'][$num]['orig_type4'] = $value;
-				$value = $this->sanitize_univis_typen('type4',$value);	
+				$value = $this->sanitize_univis_typen($value, 'type4');	
 				break;
 				
 			    case 'orgunit':
@@ -1160,7 +1184,7 @@ class UnivIS extends Provider {
 	 }
      }
      // check for select fields from univis
-     private function sanitize_univis_typen($type = 'type1', $value) {
+     private function sanitize_univis_typen($value, $type = 'type1') {
 	 $validselectors = [
 	     "type1"	=> [
 		 'unbef'    => __('unlimited','rrze-jobs'),
