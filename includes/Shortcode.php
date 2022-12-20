@@ -49,10 +49,10 @@ class Shortcode
         add_action('admin_head', [$this, 'setMCEConfig']);
         add_filter('mce_external_plugins', [$this, 'addMCEButtons']);
 
-        if (!is_plugin_active('fau-jobportal/fau-jobportal.php')) {
-            add_shortcode('jobs', [$this, 'shortcodeOutput']);
-            add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
-        }
+
+        add_shortcode('jobs', [$this, 'shortcodeOutput']);
+        add_shortcode('rrze-jobs', [$this, 'shortcodeOutput']);
+
     }
 
     /**
