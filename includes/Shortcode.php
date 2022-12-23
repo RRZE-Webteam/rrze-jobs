@@ -340,14 +340,14 @@ class Shortcode
 			$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
 		    }
 		} else {
-		    $parserdata['errormsg'] = __('No jobs found.', 'rrze-jobs');
-		    $parserdata['errortitle'] = __('Error', 'rrze-jobs');
-		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
+		    $ret['status'][0]['code'] = 404;
+		    $ret['status'][0]['valid'] = false;
+		    return self::get_errormsg($ret);
 		}
             } else {
-                $parserdata['errormsg'] = __('No jobs found.', 'rrze-jobs');
-                $parserdata['errortitle'] = __('Error', 'rrze-jobs');
-                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-error.html';
+		$ret['status'][0]['code'] = 404;
+		$ret['status'][0]['valid'] = false;
+		return self::get_errormsg($ret);
             }
             if (!is_readable($template)) {
                 $errortext .= "Templatefile $template not readable!!";
@@ -369,7 +369,6 @@ class Shortcode
         }
 
         $errortext = "Unknown shortcode handling";
-        //    $errortext .=  Helper::get_html_var_dump($parserdata);
         return self::get_errormsg($parserdata, $errortext);
     }
 
@@ -468,8 +467,8 @@ class Shortcode
         if (!empty($title)) {
             $parserdata['errortitle'] = $title;
         }
-
-        if ((empty($parserdata['errormsg'])) || ((isset(self::$options['rrze-jobs-labels_job_errortext_display'])) && (self::$options['rrze-jobs-labels_job_errortext_display'] == false))) {
+	//  if (!empty(self::$options['rrze-jobs-labels_job_errortext_display']))  {
+        if ((empty($parserdata['errormsg'])) || (empty(self::$options['rrze-jobs-labels_job_errortext_display'])) ) {
             $content = "<!--  ";
             $content .= " Code: " . $parserdata['errorcode'] . "; Msg: " . $parserdata['errormsg'];
             $content .= " -->";
@@ -480,6 +479,7 @@ class Shortcode
         $template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
         $content = Template::getContent($template, $parserdata);
         $content = do_shortcode($content);
+	$content .= "FUUUU";
         if (!empty($content)) {
             wp_enqueue_style('rrze-elements');
             wp_enqueue_style('rrze-jobs-css');
