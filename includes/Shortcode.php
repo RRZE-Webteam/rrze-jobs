@@ -479,7 +479,7 @@ class Shortcode
         $template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
         $content = Template::getContent($template, $parserdata);
         $content = do_shortcode($content);
-	$content .= "FUUUU";
+	//$content .= "FUUUU";
         if (!empty($content)) {
             wp_enqueue_style('rrze-elements');
             wp_enqueue_style('rrze-jobs-css');
