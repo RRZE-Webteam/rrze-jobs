@@ -291,17 +291,11 @@ class Shortcode
 		$listjobs = 0;
                 foreach ($newdata['positions'] as $num => $data) {
                     $hidethis = $this->hideinternal($data);
-
-                    //    echo Helper::get_html_var_dump($data);
-
                     if ($hidethis) {
                         // Ignore/hide this position in display
                         // Also do not give an error message like at single display
 
                     } else {
-			if (!empty($data['orig_occupationalCategory'])) {
-			    
-			}
 			if ((!empty($search_category)) && (!empty($data['orig_occupationalCategory']))) {
 			    $jobcategory = $positions->map_occupationalCategory($data['orig_occupationalCategory']);
 			    if ($search_category !== $jobcategory) {

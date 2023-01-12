@@ -61,6 +61,7 @@ class UnivIS extends Provider {
 		 if (is_array($job)) {	    
 		    $newpositions['JobPosting'][$num] = $this->generate_schema_values($job, $data);
 		    $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
+		    $newpositions['JobPosting'][$num]['_provider-values']['provider'] = $this->name;
 		    
 		 }
 	     }
@@ -340,9 +341,10 @@ class UnivIS extends Provider {
 	 }
 	  if ((!empty($jobdata['type1'])) || (isset($jobdata['befristet'])) ){
 	     if (($jobdata['orig_type1'] == 'bef') || (!empty($jobdata['befristet']))) {
-		 $typeliste[] = 'TEMPORARY';
-		 
+		 $typeliste[] = 'TEMPORARY';		 
 		 $res['text_befristet'] = __('Temporary employment','rrze-jobs');
+	     } elseif ($jobdata['orig_type1'] == 'unbef') {
+		 $res['text_befristet'] = __('Permanent employment','rrze-jobs');
 	     }
 	 }
 	 
@@ -457,7 +459,7 @@ class UnivIS extends Provider {
             $res['employerOverview']  = $jobdata['desc5'];
 
 	}  
-	  
+
 	return $res;
     }
      
