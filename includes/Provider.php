@@ -536,7 +536,7 @@ class Provider
                     $gruppe = preg_replace('/^0/', '', $gruppe);
 
                     if ($output_array[1] == "A"){
-                        $res = 'TV-L A ' . $gruppe;
+                        $res = 'A ' . $gruppe . ' BayBesO';
                     }else{
                         $res = 'TV-L E ' . $gruppe;
                     }
