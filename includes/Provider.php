@@ -534,7 +534,12 @@ class Provider
                 if (isset($output_array[2])) {
                     $gruppe = $output_array[2];
                     $gruppe = preg_replace('/^0/', '', $gruppe);
-                    $res = 'TV-L E ' . $gruppe;
+
+                    if ($output_array[1] == "A"){
+                        $res = 'TV-L A ' . $gruppe;
+                    }else{
+                        $res = 'TV-L E ' . $gruppe;
+                    }
                 } else {
                     // irgendwas anderes, was wir nicht interpretieren können..
                     // => behalte es, wie es ist.
