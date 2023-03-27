@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: RRZE-Jobs\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-02-04 16:35+0000\n"
-"PO-Revision-Date: 2023-03-27 12:22+0000\n"
+"PO-Revision-Date: 2023-03-27 12:21+0000\n"
 "Last-Translator: Wolfgang Wiese <wolfgang.wiese@fau.de>\n"
 "Language-Team: Deutsch\n"
 "Language: de_DE\n"
@@ -127,7 +127,7 @@ msgstr "jeden"
 
 #. Description of the plugin
 msgid "Embedding job offers from job portal apis via shortcode"
-msgstr "Jobangebote aus Jobportal-Schnittstellen per Shortcode einbinden"
+msgstr ""
 
 #: config/config.php:189
 #| msgid "Enter the apiKey for BITE"
@@ -152,7 +152,7 @@ msgstr "Fehlermeldungen"
 
 #: config/config.php:106
 msgid "FAU.ORG Number"
-msgstr "FAU.ORG-Nummer"
+msgstr ""
 
 #: config/config.php:100
 msgid "Filter by occupationalCategory"
@@ -204,7 +204,7 @@ msgstr "Stunden pro Woche"
 
 #. Author URI of the plugin
 msgid "https://blogs.fau.de/webworking/"
-msgstr "https://blogs.fau.de/webworking/"
+msgstr ""
 
 #. URI of the plugin
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"

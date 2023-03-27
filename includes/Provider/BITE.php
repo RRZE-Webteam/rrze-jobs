@@ -412,6 +412,9 @@ class BITE extends Provider {
                     $res['employmentUnit']['url'] = $jobdata['custom']['hiringorganization']['url'];
                     $res['hiringOrganization']['url'] = $jobdata['custom']['hiringorganization']['url'];
                 }
+                if (isset($jobdata['custom']['hiringorganization']['orgnum'])) {
+                    $res['hiringOrganization']['fauorg'] = $jobdata['custom']['hiringorganization']['orgnum'];
+                }
             }
 
         }

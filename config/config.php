@@ -99,10 +99,17 @@ function getShortcodeSettings() {
             'default' => '',
             'label' => __('Filter by occupationalCategory', 'rrze-jobs'),
             'type' => 'string',
-	]
-	
-	
- 
+	],
+        'fauorg' => [
+            'field_type' => 'text',
+            'default' => '',
+            'label' => __('FAU.ORG Number', 'rrze-jobs'),
+            'type' => 'number',
+        ],
+
+
+
+
     ];
 }
 

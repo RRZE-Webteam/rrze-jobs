@@ -83,8 +83,8 @@ class Shortcode
             'order',
             'fallback_apply',
             'link_only',
-	    'category'
-
+	        'category',
+            'fauorg',
         ];
 
         foreach ($aAtts as $att) {
@@ -117,8 +117,11 @@ class Shortcode
 
         // optional search for jobs with the given category in occupationalCategory
         $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
-	$search_category = strtolower($search_category);
-	
+        $search_category = strtolower($search_category);
+
+        // optional search for jobs with the given category in occupationalCategory
+        $search_fauorg = (!empty($atts['fauorg']) ? sanitize_text_field($atts['fauorg']) : '');
+
         $link_only = (!empty($atts['link_only']) ? true : false);
 
         //    $output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
@@ -302,7 +305,13 @@ class Shortcode
 				continue;
 			    }
 			}
-	
+
+            if ((!empty($search_fauorg)) && (!empty($data['hiringOrganization']['fauorg']))) {
+			    $fauorg = $data['hiringOrganization']['fauorg'];
+			    if ($search_fauorg !== $fauorg) {
+				    continue;
+			    }
+			}
 			
                         $data['const'] = $strings;
 			
