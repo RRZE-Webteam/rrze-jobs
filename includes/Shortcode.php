@@ -119,7 +119,7 @@ class Shortcode
         $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
         $search_category = strtolower($search_category);
 
-        // optional search for jobs with the given category in occupationalCategory
+        // optional search for FAU.ORG Number (BITE only)
         $search_fauorg = (!empty($atts['fauorg']) ? sanitize_text_field($atts['fauorg']) : '');
 
         $link_only = (!empty($atts['link_only']) ? true : false);
