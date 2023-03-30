@@ -359,7 +359,8 @@ class OrgData {
 	
 
 	if ((isset($orgnum)) && isset($fau_orga_breadcrumb_data[$orgnum])) {
-	    return $fau_orga_breadcrumb_data[$orgnum];
+        $fau_orga_breadcrumb_data[$orgnum]['orgnum'] = $orgnum;
+        return $fau_orga_breadcrumb_data[$orgnum];
 	}
 
 	return false;
