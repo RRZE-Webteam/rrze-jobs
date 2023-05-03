@@ -184,19 +184,13 @@ class Provider
         return $res;
     }
 
-    public function get_positions($provider = '', $query = 'get_list')
+    public function get_positions($query = 'get_list')
     {
         // Ask all providers
-
         foreach ($this->systems as $system_name) {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
             $system = new $system_class();
 
-            if (!empty($provider)) {
-                if ($system->name !== $provider) {
-                    continue;
-                }
-            }
             if (method_exists($system, $query)) {
                 $params = array();
 
@@ -210,13 +204,11 @@ class Provider
                     $this->lastcheck = time();
                 }
             }
-
-            return $this->positions;
         }
 
-        return false;
-
+        return $this->positions;
     }
+    
     // Sanitize Requests values
     public function sanitize_type($value, $type = 'string')
     {

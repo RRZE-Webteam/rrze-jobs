@@ -19,7 +19,7 @@ class BITE extends Provider {
         $this->use_cache = $use_cache;
 
         $this->api_url = 'https://api.b-ite.io/v1/jobpostings';
-        //   list: https://api.b-ite.io/v1/jobpostings
+        // list: https://api.b-ite.io/v1/jobpostings
         // single: https://api.b-ite.io/v1/jobpostings/
         $this->url = 'https://www.b-ite.com/';
         $this->name = "BITE";
