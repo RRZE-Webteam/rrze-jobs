@@ -76,14 +76,15 @@ class Shortcode
         return $myArray;
     }
 
-    private function setAtts($atts) {
+    private function setAtts($atts)
+    {
         $aAtts = [
             'limit',
             'orderby',
             'order',
             'fallback_apply',
             'link_only',
-	        'category',
+            'category',
             'fauorg',
         ];
 
@@ -92,7 +93,8 @@ class Shortcode
         }
     }
 
-    public function shortcodeOutput($atts)  {
+    public function shortcodeOutput($atts)
+    {
 
         $this->count = 0;
         $this->setAtts($atts);
@@ -113,7 +115,7 @@ class Shortcode
         $interamt_id = (!empty($atts['interamt-id']) ? sanitize_text_field($atts['interamt-id']) : '');
 
         // filter provider
-        $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
+        $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : '');
 
         // optional search for jobs with the given category in occupationalCategory
         $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
@@ -133,11 +135,11 @@ class Shortcode
         $positions = new Provider();
 
         /*
-         * TODO: QR-Code new.
-         *  Please use the JS solution like we are using in FAU Einrichtungen theme
-         *  and remove the big library here..
-         *
-         *
+        * TODO: QR-Code new.
+        *  Please use the JS solution like we are using in FAU Einrichtungen theme
+        *  and remove the big library here..
+        *
+        *
         if (($output_format == 'embedded') && !empty($_GET['job'])) {
         $format = 'embedded';
         $jobnr = (int) $_GET['job'] - 1;
@@ -145,21 +147,27 @@ class Shortcode
         } else {
         $format = 'default';
         }
-         *   Disabled yet
-         */
+        *   Disabled yet
+        */
 
-        if (!empty($search_provider)) {
+        $aSearchProvider = [];
+
+        if (!empty($search_provider)){
+            $aSearchProvider = array_map(function ($val) use ($positions) {
+                foreach ($positions->systems as $system_name) {
+                    if (strtolower(trim($val)) === strtolower(trim($system_name))) {
+                        return $system_name;
+                    }
+                }
+            }, explode(',', $search_provider));
+
             $aProvider = explode(',', $search_provider);
-            $filterprovider = '';
+
             foreach ($aProvider as $provider) {
-                $input = $provider;
-                $provider = trim(strtolower(sanitize_text_field($provider)));
+                $provider = trim(strtolower($provider));
 
                 $validprovider = $positions->is_valid_provider($provider);
-                if ($validprovider !== false) {
-                    $search_provider = $validprovider;
-                    break;
-                } else {
+                if ($validprovider === false) {
                     $ret['status'][$provider]['code'] = 400;
                     $ret['status'][$provider]['error'] = __('Invalid provider', 'rrze-jobs') . ' ' . $provider;
                     $ret['status'][$provider]['valid'] = false;
@@ -168,6 +176,7 @@ class Shortcode
                     return self::get_errormsg($ret);
                 }
             }
+
         }
 
         $query = 'get_list';
@@ -188,7 +197,7 @@ class Shortcode
         if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
             $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
         }
-	
+
 
         // In case the org id was given as a parameter, overwrite the default from backend
         // orgid will work on all identifier, anyway which provider
@@ -213,7 +222,8 @@ class Shortcode
         }
 
         $positions->set_params($params);
-        $positions->get_positions($search_provider, $query);
+        $positions->get_positions($aSearchProvider, $query);
+
         $newdata = $positions->merge_positions();
 
         if ($newdata['valid'] === false) {
@@ -248,14 +258,14 @@ class Shortcode
                         $data['const'] = $strings;
 
                         // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
-                        if ($data['jobStartDate'] != 'So bald wie möglich.'){
+                        if ($data['jobStartDate'] != 'So bald wie möglich.') {
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
-                        $data['datePosted' ] = date('Y-m-d', strtotime($data['datePosted']));
-                        $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
+                        $data['datePosted'] = date('Y-m-d', strtotime($data['datePosted']));
+                        $data['releaseDate'] = date('d.m.Y', strtotime($data['datePosted']));
                         $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
-                        
+
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
 
@@ -291,7 +301,7 @@ class Shortcode
 
                     $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
                 }
-		$listjobs = 0;
+                $listjobs = 0;
                 foreach ($newdata['positions'] as $num => $data) {
                     $hidethis = $this->hideinternal($data);
                     if ($hidethis) {
@@ -299,58 +309,58 @@ class Shortcode
                         // Also do not give an error message like at single display
 
                     } else {
-			if ((!empty($search_category)) && (!empty($data['orig_occupationalCategory']))) {
-			    $jobcategory = $positions->map_occupationalCategory($data['orig_occupationalCategory']);
-			    if ($search_category !== $jobcategory) {
-				continue;
-			    }
-			}
+                        if ((!empty($search_category)) && (!empty($data['orig_occupationalCategory']))) {
+                            $jobcategory = $positions->map_occupationalCategory($data['orig_occupationalCategory']);
+                            if ($search_category !== $jobcategory) {
+                                continue;
+                            }
+                        }
 
-            if ((!empty($search_fauorg)) && (!empty($data['hiringOrganization']['fauorg']))) {
-			    $fauorg = $data['hiringOrganization']['fauorg'];
-			    if ($search_fauorg !== $fauorg) {
-				    continue;
-			    }
-			}
-			
+                        if ((!empty($search_fauorg)) && (!empty($data['hiringOrganization']['fauorg']))) {
+                            $fauorg = $data['hiringOrganization']['fauorg'];
+                            if ($search_fauorg !== $fauorg) {
+                                continue;
+                            }
+                        }
+
                         $data['const'] = $strings;
-			
-			if ((isset(self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice'])) && (self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice']) && (!empty( $data['text_jobnotice' ]))) {
-			    $data['const']['text_jobnotice' ] = $data['text_jobnotice'];
-			}
+
+                        if ((isset(self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice'])) && (self::$options['rrze-jobs-labels_job_usedefaulttext_jobnotice']) && (!empty($data['text_jobnotice']))) {
+                            $data['const']['text_jobnotice'] = $data['text_jobnotice'];
+                        }
                         // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
-                        if (empty($data['jobStartDate'])){
+                        if (empty($data['jobStartDate'])) {
                             $data['jobStartDate'] = 'So bald wie möglich.';
-                        }elseif ($data['jobStartDate'] != 'So bald wie möglich.'){
+                        } elseif ($data['jobStartDate'] != 'So bald wie möglich.') {
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
-                        $data['datePosted' ] = date('Y-m-d', strtotime($data['datePosted']));
-                        $data['releaseDate' ] = date('d.m.Y', strtotime($data['datePosted']));
+                        $data['datePosted'] = date('Y-m-d', strtotime($data['datePosted']));
+                        $data['releaseDate'] = date('d.m.Y', strtotime($data['datePosted']));
                         $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
-			
+
                         $data = self::ParseDataVars($data);
                         $parserdata['joblist'] .= Template::getContent($template, $data);
-			$listjobs++;
+                        $listjobs++;
                     }
                 }
-		if ($listjobs > 0) {
-		    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
-		    if ($link_only) {
-			$template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
-		    }
-		} else {
-		    $ret['status'][0]['code'] = 404;
-		    $ret['status'][0]['valid'] = false;
-		    return self::get_errormsg($ret);
-		}
+                if ($listjobs > 0) {
+                    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
+                    if ($link_only) {
+                        $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-linkonly.html';
+                    }
+                } else {
+                    $ret['status'][0]['code'] = 404;
+                    $ret['status'][0]['valid'] = false;
+                    return self::get_errormsg($ret);
+                }
             } else {
-		$ret['status'][0]['code'] = 404;
-		$ret['status'][0]['valid'] = false;
-		return self::get_errormsg($ret);
+                $ret['status'][0]['code'] = 404;
+                $ret['status'][0]['valid'] = false;
+                return self::get_errormsg($ret);
             }
             if (!is_readable($template)) {
                 $errortext .= "Templatefile $template not readable!!";
@@ -470,8 +480,8 @@ class Shortcode
         if (!empty($title)) {
             $parserdata['errortitle'] = $title;
         }
-	//  if (!empty(self::$options['rrze-jobs-labels_job_errortext_display']))  {
-        if ((empty($parserdata['errormsg'])) || (empty(self::$options['rrze-jobs-labels_job_errortext_display'])) ) {
+        //  if (!empty(self::$options['rrze-jobs-labels_job_errortext_display']))  {
+        if ((empty($parserdata['errormsg'])) || (empty(self::$options['rrze-jobs-labels_job_errortext_display']))) {
             $content = "<!--  ";
             $content .= " Code: " . $parserdata['errorcode'] . "; Msg: " . $parserdata['errormsg'];
             $content .= " -->";
@@ -482,7 +492,7 @@ class Shortcode
         $template = plugin()->getPath() . 'Templates/Shortcodes/error.html';
         $content = Template::getContent($template, $parserdata);
         $content = do_shortcode($content);
-	//$content .= "FUUUU";
+        //$content .= "FUUUU";
         if (!empty($content)) {
             wp_enqueue_style('rrze-elements');
             wp_enqueue_style('rrze-jobs-css');
@@ -618,8 +628,8 @@ class Shortcode
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>
-<?php
-}
+        <?php
+    }
 
     public function addMCEButtons($pluginArray)
     {
