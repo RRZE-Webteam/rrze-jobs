@@ -31,8 +31,9 @@ Parameter:
 
 |Parameter|UnivIS|Interamt|BITE|Wert|Default|Beispiele|
 |---------|------|--------|----|----|-------|---------|
-|**provider**|obligatorisch|obligatorisch|obligatorisch|"univis" oder "interamt" oder "bite"|univis|provider="bite"|
+|**provider**|obligatorisch|obligatorisch|obligatorisch|Eine oder mehrere dieser Stellenbörsen: "univis", "interamt", "bite"|alle Provider werden abgefragt|provider="univis, bite" oder provider="univis" oder provider="interamt, bite"|
 |**orgids**|optional|optional|wird ignoriert|Zahl -  mehrere werden durch Kommata getrennt||orgids="123,456,789"<br />orgids="4711"|
+|**fauorg**|wird ignoriert|wird ignoriert|optional - damit filtern Sie die Stellenanzeigen von BITE anhand der "FAU Org Nummer" Ihrer Einrichtung|Zahl||fauorg="1234567890"|
 |**jobid**|optional|optional|optional|Zahl||jobid="123"|
 |**limit**|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
 |**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsbeginn, -ende oder Arbeitsbeginn|job_title|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
@@ -47,7 +48,15 @@ Parameter:
 Beispiele:
 ```html
 
+Alle Stellenanzeigen vom Stellenportal BITE:
 [jobs provider="bite"]
+
+Die Stellenanzeigen Ihrer Einrichtung vom Stellenportal BITE:
+[jobs provider="bite" fauorg="1234567890"]
+
+Alle Stellenanzeigen von UnivIS und Interamt, sowie die Stellenanzeigen von BITE Ihrer Einrichtung:
+[jobs fauorg="1234567890"]
+
 
 [jobs provider="bite" jobid="123456"]
 [jobs provider="interamt" jobid="123456"]

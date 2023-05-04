@@ -115,7 +115,7 @@ class Shortcode
         $interamt_id = (!empty($atts['interamt-id']) ? sanitize_text_field($atts['interamt-id']) : '');
 
         // filter provider
-        $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : ''));
+        $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : '');
 
         // optional search for jobs with the given category in occupationalCategory
         $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
@@ -150,18 +150,24 @@ class Shortcode
         *   Disabled yet
         */
 
-        if (!empty($search_provider)) {
+        $aSearchProvider = [];
+
+        if (!empty($search_provider)){
+            $aSearchProvider = array_map(function ($val) use ($positions) {
+                foreach ($positions->systems as $system_name) {
+                    if (strtolower(trim($val)) === strtolower(trim($system_name))) {
+                        return $system_name;
+                    }
+                }
+            }, explode(',', $search_provider));
+
             $aProvider = explode(',', $search_provider);
-            $filterprovider = '';
+
             foreach ($aProvider as $provider) {
-                $input = $provider;
-                $provider = trim(strtolower(sanitize_text_field($provider)));
+                $provider = trim(strtolower($provider));
 
                 $validprovider = $positions->is_valid_provider($provider);
-                if ($validprovider !== false) {
-                    $search_provider = $validprovider;
-                    break;
-                } else {
+                if ($validprovider === false) {
                     $ret['status'][$provider]['code'] = 400;
                     $ret['status'][$provider]['error'] = __('Invalid provider', 'rrze-jobs') . ' ' . $provider;
                     $ret['status'][$provider]['valid'] = false;
@@ -170,6 +176,7 @@ class Shortcode
                     return self::get_errormsg($ret);
                 }
             }
+
         }
 
         $query = 'get_list';
@@ -214,10 +221,8 @@ class Shortcode
             $params['Interamt']['get_single']['partner'] = $interamt_id;
         }
 
-
-
         $positions->set_params($params);
-        $positions->get_positions($query);
+        $positions->get_positions($aSearchProvider, $query);
 
         $newdata = $positions->merge_positions();
 

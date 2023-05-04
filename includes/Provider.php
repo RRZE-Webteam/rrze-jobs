@@ -121,9 +121,15 @@ class Provider
 
             // a job is duplicate if all the folowing fields together are
             // identical in content:
-            $matching_fields = array('title', 'validThrough', 'employmentUnit.name',
-                'jobStartDate', 'applicationContact.url', 'applicationContact.email',
-                'baseSalary.value.value');
+            $matching_fields = array(
+                'title',
+                'validThrough',
+                'employmentUnit.name',
+                'jobStartDate',
+                'applicationContact.url',
+                'applicationContact.email',
+                'baseSalary.value.value'
+            );
 
             // todo later:
             // make a checksum of the content of description (after remove all
@@ -184,10 +190,12 @@ class Provider
         return $res;
     }
 
-    public function get_positions($query = 'get_list')
+    public function get_positions($aSearchProvider = [], $query = 'get_list')
     {
-        // Ask all providers
-        foreach ($this->systems as $system_name) {
+        // Ask given providers or all providers defined in $this->systems
+        $aSearchProvider = (empty($aSearchProvider) ? $this->systems : $aSearchProvider);
+
+        foreach ($aSearchProvider as $system_name) {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
             $system = new $system_class();
 
@@ -208,7 +216,7 @@ class Provider
 
         return $this->positions;
     }
-    
+
     // Sanitize Requests values
     public function sanitize_type($value, $type = 'string')
     {
@@ -255,9 +263,11 @@ class Provider
 
         $val = strtolower($value);
 
-        if (strpos($val, 'ja') !== false
+        if (
+            strpos($val, 'ja') !== false
             || strpos($val, 'yes') !== false
-            || strpos($val, '1') !== false) {
+            || strpos($val, '1') !== false
+        ) {
             return true;
 
         }
@@ -321,8 +331,8 @@ class Provider
 
         return $res;
     }
-    
-    
+
+
     // sanitize html text input
     public function sanitize_html_field($dateinput)
     {
@@ -472,10 +482,9 @@ class Provider
     }
 
     /*
-     * Try to make the Salary Schema MonetaryAmount by the textual strings of TV-L
-     *
-     * Example: https://schema.org/MonetaryAmount
-
+    * Try to make the Salary Schema MonetaryAmount by the textual strings of TV-L
+    *
+    * Example: https://schema.org/MonetaryAmount
     "baseSalary": {
     "@type": "MonetaryAmount",
     "currency": "EUR",
@@ -485,8 +494,7 @@ class Provider
     "unitText": "MONTH"
     }
     }
-
-     */
+    */
     public function get_Salary_by_TVL($vonbesold, $bisbesold = '')
     {
 
@@ -518,25 +526,26 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_tvl($entgeld) {
+    public function sanitize_tvl($entgeld)
+    {
         $res = '';
-	
+
         if (!empty($entgeld)) {
             if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
                 if (isset($output_array[2])) {
                     $gruppe = $output_array[2];
                     $gruppe = preg_replace('/^0/', '', $gruppe);
 
-                    if ($output_array[1] == "A"){
+                    if ($output_array[1] == "A") {
                         $res = 'A ' . $gruppe . ' BayBesO';
-                    }else{
+                    } else {
                         $res = 'TV-L E ' . $gruppe;
                     }
                 } else {
                     // irgendwas anderes, was wir nicht interpretieren können..
                     // => behalte es, wie es ist.
-                    $res = $entgeld;	    
-		  
+                    $res = $entgeld;
+
                 }
             }
 
@@ -633,9 +642,10 @@ class Provider
         }
         return $res;
     }
-    
+
     // check for select value of group and translate into the desired long form
-    public function sanitize_occupationalCategory($group) {
+    public function sanitize_occupationalCategory($group)
+    {
         $res = '';
         if (empty($group)) {
             return $res;
@@ -658,9 +668,9 @@ class Provider
             case 'hiwi':
                 $res = __('Student assistants', 'rrze-jobs');
                 break;
-	    case 'prof':
-		$res = __('Professorships', 'rrze-jobs');    
-		break;
+            case 'prof':
+                $res = __('Professorships', 'rrze-jobs');
+                break;
             case 'aush':
             case 'other':
                 $res = __('Other', 'rrze-jobs');
@@ -672,14 +682,15 @@ class Provider
 
         return $res;
     }
-    
-    public function map_occupationalCategory($group) {
+
+    public function map_occupationalCategory($group)
+    {
         $res = '';
         if (empty($group)) {
             return $res;
         }
-	$group = strtolower($group);
-	
+        $group = strtolower($group);
+
         switch ($group) {
             case 'wiss':
                 $res = 'wiss';
@@ -689,18 +700,18 @@ class Provider
             case 'pflege':
             case 'arb':
             case 'n-wiss':
-                $res = 'n-wiss';	
+                $res = 'n-wiss';
                 break;
             case 'azubi':
-                $res = 'azubi';	
+                $res = 'azubi';
                 break;
 
             case 'hiwi':
                 $res = 'hiwi';
                 break;
-	    case 'prof':
-		$res = 'prof';
-		break;
+            case 'prof':
+                $res = 'prof';
+                break;
             case 'aush':
             case 'other':
                 $res = 'other';
@@ -710,7 +721,7 @@ class Provider
                 $res = '';
         }
 
-        return $res;	
+        return $res;
     }
-    
+
 }
