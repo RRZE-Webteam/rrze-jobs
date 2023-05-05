@@ -36,8 +36,8 @@ Parameter:
 |**fauorg**|wird ignoriert|wird ignoriert|optional - damit filtern Sie die Stellenanzeigen von BITE anhand der "FAU Org Nummer" Ihrer Einrichtung|Zahl||fauorg="1234567890"|
 |**jobid**|optional|optional|optional|Zahl||jobid="123"|
 |**limit**|optional|optional|optional|maximale Anzahl an Ergebnissen - unabhängig davon, wieviele orgids angeben wurden||limit="4"|
-|**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsbeginn, -ende oder Arbeitsbeginn|job_title|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
-|**order**|optional|optional|optional|Auf- oder absteigende Sortierung|DESC|order="ASC" (aufsteigend)<br />order="DESC" (absteigend)|
+|**orderby**|optional|optional|optional|Sortierung nach Titel, Bewerbungsende oder Arbeitsbeginn|job_title, application_end oder job_start|orderby="job_title"<br />orderby="application_start"<br />orderby="application_end"<br />orderby="job_start"|
+|**order**|optional|optional|optional|Auf- oder absteigende Sortierung der Datumsfelder|DESC|order="ASC" (aufsteigend)<br />order="DESC" (absteigend)|
 |**fallback_apply**|optional|optional|optional|eMail-Adresse oder Link, über den die Bewerbung erfolgen soll, wenn weder eMail-Adresse noch Bewerbungslink im Stellenangebot vorhanden ist||fallback_apply="bewerbung@domain.tld"<br />fallback_apply="https://domain.tld/bewerbungsformular"|
 |**link_only**|wird ignoriert|wird ignoriert|optional|Ausgabe als Liste ausschliesslich mit Links zu den Stellenangeboten. Mögliche Werte: 'true' oder '1' oder 'false' oder '0'|false|link_only="1"<br />link_only="true"|
 
