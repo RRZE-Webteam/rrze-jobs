@@ -69,12 +69,13 @@ class Shortcode
     private function sortArrayByField($myArray)
     {
         $this->orderby = self::backwardCompatibility($this->orderby);
-        
+
         usort($myArray, function ($a, $b) {
             if ($this->orderby == 'title'){
-                return ($this->order == 'DESC' ? strtolower($b[$this->orderby]) <=> strtolower($a[$this->orderby]) : strtolower($a[$this->orderby]) <=> strtolower($b[$this->orderby]));
+                // we have DESC per default because dates are sorted this way => if no orderby is given, default is title and would be sorted descening which does not make any sense
+                return strtolower($a[$this->orderby]) <=> strtolower($b[$this->orderby]);
             }else{
-                return ($this->order == 'ASC' ? $b[$this->orderby] <=> $a[$this->orderby] : $a[$this->orderby] <=> $b[$this->orderby]);
+                return ($this->order == 'ASC' ? $a[$this->orderby] <=> $b[$this->orderby] : $b[$this->orderby] <=> $a[$this->orderby]);
             }
         });
 
@@ -110,7 +111,7 @@ class Shortcode
                 $ret = 'validThrough';
                 break;
             case 'job_start':
-                $ret = 'jobStartDate';
+                $ret = 'jobStartDateSort';
                 break;
         }
 
