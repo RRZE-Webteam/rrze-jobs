@@ -84,6 +84,8 @@ class Provider
         $truecounter = 0;
         $poscounter = 0;
 
+        $res['valid'] = false; 
+
         foreach ($this->positions as $providername => $provider) {
             if (isset($provider['request'])) {
                 $res['request'][$providername]['request'] = $provider['request'];
@@ -91,6 +93,7 @@ class Provider
 
             $res['status'][$providername]['valid'] = $provider['valid'];
             if ($provider['valid'] === true) {
+                $res['valid'] = true; 
                 $truecounter++;
                 if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {
                     foreach ($provider['content']['JobPosting'] as $num => $posdata) {
@@ -110,11 +113,14 @@ class Provider
 
             }
         }
-        if ($truecounter == count($this->positions)) {
-            $res['valid'] = true;
-        } else {
-            $res['valid'] = false;
-        }
+
+
+        // the following lines don't work, as count($this->positions) counts number of providers and not number of positions
+        // if ($truecounter == count($this->positions)) {
+        //     $res['valid'] = true;
+        // } else {
+        //     $res['valid'] = false;
+        // }
 
         if ((count($this->positions) > 1) && ($poscounter > 0)) {
             // check for duplicate posts
@@ -190,15 +196,19 @@ class Provider
         return $res;
     }
 
-    public function get_positions($aSearchProvider = [], $query = 'get_list')
+    public function get_positions($provider = '', $query = 'get_list')
     {
-        // Ask given providers or all providers defined in $this->systems
-        $aSearchProvider = (empty($aSearchProvider) ? $this->systems : $aSearchProvider);
+        // Ask all providers
 
-        foreach ($aSearchProvider as $system_name) {
+        foreach ($this->systems as $system_name) {
             $system_class = 'RRZE\\Jobs\\Provider\\' . $system_name;
             $system = new $system_class();
 
+            if (!empty($provider)) {
+                if ($system->name !== $provider) {
+                    continue;
+                }
+            }
             if (method_exists($system, $query)) {
                 $params = array();
 
@@ -212,9 +222,12 @@ class Provider
                     $this->lastcheck = time();
                 }
             }
+
+            return $this->positions;
         }
 
-        return $this->positions;
+        return false;
+
     }
 
     // Sanitize Requests values
