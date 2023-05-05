@@ -150,7 +150,7 @@ class Shortcode
         *   Disabled yet
         */
 
-        $aSearchProvider = [];
+        $aSearchProvider = $positions->systems;
 
         if (!empty($search_provider)){
             $aSearchProvider = array_map(function ($val) use ($positions) {
@@ -222,7 +222,10 @@ class Shortcode
         }
 
         $positions->set_params($params);
-        $positions->get_positions($aSearchProvider, $query);
+
+        foreach($aSearchProvider as $provider){
+            $positions->get_positions($provider, $query);
+        }
 
         $newdata = $positions->merge_positions();
 
