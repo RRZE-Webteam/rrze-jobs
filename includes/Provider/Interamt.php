@@ -150,9 +150,19 @@ class Interamt extends Provider {
         // 'jobStartDate'    => 'start',
         // jobImmediateStart
 
+        $res['jobStartDate'] = 0;
+
         if (isset($jobdata['DatumBesetzungZum'])) {
             $res['jobStartDate'] = $jobdata['DatumBesetzungZum'];
         }
+
+        if (strtotime($res['jobStartDate']) !== false){
+            $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+        }else{
+            // whatever value is set in DatumBesetzungZum, it is not a date (f.e. "baldmöglichst" or other variations)
+            $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+        }
+
 
         // estimatedSalary  (type: MonetaryAmount)
         // aus vonbesold und bisbesold   generieren

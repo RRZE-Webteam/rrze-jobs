@@ -553,10 +553,12 @@ class BITE extends Provider {
             if ($jobdata['custom']['jobstartdate'] == "-1") {
                 $res['jobImmediateStart'] = true;
                 $res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
+                $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+
             } else {
                 $res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
+                $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
             }
-
         }
 
         if (isset($jobdata['custom']['befristung']) && ($jobdata['custom']['befristung'] == true)) {

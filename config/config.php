@@ -51,12 +51,12 @@ function getShortcodeSettings() {
         'orderby' => [
             'field_type' => 'select',
             'values' => [
-                'job_title' => __('Job title', 'rrze-jobs'),
-                'application_start' => __('Application start', 'rrze-jobs'),
-                'application_end' => __('Application end', 'rrze-jobs'),
-                'job_start' => __('Job start', 'rrze-jobs'),
+                'title' => __('Job title', 'rrze-jobs'), // in Doku: job_title
+                // 'application_start' => __('Application start', 'rrze-jobs'),
+                'validThrough' => __('Application end', 'rrze-jobs'), // in Doku: application_end
+                'jobStartDateSort' => __('Job start', 'rrze-jobs'), // in Doku: job_start  - ATTENTION: we need jobStartDateSort to sort in sortArrayByField()
             ],
-            'default' => 'job_title',
+            'default' => 'title',
             'label' => __('Order by', 'rrze-jobs'),
             'type' => 'string',
         ],

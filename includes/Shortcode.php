@@ -66,13 +66,18 @@ class Shortcode
         }
     }
 
-    private function sortArrayByField($myArray, $fieldname, $order)
+    private function sortArrayByField($myArray)
     {
-        if (!empty($this->order)) {
-            usort($myArray, function ($a, $b) use ($fieldname, $order) {
-                return ($this->order == 'ASC' ? strtolower($a[$fieldname]) <=> strtolower($b[$fieldname]) : strtolower($b[$fieldname]) <=> strtolower($a[$fieldname]));
-            });
-        }
+        $this->orderby = self::backwardCompatibility($this->orderby);
+        
+        usort($myArray, function ($a, $b) {
+            if ($this->orderby == 'title'){
+                return ($this->order == 'DESC' ? strtolower($b[$this->orderby]) <=> strtolower($a[$this->orderby]) : strtolower($a[$this->orderby]) <=> strtolower($b[$this->orderby]));
+            }else{
+                return ($this->order == 'ASC' ? $b[$this->orderby] <=> $a[$this->orderby] : $a[$this->orderby] <=> $b[$this->orderby]);
+            }
+        });
+
         return $myArray;
     }
 
@@ -91,6 +96,25 @@ class Shortcode
         foreach ($aAtts as $att) {
             $this->$att = (!empty($atts[$att]) ? $atts[$att] : $this->settings[$att]['default']);
         }
+    }
+
+
+    private function backwardCompatibility($val){
+        $ret = $val;
+
+        switch($val){
+            case 'job_title':
+                $ret = 'title';
+                break;
+            case 'application_end':
+                $ret = 'validThrough';
+                break;
+            case 'job_start':
+                $ret = 'jobStartDate';
+                break;
+        }
+
+        return $ret;
     }
 
     public function shortcodeOutput($atts)
@@ -152,7 +176,7 @@ class Shortcode
 
         $aSearchProvider = $positions->systems;
 
-        if (!empty($search_provider)){
+        if (!empty($search_provider)) {
             $aSearchProvider = array_map(function ($val) use ($positions) {
                 foreach ($positions->systems as $system_name) {
                     if (strtolower(trim($val)) === strtolower(trim($system_name))) {
@@ -223,7 +247,7 @@ class Shortcode
 
         $positions->set_params($params);
 
-        foreach($aSearchProvider as $provider){
+        foreach ($aSearchProvider as $provider) {
             $positions->get_positions($provider, $query);
         }
 
@@ -300,11 +324,14 @@ class Shortcode
 
                 $parserdata['num'] = count($newdata['positions']);
                 $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
-                if ($link_only) {
 
+                if ($link_only) {
                     $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
                 }
                 $listjobs = 0;
+
+                $newdata['positions'] = self::sortArrayByField($newdata['positions']);
+
                 foreach ($newdata['positions'] as $num => $data) {
                     $hidethis = $this->hideinternal($data);
                     if ($hidethis) {
@@ -350,6 +377,7 @@ class Shortcode
                         $listjobs++;
                     }
                 }
+
                 if ($listjobs > 0) {
                     $template = plugin()->getPath() . 'Templates/Shortcodes/joblist.html';
                     if ($link_only) {
