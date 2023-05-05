@@ -375,7 +375,12 @@ class Shortcode
 
                         $data = self::ParseDataVars($data);
                         $parserdata['joblist'] .= Template::getContent($template, $data);
+
                         $listjobs++;
+
+                        if (!empty($this->limit) && ($this->limit <= $listjobs)){
+                            break;
+                        }
                     }
                 }
 
