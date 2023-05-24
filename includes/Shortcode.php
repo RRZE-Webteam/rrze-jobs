@@ -43,7 +43,7 @@ class Shortcode
         $this->pluginname = $this->settings['block']['blockname'];
         self::$options = $settings->getOptions();
         $this->logo_url = (has_custom_logo() ? wp_get_attachment_url(get_theme_mod('custom_logo')) : RRZE_JOBS_LOGO);
-        add_action('init', [$this, 'enqueue_scripts']);
+        add_action('wp-enqueue-scripts', [$this, 'enqueue_scripts']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueGutenberg']);
         add_action('init', [$this, 'initGutenberg']);
         add_action('admin_head', [$this, 'setMCEConfig']);
