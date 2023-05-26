@@ -189,13 +189,17 @@ class UnivIS extends Provider
 		// 
 		// aus acontact oder aus Texteingabe desc6
 		// acontact = Ansprechpartner
-		//	   Der "contact" hingehgemn (Ansprechpartner) ist contactpoint in hiringOrganisatzion
+		//	   Der "contact" hingegen (Ansprechpartner) ist contactpoint in hiringOrganisatzion
 		// desc6 = Text für Bewerbungen
 		// applicationContact.url wenn url zur bewerbung vorhanden
 
+        // Update 26.05.2023: Laut UnivIS JSON und Abgleich mit EIngabe ist
+        // "contact"  der Contact wohin man sich bewirbt
+        // und
+        // "acontact" derjenige wohin man sich zu Auskünften wendet.
 
-
-		$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);
+	//	$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);
+        $persondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);
 		if (!empty($persondata)) {
 
 			$res['applicationContact']['contactType'] = __('Contact for application', 'rrze-jobs');
@@ -297,14 +301,14 @@ class UnivIS extends Provider
 		}
 
 
-		if ((!isset($jobdata['contact'])) && (isset($jobdata['acontact']))) {
+		if ((!isset($jobdata['acontact'])) && (isset($jobdata['contact']))) {
 			// Wenn es keinen Ansprechpartner gibt als Eintrag, aber einen 
 			// Ansprechpartner für Bewerbungen, dann nehme den bei den 
 			// Bewerbungen auch als Ansprechpartner für Fragen
-			$jobdata['contact'] = $jobdata['acontact'];
+			$jobdata['acontact'] = $jobdata['contact'];
 		}
 
-		$contactpersondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);
+		$contactpersondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);
 		if (!empty($contactpersondata)) {
 			if (isset($contactpersondata['email'])) {
 				$res['employmentUnit']['email'] = $contactpersondata['email'];
@@ -1378,7 +1382,9 @@ class UnivIS extends Provider
 			// __
 			'/\|(.*)\|/m' => '<i>$1</i>',
 			// |itallic|
-			'/_(.*)_/m' => '<sub>$1</sub>',
+		//	'/_(.*)_/m' => '<sub>$1</sub>',
+            // auskommentiert weil: Wenn Links ein "_" enthalten, wird der ganze Link durch das <sub> kaputt gemacht und wegsanizized.
+            
 			// H_2_O
 			'/\^(.*)\^/m' => '<sup>$1</sup>',
 			// pi^2^
