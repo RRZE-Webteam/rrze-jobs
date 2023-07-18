@@ -366,6 +366,7 @@ class Shortcode
                             $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
+                        $data['title'] = htmlentities($data['title']);
                         $data['datePosted'] = date('Y-m-d', strtotime($data['datePosted']));
                         $data['releaseDate'] = date('d.m.Y', strtotime($data['datePosted']));
                         $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
