@@ -193,13 +193,17 @@ class UnivIS extends Provider
 		// desc6 = Text für Bewerbungen
 		// applicationContact.url wenn url zur bewerbung vorhanden
 
-        // Update 26.05.2023: Laut UnivIS JSON und Abgleich mit EIngabe ist
-        // "contact"  der Contact wohin man sich bewirbt
-        // und
-        // "acontact" derjenige wohin man sich zu Auskünften wendet.
+		// Update 26.05.2023: Laut UnivIS JSON und Abgleich mit EIngabe ist
+		// "contact"  der Contact wohin man sich bewirbt
+		// und
+		// "acontact" derjenige wohin man sich zu Auskünften wendet.
 
-	//	$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);
-        $persondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);
+		//	$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['acontact'], $data);
+
+		if (!empty($jobdata['contact'])) {
+			$persondata = $this->get_univis_person_contactpoint_by_key($jobdata['contact'], $data);
+		}
+		
 		if (!empty($persondata)) {
 
 			$res['applicationContact']['contactType'] = __('Contact for application', 'rrze-jobs');
@@ -345,17 +349,17 @@ class UnivIS extends Provider
 		// jobLocation (type: Place)
 		// Achtung: Für Google muss die Property addressCountry (DE) enthalten sein. 
 		/* "jobLocation": {
-		"@type": "Place",
-		"address": {
-		"@type": "PostalAddress",
-		"streetAddress": "555 Clancy St",   aus acontact.location.street
-		"addressLocality": "Detroit",	 aus acontact.location.ort ohne plz
-		"addressRegion": "MI",	defaults Bayern
-		"postalCode": "48201",     aus acontact.location.ort nur plz
-		"addressCountry": "US"    defaults auf DE
-		}
-		}
-		*/
+			  "@type": "Place",
+			  "address": {
+			  "@type": "PostalAddress",
+			  "streetAddress": "555 Clancy St",   aus acontact.location.street
+			  "addressLocality": "Detroit",	 aus acontact.location.ort ohne plz
+			  "addressRegion": "MI",	defaults Bayern
+			  "postalCode": "48201",     aus acontact.location.ort nur plz
+			  "addressCountry": "US"    defaults auf DE
+			  }
+			  }
+			  */
 
 
 
@@ -394,15 +398,15 @@ class UnivIS extends Provider
 		// aus type2 bestimmt, muss aber einen oder mehrere der folgenden
 		// Werte enthalten:
 		/*
-		FULL_TIME
-		PART_TIME
-		CONTRACTOR
-		TEMPORARY
-		INTERN
-		VOLUNTEER
-		PER_DIEM
-		OTHER
-		*/
+			  FULL_TIME
+			  PART_TIME
+			  CONTRACTOR
+			  TEMPORARY
+			  INTERN
+			  VOLUNTEER
+			  PER_DIEM
+			  OTHER
+			  */
 		// Beispiel: "employmentType": ["FULL_TIME", "CONTRACTOR"]
 
 		// 'jobStartDate'	=> 'start', 
@@ -1382,9 +1386,9 @@ class UnivIS extends Provider
 			// __
 			'/\|(.*)\|/m' => '<i>$1</i>',
 			// |itallic|
-		//	'/_(.*)_/m' => '<sub>$1</sub>',
-            // auskommentiert weil: Wenn Links ein "_" enthalten, wird der ganze Link durch das <sub> kaputt gemacht und wegsanizized.
-            
+			//	'/_(.*)_/m' => '<sub>$1</sub>',
+			// auskommentiert weil: Wenn Links ein "_" enthalten, wird der ganze Link durch das <sub> kaputt gemacht und wegsanizized.
+
 			// H_2_O
 			'/\^(.*)\^/m' => '<sup>$1</sup>',
 			// pi^2^

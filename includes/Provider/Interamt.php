@@ -349,7 +349,7 @@ class Interamt extends Provider {
                 if (!empty($qualification)) {
                     $qualification .= ', ';
                 }
-                $qualification .= $studium['Studiengang'] . ' (' . $studium['AbschlussStudium'] . ')';
+                $qualification .= $studium['Studiengang'] . (!empty($studium['AbschlussStudium']) ? ' (' . $studium['AbschlussStudium'] . ')' : '');
             }
             $res['qualifications'] = '<p>' . $qualification . '</p>';
         }
