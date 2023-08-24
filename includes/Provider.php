@@ -84,7 +84,7 @@ class Provider
         $truecounter = 0;
         $poscounter = 0;
 
-        $res['valid'] = false; 
+        $res['valid'] = false;
 
         foreach ($this->positions as $providername => $provider) {
             if (isset($provider['request'])) {
@@ -93,7 +93,7 @@ class Provider
 
             $res['status'][$providername]['valid'] = $provider['valid'];
             if ($provider['valid'] === true) {
-                $res['valid'] = true; 
+                $res['valid'] = true;
                 $truecounter++;
                 if ((is_array($provider['content'])) && (isset($provider['content']['JobPosting']))) {
                     foreach ($provider['content']['JobPosting'] as $num => $posdata) {
@@ -544,7 +544,7 @@ class Provider
         $res = '';
 
         if (!empty($entgeld)) {
-            if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
+            if (preg_match('/^([a-z\-]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
                 if (isset($output_array[2])) {
                     $gruppe = $output_array[2];
                     $gruppe = preg_replace('/^0/', '', $gruppe);
@@ -563,6 +563,7 @@ class Provider
             }
 
         }
+
         return $res;
     }
 
