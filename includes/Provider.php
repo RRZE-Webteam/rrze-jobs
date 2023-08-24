@@ -539,47 +539,48 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_tvl($entgeld)
+    public function sanitize_tvl($entgelt)
     {
-        $res = '';
+        $ret = '';
 
-        if (!empty($entgeld)) {
-            if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
-                // matches f.e. TV-L E9b, TVL e9b, A 13, a 13 (see https://github.com/RRZE-Webteam/rrze-jobs/issues/60 & https://github.com/RRZE-Webteam/rrze-jobs/issues/70 )
-                if (isset($output_array[2])) {
-                    $gruppe = $output_array[2];
-                    $gruppe = preg_replace('/^0/', '', $gruppe);
+        // $aTests = [
+        //     'TV L 9b',
+        //     'Tarifvertrag E12',
+        //     'A12',
+        //     'E-12',
+        //     'TVLE 12',
+        //     'TVA-L BBiG',
+        //     'TVA-L',
+        //     'C1',
+        //     'W2',
+        //     'E13 TVL',
+        //     'e13 tv-L',
+        //     'tvl',
+        //     '1C',
+        //     'Wir gedenken Ihnen 2C anzubieten',
+        //     'Eine sinnfreie Kombination aus den Entgeltgruppen E12 tvAL und W3 liefert TVA-L BBiG',
+        //     'E13 TVL oder TV-L e13 oder tvL 13 oder nur 13 ergibt TV-L E 13',
+        //     '13', 
+        // ];
 
-                    $output_array[1] = strtoupper(trim($output_array[1]));
 
-                    if ($output_array[1] == "A") {
-                        $res = 'A ' . $gruppe . ' BayBesO';
-                    } else {
-                        $res = 'TV-L E ' . $gruppe;
-                    }
-                }
-            } elseif (preg_match('/^([a-z]?)([0-9ab]+)\s*([a-z\-\s]*)$/i', $entgeld, $output_array)) {
-                // matches f.e. E13 TV-L, E13 TVL, E9b TVL, E9b TV-L, e9b TV-L, 13 A, 13 a (see https://github.com/RRZE-Webteam/rrze-jobs/issues/60 & https://github.com/RRZE-Webteam/rrze-jobs/issues/70 )
-                if (isset($output_array[2])) {
-                    $gruppe = $output_array[2];
-                    $gruppe = preg_replace('/^0/', '', $gruppe);
+        if (!empty($entgelt)) {
+            $nr = (int) filter_var($entgelt, FILTER_SANITIZE_NUMBER_INT);
 
-                    $output_array[1] = strtoupper(trim($output_array[1]));
+            preg_match('/([ACW]{1})?(TVA\-?L)?/i', $entgelt, $matches);
 
-                    if ($output_array[1] == "A") {
-                        $res = 'A ' . $gruppe . ' BayBesO';
-                    } else {
-                        $res = 'TV-L E ' . $gruppe;
-                    }
-                }
-            } else {
-                // irgendwas anderes, was wir nicht interpretieren können..
-                // => behalte es, wie es ist.
-                $res = $entgeld;
+            if (!empty($matches[2])){
+                // Azubi
+                $ret = 'TVA-L BBiG';
+            }elseif(!empty($matches[1])){
+                // Besoldungsordnung A, C oder W
+                $ret = strtoupper(trim($matches[1])) . ' ' . $nr . ' ' . BESOLDUNG_TXT;
+            }else{
+                $ret = 'TV-L E ' . $nr;
             }
         }
 
-        return $res;
+        return $ret;
     }
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll

@@ -5,6 +5,7 @@ namespace RRZE\Jobs\Config;
 defined('ABSPATH') || exit;
 define('RRZE_JOBS_LOGO', plugins_url('assets/img/fau.gif', __DIR__));
 define('RRZE_JOBS_ADDRESS_REGION', 'Bayern');
+define('BESOLDUNG_TXT', '(BayBesG)');
 use RRZE\Jobs\Job;
 
 function getShortcodeSettings() {
