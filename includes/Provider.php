@@ -544,24 +544,39 @@ class Provider
         $res = '';
 
         if (!empty($entgeld)) {
-            if (preg_match('/^([a-z\-]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
+            if (preg_match('/^([a-z\-\s]*)\s*([0-9ab]+)$/i', $entgeld, $output_array)) {
+                // matches f.e. TV-L E9b, A 13 (see https://github.com/RRZE-Webteam/rrze-jobs/issues/60 & https://github.com/RRZE-Webteam/rrze-jobs/issues/70 )
                 if (isset($output_array[2])) {
                     $gruppe = $output_array[2];
                     $gruppe = preg_replace('/^0/', '', $gruppe);
+
+                    $output_array[1] = trim($output_array[1]);
 
                     if ($output_array[1] == "A") {
                         $res = 'A ' . $gruppe . ' BayBesO';
                     } else {
                         $res = 'TV-L E ' . $gruppe;
                     }
-                } else {
-                    // irgendwas anderes, was wir nicht interpretieren können..
-                    // => behalte es, wie es ist.
-                    $res = $entgeld;
-
+                } elseif (preg_match('/^([a-z0-9ab]+)\s*([a-z\-\s]*)$/i', $entgeld, $output_array)) {
+                    // matches f.e. E13 TV-L, E13 TVL, E9b TVL, E9b TV-L, 13 A (see https://github.com/RRZE-Webteam/rrze-jobs/issues/60 & https://github.com/RRZE-Webteam/rrze-jobs/issues/70 )
+                    if (isset($output_array[1])) {
+                        $gruppe = $output_array[1];
+                        $gruppe = preg_replace('/^0/', '', $gruppe);
+    
+                        $output_array[2] = trim($output_array[2]);
+    
+                        if ($output_array[2] == "A") {
+                            $res = 'A ' . $gruppe . ' BayBesO';
+                        } else {
+                            $res = 'TV-L E ' . $gruppe;
+                        }
+                    }else{
+                        // irgendwas anderes, was wir nicht interpretieren können..
+                        // => behalte es, wie es ist.
+                        $res = $entgeld;
+                    }
                 }
             }
-
         }
 
         return $res;
