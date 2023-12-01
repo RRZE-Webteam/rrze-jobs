@@ -168,7 +168,7 @@ class Interamt extends Provider {
         // aus vonbesold und bisbesold   generieren
         if (isset($jobdata['Bezahlung'])) {
             if ((isset($jobdata['Bezahlung']['Besoldung'])) && (!empty($jobdata['Bezahlung']['Besoldung']))) {
-                $res['estimatedSalary'] = $this->get_Salary_by_TVL(jobdata['Bezahlung']['Besoldung']);
+                $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['Bezahlung']['Besoldung']);
             }
             if ((isset($jobdata['Bezahlung']['Entgelt'])) && (!empty($jobdata['Bezahlung']['Entgelt']))) {
                 $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['Bezahlung']['Entgelt']);

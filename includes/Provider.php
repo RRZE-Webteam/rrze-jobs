@@ -558,17 +558,14 @@ class Provider
         //     'tvl',
         //     '1C',
         //     'Wir gedenken Ihnen 2C anzubieten',
-        //     'Eine sinnfreie Kombination aus den Entgeltgruppen E12 tvAL und W3 liefert TVA-L BBiG',
         //     'E13 TVL oder TV-L e13 oder tvL 13 oder nur 13 ergibt TV-L E 13',
         //     '13', 
         // ];
 
-
         if (!empty($entgelt)) {
-            $nr = (int) filter_var($entgelt, FILTER_SANITIZE_NUMBER_INT);
-
+            $nr = abs((int) filter_var($entgelt, FILTER_SANITIZE_NUMBER_INT));
             preg_match('/([ACW]{1})?(TVA\-?L)?/i', $entgelt, $matches);
-
+            
             if (!empty($matches[2])){
                 // Azubi
                 $ret = 'TVA-L BBiG';
@@ -576,7 +573,8 @@ class Provider
                 // Besoldungsordnung A, C oder W
                 $ret = strtoupper(trim($matches[1])) . ' ' . $nr . ' ' . BESOLDUNG_TXT;
             }else{
-                $ret = 'TV-L E ' . $nr;
+                preg_match('/(\D)*(\d)*(a|b)?/i', $entgelt, $matches);                
+                $ret = 'TV-L E ' . $nr . (!empty($matches[3])?strtolower($matches[3]):'');
             }
         }
 

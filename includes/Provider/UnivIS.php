@@ -793,7 +793,7 @@ class UnivIS extends Provider
 		} else {
 			$content = json_decode($remote_get["body"], true);
 
-			if (!is_array($content) && strpos($content, 'keine passenden ') === false) {
+            if ($content == null || (!is_array($content) && !str_contains($content, 'keine passenden '))) {
 				$aRet = [
 					'valid' => false,
 					'error' => 'No entry',
