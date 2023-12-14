@@ -176,7 +176,7 @@ class Provider
                     if ($matchnum == count($matching_fields)) {
                         //ok, we found a duplicate entry.
                         // mark it in a dup-list
-
+                        
                         $dup[$num2] = true;
                     }
                 }

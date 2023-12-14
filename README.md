@@ -8,7 +8,7 @@ APIs:
 
 
 ## Download
-GITHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
+GitHub-Repo: https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 
 ## Autor
 RRZE-Webteam , http://www.rrze.fau.de
