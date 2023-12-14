@@ -48,12 +48,10 @@
 
 		<p>
 			{{applicationContact.url}}
-			<a class="standard-btn full-btn primary-btn"
-				href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
+			<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
 			{{:applicationContact.url}}
 			{{applicationContact.email}}
-			<a class="standard-btn full-btn primary-btn"
-				href="mailto:{{=applicationContact.email}}"><span>{{=const.title_application_button}}</span></a>
+			<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}"><span>{{=const.title_application_button}}</span></a>
 			{{:applicationContact.email}}
 
 			{{applicationContact.description}}
@@ -129,8 +127,7 @@
 					{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
 					{{=employmentUnit.name}}
 					<ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
-						{{employmentUnit.email}}<li>E-Mail: <a itemprop="email"
-								href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
+						{{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
 						{{/employmentUnit.email}}
 						{{employmentUnit.telephone}}<li>Telefon: <span
 								itemprop="telephone">{{=employmentUnit.telephone}}</span></li>
