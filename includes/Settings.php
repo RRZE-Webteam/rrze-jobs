@@ -13,8 +13,7 @@ use function RRZE\Jobs\Config\getSections;
 /**
  * Settings-Klasse
  */
-class Settings
-{
+class Settings {
     /**
      * Der vollständige Pfad- und Dateiname der Plugin-Datei.
      * @var string
@@ -38,7 +37,13 @@ class Settings
      * @var array
      */
     protected $settingsMenu;
-
+    
+    /**
+     * Options-Pages
+     * @var array
+     */
+    protected $optionsPage;
+    
     /**
      * Settings-Bereiche
      * @var array
@@ -78,15 +83,13 @@ class Settings
      * @todo        IMPORTANT: For now, on change in default size, type or alignment, also copy
      *                the new defaults to style.php
      */
-    public $defaults = array(
-    );
+    public $defaults = array( );
 
     /**
      * Variablen Werte zuweisen.
      * @param string $pluginFile [description]
      */
-    public function __construct($pluginFile)
-    {
+    public function __construct($pluginFile)  {
         $this->pluginFile = $pluginFile;
 
         // einmalig alte Parameter holen

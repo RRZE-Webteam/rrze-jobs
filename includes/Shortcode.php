@@ -11,14 +11,13 @@ use RRZE\Jobs\Template;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-class Shortcode
-{
+class Shortcode {
     private $provider = '';
     private $map_template = [];
     private $jobid = 0;
     private $aOrgIDs = [];
     private $count = 0;
-    private $settings = '';
+    private $settings;
     private $pluginname = '';
     static $options = [];
     private $jobOutput = '';
@@ -32,10 +31,15 @@ class Shortcode
     private $link_only;
 
     /**
+     * Der vollständige Pfad- und Dateiname der Plugin-Datei.
+     * @var string
+     */
+    protected $pluginFile;
+
+    /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct($pluginFile, $settings)
-    {
+    public function __construct($pluginFile, $settings) {
         $this->pluginFile = $pluginFile;
 
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -66,8 +70,7 @@ class Shortcode
         }
     }
 
-    private function sortArrayByField($myArray)
-    {
+    private function sortArrayByField($myArray) {
         $this->orderby = self::backwardCompatibility($this->orderby);
 
         usort($myArray, function ($a, $b) {
@@ -82,8 +85,7 @@ class Shortcode
         return $myArray;
     }
 
-    private function setAtts($atts)
-    {
+    private function setAtts($atts) {
         $aAtts = [
             'limit',
             'orderby',
@@ -100,7 +102,7 @@ class Shortcode
     }
 
 
-    private function backwardCompatibility($val){
+    private function backwardCompatibility($val) {
         $ret = $val;
 
         switch($val){
