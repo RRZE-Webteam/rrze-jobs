@@ -12,17 +12,20 @@ use RRZE\Jobs\Provider;
 use RRZE\Jobs\Cache;
 use RRZE\Jobs\Helper;
 
-class UnivIS extends Provider
-{
-
-	public function __construct($use_cache = true)
-	{
+class UnivIS extends Provider {
+    protected $api_url = 'https://univis.uni-erlangen.de/prg';
+    protected $cachetime = 3 * HOUR_IN_SECONDS;
+    protected $uriparameter = 'search=positions&closed=0&show=json';
+    protected $request_args = [];
+    protected $required_fields = [];
+    
+	public function __construct($use_cache = true) {
 		$this->use_cache = $use_cache;
-		$this->api_url = 'https://univis.uni-erlangen.de/prg';
+//		$this->api_url = 'https://univis.uni-erlangen.de/prg';
 		$this->url = 'https://univis.uni-erlangen.de/';
 		$this->name = "UnivIS";
-		$this->cachetime = 3 * HOUR_IN_SECONDS;
-		$this->uriparameter = 'search=positions&closed=0&show=json';
+//		$this->cachetime = 3 * HOUR_IN_SECONDS;
+//		$this->uriparameter = 'search=positions&closed=0&show=json';
 		$this->request_args = array(
 			'timeout' => 45,
 			'redirection' => 5,
@@ -83,8 +86,7 @@ class UnivIS extends Provider
 	// we already map to schema.
 	// all fields that remain are new or was not mapped to schema and
 	// may be used to other purpuses
-	private function add_remaining_non_schema_fields($jobdata)
-	{
+	private function add_remaining_non_schema_fields($jobdata) {
 		$known_fields = array(
 			'creation',
 			'title',
@@ -127,8 +129,7 @@ class UnivIS extends Provider
 	}
 
 	// some missing schema fields can be generated automatically 
-	private function generate_schema_values($jobdata, $data)
-	{
+	private function generate_schema_values($jobdata, $data) {
 		// Paramas:
 		// $jobdata - one single jobarray
 		// $data - all univis data. includes Persondata we need for contacts

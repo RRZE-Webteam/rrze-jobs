@@ -11,31 +11,42 @@ use RRZE\Jobs\Template;
 
 include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-class Shortcode
-{
+class Shortcode {
     private $provider = '';
     private $map_template = [];
     private $jobid = 0;
     private $aOrgIDs = [];
     private $count = 0;
-    private $settings = '';
+    private $settings;
     private $pluginname = '';
     static $options = [];
     private $jobOutput = '';
     private $logo_url;
 
+    /*
+     * Attributes
+     */
     private $limit;
     private $orderby;
     private $order;
     private $internal = 'exclude';
     private $fallback_apply = '';
     private $link_only;
+    private $category;
+    private $fauorg;
+    
+
+    
+    /**
+     * Der vollständige Pfad- und Dateiname der Plugin-Datei.
+     * @var string
+     */
+    protected $pluginFile;
 
     /**
      * Shortcode-Klasse wird instanziiert.
      */
-    public function __construct($pluginFile, $settings)
-    {
+    public function __construct($pluginFile, $settings) {
         $this->pluginFile = $pluginFile;
 
         include_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -58,16 +69,14 @@ class Shortcode
     /**
      * Enqueue der Skripte.
      */
-    public function enqueue_scripts()
-    {
+    public function enqueue_scripts()  {
         wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
         if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.css')) {
             wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.css');
         }
     }
 
-    private function sortArrayByField($myArray)
-    {
+    private function sortArrayByField($myArray) {
         $this->orderby = self::backwardCompatibility($this->orderby);
 
         usort($myArray, function ($a, $b) {
@@ -82,8 +91,7 @@ class Shortcode
         return $myArray;
     }
 
-    private function setAtts($atts)
-    {
+    private function setAtts($atts) {
         $aAtts = [
             'limit',
             'orderby',
@@ -100,7 +108,7 @@ class Shortcode
     }
 
 
-    private function backwardCompatibility($val){
+    private function backwardCompatibility($val) {
         $ret = $val;
 
         switch($val){
@@ -118,8 +126,7 @@ class Shortcode
         return $ret;
     }
 
-    public function shortcodeOutput($atts)
-    {
+    public function shortcodeOutput($atts)  {
 
         $this->count = 0;
         $this->setAtts($atts);
@@ -174,7 +181,9 @@ class Shortcode
         }
         *   Disabled yet
         */
-
+        $debugmsg = '';
+  //      $debugmsg .= Debug::get_notice("ATTS:<br>".Debug::get_html_var_dump($atts).'<br>Search Provider: '.$search_provider);
+        
         $aSearchProvider = $positions->systems;
 
         if (!empty($search_provider)) {
@@ -246,6 +255,7 @@ class Shortcode
             $params['Interamt']['get_single']['partner'] = $interamt_id;
         }
 
+        $debugmsg .= Debug::get_notice("Params:<br>".Debug::get_html_var_dump($params));
         $positions->set_params($params);
 
         foreach ($aSearchProvider as $provider) {
@@ -254,8 +264,11 @@ class Shortcode
 
         $newdata = $positions->merge_positions();
 
+        $debugmsg .= Debug::get_notice("Data:<br>".Debug::get_html_var_dump($newdata));
+        
         if ($newdata['valid'] === false) {
-            return self::get_errormsg($newdata);
+            $res = $debugmsg . self::get_errormsg($newdata);
+            return $res;
         }
 
         $parserdata = array();
@@ -411,8 +424,8 @@ class Shortcode
             if (!empty($content)) {
                 wp_enqueue_style('rrze-elements');
                 wp_enqueue_style('rrze-jobs-css');
-
-                return $content;
+     
+                return $debugmsg . $content;
             } else {
                 $errortext .= "Empty content from template $template";
                 return self::get_errormsg($parserdata, $errortext, 'Output Error');
@@ -423,8 +436,7 @@ class Shortcode
         return self::get_errormsg($parserdata, $errortext);
     }
 
-    private static function isIPinRange($fromIP, $toIP, $myIP)
-    {
+    private static function isIPinRange($fromIP, $toIP, $myIP)  {
         $min = ip2long($fromIP);
         $max = ip2long($toIP);
         $needle = ip2long($myIP);
@@ -432,8 +444,7 @@ class Shortcode
         return (($needle >= $min) and ($needle <= $max));
     }
 
-    public static function isInternAllowed()
-    {
+    public static function isInternAllowed()  {
         $remoteIP = $_SERVER['REMOTE_ADDR'];
         $remoteAdr = gethostbyaddr($remoteIP);
 

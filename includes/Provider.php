@@ -13,8 +13,7 @@ defined('ABSPATH') || exit;
 use RRZE\Jobs\OrgData;
 use RRZE\Jobs\Parsedown;
 
-class Provider
-{
+class Provider {
     public $name;
     public $version;
     public $url;
@@ -23,17 +22,18 @@ class Provider
     public $common_methods = ["get_group", "get_list", "get_single"];
 
     public $use_cache;
-
-    public function __construct($use_cache = true)
-    {
+    public $positions = [];
+    public $lastcheck = '';
+    public $params = [];
+    
+    public function __construct($use_cache = true) {
         $this->use_cache = $use_cache;
         $this->positions = array();
         $this->lastcheck = '';
         $this->params = array();
     }
 
-    public function is_valid_provider($provider)
-    {
+    public function is_valid_provider($provider) {
         if ((!isset($provider)) || (empty($provider))) {
             return false;
         }
@@ -508,8 +508,7 @@ class Provider
     }
     }
     */
-    public function get_Salary_by_TVL($vonbesold, $bisbesold = '')
-    {
+    public function get_Salary_by_TVL($vonbesold, $bisbesold = '') {
 
         $res = array();
         $value = $htmlvalue = '';
@@ -539,8 +538,7 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_tvl($entgelt)
-    {
+    public function sanitize_tvl($entgelt) {
         $ret = '';
 
         // $aTests = [
@@ -559,23 +557,56 @@ class Provider
         //     '1C',
         //     'Wir gedenken Ihnen 2C anzubieten',
         //     'E13 TVL oder TV-L e13 oder tvL 13 oder nur 13 ergibt TV-L E 13',
-        //     '13', 
+        //     '13, 15, 17, irgendwas blabla', 
+        //     'TVL12 (50%)'
+        //     'Vergütung nach Vergütungstabelle der FAU ab 01.01.2024 (entspricht inkl. Sozialversicherungsabgaben 622,80 bei 9 Std./Woche)'
         // ];
 
         if (!empty($entgelt)) {
-            $nr = abs((int) filter_var($entgelt, FILTER_SANITIZE_NUMBER_INT));
+            // Zuerst entfernen wir runde Klammern und deren Inhalte
+            // diese werden ab un dzu fälschlich verwendet um Teilzeitstellen
+            // zu kennzeichnen. Dadurch ändert sich aber die Entlöhnung nicht.
+            
+            $entgelt = preg_replace('/\([^\(\)]*\)/i', '', $entgelt);
+            
+            // falls der Satz Kommas enthält, z.B. weil da jemand mehr als ein 
+            // Tarif einträgt, ist das ungültig. Daher entferne den Komma und 
+            // alles danach
+            $entgelt = preg_replace('/,\s*(.*)/i', '', $entgelt);
+            $gruppe = '';
+            
             preg_match('/([ACW]{1})?(TVA\-?L)?/i', $entgelt, $matches);
             
-            if (!empty($matches[2])){
+            if (!empty($matches[2])) {
                 // Azubi
                 $ret = 'TVA-L BBiG';
-            }elseif(!empty($matches[1])){
+            } elseif(!empty($matches[1])) {
                 // Besoldungsordnung A, C oder W
-                $ret = strtoupper(trim($matches[1])) . ' ' . $nr . ' ' . BESOLDUNG_TXT;
-            }else{
-                preg_match('/(\D)*(\d)*(a|b)?/i', $entgelt, $matches);                
-                $ret = 'TV-L E ' . $nr . (!empty($matches[3])?strtolower($matches[3]):'');
+                preg_match('/(\D)*([\d]+)*/i', $entgelt, $matchnumber);            
+                if (!empty($matchnumber[2])) {
+                    $gruppe = intval($matchnumber[2]);
+                }
+                $ret = strtoupper(trim($matches[1])) . ' ' . $gruppe . ' ' . BESOLDUNG_TXT;
+            } else {
+                if (preg_match('/bbig/i', $entgelt)) {
+                    // Azubis
+                    $ret = 'TVA-L BBiG';
+                    
+                } elseif (preg_match('/(tv[\-\s]?l|e\s*\d{1,2})/i', $entgelt)) {
+                    // Tarifvertrag TV-L
+                    preg_match('/(\D)*([\d]+)*(a|b)?/i', $entgelt, $matches);            
+                    if (!empty($matches[2])) {
+                        $gruppe = intval($matches[2]);
+                    }
+                    $ret = 'TV-L E ' . $gruppe . (!empty($matches[3])?strtolower($matches[3]):'');
+                } else {
+                    // Nicht interpretierbar, wahrscheinlich Prosatext
+                    $ret = esc_html($entgelt);
+                }
+                
+              
             }
+
         }
 
         return $ret;
@@ -583,8 +614,7 @@ class Provider
 
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
-    public function sanitize_besoldung($entgeld)
-    {
+    public function sanitize_besoldung($entgeld) {
         $res = '';
         if (!empty($entgeld)) {
             if (preg_match('/^(a|b|c|w|r|aw)\s*([0-9]+)$/i', $entgeld, $output_array)) {
@@ -603,8 +633,7 @@ class Provider
         return $res;
     }
 
-    public function get_array_as_string($type)
-    {
+    public function get_array_as_string($type)  {
         if (is_array($type)) {
             $res = '';
             foreach ($type as $i) {
