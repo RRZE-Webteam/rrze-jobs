@@ -201,6 +201,10 @@ class Settings {
                 $name = $option['name'];
                 $default = !empty($option['default']) ? $option['default'] : '';
                 $options = array_merge($options, [$section . '_' . $name => $default]);
+                if (str_contains($option['type'], 'Translation')) {
+                    $default_en = !empty($option['default_en']) ? $option['default_en'] : '';
+                    $options = array_merge($options, [$section . '_' . $name . '_en' => $default_en]);
+                }
             }
         }
 
@@ -752,6 +756,70 @@ class Settings {
             $args['section'],
             $args['id'],
         );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+    public function callbackTextTranslation($args) {
+        $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
+        $value_en = esc_attr($this->getOption($args['section'], $args['id'] . '_en', $args['default']));
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+
+        $html = sprintf(
+            '<p style="float: left;"><input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s><br /><span class="description">%8$s</span></p>',
+            'text',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $value,
+            $placeholder,
+            __('german', 'rrze-jobs')
+        );
+        $html .= sprintf(
+            '<p style="float: left;"><input type="%1$s" class="%2$s-text" id="%4$s-%5$s_en" name="%3$s[%4$s_%5$s_en]" value="%6$s"%7$s><br /><span class="description">%8$s</span></p>',
+            'text',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $value_en,
+            $placeholder,
+            __('english', 'rrze-jobs')
+        );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+    public function callbackTextareaTranslation($args) {
+        $value = esc_textarea($this->getOption($args['section'], $args['id'], $args['default']));
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+
+        $html = sprintf(
+            '%7$s<br /><textarea rows="5" cols="55" class="%1$s-text" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]"%5$s>%6$s</textarea>',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $placeholder,
+            $value,
+            __('german', 'rrze-jobs')
+        );
+        $html .= '<br /><br />' . sprintf(
+            '%7$s<br /><textarea rows="5" cols="55" class="%1$s-text" id="%3$s-%4$s_en" name="%2$s[%3$s_%4$s_en]"%5$s>%6$s</textarea>',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id'],
+            $placeholder,
+            $value,
+            __('english', 'rrze-jobs')
+        );
+
         $html .= $this->getFieldDescription($args);
 
         echo $html;

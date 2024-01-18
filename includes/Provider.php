@@ -50,7 +50,7 @@ class Provider {
     // set parameters to a defined provider
     public function set_provider_params($provider, $params)
     {
-        $provider = is_valid_provider($provider);
+        $provider = $this->is_valid_provider($provider);
         if ($provider === false) {
             return false;
         }
