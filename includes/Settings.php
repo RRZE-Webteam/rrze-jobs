@@ -766,9 +766,10 @@ class Settings {
         $value_en = esc_attr($this->getOption($args['section'], $args['id'] . '_en', $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
+        $label = $args['name'] ?? '';
 
         $html = sprintf(
-            '<p style="float: left;"><input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s><br /><span class="description">%8$s</span></p>',
+            '<p style="float: left;"><label><input type="%1$s" class="%2$s-text" id="%4$s-%5$s" name="%3$s[%4$s_%5$s]" value="%6$s"%7$s><br />%8$s</label></p>',
             'text',
             $size,
             $this->optionName,
@@ -776,10 +777,10 @@ class Settings {
             $args['id'],
             $value,
             $placeholder,
-            __('german', 'rrze-jobs')
+            '<span class="screen-reader-text">' . $label . ' </span>(' . __('german', 'rrze-jobs') . ')'
         );
         $html .= sprintf(
-            '<p style="float: left;"><input type="%1$s" class="%2$s-text" id="%4$s-%5$s_en" name="%3$s[%4$s_%5$s_en]" value="%6$s"%7$s><br /><span class="description">%8$s</span></p>',
+            '<p style="float: left;"><label><input type="%1$s" class="%2$s-text" id="%4$s-%5$s_en" name="%3$s[%4$s_%5$s_en]" value="%6$s"%7$s><br />%8$s</label></p>',
             'text',
             $size,
             $this->optionName,
@@ -787,7 +788,7 @@ class Settings {
             $args['id'],
             $value_en,
             $placeholder,
-            __('english', 'rrze-jobs')
+            '<span class="screen-reader-text">' . $label . ' </span>(' . __('english', 'rrze-jobs') . ')'
         );
         $html .= $this->getFieldDescription($args);
 
