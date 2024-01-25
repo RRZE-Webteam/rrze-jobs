@@ -797,6 +797,7 @@ class Settings {
 
     public function callbackTextareaTranslation($args) {
         $value = esc_textarea($this->getOption($args['section'], $args['id'], $args['default']));
+        $value_en = esc_textarea($this->getOption($args['section'], $args['id'].'_en', $args['default']));
         $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
         $placeholder = empty($args['placeholder']) ? '' : ' placeholder="' . $args['placeholder'] . '"';
 
@@ -817,7 +818,7 @@ class Settings {
             $args['section'],
             $args['id'],
             $placeholder,
-            $value,
+            $value_en,
             __('english', 'rrze-jobs')
         );
 

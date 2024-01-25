@@ -62,6 +62,7 @@ class Interamt extends Provider {
                 if (is_array($job)) {
                     $newpositions['JobPosting'][$num] = $this->generate_schema_values($job);
                     $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
+                    $newpositions['JobPosting'][$num]['provider'] = $this->name;
                 }
             }
             $data = $newpositions;
@@ -70,7 +71,8 @@ class Interamt extends Provider {
             if (is_array($data)) {
                 $newpositions['JobPosting'][0] = $this->generate_schema_values($data);
                 $newpositions['JobPosting'][0]['_provider-values'] = $this->add_remaining_non_schema_fields($data);
-                $newpositions['JobPosting'][$num]['_provider-values']['provider'] = $this->name;
+                $newpositions['JobPosting'][0]['_provider-values']['provider'] = $this->name;
+                $newpositions['JobPosting'][0]['provider'] = $this->name;
                 $data = $newpositions;
             }
         }
