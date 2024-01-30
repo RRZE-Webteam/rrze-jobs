@@ -73,7 +73,7 @@ class UnivIS extends Provider {
 					$newpositions['JobPosting'][$num] = $this->generate_schema_values($job, $data);
 					$newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
 					$newpositions['JobPosting'][$num]['_provider-values']['provider'] = $this->name;
-
+					$newpositions['JobPosting'][$num]['provider'] = $this->name;
 				}
 			}
 			$data = $newpositions;

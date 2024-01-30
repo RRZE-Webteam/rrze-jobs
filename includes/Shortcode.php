@@ -555,11 +555,15 @@ class Shortcode {
     // replace Parse Variables in values itself outside the parser
     public static function ParseDataVars($data)
     {
+        $lang = isset($data["_provider-values"]["lang"]) && $data["_provider-values"]["lang"] == 'en' ? 'en' : 'de';
         $searchfields = $data['const'];
         $replacefields = array("description", "qualifications", "disambiguatingDescription", "text_jobnotice");
         foreach ($replacefields as $r) {
             if (isset($data[$r])) {
                 foreach ($searchfields as $name => $value) {
+                    if ($lang == 'en') {
+                        $value = $searchfields[$name.'_en'] ?? $value;
+                    }
                     $pos = strpos($name, 'title_');
                     if (($pos !== false) && ($pos == 0)) {
                         $searchval = '/{{=const.' . $name . '}}/i';
