@@ -2,6 +2,7 @@
 .DS_Store
 vendor/
 *.pot~
+*.po~
 .vscode/sftp.json
 Browse.plb
 node_modules
