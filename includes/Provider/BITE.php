@@ -1104,7 +1104,11 @@ class BITE extends Provider {
                             $value = $this->deleteDefaults($value);
                             break;
                         case 'hiringorganization':
-                            $value = $this->sanitize_custom_org($value);
+                            if ($data['hiringorganization'] == 'Technische Universität Nürnberg') {
+                                $value = sanitize_text_field($data['hiringorganization']);
+                            } else {
+                                $value = $this->sanitize_custom_org($value);
+                            }
                             break;
 
                         case 'workhours':
