@@ -216,6 +216,14 @@ function getFields() {
                 'default_en' => "Details"
             ],
             [
+                'name' => 'job_headline_workplace',
+                'label' => __('Label for', 'rrze-jobs') . ' ' . __('Your Workplace', 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'textTranslation',
+                'default' => __('Your Workplace', 'rrze-jobs'),
+                'default_en' => "Your Workplace"
+            ],
+            [
                 'name' => 'job_headline_description',
                 'label' => __('Label for', 'rrze-jobs') . ' ' . __('Description', 'rrze-jobs'),
                 'desc' => '',

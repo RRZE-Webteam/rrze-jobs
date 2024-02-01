@@ -168,7 +168,7 @@ class Provider {
                                 }
                             }
 
-                        } elseif ($pos[$field] == $pos2[$field]) {
+                        } elseif (isset($pos[$field]) && $pos[$field] == $pos2[$field]) {
                             $matchnum++;
 
                         }
