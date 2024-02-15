@@ -173,7 +173,7 @@ class BITE extends Provider {
 	    }
         // neu 02/2024
         if (!empty($jobdata['custom']['beschreibung_beschaeftigungsstelle'])) {
-            $res['employerOverview']  = $jobdata['custom']['beschreibung_beschaeftigungsstelle'];
+            $res['employerWorkplace'] = $jobdata['custom']['beschreibung_beschaeftigungsstelle'];
         }
         // description
 	    if (!empty($jobdata['custom']['aufgaben'])) {
@@ -1226,7 +1226,7 @@ class BITE extends Provider {
 
             return $this->sanitize_dates($date);
         }
-        if (preg_match_all('/(schnellstmöglich|sofort|nächstmöglich|as soon|asap)/i', $date, $output_array)) {
+        if (preg_match_all('/(sofort|as soon|asap|bald|glich|a.s.a.p)/i', $date, $output_array)) {
             return "-1";
         }
         //ok, maybe its just text, so we sanitize it as text
