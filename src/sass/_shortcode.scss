@@ -20,7 +20,8 @@
 	display: block;
     }
     
-    aside {
+    aside,
+	section.keyfacts {
 	display: block;
 	@media (min-width: 1024px) {
 	    border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
