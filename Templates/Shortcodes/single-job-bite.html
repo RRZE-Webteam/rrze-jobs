@@ -50,6 +50,8 @@
 				{{=const.text_fau_employer}}
 			{{/const.text_fau_employer}}
 
+			{{=application_process}}
+
 			{{const.text_jobnotice}}
 				[alert]
 				<h2>{{=const.title_jobnotice}}</h2>
@@ -61,6 +63,7 @@
 
 			{{const.title_releasedate}}<p><em>{{=const.title_releasedate}}: {{=releaseDate}}</em></p>{{/const.title_releasedate}}
 		</section>
+
 		<section class="keyfacts" aria-label="{{=const.title_keyfacts}}">
 			<p>
 				{{applicationContact.url}}
@@ -79,7 +82,6 @@
 			<p class="notice-validThrough">
 				<strong class="title">{{=const.title_validThrough}}:</strong> <span class="validThrough">{{=validThrough_DE}}</span>
 			</p>
-
 
 			<table class="rrze-jobs-single-keyfacts">
 				<tr>
