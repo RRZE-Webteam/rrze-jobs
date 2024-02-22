@@ -1346,6 +1346,7 @@ class UnivIS extends Provider {
 					|| strpos($val, 'glich') !== false
 					|| strpos($val, 'asap') !== false
 					|| strpos($val, 'a.s.a.p.') !== false
+					|| strpos($val, 'as soon') !== false
 				) {
 					// sofort, ab sofort, baldmöglich, baldmöglichst, zum nächstmöglichen Zeitpunkt, nächstmöglich, frühst möglich, frühestmöglich, asap, a.s.a.p.
 					$res = '0';

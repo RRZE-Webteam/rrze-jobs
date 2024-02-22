@@ -9,47 +9,62 @@
 		<meta itemprop="employmentType" content="{{=employmentType}}">
 		{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
 		{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
-		<article>
-		    {{employerOverview}}
-		    <div itemprop="employerOverview">
-			    {{=employerOverview}}
-		    </div>
-		    <h3>{{=const.title_description}}</h3>
-		    {{/employerOverview}}
-			<div itemprop="description">
-				{{=description}}
-			</div>
+		<section>
 
-			{{const.title_qualifications}}<h3>{{=const.title_qualifications}}</h3>{{/const.title_qualifications}}
-			<div itemprop="qualifications">
-				{{=qualifications}}
-			</div>
+			{{employerWorkplace}}
+				<h2>{{=const.title_workplace}}</h2>
+				{{=employerWorkplace}}
+			{{/employerWorkplace}}
+
 			{{jobBenefits}}
-			<h3>{{=const.title_jobBenefits}}</h3>
-			<div itemprop="jobBenefits">
-				{{=jobBenefits}}
-			</div>
+				<h2>{{=const.title_jobBenefits}}</h2>
+				<div itemprop="jobBenefits">
+					{{=jobBenefits}}
+				</div>
 			{{/jobBenefits}}
+
+			{{description}}
+				<h2>{{=const.title_description}}</h2>
+				<div itemprop="description">
+					{{=description}}
+				</div>
+			{{/description}}
+
+
+			{{qualifications}}
+				<h2>{{=const.title_qualifications}}</h2>
+				<div itemprop="qualifications">
+					{{=qualifications}}
+				</div>
+			{{/qualifications}}
+
 			{{disambiguatingDescription}}
-			<h3>{{=const.title_disambiguatingDescription}}</h3>
-			<div itemprop="disambiguatingDescription">
-				{{=disambiguatingDescription}}
-			</div>
+				<h2>{{=const.title_disambiguatingDescription}}</h2>
+				<div itemprop="disambiguatingDescription">
+					{{=disambiguatingDescription}}
+				</div>
 			{{/disambiguatingDescription}}
-			
+
+			{{const.text_fau_employer}}
+				<h2>{{=const.title_fau_employer}}</h2>
+				{{=const.text_fau_employer}}
+			{{/const.text_fau_employer}}
+
+			{{=application_process}}
+
 			{{const.text_jobnotice}}
-			[alert]
-			<h3>{{=const.title_jobnotice}}</h3>
-			{{=const.text_jobnotice}}
-			[/alert]
+				[alert]
+				<h2>{{=const.title_jobnotice}}</h2>
+				{{=const.text_jobnotice}}
+				[/alert]
 			{{/const.text_jobnotice}}
 
 			{{intern}}[alert style="warning"]{{=const.internal_message}}[/alert]{{/intern}}
 
 			{{const.title_releasedate}}<p><em>{{=const.title_releasedate}}: {{=releaseDate}}</em></p>{{/const.title_releasedate}}
-		</article>
-		<aside aria-label="{{=const.title_keyfacts}}">
+		</section>
 
+		<section class="keyfacts" aria-label="{{=const.title_keyfacts}}">
 			<p>
 				{{applicationContact.url}}
 				<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
@@ -67,7 +82,6 @@
 			<p class="notice-validThrough">
 				<strong class="title">{{=const.title_validThrough}}:</strong> <span class="validThrough">{{=validThrough_DE}}</span>
 			</p>
-
 
 			<table class="rrze-jobs-single-keyfacts">
 				<tr>
@@ -141,6 +155,6 @@
 					</td>
 				</tr>
 			</table>
-		</aside>
+		</section>
 	</div>
 </div>

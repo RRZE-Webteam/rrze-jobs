@@ -94,7 +94,7 @@ class BITE extends Provider {
             "description", "locale", "identification", "keywords");
 
 	$known_custom_fields = array("einleitung", "03_aufgaben_profil", "interessiert", 
-	    "sie_haben_fragen", "einleitungstext", "aufgaben", "stellenzusatz", "profil",
+	    "sie_haben_fragen", "einleitungstext", "beschreibung_beschaeftigungsstelle", "aufgaben", "stellenzusatz", "profil",
 	    "job_experience", "job_qualifications_nth", "angebot", "wir_bieten", 
 	    "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung", 
 	    "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
@@ -171,7 +171,11 @@ class BITE extends Provider {
 	    if (!empty($jobdata['custom']['einleitungstext'])) {
             $res['employerOverview']  = $jobdata['custom']['einleitungstext'];
 	    }
-	    // description
+        // neu 02/2024
+        if (!empty($jobdata['custom']['beschreibung_beschaeftigungsstelle'])) {
+            $res['employerWorkplace'] = $jobdata['custom']['beschreibung_beschaeftigungsstelle'];
+        }
+        // description
 	    if (!empty($jobdata['custom']['aufgaben'])) {
 	       $res['description'] = $jobdata['custom']['aufgaben'];
 	    } 
@@ -590,7 +594,7 @@ class BITE extends Provider {
         // i create s switch by the known custom fields
 
         $customerer_fields = array(
-          'fau'	    => ["zuordnung", "aufgaben", "einleitungstext", "angebot", "profil", "stellenzusatz"],
+          'fau'	    => ["zuordnung", "aufgaben", "einleitungstext", "beschreibung_beschaeftigungsstelle", "angebot", "profil", "stellenzusatz"],
           'utn'	    => ["einleitung", "01_introduction", "02_addition","03_aufgaben_profil", "03_qualifications", "04_Interested", "05_questions", "sie_haben_fragen", "interessiert", "06_schluss"]
         );
 
@@ -1083,6 +1087,7 @@ class BITE extends Provider {
                         case 'angebot':
                         case 'aufgaben':
                         case 'einleitungstext':
+                        case 'beschreibung_beschaeftigungsstelle':
                         case 'einleitung':
                         case 'stellenzusatz':
                         case 'profil':
@@ -1221,7 +1226,7 @@ class BITE extends Provider {
 
             return $this->sanitize_dates($date);
         }
-        if (preg_match_all('/(schnellstmöglich|sofort|nächstmöglich|as soon|asap)/i', $date, $output_array)) {
+        if (preg_match_all('/(sofort|as soon|asap|bald|glich|a.s.a.p)/i', $date, $output_array)) {
             return "-1";
         }
         //ok, maybe its just text, so we sanitize it as text

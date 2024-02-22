@@ -168,7 +168,7 @@ class Provider {
                                 }
                             }
 
-                        } elseif ($pos[$field] == $pos2[$field]) {
+                        } elseif (isset($pos[$field]) && $pos[$field] == $pos2[$field]) {
                             $matchnum++;
 
                         }
@@ -309,7 +309,8 @@ class Provider {
         // first translate input into markdown, then sanitize with html sanitizer
         $Parsedown = new Parsedown();
 
-        $dateinput = preg_replace('/\\\s*$/m', ' ', $dateinput);
+        // ToDo: Zweites Pattern + Replacement kann entfernt werden, wenn B-ITE den Export-Bug mit den doppelt escapten Doppelpunkten behoben hat.
+        $dateinput = preg_replace(['/\\\s*$/m', '/(\\\:)/m'], [' ', ':'], $dateinput);
         $dateinput = nl2br($dateinput);
 
         $html = $Parsedown->text($dateinput);
