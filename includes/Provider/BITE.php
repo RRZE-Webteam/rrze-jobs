@@ -67,6 +67,7 @@ class BITE extends Provider {
                     $newpositions['JobPosting'][$num]['_provider-values'] = $this->add_remaining_non_schema_fields($job);
                     $newpositions['JobPosting'][$num]['_provider-values']['provider'] = $this->name;
                     $newpositions['JobPosting'][$num]['provider'] = $this->name;
+                    $newpositions['JobPosting'][$num]['hash'] = $job["hash"];
                 }
             }
             $data = $newpositions;
@@ -77,6 +78,7 @@ class BITE extends Provider {
                 $newpositions['JobPosting'][0]['_provider-values'] = $this->add_remaining_non_schema_fields($data);
                 $newpositions['JobPosting'][0]['_provider-values']['provider'] = $this->name;
                 $newpositions['JobPosting'][0]['provider'] = $this->name;
+                $newpositions['JobPosting'][0]['hash'] = $data["hash"];
                 $data = $newpositions;
             }
 
