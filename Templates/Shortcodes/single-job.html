@@ -87,10 +87,13 @@
 							<span itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
 								<meta itemprop="name" content="{{=hiringOrganization.name}}">
 								{{jobLocation.address.streetAddress}}<br /><span itemprop="streetAddress">{{=jobLocation.address.streetAddress}}</span>{{/jobLocation.address.streetAddress}}
-								{{jobLocation.address.addressLocality}}<br />{{jobLocation.address.postalCode}}<span itemprop="postalCode">{{=jobLocation.address.postalCode}}</span>{{/jobLocation.address.postalCode}} <span itemprop="address">{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
+								{{jobLocation.address.addressLocality}}<br />{{jobLocation.address.postalCode}}<span itemprop="postalCode">{{=jobLocation.address.postalCode}}</span>{{/jobLocation.address.postalCode}} <span itemprop="addressLocality">{{=jobLocation.address.addressLocality}}</span>{{/jobLocation.address.addressLocality}}
 								{{jobLocation.address.addressRegion}}
 								<meta itemprop="addressRegion" content="{{=jobLocation.address.addressRegion}}">
 								{{/jobLocation.address.addressRegion}}
+								{{jobLocation.address.addressCountry}}
+								<meta itemprop="addressCountry" content="{{=jobLocation.address.addressCountry}}">
+								{{/jobLocation.address.addressCountry}}
 							</span>
 						</span>
 					</td>
