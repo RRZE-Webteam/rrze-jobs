@@ -103,7 +103,7 @@ class BITE extends Provider {
 	    "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
 	    "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar", 
 	    "job_limitation_duration", "abschlusstext", "06_schluss",
-	    "estimatedsalary", "framework", "jobstartdate",  "job_workhours", "workHours", "befristung", 
+	    "estimatedsalary", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
 	    "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
 	    "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
 	    "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper", "status");
@@ -221,8 +221,9 @@ class BITE extends Provider {
         // jobBenefits
         if (!empty($jobdata['custom']['angebot'])) {
             $res['jobBenefits'] = $jobdata['custom']['angebot'];
-        } elseif (!empty($jobdata['custom']['wir_bieten'])) {
-            $res['jobBenefits'] = $jobdata['custom']['wir_bieten'];
+        }
+        if (!empty($jobdata['custom']['wir_bieten'])) {
+            $res['jobBenefits'] .= $jobdata['custom']['wir_bieten'];
         }
 
         
@@ -545,15 +546,17 @@ class BITE extends Provider {
                 switch ($worktyp) {
                     case 'bereitschaftsdienst':
                     case 'rufbereitschaft':
-                        $workspec .= ', ' . __('On-call duty', 'rrze-jobs');
+                        $workspec .= ', ' . __('on-call duty', 'rrze-jobs');
                         break;
                     case 'schichtdienst':
-                        $workspec .= ', ' . __('Shift work', 'rrze-jobs');
+                        $workspec .= ', ' . __('shift work', 'rrze-jobs');
                         break;
                     case 'nachtdienst':
-                        $workspec .= ', ' . __('Night duty', 'rrze-jobs');
+                        $workspec .= ', ' . __('night duty', 'rrze-jobs');
                         break;
-
+                    case 'wechselschicht':
+                        $workspec .= ', ' . __('rotating shift', 'rrze-jobs');
+                        break;
                 }
             }
             if (!empty($workspec)) {
@@ -572,11 +575,22 @@ class BITE extends Provider {
                 $res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
                 $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
             }
+        } elseif (!empty($jobdata['custom']['jobstartdate2'])) {
+
+            if ($jobdata['custom']['jobstartdate2'] == "-1") {
+                $res['jobImmediateStart'] = true;
+                $res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
+                $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+
+            } else {
+                $res['jobStartDate'] = $jobdata['custom']['jobstartdate2'];
+                $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+            }
         }
 
         if (isset($jobdata['custom']['befristung']) && ($jobdata['custom']['befristung'] == true)) {
             if ((!empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
-                $res['text_befristet'] = __('Temporary employment', 'rrze-jobs') . ', ' . $jobdata['custom']['job_limitation_duration'] . " " . __('monthes', 'rrze-jobs');
+                $res['text_befristet'] = __('Temporary employment', 'rrze-jobs') . ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
             }
         }
 

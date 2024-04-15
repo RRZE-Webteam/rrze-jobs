@@ -306,7 +306,7 @@ class Interamt extends Provider {
             }
         }
         if ((isset($jobdata['BefristetFuer'])) && (!empty($jobdata['BefristetFuer']))) {
-            $res['text_befristet'] = __('Temporary employment until', 'rrze-jobs') . ' ' . $jobdata['BefristetFuer'] . " " . __('monthes', 'rrze-jobs');
+            $res['text_befristet'] = __('Temporary employment until', 'rrze-jobs') . ' ' . $jobdata['BefristetFuer'] . " " . __('months', 'rrze-jobs');
         }
 
         $res['employmentType'] = $typeliste;
