@@ -13,7 +13,15 @@ use RRZE\Jobs\Helper;
 use RRZE\Jobs\Provider;
 
 class BITE extends Provider {
-    
+
+    protected $api_url;
+    protected $cachetime;
+    protected $cachetime_list;
+    protected $cachetime_single;
+    protected $uriparameter;
+    protected $request_args;
+    protected $required_fields;
+
 
     public function __construct($use_cache = true) {
         $this->use_cache = $use_cache;
@@ -95,19 +103,19 @@ class BITE extends Provider {
             "subsidiary", "content", "seo", "title", "location", "custom",
             "description", "locale", "identification", "keywords");
 
-	$known_custom_fields = array("einleitung", "03_aufgaben_profil", "interessiert", 
-	    "sie_haben_fragen", "einleitungstext", "beschreibung_beschaeftigungsstelle", "aufgaben", "stellenzusatz", "profil",
-	    "job_experience", "job_qualifications_nth", "angebot", "wir_bieten", 
-	    "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung", 
-	    "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
-	    "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
-	    "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar", 
-	    "job_limitation_duration", "abschlusstext", "06_schluss",
-	    "estimatedsalary", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
-	    "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
-	    "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
-	    "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper", "status");
-	
+        $known_custom_fields = array("einleitung", "03_aufgaben_profil", "interessiert",
+            "sie_haben_fragen", "einleitungstext", "beschreibung_beschaeftigungsstelle", "aufgaben", "stellenzusatz", "profil",
+            "job_experience", "job_qualifications_nth", "angebot", "wir_bieten",
+            "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung",
+            "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
+            "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
+            "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar",
+            "job_limitation_duration", "abschlusstext", "06_schluss",
+            "estimatedsalary", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
+            "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
+            "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
+            "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper", "status");
+
         // keynames we already used in schema values or which we dont need anyway
 
         $providerfield = array();
@@ -145,77 +153,71 @@ class BITE extends Provider {
             // but they can be evaluated from others
 
       
-	if ($customer == 'utn') {
-	    if (!empty($jobdata['custom']['einleitung'])) {
-            $res['employerOverview']  = $jobdata['custom']['einleitung'].' '. $jobdata['title'];
-	    }
-	     // description
-	    if  (!empty($jobdata['custom']['03_aufgaben_profil'])) {
-	       $res['description'] = $jobdata['custom']['03_aufgaben_profil'];
-	    }
-	    // disambiguatingDescription
-	    if (!empty($jobdata['custom']['interessiert'])) {
-            $res['disambiguatingDescription'] = $jobdata['custom']['interessiert'];
-	    }
-	     
-	    if (!empty($jobdata['custom']['sie_haben_fragen'])) {
-		   $res['disambiguatingDescription'] .= "\n\n".$jobdata['custom']['sie_haben_fragen'];
-	    }
-	    if (!empty($jobdata['custom']['06_schluss'])) {
-		   $res['text_jobnotice'] = $jobdata['custom']['06_schluss'];
-	    }
-		    
-		   
-		   
-	} else {
-	    // Die Einleitung geht in ein die employerOverview
-	    // https://schema.org/employerOverview
-	    if (!empty($jobdata['custom']['einleitungstext'])) {
-            $res['employerOverview']  = $jobdata['custom']['einleitungstext'];
-	    }
-        // neu 02/2024
-        if (!empty($jobdata['custom']['beschreibung_beschaeftigungsstelle'])) {
-            $res['employerWorkplace'] = $jobdata['custom']['beschreibung_beschaeftigungsstelle'];
+        if ($customer == 'utn') {
+            if (!empty($jobdata['custom']['einleitung'])) {
+                $res['employerOverview']  = $jobdata['custom']['einleitung'].' '. $jobdata['title'];
+            }
+             // description
+            if  (!empty($jobdata['custom']['03_aufgaben_profil'])) {
+               $res['description'] = $jobdata['custom']['03_aufgaben_profil'];
+            }
+            // disambiguatingDescription
+            if (!empty($jobdata['custom']['interessiert'])) {
+                $res['disambiguatingDescription'] = $jobdata['custom']['interessiert'];
+            }
+
+            if (!empty($jobdata['custom']['sie_haben_fragen'])) {
+               $res['disambiguatingDescription'] .= "\n\n".$jobdata['custom']['sie_haben_fragen'];
+            }
+            if (!empty($jobdata['custom']['06_schluss'])) {
+               $res['text_jobnotice'] = $jobdata['custom']['06_schluss'];
+            }
+
+        } else {
+            // Die Einleitung geht in ein die employerOverview
+            // https://schema.org/employerOverview
+            if (!empty($jobdata['custom']['einleitungstext'])) {
+                $res['employerOverview']  = $jobdata['custom']['einleitungstext'];
+            }
+            // neu 02/2024
+            if (!empty($jobdata['custom']['beschreibung_beschaeftigungsstelle'])) {
+                $res['employerWorkplace'] = $jobdata['custom']['beschreibung_beschaeftigungsstelle'];
+            }
+            // description
+            if (!empty($jobdata['custom']['aufgaben'])) {
+               $res['description'] = $jobdata['custom']['aufgaben'];
+            }
+            // disambiguatingDescription
+            if (!empty($jobdata['custom']['stellenzusatz'])) {
+                $res['disambiguatingDescription'] = $jobdata['custom']['stellenzusatz'];
+            }
+
+            if (!empty($jobdata['custom']['profil'])) {
+                if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+                    $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
+                } else {
+                    $res['qualifications'] = '';
+                }
+                $res['qualifications'] .= $jobdata['custom']['profil'];
+            }
+            if (!empty($jobdata['custom']['job_experience'])) {
+                if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_qualifications_nth'])){
+                    $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
+                }
+                $res['qualifications'] .= $jobdata['custom']['job_experience'];
+            }
+
+            if (!empty($jobdata['custom']['job_qualifications_nth'])) {
+                if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_experience'])){
+                    $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
+                }
+                $res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
+            }
+
+            if (!empty($jobdata['custom']['abschlusstext'])) {
+               $res['text_jobnotice'] = $jobdata['custom']['abschlusstext'];
+            }
         }
-        // description
-	    if (!empty($jobdata['custom']['aufgaben'])) {
-	       $res['description'] = $jobdata['custom']['aufgaben'];
-	    } 
-	       // disambiguatingDescription
-	    if (!empty($jobdata['custom']['stellenzusatz'])) {
-            $res['disambiguatingDescription'] = $jobdata['custom']['stellenzusatz'];
-	    }
-	    
-	     
-	    if (!empty($jobdata['custom']['profil'])) {
-            if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
-                $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
-            } else {
-                $res['qualifications'] = '';
-            }
-            $res['qualifications'] .= $jobdata['custom']['profil'];
-	    }
-	    if (!empty($jobdata['custom']['job_experience'])) {
-            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_qualifications_nth'])){
-                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_experience}}:</strong></p>';
-            }
-            $res['qualifications'] .= $jobdata['custom']['job_experience'];
-	    }
-
-	    if (!empty($jobdata['custom']['job_qualifications_nth'])) {
-            if (!empty($jobdata['custom']['profil']) || !empty($jobdata['custom']['job_experience'])){
-                $res['qualifications'] .= '<p><strong>{{=const.title_qualifications_optional}}:</strong></p>';
-            }
-            $res['qualifications'] .= $jobdata['custom']['job_qualifications_nth'];
-	    }
-
-	    if (!empty($jobdata['custom']['abschlusstext'])) {
-		   $res['text_jobnotice'] = $jobdata['custom']['abschlusstext'];
-	    }
-	}
-	
-
-
 
 
         // jobBenefits
@@ -229,16 +231,19 @@ class BITE extends Provider {
         
         // intern (needed by FAU-Jobportal)
         //   $res['intern'] = ((!empty($data['_provider-values']['intern']) && $data['_provider-values']['intern'] === true) ? true : false);
-
-       if (!empty($jobdata['custom']['intern'])) {
+       /*if (!empty($jobdata['custom']['intern'])) {
            $res['intern'] = ((!empty($jobdata['custom']['intern']) && $jobdata['custom']['intern'] === true) ? true : false);
        } elseif (!empty($jobdata['custom']['job_intern'])) {
            $res['intern'] = ((!empty($jobdata['custom']['job_intern']) && $jobdata['custom']['job_intern'] === true) ? true : false);
        } else {
            $res['intern'] = false;
-       }
-	
-        
+       }*/
+        if (isset($jobdata['channels']['channel1']['to']) && strtotime($jobdata['channels']['channel1']['to']) > time()) {
+            $res['intern'] = true;
+        } else {
+            $res['intern'] = false;
+        }
+
         // title
         if (!empty($jobdata['title'])) {
             $res['title'] = $jobdata['title'];
@@ -328,11 +333,17 @@ class BITE extends Provider {
         }
 	
 
-        if ((isset($jobdata['channels'])) && (isset($jobdata['channels']['channel0']))) {
-            // datePosted
-            $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel0']['from']);
-            // validThrough
-            $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel0']['to']);
+        if (isset($jobdata['channels']) && (isset($jobdata['channels']['channel0']) || isset($jobdata['channels']['channel1']))) {
+            // channel0 = Öffentliche Ausschreibungen
+            // channel1 = Interne Ausschreibungen
+            // Info vom 15.04.2024: channel0 darf nicht leer sein, daher wird bei internen Ausschreibungen in channel0 ein Datum in der Vergangenheit angegeben.
+            if (isset($jobdata['channels']['channel1']) && strtotime($jobdata['channels']['channel1']['from']) > strtotime($jobdata['channels']['channel0']['from'])) {
+                $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel1']['from']);
+                $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel1']['to']);
+            } else {
+                $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel0']['from']);
+                $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel0']['to']);
+            }
             // Notice: We validate the dates here, cause it might be possible, that we need the original
             // time on other functions. So we dont want to remove it in the sanitize-function
 
@@ -742,8 +753,12 @@ class BITE extends Provider {
                     return $aRet;
                 }
 
-                if ((isset($response['content']['channels'])) && (isset($response['content']['channels']['channel0']))) {
-                    $public = $this->is_public_by_dates($response['content']['channels']['channel0']['from'], $response['content']['channels']['channel0']['to']);
+                if ((isset($response['content']['channels'])) && (isset($response['channels']['channel0']) || isset($response['channels']['channel1']))) {
+                    if (isset($response['channels']['channel1']) && strtotime($response['channels']['channel1']['from']) > strtotime($response['channels']['channel0']['from'])) {
+                        $public = $this->is_public_by_dates($response['content']['channels']['channel1']['from'], $response['content']['channels']['channel1']['to']);
+                    } else {
+                        $public = $this->is_public_by_dates($response['content']['channels']['channel0']['from'], $response['content']['channels']['channel0']['to']);
+                    }
                     if ($public == false) {
                         $aRet = [
                             'valid' => false,
@@ -908,9 +923,9 @@ class BITE extends Provider {
             $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
             if ($cachedout) {		
                 return $cachedout;
+	        }
 	    }
-	}
-	
+
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
@@ -948,9 +963,12 @@ class BITE extends Provider {
                 return $aRet;
             }
 
-            if ((isset($content['channels'])) && (isset($content['channels']['channel0']))) {
-
-                $public = $this->is_public_by_dates($content['channels']['channel0']['from'], $content['channels']['channel0']['to']);
+            if ((isset($content['channels'])) && (isset($content['channels']['channel0']) || isset($content['channels']['channel1']))) {
+                if (isset($content['channels']['channel1']) && strtotime($content['channels']['channel1']['from']) > strtotime($content['channels']['channel0']['from'])) {
+                    $public = $this->is_public_by_dates($content['channels']['channel1']['from'], $content['channels']['channel1']['to']);
+                } else {
+                    $public = $this->is_public_by_dates($content['channels']['channel0']['from'], $content['channels']['channel0']['to']);
+                }
                 if ($public == false) {
                     $aRet = [
                         'valid' => false,
