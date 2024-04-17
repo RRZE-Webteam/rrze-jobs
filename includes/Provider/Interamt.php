@@ -15,6 +15,14 @@ use RRZE\Jobs\Provider;
 
 class Interamt extends Provider {
 
+    protected $api_url;
+    protected $cachetime;
+    protected $cachetime_list;
+    protected $cachetime_single;
+    protected $uriparameter;
+    protected $request_args;
+    protected $required_fields;
+
     public function __construct($use_cache = true) {
         $this->use_cache = $use_cache;
 
