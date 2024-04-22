@@ -337,30 +337,40 @@ class BITE extends Provider {
             // channel0 = Öffentliche Ausschreibungen
             // channel1 = Interne Ausschreibungen
             // Info vom 15.04.2024: channel0 darf nicht leer sein, daher wird bei internen Ausschreibungen in channel0 ein Datum in der Vergangenheit angegeben.
+            // Notice: We validate the dates here, cause it might be possible, that we need the original
+            // time on other functions. So we dont want to remove it in the sanitize-function
             if (isset($jobdata['channels']['channel1']) && strtotime($jobdata['channels']['channel1']['from']) > strtotime($jobdata['channels']['channel0']['from'])) {
                 $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel1']['from']);
                 $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel1']['to']);
+                if (isset($jobdata['channels']['channel1']['route']['application'])) {
+                    $res['applicationContact']['url'] = $jobdata['channels']['channel1']['route']['application'];
+                }
+                if (isset($jobdata['channels']['channel1']['route']['email'])) {
+                    $res['applicationContact']['email'] = $jobdata['channels']['channel1']['route']['email'];
+                    if (isset($jobdata['custom']['ausschreibungskennziffer'])) {
+                        $res['applicationContact']['email_subject'] = $jobdata['custom']['ausschreibungskennziffer'];
+                    }
+                }
+                if (isset($jobdata['channels']['channel1']['route']['posting'])) {
+                    $res['url'] = $jobdata['channels']['channel1']['route']['posting'];
+                    $res['sameAs'] = $jobdata['channels']['channel1']['route']['posting'];
+                }
             } else {
                 $res['datePosted'] = $this->sanitize_dates($jobdata['channels']['channel0']['from']);
                 $res['validThrough'] = $this->sanitize_dates($jobdata['channels']['channel0']['to']);
-            }
-            // Notice: We validate the dates here, cause it might be possible, that we need the original
-            // time on other functions. So we dont want to remove it in the sanitize-function
-
-            if (isset($jobdata['channels']['channel0']['route']['application'])) {
-                $res['applicationContact']['url'] = $jobdata['channels']['channel0']['route']['application'];
-            }
-            if (isset($jobdata['channels']['channel0']['route']['email'])) {
-                $res['applicationContact']['email'] = $jobdata['channels']['channel0']['route']['email'];
-                if (isset($jobdata['custom']['ausschreibungskennziffer'])) {
-                    $res['applicationContact']['email_subject'] = $jobdata['custom']['ausschreibungskennziffer'];
+                if (isset($jobdata['channels']['channel0']['route']['application'])) {
+                    $res['applicationContact']['url'] = $jobdata['channels']['channel0']['route']['application'];
                 }
-
-            }
-            if (isset($jobdata['channels']['channel0']['route']['posting'])) {
-                $res['url'] = $jobdata['channels']['channel0']['route']['posting'];
-                $res['sameAs'] = $jobdata['channels']['channel0']['route']['posting'];
-
+                if (isset($jobdata['channels']['channel0']['route']['email'])) {
+                    $res['applicationContact']['email'] = $jobdata['channels']['channel0']['route']['email'];
+                    if (isset($jobdata['custom']['ausschreibungskennziffer'])) {
+                        $res['applicationContact']['email_subject'] = $jobdata['custom']['ausschreibungskennziffer'];
+                    }
+                }
+                if (isset($jobdata['channels']['channel0']['route']['posting'])) {
+                    $res['url'] = $jobdata['channels']['channel0']['route']['posting'];
+                    $res['sameAs'] = $jobdata['channels']['channel0']['route']['posting'];
+                }
             }
 
             $res['directApply'] = true;
