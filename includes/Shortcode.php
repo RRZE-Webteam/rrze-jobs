@@ -278,7 +278,7 @@ class Shortcode {
             $content = '';
 
             if ($newdata['valid'] === true) {
-                $template = plugin()->getPath() . 'Templates/Shortcodes/single-job.html';
+                $template = plugin()->getPath() . 'Templates/Shortcodes/single-job-bite.html';
                 if ($link_only) {
                     $template = plugin()->getPath() . 'Templates/Shortcodes/single-job-linkonly.html';
                 }
@@ -337,11 +337,6 @@ class Shortcode {
                 $parserdata['joblist'] = '';
 
                 $parserdata['num'] = count($newdata['positions']);
-                $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single.html';
-
-                if ($link_only) {
-                    $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
-                }
                 $listjobs = 0;
 
                 $newdata['positions'] = self::sortArrayByField($newdata['positions']);
@@ -389,6 +384,14 @@ class Shortcode {
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
 
                         $data = self::ParseDataVars($data);
+
+                        $templateSub = (isset($data['employerWorkplace']) ? '-bite' : '');
+                        $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single'.$templateSub.'.html';
+
+                        if ($link_only) {
+                            $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single-linkonly.html';
+                        }
+
                         $parserdata['joblist'] .= Template::getContent($template, $data);
 
                         $listjobs++;
