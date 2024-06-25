@@ -308,8 +308,6 @@ class BITE extends Provider {
             $res['text_workingtime'] = $jobdata['custom']['beschaeftigungsumfang'];
         }
 
-        $res['employmentType'] = $typeliste;
-
         //  muss aber einen oder mehrere der folgenden
         // Werte enthalten:
         /*
@@ -613,7 +611,10 @@ class BITE extends Provider {
             if ((!empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
                 $res['text_befristet'] = __('Temporary employment', 'rrze-jobs') . ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
             }
+            $typeliste[] = 'TEMPORARY';
         }
+
+        $res['employmentType'] = $typeliste;
 
         if (isset($jobdata['keywords'])) {
             $res['text_keywords'] = $this->get_array_as_string($jobdata['keywords']);
