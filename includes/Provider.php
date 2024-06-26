@@ -104,12 +104,18 @@ class Provider {
                     //        $res['unused-data'][$providername] = $provider['content'];
                 }
             } else {
-                $res['status'][$providername]['error'] = $provider['error'];
-                $res['status'][$providername]['code'] = $provider['code'];
+                if (isset($provider['error'])) {
+                    $res['status'][$providername]['error'] = $provider['error'];
+                }
+                if (isset($provider['code'])) {
+                    $res['status'][$providername]['code'] = $provider['code'];
+                }
                 if (isset($provider['params_given'])) {
                     $res['status'][$providername]['params_given'] = $provider['params_given'];
                 }
-                $res['status'][$providername]['content'] = $provider['content'];
+                if (isset($provider['content'])) {
+                    $res['status'][$providername]['content'] = $provider['content'];
+                }
 
             }
         }
