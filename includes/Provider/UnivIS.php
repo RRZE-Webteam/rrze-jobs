@@ -494,9 +494,26 @@ class UnivIS extends Provider {
 			// Die Einleitung geht in ein die employerOverview
 			// https://schema.org/employerOverview
 
-			$res['employerOverview'] = $jobdata['desc5'];
+			$searchItems = [
+                'ein',
+                'eine',
+                'einen',
+                'eine(n)',
+                'eine/n',
+                'einer',
+                'eines',
+                'einer/s',
+                'mehrere'
+            ];
+            foreach ($searchItems as $searchItem) {
+                if (str_ends_with($jobdata['desc5'], $searchItem.'</p>')) {
+                    $jobdata['desc5'] = str_replace($searchItem.'</p>', $searchItem . ' <br /><strong>' . $jobdata['title'] . '</strong>.</p>', $jobdata['desc5']);
+                    break;
+                }
+            }
+            $res['employerOverview'] = $jobdata['desc5'];
 
-		}
+        }
 
 		return $res;
 	}
