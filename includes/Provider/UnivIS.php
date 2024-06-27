@@ -503,11 +503,13 @@ class UnivIS extends Provider {
                 'einer',
                 'eines',
                 'einer/s',
-                'mehrere'
+                'mehrere',
+                'als',
+                'sucht'
             ];
             foreach ($searchItems as $searchItem) {
                 if (str_ends_with($jobdata['desc5'], $searchItem.'</p>')) {
-                    $jobdata['desc5'] = str_replace($searchItem.'</p>', $searchItem . ' <br /><strong>' . $jobdata['title'] . '</strong>.</p>', $jobdata['desc5']);
+                    $jobdata['desc5'] = str_replace($searchItem.'</p>', $searchItem . ' <strong>' . $jobdata['title'] . '</strong>.</p>', $jobdata['desc5']);
                     break;
                 }
             }
