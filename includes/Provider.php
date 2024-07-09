@@ -760,29 +760,35 @@ class Provider {
                 $res = 'wiss';
                 break;
             case 'verw':
-            case 'tech':
             case 'pflege':
             case 'arb':
             case 'n-wiss':
                 $res = 'n-wiss';
                 break;
             case 'azubi':
-                $res = 'azubi';
+                $res = 'azubi'; // UnivIS + B-ITE
                 break;
-
             case 'hiwi':
-                $res = 'hiwi';
+                $res = 'hiwi'; // UnivIS + B-ITE
                 break;
             case 'prof':
                 $res = 'prof';
                 break;
+            case 'postdoc':
+            case 'promo':
+            case 'unimgt':
+            case 'it':
+            case 'tech':
+            case 'prak':
+            case 'studjobs':
+                // neue B-ITE-Gruppen
+                $res = $group;
+                break;
+            default:
             case 'aush':
             case 'other':
                 $res = 'other';
                 break;
-
-            default:
-                $res = '';
         }
 
         return $res;
