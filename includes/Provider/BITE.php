@@ -225,7 +225,7 @@ class BITE extends Provider {
             $res['jobBenefits'] = $jobdata['custom']['angebot'];
         }
         if (!empty($jobdata['custom']['wir_bieten'])) {
-            $res['jobBenefits'] .= $jobdata['custom']['wir_bieten'];
+            $res['jobBenefits'] = isset($res['jobBenefits']) ? $res['jobBenefits'] . $jobdata['custom']['wir_bieten'] : $jobdata['custom']['wir_bieten'];
         }
 
         
