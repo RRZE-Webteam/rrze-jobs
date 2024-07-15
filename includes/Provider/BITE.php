@@ -162,6 +162,7 @@ class BITE extends Provider {
                $res['description'] = $jobdata['custom']['03_aufgaben_profil'];
             }
             // disambiguatingDescription
+            $res['disambiguatingDescription'] = '';
             if (!empty($jobdata['custom']['interessiert'])) {
                 $res['disambiguatingDescription'] = $jobdata['custom']['interessiert'];
             }
@@ -192,6 +193,7 @@ class BITE extends Provider {
                 $res['disambiguatingDescription'] = $jobdata['custom']['stellenzusatz'];
             }
 
+            $res['qualifications'] = '';
             if (!empty($jobdata['custom']['profil'])) {
                 if (!empty($jobdata['custom']['job_experience']) || !empty($jobdata['custom']['job_qualifications_nth'])){
                     $res['qualifications'] = '<p><strong>{{=const.title_qualifications_required}}:</strong></p>';
