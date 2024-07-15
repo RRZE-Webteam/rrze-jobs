@@ -505,7 +505,9 @@ class UnivIS extends Provider {
                 'einer/s',
                 'mehrere',
                 'als',
-                'sucht'
+                'sucht',
+                ' a',
+                ' an'
             ];
             foreach ($searchItems as $searchItem) {
                 if (str_ends_with($jobdata['desc5'], $searchItem.'</p>')) {
