@@ -48,20 +48,19 @@
 
 			<p>{{const.title_releasedate}}<em>{{=const.title_releasedate}}: {{=releaseDate}}</em>{{/const.title_releasedate}}{{pdfLinkUrl}}, <a href="{{=pdfLinkUrl}}">{{=pdfLinkText}}</a>{{/pdfLinkUrl}}</p>
 		</article>
-		<aside aria-label="{{=const.title_keyfacts}}">
 
+		<aside aria-label="{{=const.title_keyfacts}}">
 			<p>
 				{{applicationContact.url}}
-				<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
+					<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button}}</span></a>
 				{{:applicationContact.url}}
-				{{applicationContact.email}}
-				<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}" id="apply"><span>{{=const.title_application_button}}</span></a>
-				{{:applicationContact.email}}
-
-				{{applicationContact.description}}
-				<strong>{{=applicationContact.description}}</strong>
-				{{/applicationContact.description}}
-				{{/applicationContact.email}}
+					{{applicationContact.email}}
+					<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button}}</span></a>
+					{{:applicationContact.email}}
+						{{applicationContact.description}}
+							<strong>{{=applicationContact.description}}</strong>
+						{{/applicationContact.description}}
+					{{/applicationContact.email}}
 				{{/applicationContact.url}}
 			</p>
 			<p class="notice-validThrough">

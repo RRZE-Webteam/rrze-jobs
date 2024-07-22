@@ -662,15 +662,22 @@ class Provider {
     }
 
     // create the url for apply
-    public function get_apply_url($data, $fallback = '')
+    public function get_apply_url($data, $fallback = '', $defaultSubject = '')
     {
 
         if ((isset($data['applicationContact']['url'])) && (!empty($data['applicationContact']['url']))) {
             return $data['applicationContact']['url'];
         } elseif ((isset($data['applicationContact']['email'])) && (!empty($data['applicationContact']['email']))) {
             $mailadr = $data['applicationContact']['email'];
-            if ((isset($data['applicationContact']['email_subject'])) && (!empty($data['applicationContact']['email_subject']))) {
-                $mailadr .= '?subject=' . $data['applicationContact']['email_subject'];
+            if ($defaultSubject != '' || !empty($data['applicationContact']['email_subject'])) {
+                $subjects = [];
+                if ($defaultSubject != '') {
+                    $subjects[] = sanitize_text_field($defaultSubject);
+                }
+                if (!empty($data['applicationContact']['email_subject'])) {
+                    $subjects[] = $data['applicationContact']['email_subject'];
+                }
+                $mailadr .= '?subject=' . implode(' ', $subjects);
             }
 
             return 'mailto:' . $mailadr;

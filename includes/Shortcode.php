@@ -95,6 +95,7 @@ class Shortcode {
             'orderby',
             'order',
             'fallback_apply',
+            'default_subject',
             'link_only',
             'category',
             'fauorg',
@@ -160,6 +161,7 @@ class Shortcode {
         //    $output_format = (!empty($atts['format']) ? sanitize_text_field($atts['format']) : (!empty($_GET['format']) ? sanitize_text_field($_GET['format']) : 'default'));
 
         $fallback_apply = (!empty($atts['fallback_apply']) ? sanitize_text_field($atts['fallback_apply']) : '');
+        $default_subject = (!empty($atts['default_subject']) ? sanitize_text_field($atts['default_subject']) : '');
         // TODO: check if Mailadress or URL
         // If Mail, check if there is a subject we can add, depending of job
 
@@ -308,7 +310,7 @@ class Shortcode {
                         $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
-                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
+                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply, $default_subject);
 
                         $data = self::ParseDataVars($data);
                         $content .= Template::getContent($template, $data);
@@ -381,7 +383,7 @@ class Shortcode {
                         $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
-                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply);
+                        $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply, $default_subject);
 
                         $data = self::ParseDataVars($data);
 
