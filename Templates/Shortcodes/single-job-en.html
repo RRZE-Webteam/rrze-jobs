@@ -75,8 +75,9 @@
 					<td itemprop="title">{{=title}}</td>
 				</tr>
 				{{jobStartDate}}
-				<th>{{=const.title_jobStartDate_en}}</th>
-				<td itemprop="jobStartDate">{{=jobStartDate}}</td>
+				<tr>
+					<th>{{=const.title_jobStartDate_en}}</th>
+					<td itemprop="jobStartDate">{{=jobStartDate}}</td>
 				</tr>
 				{{/jobStartDate}}
 				<tr>
@@ -99,14 +100,15 @@
 					</td>
 				</tr>
 				{{estimatedSalary.stringvalue}}
-				<th>{{=const.title_payment_en}}</th>
-				<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
-					<meta itemprop="currency" content="EUR">
-					<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
-						<meta itemprop="uniText" content="MONTH">
-						<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
-					</span>
-				</td>
+				<tr>
+					<th>{{=const.title_payment_en}}</th>
+					<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
+						<meta itemprop="currency" content="EUR">
+						<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
+							<meta itemprop="uniText" content="MONTH">
+							<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
+						</span>
+					</td>
 				</tr>
 				{{/estimatedSalary.stringvalue}}
 				{{text_workingtime}}
