@@ -6,7 +6,7 @@ import ServerSideRender from '@wordpress/server-side-render';
 import metadata from './block.json'; // Import block.json metadata
 
 export default function Edit({ attributes, setAttributes }) {
-    const { provider, orgids, jobid, limit, orderby, order, fallback_apply, link_only, category, fauorg } = attributes;
+    const { provider, orgids, jobid, limit, orderby, order, fallback_apply, default_subject, link_only, category, fauorg } = attributes;
     const blockProps = useBlockProps();
 
     // Initialize attributes with default values from block.json
@@ -46,6 +46,10 @@ export default function Edit({ attributes, setAttributes }) {
 
     const onFallbackApplyChange = (newFallbackApply) => {
         setAttributes({ fallback_apply: newFallbackApply });
+    };
+
+    const onDefaultSubjectChange = (newDefaultSubject) => {
+        setAttributes({ default_subject: newDefaultSubject });
     };
 
     const onLinkOnlyChange = (newLinkOnly) => {
@@ -115,6 +119,11 @@ export default function Edit({ attributes, setAttributes }) {
                         label={__('Default application link')}
                         value={fallback_apply}
                         onChange={onFallbackApplyChange}
+                    />
+                    <TextControl
+                        label={__('Default application email subject')}
+                        value={default_subject}
+                        onChange={onDefaultSubjectChange}
                     />
                     <ToggleControl
                         label={__('Show only links to BITE')}

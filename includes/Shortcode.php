@@ -31,6 +31,7 @@ class Shortcode {
     private $order;
     private $internal = 'exclude';
     private $fallback_apply = '';
+    private $default_subject = '';
     private $link_only;
     private $category;
     private $fauorg;
