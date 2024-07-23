@@ -78,6 +78,13 @@ function getShortcodeSettings() {
             'label' => __('Default application link', 'rrze-jobs'),
             'type' => 'string',
         ],
+        'default_subject' => [
+            'field_type' => 'text',
+            'values' => '',
+            'default' => '',
+            'label' => __('Default application email subject', 'rrze-jobs'),
+            'type' => 'string',
+        ],
         'link_only' => [
             'field_type' => 'toggle',
             'label' => __('Show only links to BITE', 'rrze-univis'),
