@@ -52,16 +52,15 @@
 
 			<p>
 				{{applicationContact.url}}
-				<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button_en}}</span></a>
+					<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button}}</span></a>
 				{{:applicationContact.url}}
-				{{applicationContact.email}}
-				<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}" id="apply-en"><span>{{=const.title_application_button_en}}</span></a>
-				{{:applicationContact.email}}
-
-				{{applicationContact.description}}
-				<strong>{{=applicationContact.description}}</strong>
-				{{/applicationContact.description}}
-				{{/applicationContact.email}}
+					{{applicationContact.email}}
+						<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button}}</span></a>
+					{{:applicationContact.email}}
+						{{applicationContact.description}}
+							<strong>{{=applicationContact.description}}</strong>
+						{{/applicationContact.description}}
+					{{/applicationContact.email}}
 				{{/applicationContact.url}}
 			</p>
 			<p class="notice-validThrough">
@@ -75,8 +74,9 @@
 					<td itemprop="title">{{=title}}</td>
 				</tr>
 				{{jobStartDate}}
-				<th>{{=const.title_jobStartDate_en}}</th>
-				<td itemprop="jobStartDate">{{=jobStartDate}}</td>
+				<tr>
+					<th>{{=const.title_jobStartDate_en}}</th>
+					<td itemprop="jobStartDate">{{=jobStartDate}}</td>
 				</tr>
 				{{/jobStartDate}}
 				<tr>
@@ -99,14 +99,15 @@
 					</td>
 				</tr>
 				{{estimatedSalary.stringvalue}}
-				<th>{{=const.title_payment_en}}</th>
-				<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
-					<meta itemprop="currency" content="EUR">
-					<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
-						<meta itemprop="uniText" content="MONTH">
-						<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
-					</span>
-				</td>
+				<tr>
+					<th>{{=const.title_payment_en}}</th>
+					<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
+						<meta itemprop="currency" content="EUR">
+						<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
+							<meta itemprop="uniText" content="MONTH">
+							<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
+						</span>
+					</td>
 				</tr>
 				{{/estimatedSalary.stringvalue}}
 				{{text_workingtime}}
