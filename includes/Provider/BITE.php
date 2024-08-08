@@ -609,11 +609,16 @@ class BITE extends Provider {
             }
         }
 
-        if (isset($jobdata['custom']['befristung']) && ($jobdata['custom']['befristung'] == true)) {
-            if ((!empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
-                $res['text_befristet'] = __('Temporary employment', 'rrze-jobs') . ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
+        if (isset($jobdata['custom']['befristung'])) {
+            if ($jobdata['custom']['befristung'] == TRUE) {
+                $res['text_befristet'] = __('Temporary employment', 'rrze-jobs');
+                if (( ! empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
+                    $res['text_befristet'] .= ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
+                }
+                $typeliste[] = 'TEMPORARY';
+            } elseif ($jobdata['custom']['befristung'] == FALSE) {
+                $res['text_befristet'] = __('Permanent employment', 'rrze-jobs');
             }
-            $typeliste[] = 'TEMPORARY';
         }
 
         $res['employmentType'] = $typeliste;
