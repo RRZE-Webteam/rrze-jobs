@@ -4,7 +4,7 @@
 Plugin Name:     RRZE Jobs
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 Description:     Embedding job offers from job portal apis via shortcode
-Version:         3.9.14
+Version:         3.9.15
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v3
@@ -58,6 +58,7 @@ register_activation_hook(__FILE__, __NAMESPACE__ . '\activation');
 register_deactivation_hook(__FILE__, __NAMESPACE__ . '\deactivation');
 // Wird aufgerufen, sobald alle aktivierten Plugins geladen wurden.
 add_action('plugins_loaded', __NAMESPACE__ . '\loaded');
+add_action('init', __NAMESPACE__ . '\init');
 
 /**
  * Einbindung der Sprachdateien.
@@ -100,6 +101,10 @@ function activation() {
     // Bspw. wp_schedule_event, flush_rewrite_rules, etc.
 }
 
+function init() {
+    load_textdomain();
+}
+
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
  */
@@ -135,7 +140,6 @@ function rrze_jobs_init()
  */
 function loaded() {
     // Sprachdateien werden eingebunden.
-    load_textdomain();
     plugin()->loaded();
     // Überprüft die minimal erforderliche PHP- u. WP-Version.
     if ($error = system_requirements()) {
