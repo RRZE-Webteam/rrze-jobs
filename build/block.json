@@ -2,7 +2,7 @@
   "$schema": "https://schemas.wp.org/trunk/block.json",
   "apiVersion": 3,
   "name": "create-block/rrze-jobs",
-  "version": "3.9.15",
+  "version": "3.9.14",
   "title": "Jobs RRZE",
   "description": "A block to show job offers.",
   "category": "widgets",
