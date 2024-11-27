@@ -388,7 +388,7 @@ class Shortcode {
 
                         $data = self::ParseDataVars($data);
 
-                        $templateSub = (isset($data['employerWorkplace']) ? '-bite' : '');
+                        $templateSub = ((isset($data['provider']) && $data['provider'] == 'BITE') ? '-bite' : '');
                         $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single'.$templateSub.'.html';
 
                         if ($link_only) {
