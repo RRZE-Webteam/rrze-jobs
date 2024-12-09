@@ -1037,7 +1037,7 @@ class BITE extends Provider {
     
     
     /*
-     Prüft ob es bei der BITE Installation einen custom value zur Freigabe 
+     Prüft, ob es bei der BITE Installation einen custom value zur Freigabe
      gibt und ob der Beitrag danach öffentlich sein darf. 
      Neu aus Anforderung P ab 20231207, WW
     
@@ -1058,13 +1058,18 @@ class BITE extends Provider {
     
     private function is_public_by_custom_status($statusval) {
         
-        return true;
+        //return true;
         
         // Nach Besprechung am 11.12.2023 werden erst noch 
         // Dinge geklärt, bevor wir das aktivieren.
         // Daher erstmal hier nur "true" als Antwort.
         // - WW
-        
+
+        // Nach Unstimmigkeiten in der Bedienung von B-ITE
+        // am 09.12.2024 wieder aktiviert (vgl.
+        // https://www.helpdesk.rrze.fau.de/otrs/index.pl?Action=AgentTicketZoom&TicketID=1273163#Article4308730)
+        // - BB
+
         if (isset($statusval)) {
             $statusval = intval($statusval);
             

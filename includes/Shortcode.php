@@ -358,7 +358,10 @@ class Shortcode {
                             }
                         }
 
-                        if ((!empty($search_fauorg)) && (!empty($data['hiringOrganization']['fauorg']))) {
+                        if (!empty($search_fauorg)) {
+                            if (empty($data['hiringOrganization']['fauorg'])) {
+                                continue;
+                            }
                             $fauorg = $data['hiringOrganization']['fauorg'];
                             if ($search_fauorg !== $fauorg) {
                                 continue;
@@ -388,7 +391,7 @@ class Shortcode {
 
                         $data = self::ParseDataVars($data);
 
-                        $templateSub = (isset($data['employerWorkplace']) ? '-bite' : '');
+                        $templateSub = ((isset($data['provider']) && $data['provider'] == 'BITE') ? '-bite' : '');
                         $template = plugin()->getPath() . 'Templates/Shortcodes/joblist-single'.$templateSub.'.html';
 
                         if ($link_only) {
