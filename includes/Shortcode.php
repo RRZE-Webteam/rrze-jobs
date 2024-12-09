@@ -358,7 +358,10 @@ class Shortcode {
                             }
                         }
 
-                        if ((!empty($search_fauorg)) && (!empty($data['hiringOrganization']['fauorg']))) {
+                        if (!empty($search_fauorg)) {
+                            if (empty($data['hiringOrganization']['fauorg'])) {
+                                continue;
+                            }
                             $fauorg = $data['hiringOrganization']['fauorg'];
                             if ($search_fauorg !== $fauorg) {
                                 continue;
