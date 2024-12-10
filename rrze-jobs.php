@@ -93,7 +93,7 @@ function activation() {
     // Wenn die Überprüfung fehlschlägt, dann wird das Plugin automatisch deaktiviert.
     if ($error = system_requirements()) {
         deactivate_plugins(plugin_basename(__FILE__), false, true);
-        wp_die(esc_html($error));
+        wp_die(wp_kses_post($error));
     }
 
     // Ab hier können die Funktionen hinzugefügt werden,
