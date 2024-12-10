@@ -43,7 +43,7 @@ class Debug {
 
     public static function get_html_uri_encoded($uri_string) {
          // Extrahiere den Query String aus der URL
-        $query_string = parse_url($uri_string, PHP_URL_QUERY);
+        $query_string = wp_parse_url($uri_string, PHP_URL_QUERY);
 
         // Splitten des Query Strings nach den &-Zeichen und Umwandlung in ein Array
         $params = explode('&', $query_string);
@@ -170,7 +170,7 @@ class Debug {
                             $output .=  $type . ($type_length !== null ? "(" . $type_length . ")" : "")."\n";
 
                         } else {
-                            $id = substr(md5(rand().":".$key.":".$level), 0, 8);
+                            $id = substr(md5(wp_rand().":".$key.":".$level), 0, 8);
                             $output .=  '<div class="dump_debug">';
                             $output .=  "<a href=\"javascript:toggleDisplay('". $id ."');\" style=\"text-decoration:none\">";
                             $output .=  "<strong style='color:blue'>" . $type . ($type_length !== null ? "(" . $type_length . ")" : "") . "</strong>";
@@ -294,7 +294,7 @@ class Debug {
             }
             
             $msg .= ' execTime: ' . sprintf('%.2f', microtime(true) - $tsStart) . ' s';
-            echo '<script>console.log(' . json_encode($msg, JSON_HEX_TAG) . ');</script>';
+            echo '<script>console.log(' . wp_json_encode($msg, JSON_HEX_TAG) . ');</script>';
         }
     }
     
@@ -304,7 +304,7 @@ class Debug {
         $pre = __NAMESPACE__ . ' ' . $method . '() : ';
         if ($logType == 'DB') {
             global $wpdb;
-            do_action('rrze.log.error', $pre . '$wpdb->last_result= ' . json_encode($wpdb->last_result) . '| $wpdb->last_query= ' . json_encode($wpdb->last_query . '| $wpdb->last_error= ' . json_encode($wpdb->last_error)));
+            do_action('rrze.log.error', $pre . '$wpdb->last_result= ' . wp_json_encode($wpdb->last_result) . '| $wpdb->last_query= ' . wp_json_encode($wpdb->last_query . '| $wpdb->last_error= ' . wp_json_encode($wpdb->last_error)));
         } else {
             do_action('rrze.log.' . $logType, __NAMESPACE__ . ' ' . $method . '() : ' . $msg);
         }

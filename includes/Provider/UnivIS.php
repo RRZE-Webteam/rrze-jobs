@@ -416,10 +416,10 @@ class UnivIS extends Provider {
 		if ($jobdata['start'] == "-1") {
 			$res['jobImmediateStart'] = true;
 			$res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
-			$res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+			$res['jobStartDateSort'] = gmdate('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
 		} else {
 			$res['jobStartDate'] = $jobdata['start'];
-			$res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+			$res['jobStartDateSort'] = gmdate('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
 		}
 
 
@@ -1325,13 +1325,13 @@ class UnivIS extends Provider {
 			// field might contain a date - if it contains a date, it must be in english format
 			if (preg_match("/\d{4}-\d{2}-\d{2}/", $start, $parts)) {
 				$res = $parts[0];
-				$res = date('d.m.Y', strtotime($res));
+				$res = gmdate('d.m.Y', strtotime($res));
 			} elseif (preg_match("/(\d{2}).(\d{2}).(\d{4})/", $start, $parts)) {
 				$res = $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-				$res = date('d.m.Y', strtotime($res));
+				$res = gmdate('d.m.Y', strtotime($res));
 			} elseif (preg_match("/(\d{2}).(\d{2}).(\d{2})\s*$/", $start, $parts)) {
 				$res = '20' . $parts[3] . '-' . $parts[2] . '-' . $parts[1];
-				$res = date('d.m.Y', strtotime($res));
+				$res = gmdate('d.m.Y', strtotime($res));
 
 			} else {
 				$res = sanitize_text_field($start);
@@ -1380,7 +1380,7 @@ class UnivIS extends Provider {
 			$res = "-1";
 		} else {
 			// Convert date 'job_start'
-			$res = date('d.m.Y', strtotime($res));
+			$res = gmdate('d.m.Y', strtotime($res));
 		}
 
 

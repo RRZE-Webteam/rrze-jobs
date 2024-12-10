@@ -311,7 +311,7 @@ class Settings {
 
         $html .= '</h2>' . PHP_EOL;
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -323,7 +323,7 @@ class Settings {
             if ($section['id'] != $this->currentTab) {
                 continue;
             }?>
-            <div id="<?php echo $section['id']; ?>">
+            <div id="<?php echo esc_html($section['id']); ?>">
                 <form method="post" action="options.php">
                     <?php settings_fields($section['id']);?>
                     <?php do_settings_sections($section['id']);?>
@@ -383,7 +383,7 @@ class Settings {
             if (isset($section['desc']) && !empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
                 $callback = function () use ($section) {
-                    echo str_replace('"', '\"', $section['desc']);
+                    echo esc_html(str_replace('"', '\"', $section['desc']));
                 };
             } elseif (isset($section['callback'])) {
                 $callback = $section['callback'];
@@ -521,7 +521,7 @@ class Settings {
         );
         $html .= '</fieldset>';
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -560,7 +560,7 @@ class Settings {
         $html .= $this->getFieldDescription($args);
         $html .= '</fieldset>';
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -584,7 +584,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -620,7 +620,7 @@ class Settings {
         $html .= $this->getFieldDescription($args);
         $html .= '</fieldset>';
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -646,7 +646,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -677,7 +677,7 @@ class Settings {
         $html .= sprintf('</select>');
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     /**
@@ -699,7 +699,7 @@ class Settings {
         $html = wp_dropdown_pages($select_args);
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     public function callbackPlaintext($args)
@@ -724,7 +724,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     public function callbackNumber($args)
@@ -743,7 +743,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     public function callbackEmail($args)
@@ -758,7 +758,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     public function callbackTextTranslation($args) {
@@ -792,7 +792,7 @@ class Settings {
         );
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 
     public function callbackTextareaTranslation($args) {
@@ -824,6 +824,6 @@ class Settings {
 
         $html .= $this->getFieldDescription($args);
 
-        echo $html;
+        echo esc_html($html);
     }
 }

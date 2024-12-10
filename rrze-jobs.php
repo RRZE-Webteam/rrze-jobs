@@ -8,7 +8,7 @@ Version:         3.10.0
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v3
-License URI:     http://www.gnu.org/licenses/gpl-2.0.html
+License URI:     https://www.gnu.org/licenses/gpl-3.0.html
 Text Domain:     rrze-jobs
  */
 
@@ -30,7 +30,7 @@ use RRZE\Jobs\Main;
 
 const RRZE_PHP_VERSION = '8.0';
 const RRZE_WP_VERSION = '6.0';
-const RRZE_TEXTDOMAIN = 'rrze-jobs';
+const RRZE_JOBS_PLUGIN_VERSION = '3.10.0';
 const RRZE_PLUGIN_FILE = __FILE__;
 
 // Automatische Laden von Klassen.
@@ -73,10 +73,10 @@ function load_textdomain() {
 function system_requirements() {
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
-        /* Übersetzer: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version */
+        /* Translators: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version */
         $error = sprintf(__('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-jobs'), PHP_VERSION, RRZE_PHP_VERSION);
     } elseif (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
-        /* Übersetzer: 1: aktuelle WP-Version, 2: erforderliche WP-Version */
+        /* Translators: 1: aktuelle WP-Version, 2: erforderliche WP-Version */
         $error = sprintf(__('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-jobs'), $GLOBALS['wp_version'], RRZE_WP_VERSION);
     }
     return $error;
@@ -93,7 +93,7 @@ function activation() {
     // Wenn die Überprüfung fehlschlägt, dann wird das Plugin automatisch deaktiviert.
     if ($error = system_requirements()) {
         deactivate_plugins(plugin_basename(__FILE__), false, true);
-        wp_die($error);
+        wp_die(esc_html($error));
     }
 
     // Ab hier können die Funktionen hinzugefügt werden,

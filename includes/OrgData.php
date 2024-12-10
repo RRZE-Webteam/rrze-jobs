@@ -10,7 +10,6 @@ namespace RRZE\Jobs;
 use function RRZE\Jobs\Config\getConstants;
 
 defined('ABSPATH') || exit;
-// const RRZE_TEXTDOMAIN = 'rrze-jobs';
 
 class OrgData {
     
@@ -104,161 +103,161 @@ class OrgData {
             '0000000000' => array(
                 'title'		=> 'Friedrich-Alexander-Universität',
                 'shorttitle'	=> 'FAU',
-                'url'		=> __('https://www.fau.de', RRZE_TEXTDOMAIN)
+                'url'		=> __('https://www.fau.de', 'rrze-jobs')
             ),
             '1005000000' => array(
-                'title'	    => __('Zentrale Universitätsverwaltung', RRZE_TEXTDOMAIN),
+                'title'	    => __('Zentrale Universitätsverwaltung', 'rrze-jobs'),
                 'shorttitle'    => 'ZUV',
                 'parent'    => '0000000000'
             ),
              '1011000000'	=> array(
-                'title'	=> __('Zentrale Einrichtungen', RRZE_TEXTDOMAIN),
+                'title'	=> __('Zentrale Einrichtungen', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'hide'	    => true,
             ),
             '1011110000' => array(
-                'title'	    => __('Universitätsbibliothek', RRZE_TEXTDOMAIN),
+                'title'	    => __('Universitätsbibliothek', 'rrze-jobs'),
                 'shorttitle'    => 'UB',
-                'url'	    => __('https://ub.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://ub.fau.de', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
              '1011120000' => array(
-                'title'	    => __('Regionales Rechenzentrum Erlangen', RRZE_TEXTDOMAIN),
+                'title'	    => __('Regionales Rechenzentrum Erlangen', 'rrze-jobs'),
                 'shorttitle'    => 'RRZE',
-                'url'	    => __('https://rrze.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://rrze.fau.de', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
              '1011130000' => array(
-                'title'	    => __('Zentralinstitut für Regionenforschung', RRZE_TEXTDOMAIN),
+                'title'	    => __('Zentralinstitut für Regionenforschung', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
             '1011200000' => array(
-                'title'	    => __('Graduiertenzentrum der FAU', RRZE_TEXTDOMAIN),
+                'title'	    => __('Graduiertenzentrum der FAU', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
              '1011290000' => array(
-                'title'	    => __('Zentrum für Lehr-/Lernforschung, -innovation und Transfer', RRZE_TEXTDOMAIN),
+                'title'	    => __('Zentrum für Lehr-/Lernforschung, -innovation und Transfer', 'rrze-jobs'),
                 'shorttitle'    => 'ZeLLIT',
                 'parent'    => '1011000000'
             ),
              '1011320000' => array(
-                'title'	    => __('FAU Forschungszentren', RRZE_TEXTDOMAIN),
+                'title'	    => __('FAU Forschungszentren', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
             '1011330000' => array(
-                'title'	    => __('FAU Kompetenzzentren', RRZE_TEXTDOMAIN),
+                'title'	    => __('FAU Kompetenzzentren', 'rrze-jobs'),
                 'parent'    => '1011000000'
             ),
             '1013000000'	=> array(
-                'title'	=> __('Interdisziplinäre Zentren', RRZE_TEXTDOMAIN),
+                'title'	=> __('Interdisziplinäre Zentren', 'rrze-jobs'),
                 'parent'    => '0000000000',
             ),
              '1014000000'	=> array(
-                'title'	=> __('Museen und Sammlungen', RRZE_TEXTDOMAIN),
+                'title'	=> __('Museen und Sammlungen', 'rrze-jobs'),
                 'parent'    => '0000000000',
             ),
             '1015000000'	=> array(
-                'title'	=> __('DFG-Sonderforschungsbereiche/ Transregios/Transferbereiche', RRZE_TEXTDOMAIN),
+                'title'	=> __('DFG-Sonderforschungsbereiche/ Transregios/Transferbereiche', 'rrze-jobs'),
                 'parent'    => '0000000000',
             ),
             '1016000000'	=> array(
-                'title'	=> __('DFG-Graduiertenkollegs', RRZE_TEXTDOMAIN),
+                'title'	=> __('DFG-Graduiertenkollegs', 'rrze-jobs'),
                 'parent'    => '0000000000',
             ),
             '1040000000'	=> array(
-                'title'	=> __('Zentrale Serviceeinrichtungen', RRZE_TEXTDOMAIN),
+                'title'	=> __('Zentrale Serviceeinrichtungen', 'rrze-jobs'),
                 'parent'    => '0000000000',
             ),
             '1100000000' => array(
-                'title'	    => __('Philosophische Fakultät und Fachbereich Theologie', RRZE_TEXTDOMAIN),
+                'title'	    => __('Philosophische Fakultät und Fachbereich Theologie', 'rrze-jobs'),
                 'shorttitle'    => 'Phil',
-                'url'	    => __('https://phil.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://phil.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'phil',
                 'faculty'   => 'phil'
             ),
             '1111000000' => array(
-                'title'	    => __('Department Alte Welt und Asiatische Kulturen', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Alte Welt und Asiatische Kulturen', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1112000000' => array(
-                'title'	    => __('Department Anglistik/Amerikanistik und Romanistik', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Anglistik/Amerikanistik und Romanistik', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1113000000' => array(
-                'title'	    => __('Department Fachdidaktiken', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.fachdidaktiken.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Fachdidaktiken', 'rrze-jobs'),
+                'url'	    => __('https://www.fachdidaktiken.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1114000000' => array(
-                'title'	    => __('Department Germanistik und Komparatistik', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.germanistik.phil.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Germanistik und Komparatistik', 'rrze-jobs'),
+                'url'	    => __('https://www.germanistik.phil.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1115000000' => array(
-                'title'	    => __('Department Geschichte', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.geschichte.phil.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Geschichte', 'rrze-jobs'),
+                'url'	    => __('https://www.geschichte.phil.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1116000000' => array(
-                'title'	    => __('Department Medienwissenschaften und Kunstgeschichte', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Medienwissenschaften und Kunstgeschichte', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1117000000' => array(
-                'title'	    => __('Department Pädagogik', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.department-paedagogik.phil.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Pädagogik', 'rrze-jobs'),
+                'url'	    => __('https://www.department-paedagogik.phil.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1118000000' => array(
-                'title'	    => __('Department Psychologie', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Psychologie', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1119000000' => array(
-                'title'	    => __('Department Sozialwissenschaften und Philosophie', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Sozialwissenschaften und Philosophie', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1120000000' => array(
-                'title'	    => __('Fachbereich Theologie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.theologie.fau.de', RRZE_TEXTDOMAIN),
+                'title'	    => __('Fachbereich Theologie', 'rrze-jobs'),
+                'url'	    => __('https://www.theologie.fau.de', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
              '1121000000' => array(
-                'title'	    => __('Department Islamisch-Religiöse Studien', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.dirs.phil.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Islamisch-Religiöse Studien', 'rrze-jobs'),
+                'url'	    => __('https://www.dirs.phil.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1122000000' => array(
-                'title'	    => __('Department Sportwissenschaft und Sport', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.sport.fau.de', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Sportwissenschaft und Sport', 'rrze-jobs'),
+                'url'	    => __('https://www.sport.fau.de', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
             '1123000000' => array(
-                'title'	    => __('Department Digital Humanities and Social Studies', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.dhss.phil.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Digital Humanities and Social Studies', 'rrze-jobs'),
+                'url'	    => __('https://www.dhss.phil.fau.de/', 'rrze-jobs'),
                 'parent'    => '1100000000'
             ),
 
 
             '1200000000' => array(
-                'title'	    => __('Rechts- und Wirtschaftswissenschaftliche Fakultät', RRZE_TEXTDOMAIN),
+                'title'	    => __('Rechts- und Wirtschaftswissenschaftliche Fakultät', 'rrze-jobs'),
                 'shorttitle'    => 'RW',
-                'url'	    => __('https://rw.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://rw.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'rw',
                 'faculty'   => 'rw'
             ),
             '1211000000' => array(
-                'title'	    => __('Fachbereich Rechtswissenschaft', RRZE_TEXTDOMAIN),
-                'shorttitle'    => __('FB Rechtsw.', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://jura.rw.fau.de', RRZE_TEXTDOMAIN),
+                'title'	    => __('Fachbereich Rechtswissenschaft', 'rrze-jobs'),
+                'shorttitle'    => __('FB Rechtsw.', 'rrze-jobs'),
+                'url'	    => __('https://jura.rw.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'rw',
                 'faculty'   => 'rw'
             ),
             '1212000000' => array(
-                'title'	    => __('Fachbereich Wirtschafts- und Sozialwissenschaften', RRZE_TEXTDOMAIN),
+                'title'	    => __('Fachbereich Wirtschafts- und Sozialwissenschaften', 'rrze-jobs'),
                 'shorttitle'    => 'FB WiSo',
-                'url'	    => __('https://wiso.rw.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://wiso.rw.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'rw',
                 'faculty'   => 'rw'
@@ -266,157 +265,157 @@ class OrgData {
 
 
             '1300000000' => array(
-                'title'	    => __('Medizinische Fakultät', RRZE_TEXTDOMAIN),
+                'title'	    => __('Medizinische Fakultät', 'rrze-jobs'),
                 'shorttitle'    => 'Med', 
-                'url'	    => __('https://med.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://med.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'med',
                 'faculty'   => 'med'
             ),
             '1311000000' => array(
-                'title'	    => __('Einrichtungen, die nicht zum Universitätsklinikum Erlangen gehören', RRZE_TEXTDOMAIN),
+                'title'	    => __('Einrichtungen, die nicht zum Universitätsklinikum Erlangen gehören', 'rrze-jobs'),
                 'parent'    => '1300000000',
                 'hide'	    => true,
             ),
             '1311110000' => array(
-                'title'	    => __('Institut für Anatomie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.anatomie.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Anatomie', 'rrze-jobs'),
+                'url'	    => __('https://www.anatomie.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311120000' => array(
-                'title'	    => __('Institut für Physiologie und Pathophysiologie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.physiologie1.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Physiologie und Pathophysiologie', 'rrze-jobs'),
+                'url'	    => __('https://www.physiologie1.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311130000' => array(
-                'title'	    => __('Institut für Zelluläre und Molekulare Physiologie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.physiologie2.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Zelluläre und Molekulare Physiologie', 'rrze-jobs'),
+                'url'	    => __('https://www.physiologie2.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311140000' => array(
-                'title'	    => __('Institut für Biochemie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.biochemie.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Biochemie', 'rrze-jobs'),
+                'url'	    => __('https://www.biochemie.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311310000' => array(
-                'title'	    => __('Institut für Medizininformatik, Biometrie und Epidemiologie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.imbe.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Medizininformatik, Biometrie und Epidemiologie', 'rrze-jobs'),
+                'url'	    => __('https://www.imbe.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311320000' => array(
-                'title'	    => __('Institut für Geschichte und Ethik der Medizin', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.igem.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Geschichte und Ethik der Medizin', 'rrze-jobs'),
+                'url'	    => __('https://www.igem.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311330000' => array(
-                'title'	    => __('Institut für Rechtsmedizin', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.recht.med.uni-erlangen.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Rechtsmedizin', 'rrze-jobs'),
+                'url'	    => __('https://www.recht.med.uni-erlangen.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311340000' => array(
-                'title'	    => __('Institut für Experimentelle und Klinische Pharmakologie und Toxikologie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.pharmakologie.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Experimentelle und Klinische Pharmakologie und Toxikologie', 'rrze-jobs'),
+                'url'	    => __('https://www.pharmakologie.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311350000' => array(
-                'title'	    => __('Institut und Poliklinik für Arbeits-, Sozial- und Umweltmedizin', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.ipasum.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut und Poliklinik für Arbeits-, Sozial- und Umweltmedizin', 'rrze-jobs'),
+                'url'	    => __('https://www.ipasum.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311360000' => array(
-                'title'	    => __('Institut für Biomedizin des Alterns', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.iba.med.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Institut für Biomedizin des Alterns', 'rrze-jobs'),
+                'url'	    => __('https://www.iba.med.fau.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
             '1311370000' => array(
-                'title'	    => __('Klinisch-Molekularbiologisches Forschungszentrum', RRZE_TEXTDOMAIN),
-                'url'	    => __('http://www.molmed.uni-erlangen.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Klinisch-Molekularbiologisches Forschungszentrum', 'rrze-jobs'),
+                'url'	    => __('http://www.molmed.uni-erlangen.de/', 'rrze-jobs'),
                 'parent'	    => '1311000000'
             ),
 
 
 
             '1400000000' => array(
-                'title'	    => __('Naturwissenschaftliche Fakultät', RRZE_TEXTDOMAIN),
+                'title'	    => __('Naturwissenschaftliche Fakultät', 'rrze-jobs'),
                 'shorttitle'    => 'Nat', 
-                'url'	    => __('https://nat.fau.de', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://nat.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'nat',
                 'faculty'   => 'nat'
             ),
             '1411000000' => array(
-                'title'	    => __('Department Biologie', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Biologie', 'rrze-jobs'),
                 'shorttitle'    => 'Bio',
-                'url'	    => __('https://www.biologie.nat.fau.de/', RRZE_TEXTDOMAIN),
+                'url'	    => __('https://www.biologie.nat.fau.de/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
             '1412000000' => array(
-                'title'	    => __('Department Chemie und Pharmazie', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.chemie.nat.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Chemie und Pharmazie', 'rrze-jobs'),
+                'url'	    => __('https://www.chemie.nat.fau.de/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
             '1413000000' => array(
-                'title'	    => __('Department Geographie und Geowissenschaften', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.geo.nat.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Geographie und Geowissenschaften', 'rrze-jobs'),
+                'url'	    => __('https://www.geo.nat.fau.de/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
             '1414000000' => array(
-                'title'	    => __('Department Mathematik', RRZE_TEXTDOMAIN),
-                'url'	    => __('http://www.math.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Mathematik', 'rrze-jobs'),
+                'url'	    => __('http://www.math.fau.de/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
             '1415000000' => array(
-                'title'	    => __('Department Physik', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.physik.nat.fau.de/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department Physik', 'rrze-jobs'),
+                'url'	    => __('https://www.physik.nat.fau.de/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
              '1416000000' => array(
-                'title'	    => __('Department of Data Science', RRZE_TEXTDOMAIN),
-                'url'	    => __('https://www.datascience.nat.fau.eu/', RRZE_TEXTDOMAIN),
+                'title'	    => __('Department of Data Science', 'rrze-jobs'),
+                'url'	    => __('https://www.datascience.nat.fau.eu/', 'rrze-jobs'),
                 'parent'    => '1400000000'
             ),
 
 
             '1500000000' => array(
-                'title'         => __('Technische Fakultät', RRZE_TEXTDOMAIN),
+                'title'         => __('Technische Fakultät', 'rrze-jobs'),
                 'shorttitle'    =>  'TF', 
-                'url'           => __('https://tf.fau.de', RRZE_TEXTDOMAIN),
+                'url'           => __('https://tf.fau.de', 'rrze-jobs'),
                 'parent'    => '0000000000',
                 'class'	    => 'tf',
                 'faculty'   => 'tf'
             ),    
             '1511000000'   => array(
-                'title'          => __('Department Chemie- und Bioingenieurwesen', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Chemie- und Bioingenieurwesen', 'rrze-jobs'),
                 'shorttitle'     => 'CBI', 
-                'url'            => __('https://www.cbi.tf.fau.de/', RRZE_TEXTDOMAIN),
+                'url'            => __('https://www.cbi.tf.fau.de/', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ),
             '1512000000'   => array(
-                'title'          => __('Department Elektrotechnik-Elektronik-Informationstechnik', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Elektrotechnik-Elektronik-Informationstechnik', 'rrze-jobs'),
                 'shorttitle'     => 'EEI', 
-                'url'            => __('https://www.eei.tf.fau.de/', RRZE_TEXTDOMAIN),
+                'url'            => __('https://www.eei.tf.fau.de/', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ),
             '1513000000'   => array(
-                'title'          => __('Department Informatik', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Informatik', 'rrze-jobs'),
                 'shorttitle'     => 'CS',
-                'url'            => __('https://cs.fau.de/', RRZE_TEXTDOMAIN),
+                'url'            => __('https://cs.fau.de/', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ),
             '1514000000'   => array(
-                'title'          => __('Department Maschinenbau', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Maschinenbau', 'rrze-jobs'),
                 'shorttitle'     => 'MB', 
-                'url'            => __('https://www.department.mb.tf.fau.de/', RRZE_TEXTDOMAIN),
+                'url'            => __('https://www.department.mb.tf.fau.de/', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ),
             '1515000000'   => array(
-                'title'          => __('Department Werkstoffwissenschaften', RRZE_TEXTDOMAIN),
-                'url'            => __('https://www.ww.tf.fau.de', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Werkstoffwissenschaften', 'rrze-jobs'),
+                'url'            => __('https://www.ww.tf.fau.de', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ), 
             '1518000000'   => array(
-                'title'          => __('Department Artificial Intelligence in Biomedical Engineering', RRZE_TEXTDOMAIN),
-                'url'            => __('https://www.aibe.tf.fau.de/', RRZE_TEXTDOMAIN),
+                'title'          => __('Department Artificial Intelligence in Biomedical Engineering', 'rrze-jobs'),
+                'url'            => __('https://www.aibe.tf.fau.de/', 'rrze-jobs'),
                 'parent'    => '1500000000'
             ), 
 

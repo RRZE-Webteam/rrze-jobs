@@ -87,7 +87,7 @@ function getShortcodeSettings() {
         ],
         'link_only' => [
             'field_type' => 'toggle',
-            'label' => __('Show only links to BITE', 'rrze-univis'),
+            'label' => __('Show only links to BITE', 'rrze-jobs'),
             'type' => 'boolean',
             'default' => FALSE,
             'checked' => FALSE,
