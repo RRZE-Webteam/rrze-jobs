@@ -69,7 +69,7 @@ class Shortcode {
      * Enqueue der Skripte.
      */
     public function enqueue_scripts()  {
-        wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)));
+        wp_register_style('rrze-jobs-css', plugins_url('assets/css/rrze-jobs.css', plugin_basename(RRZE_PLUGIN_FILE)), [], RRZE_JOBS_PLUGIN_VERSION);
         if (file_exists(WP_PLUGIN_DIR . '/rrze-elements/assets/css/rrze-elements.css')) {
             wp_register_style('rrze-elements', plugins_url() . '/rrze-elements/assets/css/rrze-elements.css');
         }
@@ -230,8 +230,9 @@ class Shortcode {
         if (!empty(self::$options['rrze-jobs-access_orgids_interamt'])) {
             $params['Interamt']['get_list']['partner'] = self::$options['rrze-jobs-access_orgids_interamt'];
         }
-        if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
-            $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
+
+        if (!empty(Helper::getBiteApiKey())) {
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = Helper::getBiteApiKey();
         }
 
 
@@ -303,12 +304,12 @@ class Shortcode {
 
                         // convert output to German format BUT NOT the one from $positions->merge_positions() because FAU-Jobportal needs Y-m-d (in fact WordPress needs this to sort by meta_value)
                         if ($data['jobStartDate'] != 'So bald wie möglich.') {
-                            $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
+                            $data['jobStartDate'] = gmdate('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
-                        $data['datePosted'] = date('Y-m-d', strtotime($data['datePosted']));
-                        $data['releaseDate'] = date('d.m.Y', strtotime($data['datePosted']));
-                        $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
+                        $data['datePosted'] = gmdate('Y-m-d', strtotime($data['datePosted']));
+                        $data['releaseDate'] = gmdate('d.m.Y', strtotime($data['datePosted']));
+                        $data['validThrough_DE'] = gmdate('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply, $default_subject);
@@ -378,13 +379,13 @@ class Shortcode {
                         if (empty($data['jobStartDate'])) {
                             $data['jobStartDate'] = 'So bald wie möglich.';
                         } elseif ($data['jobStartDate'] != 'So bald wie möglich.') {
-                            $data['jobStartDate'] = date('d.m.Y', strtotime($data['jobStartDate']));
+                            $data['jobStartDate'] = gmdate('d.m.Y', strtotime($data['jobStartDate']));
                         }
 
                         $data['title'] = htmlentities($data['title']);
-                        $data['datePosted'] = date('Y-m-d', strtotime($data['datePosted']));
-                        $data['releaseDate'] = date('d.m.Y', strtotime($data['datePosted']));
-                        $data['validThrough_DE'] = date('d.m.Y', strtotime($data['validThrough']));
+                        $data['datePosted'] = gmdate('Y-m-d', strtotime($data['datePosted']));
+                        $data['releaseDate'] = gmdate('d.m.Y', strtotime($data['datePosted']));
+                        $data['validThrough_DE'] = gmdate('d.m.Y', strtotime($data['validThrough']));
 
                         $data['employmentType'] = $positions->get_empoymentType_as_string($data['employmentType']);
                         $data['applicationContact']['url'] = $positions->get_apply_url($data, $fallback_apply, $default_subject);
@@ -623,10 +624,10 @@ class Shortcode {
         ?>
         <script type='text/javascript'>
             tmp = [{
-                'name': <?php echo json_encode($this->pluginname); ?>,
-                'title': <?php echo json_encode($this->settings['block']['title']); ?>,
-                'icon': <?php echo json_encode($this->settings['block']['tinymce_icon']); ?>,
-                'shortcode': <?php echo json_encode($shortcode); ?>,
+                'name': <?php echo wp_json_encode($this->pluginname); ?>,
+                'title': <?php echo wp_json_encode($this->settings['block']['title']); ?>,
+                'icon': <?php echo wp_json_encode($this->settings['block']['tinymce_icon']); ?>,
+                'shortcode': <?php echo wp_json_encode($shortcode); ?>,
             }];
             phpvar = (typeof phpvar === 'undefined' ? tmp : phpvar.concat(tmp));
         </script>

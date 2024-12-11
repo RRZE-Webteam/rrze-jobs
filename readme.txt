@@ -1,9 +1,11 @@
-# RRZE Jobs
-
-[![Aktuelle Version](https://img.shields.io/github/package-json/v/rrze-webteam/rrze-jobs/main?label=Version)](https://github.com/RRZE-Webteam/rrze-jobs)
-[![Release Version](https://img.shields.io/github/v/release/rrze-webteam/rrze-jobs?label=Release+Version)](https://github.com/RRZE-Webteam/rrze-jobs/releases/)
-[![GitHub License](https://img.shields.io/github/license/rrze-webteam/rrze-jobs)](https://github.com/RRZE-Webteam/rrze-jobs)
-[![GitHub issues](https://img.shields.io/github/issues/RRZE-Webteam/rrze-jobs)](https://github.com/RRZE-Webteam/rrze-jobs/issues)
+=== RRZE Jobs ===
+Contributors: RRZE-Webteam
+Requires at least: 4.7
+Tested up to: 6.7
+Stable tag: 3.10.1
+Requires PHP: 7.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Einbindung von Jobangeboten über API per Shortcode
 

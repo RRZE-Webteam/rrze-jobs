@@ -58,4 +58,23 @@ class Helper
         var_dump($input);
         return "\n" . ob_get_clean();
     }
+
+    public static function getBiteApiKey() {
+        $apiKey = '';
+
+        $apiKey = self::getMultisiteBiteApiKey();
+
+        if ($apiKey == '') {
+            $jobsOptions = get_option('rrze-jobs');
+            $apiKey = $jobsOptions['rrze-jobs-access_bite_apikey'] ?? '';
+        }
+
+        return $apiKey;
+    }
+
+    public static function getMultisiteBiteApiKey() {
+        return method_exists(\RRZE\Settings\Helper::class, 'getBiteApiKey')
+            ? \RRZE\Settings\Helper::getBiteApiKey()
+            : '';
+    }
 }

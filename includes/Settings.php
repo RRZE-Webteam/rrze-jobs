@@ -323,7 +323,7 @@ class Settings {
             if ($section['id'] != $this->currentTab) {
                 continue;
             }?>
-            <div id="<?php echo $section['id']; ?>">
+            <div id="<?php echo esc_attr($section['id']); ?>">
                 <form method="post" action="options.php">
                     <?php settings_fields($section['id']);?>
                     <?php do_settings_sections($section['id']);?>
@@ -383,7 +383,7 @@ class Settings {
             if (isset($section['desc']) && !empty($section['desc'])) {
                 $section['desc'] = '<div class="inside">' . $section['desc'] . '</div>';
                 $callback = function () use ($section) {
-                    echo str_replace('"', '\"', $section['desc']);
+                    echo wp_kses_post(str_replace('"', '\"', $section['desc']));
                 };
             } elseif (isset($section['callback'])) {
                 $callback = $section['callback'];
@@ -397,6 +397,11 @@ class Settings {
         // Hinzufügen von Einstellungsfelder
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
+                // Don't show BITE API Key field if it is already set in multisite options
+                if ($option['name'] == 'bite_apikey' && Helper::getMultisiteBiteApiKey() != '') {
+                    continue;
+                }
+
                 $name = $option['name'];
                 $type = isset($option['type']) ? $option['type'] : 'text';
                 $label = isset($option['label']) ? $option['label'] : '';

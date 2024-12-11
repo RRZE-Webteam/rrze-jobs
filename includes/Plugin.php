@@ -197,7 +197,7 @@ class Plugin
                 ]
             );
             if (defined('WP_DEBUG') && WP_DEBUG) {
-                throw new \Exception($message);
+                throw new \Exception(wp_kses_post($message));
             }
         }
     }
