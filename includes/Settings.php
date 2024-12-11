@@ -397,6 +397,11 @@ class Settings {
         // Hinzufügen von Einstellungsfelder
         foreach ($this->settingsFields as $section => $field) {
             foreach ($field as $option) {
+                // Don't show BITE API Key field if it is already set in multisite options
+                if ($option['name'] == 'bite_apikey' && Helper::getMultisiteBiteApiKey() != '') {
+                    continue;
+                }
+
                 $name = $option['name'];
                 $type = isset($option['type']) ? $option['type'] : 'text';
                 $label = isset($option['label']) ? $option['label'] : '';
