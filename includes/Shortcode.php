@@ -230,8 +230,9 @@ class Shortcode {
         if (!empty(self::$options['rrze-jobs-access_orgids_interamt'])) {
             $params['Interamt']['get_list']['partner'] = self::$options['rrze-jobs-access_orgids_interamt'];
         }
-        if (!empty(self::$options['rrze-jobs-access_bite_apikey'])) {
-            $params['BITE']['request-header']['headers']['BAPI-Token'] = self::$options['rrze-jobs-access_bite_apikey'];
+
+        if (!empty(Helper::getBiteApiKey())) {
+            $params['BITE']['request-header']['headers']['BAPI-Token'] = Helper::getBiteApiKey();
         }
 
 
