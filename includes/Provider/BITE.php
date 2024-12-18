@@ -590,22 +590,22 @@ class BITE extends Provider {
             if ($jobdata['custom']['jobstartdate'] == "-1") {
                 $res['jobImmediateStart'] = true;
                 $res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
-                $res['jobStartDateSort'] = gmdate('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+                $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
 
             } else {
                 $res['jobStartDate'] = $jobdata['custom']['jobstartdate'];
-                $res['jobStartDateSort'] = gmdate('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+                $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
             }
         } elseif (!empty($jobdata['custom']['jobstartdate2'])) {
 
             if ($jobdata['custom']['jobstartdate2'] == "-1") {
                 $res['jobImmediateStart'] = true;
                 $res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
-                $res['jobStartDateSort'] = gmdate('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+                $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
 
             } else {
                 $res['jobStartDate'] = $jobdata['custom']['jobstartdate2'];
-                $res['jobStartDateSort'] = gmdate('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+                $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
             }
         }
 

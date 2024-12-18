@@ -167,10 +167,10 @@ class Interamt extends Provider {
         }
 
         if (strtotime($res['jobStartDate']) !== false){
-            $res['jobStartDateSort'] = gmdate('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
+            $res['jobStartDateSort'] = date('Ymd', strtotime($res['jobStartDate'])); // we need this to sort in sortArrayByField()
         }else{
             // whatever value is set in DatumBesetzungZum, it is not a date (f.e. "baldmöglichst" or other variations)
-            $res['jobStartDateSort'] = gmdate('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
+            $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
         }
 
 
