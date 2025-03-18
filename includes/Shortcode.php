@@ -588,8 +588,15 @@ class Shortcode {
     // get the Labels from the options
     public static function get_labels()
     {
+        if (empty(self::$options)) {
+            $settings = new Settings(WP_PLUGIN_DIR . '/rrze-jobs/rrze-jobs.php');
+            $settings->onLoaded();
+            $options = $settings->getOptions();
+        } else {
+            $options = self::$options;
+        }
         $res = array();
-        foreach (self::$options as $name => $value) {
+        foreach ($options as $name => $value) {
             $pos = strpos($name, 'rrze-jobs-labels_job_headline_');
             if (($pos !== false) && ($pos == 0)) {
                 preg_match('/rrze-jobs-labels_job_headline_([a-z0-9\-_]*)/i', $name, $output_array);
