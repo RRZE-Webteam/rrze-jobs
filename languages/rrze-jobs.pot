@@ -220,7 +220,7 @@ msgstr ""
 
 #: includes/Provider/BITE.php:530 includes/Provider/Interamt.php:338
 #: includes/Provider/Interamt.php:340 includes/Provider/UnivIS.php:436
-msgid "hours per week"
+msgid "hours/week"
 msgstr ""
 
 #. Author URI of the plugin

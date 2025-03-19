@@ -433,7 +433,7 @@ class UnivIS extends Provider {
 		$res['workHours'] = '';
 
 		if (isset($jobdata['wstunden'])) {
-			$res['workHours'] = $jobdata['wstunden'] . ' ' . __('hours per week', 'rrze-jobs');
+			$res['workHours'] = $jobdata['wstunden'] . ' ' . __('hours/week', 'rrze-jobs');
 		}
 		if (!empty($jobdata['type4'])) {
 			if (!empty($res['workHours'])) {

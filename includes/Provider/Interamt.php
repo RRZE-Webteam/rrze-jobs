@@ -343,9 +343,9 @@ class Interamt extends Provider {
         $res['workHours'] = '';
 
         if ((isset($jobdata['WochenarbeitszeitArbeitnehmer'])) && (!empty($jobdata['WochenarbeitszeitArbeitnehmer']))) {
-            $res['workHours'] = $jobdata['WochenarbeitszeitArbeitnehmer'] . ' ' . __('hours per week', 'rrze-jobs');
+            $res['workHours'] = $jobdata['WochenarbeitszeitArbeitnehmer'] . ' ' . __('hours/week', 'rrze-jobs');
         } elseif ((isset($jobdata['WochenarbeitszeitBeamter'])) && (!empty($jobdata['WochenarbeitszeitBeamter']))) {
-            $res['workHours'] = $jobdata['WochenarbeitszeitBeamter'] . ' ' . __('hours per week', 'rrze-jobs');
+            $res['workHours'] = $jobdata['WochenarbeitszeitBeamter'] . ' ' . __('hours/week', 'rrze-jobs');
         }
 
         // Gruppe / Kategorie der Stelle
