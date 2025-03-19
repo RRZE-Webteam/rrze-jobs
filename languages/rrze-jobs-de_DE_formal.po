@@ -225,8 +225,8 @@ msgstr ""
 
 #: includes/Provider/BITE.php:530 includes/Provider/Interamt.php:338
 #: includes/Provider/Interamt.php:340 includes/Provider/UnivIS.php:436
-msgid "hours per week"
-msgstr "Stunden pro Woche"
+msgid "hours/week"
+msgstr "Std./Woche"
 
 #. Author URI of the plugin
 msgid "https://blogs.fau.de/webworking/"

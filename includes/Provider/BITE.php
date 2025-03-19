@@ -547,8 +547,8 @@ class BITE extends Provider {
 
         if ((isset($jobdata['custom']['job_workhours'])) && (!empty($jobdata['custom']['job_workhours']))) {
 
-            if (preg_match_all('/^[0-9,\.]+$/i', $jobdata['custom']['job_workhours'], $output_array)) {
-                $res['workHours'] = $jobdata['custom']['job_workhours'] . ' ' . __('hours per week', 'rrze-jobs');
+            if (preg_match_all('/^(mind\.\s*)?\d{1,2},\d{1,2}\s*(-\s*\d{1,3},\d{2})?$/i', $jobdata['custom']['job_workhours'], $output_array)) {
+                $res['workHours'] = $jobdata['custom']['job_workhours'] . ' ' . __('hours/week', 'rrze-jobs');
             } else {
                 $res['workHours'] = $jobdata['custom']['job_workhours'];
             }
