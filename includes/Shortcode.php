@@ -493,7 +493,8 @@ class Shortcode {
      */
     private function hideinternal($data)
     {
-        if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)) {
+        if ((isset($data['_provider-values']['intern'])) && ($data['_provider-values']['intern'] === true)
+            || (isset($data['intern']) && $data['intern'] == '1')) {
 
             return !self::isInternAllowed();
 
