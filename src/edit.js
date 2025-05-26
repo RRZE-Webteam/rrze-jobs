@@ -67,85 +67,85 @@ export default function Edit({ attributes, setAttributes }) {
     return (
         <>
             <InspectorControls>
-                <PanelBody title={__('Filter', 'rrze-faq')}>
+                <PanelBody title={__('Filter', 'rrze-jobs')}>
 
                     <SelectControl
-                        label={__('Provider')}
+                        label={__('Provider', 'rrze-jobs')}
                         value={provider}
                         options={[
-                            { label: __('BITE'), value: 'bite' },
-                            { label: __('Interamt'), value: 'interamt' },
-                            { label: __('UnivIS'), value: 'univis' }
+                            { label: __('BITE', 'rrze-jobs'), value: 'bite' },
+                            { label: __('Interamt', 'rrze-jobs'), value: 'interamt' },
+                            { label: __('UnivIS', 'rrze-jobs'), value: 'univis' }
                         ]}
                         onChange={onProviderChange}
                     />
                     <TextControl
-                        label={__('OrgID(s)')}
+                        label={__('OrgID(s)', 'rrze-jobs')}
                         value={orgids}
                         onChange={onOrgidsChange}
                     />
                     <TextControl
-                        label={__('Job ID (0 = all)')}
+                        label={__('Job ID (0 = all)', 'rrze-jobs')}
                         value={jobid}
                         type="number"
                         onChange={onJobidChange}
                     />
                     <TextControl
-                        label={__('Number of job offers')}
+                        label={__('Number of job offers', 'rrze-jobs')}
                         value={limit}
                         type="number"
                         onChange={onLimitChange}
                     />
                     <SelectControl
-                        label={__('Order by')}
+                        label={__('Order by', 'rrze-jobs')}
                         value={orderby}
                         options={[
-                            { label: __('Job title'), value: 'title' },
-                            { label: __('Application end'), value: 'validThrough' },
-                            { label: __('Job start'), value: 'jobStartDateSort' }
+                            { label: __('Job title', 'rrze-jobs'), value: 'title' },
+                            { label: __('Application end', 'rrze-jobs'), value: 'validThrough' },
+                            { label: __('Job start', 'rrze-jobs'), value: 'jobStartDateSort' }
                         ]}
                         onChange={onOrderbyChange}
                     />
                     <RadioControl
-                        label={__('Order')}
+                        label={__('Order', 'rrze-jobs')}
                         selected={order}
                         options={[
-                            { label: __('Ascending'), value: 'ASC' },
-                            { label: __('Descending'), value: 'DESC' }
+                            { label: __('Ascending', 'rrze-jobs'), value: 'ASC' },
+                            { label: __('Descending', 'rrze-jobs'), value: 'DESC' }
                         ]}
                         onChange={onOrderChange}
                     />
                     <TextControl
-                        label={__('Default application link')}
+                        label={__('Default application link', 'rrze-jobs')}
                         value={fallback_apply}
                         onChange={onFallbackApplyChange}
                     />
                     <TextControl
-                        label={__('Default application email subject')}
+                        label={__('Default application email subject', 'rrze-jobs')}
                         value={default_subject}
                         onChange={onDefaultSubjectChange}
                     />
                     <ToggleControl
-                        label={__('Show only links to BITE')}
+                        label={__('Show only links to BITE', 'rrze-jobs')}
                         checked={link_only}
                         onChange={onLinkOnlyChange}
                     />
                     <SelectControl
-                        label={__('Filter by occupationalCategory')}
+                        label={__('Filter by occupationalCategory', 'rrze-jobs')}
                         value={category}
                         options={[
-                            { label: __('Research & Teaching'), value: 'wiss' },
-                            { label: __('Technology & Administration'), value: 'n-wiss' },
-                            { label: __('Trainee'), value: 'azubi' },
-                            { label: __('Student assistants'), value: 'hiwi' },
-                            { label: __('Professorships'), value: 'prof' },
-                            { label: __('Other'), value: 'other' },
-                            { label: __('No filter'), value: '' }
+                            { label: __('Research & Teaching', 'rrze-jobs'), value: 'wiss' },
+                            { label: __('Technology & Administration', 'rrze-jobs'), value: 'n-wiss' },
+                            { label: __('Trainee', 'rrze-jobs'), value: 'azubi' },
+                            { label: __('Student assistants', 'rrze-jobs'), value: 'hiwi' },
+                            { label: __('Professorships', 'rrze-jobs'), value: 'prof' },
+                            { label: __('Other', 'rrze-jobs'), value: 'other' },
+                            { label: __('No filter', 'rrze-jobs'), value: '' }
                         ]}
                         onChange={onCategoryChange}
                     />
                     <TextControl
-                        label={__('FAU.ORG Number')}
+                        label={__('FAU.ORG Number', 'rrze-jobs')}
                         value={fauorg}
                         type="number"
                         onChange={onFauorgChange}

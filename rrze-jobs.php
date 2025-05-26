@@ -4,7 +4,7 @@
 Plugin Name:     RRZE Jobs
 Plugin URI:      https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs
 Description:     Embedding job offers from job portal apis via shortcode
-Version:         3.10.7
+Version:         3.10.8
 Author:          RRZE Webteam
 Author URI:      https://blogs.fau.de/webworking/
 License:         GNU General Public License v3
@@ -31,7 +31,7 @@ use RRZE\Jobs\Main;
 
 const RRZE_PHP_VERSION = '8.0';
 const RRZE_WP_VERSION = '6.0';
-const RRZE_JOBS_PLUGIN_VERSION = '3.10.7';
+const RRZE_JOBS_PLUGIN_VERSION = '3.10.8';
 const RRZE_PLUGIN_FILE = __FILE__;
 
 // Automatische Laden von Klassen.
@@ -132,6 +132,9 @@ function plugin() {
 function rrze_jobs_init()
 {
     register_block_type(__DIR__ . '/build');
+    //$script_handle = generate_block_asset_handle( 'create-block/rrze-jobs', 'editorScript' );
+    $script_handle = 'create-block-rrze-jobs-editor-script';
+    wp_set_script_translations( $script_handle, 'rrze-jobs', plugin_dir_path( __FILE__ ) . 'languages' );
 }
 
 
