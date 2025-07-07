@@ -2,14 +2,14 @@
 # This file is distributed under the GNU General Public License v3.
 msgid ""
 msgstr ""
-"Project-Id-Version: RRZE Jobs 3.10.8\n"
+"Project-Id-Version: RRZE Jobs 3.11.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/rrze-jobs\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-05-22T15:46:09+00:00\n"
+"POT-Creation-Date: 2025-07-07T08:19:42+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: rrze-jobs\n"
@@ -41,191 +41,165 @@ msgid "https://blogs.fau.de/webworking/"
 msgstr ""
 
 #: config/config.php:25
-#: build/index.js:126
+#: build/index.js:1
 #: src/edit.js:76
-#: build/index.js:76
 msgid "BITE"
 msgstr ""
 
 #: config/config.php:26
-#: build/index.js:129
+#: build/index.js:1
 #: src/edit.js:77
-#: build/index.js:77
 msgid "Interamt"
 msgstr ""
 
 #: config/config.php:27
-#: build/index.js:132
+#: build/index.js:1
 #: src/edit.js:78
-#: build/index.js:78
 msgid "UnivIS"
 msgstr ""
 
 #: config/config.php:30
-#: build/index.js:123
+#: build/index.js:1
 #: src/edit.js:73
-#: build/index.js:73
 msgid "Provider"
 msgstr ""
 
 #: config/config.php:36
-#: build/index.js:137
+#: build/index.js:1
 #: src/edit.js:83
-#: build/index.js:83
 msgid "OrgID(s)"
 msgstr ""
 
 #: config/config.php:42
-#: build/index.js:141
+#: build/index.js:1
 #: src/edit.js:88
-#: build/index.js:88
 msgid "Job ID (0 = all)"
 msgstr ""
 
 #: config/config.php:49
-#: build/index.js:146
+#: build/index.js:1
 #: src/edit.js:94
-#: build/index.js:94
 msgid "Number of job offers"
 msgstr ""
 
 #: config/config.php:55
-#: build/index.js:154
+#: build/index.js:1
 #: src/edit.js:103
-#: build/index.js:103
 msgid "Job title"
 msgstr ""
 
 #: config/config.php:57
-#: build/index.js:157
+#: build/index.js:1
 #: src/edit.js:104
-#: build/index.js:104
 msgid "Application end"
 msgstr ""
 
 #: config/config.php:58
-#: build/index.js:160
+#: build/index.js:1
 #: src/edit.js:105
-#: build/index.js:105
 msgid "Job start"
 msgstr ""
 
 #: config/config.php:61
-#: build/index.js:151
+#: build/index.js:1
 #: src/edit.js:100
-#: build/index.js:100
 msgid "Order by"
 msgstr ""
 
 #: config/config.php:67
-#: build/index.js:168
+#: build/index.js:1
 #: src/edit.js:113
-#: build/index.js:113
 msgid "Ascending"
 msgstr ""
 
 #: config/config.php:68
-#: build/index.js:171
+#: build/index.js:1
 #: src/edit.js:114
-#: build/index.js:114
 msgid "Descending"
 msgstr ""
 
 #: config/config.php:71
-#: build/index.js:165
+#: build/index.js:1
 #: src/edit.js:110
-#: build/index.js:110
 msgid "Order"
 msgstr ""
 
 #: config/config.php:78
-#: build/index.js:176
+#: build/index.js:1
 #: src/edit.js:119
-#: build/index.js:119
 msgid "Default application link"
 msgstr ""
 
 #: config/config.php:85
-#: build/index.js:180
+#: build/index.js:1
 #: src/edit.js:124
-#: build/index.js:124
 msgid "Default application email subject"
 msgstr ""
 
 #: config/config.php:90
-#: build/index.js:184
+#: build/index.js:1
 #: src/edit.js:129
-#: build/index.js:129
 msgid "Show only links to BITE"
 msgstr ""
 
 #: config/config.php:99
 #: includes/Provider.php:726
-#: build/index.js:191
+#: build/index.js:1
 #: src/edit.js:137
-#: build/index.js:137
 msgid "Research & Teaching"
 msgstr ""
 
 #: config/config.php:100
 #: includes/Provider.php:733
-#: build/index.js:194
+#: build/index.js:1
 #: src/edit.js:138
-#: build/index.js:138
 msgid "Technology & Administration"
 msgstr ""
 
 #: config/config.php:101
 #: includes/Provider.php:736
-#: build/index.js:197
+#: build/index.js:1
 #: src/edit.js:139
-#: build/index.js:139
 msgid "Trainee"
 msgstr ""
 
 #: config/config.php:102
 #: includes/Provider.php:740
-#: build/index.js:200
+#: build/index.js:1
 #: src/edit.js:140
-#: build/index.js:140
 msgid "Student assistants"
 msgstr ""
 
 #: config/config.php:103
 #: includes/Provider.php:743
-#: build/index.js:203
+#: build/index.js:1
 #: src/edit.js:141
-#: build/index.js:141
 msgid "Professorships"
 msgstr ""
 
 #: config/config.php:104
 #: includes/Provider.php:747
 #: includes/Provider.php:751
-#: build/index.js:206
+#: build/index.js:1
 #: src/edit.js:142
-#: build/index.js:142
 msgid "Other"
 msgstr ""
 
 #: config/config.php:105
-#: build/index.js:209
+#: build/index.js:1
 #: src/edit.js:143
-#: build/index.js:143
 msgid "No filter"
 msgstr ""
 
 #: config/config.php:108
-#: build/index.js:188
+#: build/index.js:1
 #: src/edit.js:134
-#: build/index.js:134
 msgid "Filter by occupationalCategory"
 msgstr ""
 
 #: config/config.php:114
-#: build/index.js:214
+#: build/index.js:1
 #: src/edit.js:148
-#: build/index.js:148
 msgid "FAU.ORG Number"
 msgstr ""
 
@@ -963,7 +937,7 @@ msgid "https://www.aibe.tf.fau.de/"
 msgstr ""
 
 #: includes/Provider/BITE.php:290
-#: includes/Provider/BITE.php:1323
+#: includes/Provider/BITE.php:1330
 #: includes/Provider/Interamt.php:302
 #: includes/Provider/UnivIS.php:372
 #: includes/Provider/UnivIS.php:1275
@@ -971,7 +945,7 @@ msgid "Full time"
 msgstr ""
 
 #: includes/Provider/BITE.php:296
-#: includes/Provider/BITE.php:1324
+#: includes/Provider/BITE.php:1331
 #: includes/Provider/Interamt.php:305
 #: includes/Provider/UnivIS.php:374
 #: includes/Provider/UnivIS.php:1276
@@ -979,115 +953,126 @@ msgid "Part time"
 msgstr ""
 
 #: includes/Provider/BITE.php:299
-#: includes/Provider/BITE.php:603
+#: includes/Provider/BITE.php:605
 #: includes/Provider/Interamt.php:313
 #: includes/Provider/UnivIS.php:381
 msgid "Temporary employment"
 msgstr ""
 
-#: includes/Provider/BITE.php:394
+#: includes/Provider/BITE.php:396
 #: includes/Provider/Interamt.php:277
 #: includes/Provider/UnivIS.php:344
 msgid "Bavaria"
 msgstr ""
 
-#: includes/Provider/BITE.php:551
+#: includes/Provider/BITE.php:553
 #: includes/Provider/Interamt.php:346
 #: includes/Provider/Interamt.php:348
 #: includes/Provider/UnivIS.php:436
 msgid "hours/week"
 msgstr ""
 
-#: includes/Provider/BITE.php:570
+#: includes/Provider/BITE.php:572
 msgid "on-call duty"
 msgstr ""
 
-#: includes/Provider/BITE.php:573
+#: includes/Provider/BITE.php:575
 msgid "shift work"
 msgstr ""
 
-#: includes/Provider/BITE.php:576
+#: includes/Provider/BITE.php:578
 msgid "night duty"
 msgstr ""
 
-#: includes/Provider/BITE.php:579
+#: includes/Provider/BITE.php:581
 msgid "rotating shift"
 msgstr ""
 
-#: includes/Provider/BITE.php:592
+#: includes/Provider/BITE.php:594
 #: includes/Provider/UnivIS.php:418
 msgid "As soon as possible"
 msgstr ""
 
-#: includes/Provider/BITE.php:605
+#: includes/Provider/BITE.php:608
+msgctxt "Date format"
+msgid "F j, Y"
+msgstr ""
+
+#. translators: "Temporary employment until $date"
+#: includes/Provider/BITE.php:610
+msgctxt "Temporary employment until $date"
+msgid "until %s"
+msgstr ""
+
+#: includes/Provider/BITE.php:612
 #: includes/Provider/Interamt.php:317
 msgid "months"
 msgstr ""
 
-#: includes/Provider/BITE.php:609
+#: includes/Provider/BITE.php:616
 #: includes/Provider/UnivIS.php:383
 msgid "Permanent employment"
 msgstr ""
 
-#: includes/Provider/BITE.php:1301
+#: includes/Provider/BITE.php:1308
 #: includes/Provider/UnivIS.php:1270
 msgid "unlimited"
 msgstr ""
 
-#: includes/Provider/BITE.php:1302
+#: includes/Provider/BITE.php:1309
 #: includes/Provider/UnivIS.php:1271
 msgid "temporary"
 msgstr ""
 
-#: includes/Provider/BITE.php:1325
+#: includes/Provider/BITE.php:1332
 msgid "Full or part time"
 msgstr ""
 
-#: includes/Provider/BITE.php:1346
+#: includes/Provider/BITE.php:1353
 #: includes/Provider/UnivIS.php:1279
 msgid "Replacement"
 msgstr ""
 
-#: includes/Provider/BITE.php:1347
+#: includes/Provider/BITE.php:1354
 #: includes/Provider/UnivIS.php:1281
 msgid "Maternity leave replacement"
 msgstr ""
 
-#: includes/Provider/BITE.php:1348
+#: includes/Provider/BITE.php:1355
 #: includes/Provider/UnivIS.php:1283
 msgid "Maternity/parental leave replacement"
 msgstr ""
 
-#: includes/Provider/BITE.php:1349
+#: includes/Provider/BITE.php:1356
 #: includes/Provider/UnivIS.php:1285
 msgid "Limited research project"
 msgstr ""
 
-#: includes/Provider/BITE.php:1350
+#: includes/Provider/BITE.php:1357
 msgid "Project"
 msgstr ""
 
-#: includes/Provider/BITE.php:1351
+#: includes/Provider/BITE.php:1358
 #: includes/Provider/UnivIS.php:1287
 msgid "Sickness replacement"
 msgstr ""
 
-#: includes/Provider/BITE.php:1352
+#: includes/Provider/BITE.php:1359
 #: includes/Provider/UnivIS.php:1289
 msgid "Temporary officials"
 msgstr ""
 
-#: includes/Provider/BITE.php:1374
+#: includes/Provider/BITE.php:1381
 #: includes/Provider/UnivIS.php:1293
 msgid "By arrangement"
 msgstr ""
 
-#: includes/Provider/BITE.php:1375
+#: includes/Provider/BITE.php:1382
 #: includes/Provider/UnivIS.php:1294
 msgid "Morning times"
 msgstr ""
 
-#: includes/Provider/BITE.php:1376
+#: includes/Provider/BITE.php:1383
 #: includes/Provider/UnivIS.php:1295
 msgid "Afternoon times"
 msgstr ""
@@ -1205,9 +1190,8 @@ msgstr ""
 msgid "The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s."
 msgstr ""
 
-#: build/index.js:121
+#: build/index.js:1
 #: src/edit.js:70
-#: build/index.js:70
 msgid "Filter"
 msgstr ""
 

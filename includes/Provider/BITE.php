@@ -108,9 +108,9 @@ class BITE extends Provider {
             "job_experience", "job_qualifications_nth", "angebot", "wir_bieten",
             "ausschreibungskennziffer", "beschaeftigungsumfang", "zuordnung",
             "orig_occupationalCategory", "hiringorganization", "place_of_employment_street",
-            "place_of_employment_house_number", "place_of_employment_postcode", "place_of_employment_city",
+            "place_of_employment_house_number", "beschort_hn", "place_of_employment_postcode", "place_of_employment_city",
             "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar",
-            "job_limitation_duration", "abschlusstext", "06_schluss",
+            "job_limitation_duration", "beschaeftigungsende_datum", "abschlusstext", "06_schluss",
             "estimatedsalary", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
             "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
             "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
@@ -378,7 +378,9 @@ class BITE extends Provider {
 
         if (isset($jobdata['custom']['place_of_employment_street'])) {
             $res['jobLocation']['address']['streetAddress'] = $jobdata['custom']['place_of_employment_street'];
-            if (isset($jobdata['custom']['place_of_employment_house_number'])) {
+            if (isset($jobdata['custom']['beschort_hn'])) {
+                $res['jobLocation']['address']['streetAddress'] .= ' ' . $jobdata['custom']['beschort_hn'];
+            } elseif (isset($jobdata['custom']['place_of_employment_house_number'])) {
                 $res['jobLocation']['address']['streetAddress'] .= ' ' . $jobdata['custom']['place_of_employment_house_number'];
             }
         }
@@ -601,7 +603,12 @@ class BITE extends Provider {
         if (isset($jobdata['custom']['befristung'])) {
             if ($jobdata['custom']['befristung'] == TRUE) {
                 $res['text_befristet'] = __('Temporary employment', 'rrze-jobs');
-                if (( ! empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
+
+                if (( ! empty($jobdata['custom']['beschaeftigungsende_datum'])) || (isset($jobdata['custom']['beschaeftigungsende_datum']))) {
+                    $formattedDate = date(_x('F j, Y', 'Date format', 'rrze-jobs'), strtotime($jobdata['custom']['beschaeftigungsende_datum']));
+                    /* translators: "Temporary employment until $date" */
+                    $res['text_befristet'] .= ': ' . sprintf(_x('until %s', 'Temporary employment until $date', 'rrze-jobs'), $formattedDate);
+                } elseif (( ! empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
                     $res['text_befristet'] .= ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
                 }
                 $typeliste[] = 'TEMPORARY';
