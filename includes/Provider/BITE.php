@@ -1187,6 +1187,7 @@ class BITE extends Provider {
                             break;
                         case '02_addition':
                         case 'jobstartdate':
+                        case 'beschaeftigungsende_datum':
                             $value = $this->sanitize_bite_jobstartdate($value);
                             break;
 
