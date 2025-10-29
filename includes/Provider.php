@@ -140,7 +140,8 @@ class Provider {
                 'jobStartDate',
                 'applicationContact.url',
                 'applicationContact.email',
-                'baseSalary.value.value'
+                'baseSalary.value.value',
+                'employmentType'
             );
 
             // todo later:
