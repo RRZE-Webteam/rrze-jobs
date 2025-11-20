@@ -50,7 +50,10 @@
 				{{=const.text_fau_employer_en}}
 			{{/const.text_fau_employer_en}}
 
-			{{=application_process}}
+			{{application_process}}
+				<h2>{{=const.title_applicationProcess_en}}</h2>
+				{{=application_process}}
+			{{/application_process}}
 
 			{{const.text_jobnotice_en}}
 				[alert]
@@ -148,9 +151,9 @@
 						{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
 						{{=employmentUnit.name}}
 						<ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
-							{{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
+							{{employmentUnit.email}}<li>Email: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
 							{{/employmentUnit.email}}
-							{{employmentUnit.telephone}}<li>Telefon: <span
+							{{employmentUnit.telephone}}<li>Phone: <span
 									itemprop="telephone">{{=employmentUnit.telephone}}</span></li>
 							{{/employmentUnit.telephone}}
 							{{/applicationContact.description}}

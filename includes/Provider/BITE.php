@@ -141,6 +141,7 @@ class BITE extends Provider {
         // $jobdata - one single jobarray
 
         $res = array();
+        $lang = !empty($jobdata['custom']['jobposting_language']) ? $this->sanitize_lang($jobdata['custom']['jobposting_language']) : substr(get_bloginfo('language'), 0, 2);
 
 	
         // Cause several customer might use different custom fields but also
@@ -285,18 +286,18 @@ class BITE extends Provider {
 
                     if ($val == 'FULL_TIME') {
                         if (!empty($beschaeftigungsumfang)) {
-                            $beschaeftigungsumfang = ', ';
+                            $beschaeftigungsumfang .= ', ';
                         }
-                        $beschaeftigungsumfang = __('Full time', 'rrze-jobs');
+                        $beschaeftigungsumfang .= __('Full time', 'rrze-jobs');
                     }
                     if ($val == 'PART_TIME') {
                         if (!empty($beschaeftigungsumfang)) {
-                            $beschaeftigungsumfang = ', ';
+                            $beschaeftigungsumfang .= ', ';
                         }
-                        $beschaeftigungsumfang = __('Part time', 'rrze-jobs');
+                        $beschaeftigungsumfang .= __('Part time', 'rrze-jobs');
                     }
                     if ($val == 'TEMPORARY') {
-                        $res['text_befristet'] = __('Temporary employment', 'rrze-jobs');
+                        $res['text_befristet'] .= __('Temporary employment', 'rrze-jobs');
                     }
 
                 }
@@ -550,7 +551,7 @@ class BITE extends Provider {
         if ((isset($jobdata['custom']['job_workhours'])) && (!empty($jobdata['custom']['job_workhours']))) {
 
             if (preg_match_all('/^(mind\.\s*)?\d{1,2},\d{1,2}\s*(-\s*\d{1,3},\d{2})?$/i', $jobdata['custom']['job_workhours'], $output_array)) {
-                $res['workHours'] = $jobdata['custom']['job_workhours'] . ' ' . __('hours/week', 'rrze-jobs');
+                $res['workHours'] = $jobdata['custom']['job_workhours'] . ' ' . ($lang == 'de' ? 'Std./Woche' : 'hours/week');
             } else {
                 $res['workHours'] = $jobdata['custom']['job_workhours'];
             }
@@ -569,16 +570,16 @@ class BITE extends Provider {
                 switch ($worktyp) {
                     case 'bereitschaftsdienst':
                     case 'rufbereitschaft':
-                        $workspec .= ', ' . __('on-call duty', 'rrze-jobs');
+                        $workspec .= ', ' . ($lang == 'de' ? ucfirst($worktyp) : 'on-call duty');
                         break;
                     case 'schichtdienst':
-                        $workspec .= ', ' . __('shift work', 'rrze-jobs');
+                        $workspec .= ', ' . ($lang == 'de' ? ucfirst($worktyp) : 'shift work');
                         break;
                     case 'nachtdienst':
-                        $workspec .= ', ' . __('night duty', 'rrze-jobs');
+                        $workspec .= ', ' . ($lang == 'de' ? ucfirst($worktyp) : 'night duty');
                         break;
                     case 'wechselschicht':
-                        $workspec .= ', ' . __('rotating shift', 'rrze-jobs');
+                        $workspec .= ', ' . ($lang == 'de' ? ucfirst($worktyp) : 'rotating shift');
                         break;
                 }
             }
@@ -591,7 +592,7 @@ class BITE extends Provider {
 
             if ($jobdata['custom']['jobstartdate2'] == "-1") {
                 $res['jobImmediateStart'] = true;
-                $res['jobStartDate'] = __('As soon as possible', 'rrze-jobs');
+                $res['jobStartDate'] = ($lang == 'de' ? 'So bald wie möglich' : 'As soon as possible');
                 $res['jobStartDateSort'] = date('Ymd', strtotime('1. Januar 1970')); // we need this to sort in sortArrayByField()
 
             } else {
@@ -602,18 +603,18 @@ class BITE extends Provider {
 
         if (isset($jobdata['custom']['befristung'])) {
             if ($jobdata['custom']['befristung'] == TRUE) {
-                $res['text_befristet'] = __('Temporary employment', 'rrze-jobs');
+                $res['text_befristet'] = ($lang == 'de' ? 'Befristete Anstellung' : 'Temporary employment');
 
                 if (( ! empty($jobdata['custom']['beschaeftigungsende_datum'])) || (isset($jobdata['custom']['beschaeftigungsende_datum']))) {
                     $formattedDate = date(_x('F j, Y', 'Date format', 'rrze-jobs'), strtotime($jobdata['custom']['beschaeftigungsende_datum']));
                     /* translators: "Temporary employment until $date" */
-                    $res['text_befristet'] .= ': ' . sprintf(_x('until %s', 'Temporary employment until $date', 'rrze-jobs'), $formattedDate);
+                    $res['text_befristet'] .= ': ' . sprintf(($lang == 'de' ? 'bis %s' : 'until %s'), $formattedDate);
                 } elseif (( ! empty($jobdata['custom']['job_limitation_duration'])) || (isset($jobdata['custom']['job_limitation_duration']))) {
-                    $res['text_befristet'] .= ': ' . $jobdata['custom']['job_limitation_duration'] . " " . __('months', 'rrze-jobs');
+                    $res['text_befristet'] .= ': ' . $jobdata['custom']['job_limitation_duration'] . " " . ($lang == 'de' ? 'Monate' : 'months');
                 }
                 $typeliste[] = 'TEMPORARY';
             } elseif ($jobdata['custom']['befristung'] == FALSE) {
-                $res['text_befristet'] = __('Permanent employment', 'rrze-jobs');
+                $res['text_befristet'] = ($lang == 'de' ? 'Unbefristete Anstellung' : 'Permanent employment');
             }
         }
 
@@ -1123,6 +1124,7 @@ class BITE extends Provider {
             }
         } else {
             // Bei der Direkten Abfrage einer Stelle wird alles auf oberster Ebene geliefert
+            $lang = !empty($data['jobposting_language']) ? $this->sanitize_lang($data['jobposting_language']) : substr(get_bloginfo('language'), 0, 2);
             foreach ($data as $key => $value) {
                 if (!is_array($value)) {
                     switch ($key) {
@@ -1195,7 +1197,7 @@ class BITE extends Provider {
                             $value = $this->sanitize_bite_employmenttype($value);
                             break;
                         case 'beschaeftigungsumfang':
-                            $value = $this->sanitize_bite_beschaeftigungsumfang($value);
+                            $value = $this->sanitize_bite_beschaeftigungsumfang($value, $lang);
                             break;
 
                         case 'identifier':
@@ -1325,12 +1327,12 @@ class BITE extends Provider {
     }
 
     // employment type aus custom.beschaeftigungsumfang , nicht aus seo
-    private function sanitize_bite_beschaeftigungsumfang($value)
+    private function sanitize_bite_beschaeftigungsumfang($value, $lang = 'de')
     {
         $options = array(
-            '01_vollzeit' => __('Full time', 'rrze-jobs'),
-            '02_teilzeit' => __('Part time', 'rrze-jobs'),
-            '03_voll_teilzeit' => __('Full or part time', 'rrze-jobs'),
+            '01_vollzeit' => $lang == 'de' ? 'Vollzeit' : 'Full time',
+            '02_teilzeit' => $lang == 'de' ? 'Teilzeit' : 'Part time',
+            '03_voll_teilzeit' => $lang == 'de' ? 'Voll- oder Teilzeit' : 'Full or part time',
         );
         if (!empty($value)) {
             $value = trim(strtolower($value));
