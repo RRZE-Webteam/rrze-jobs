@@ -287,6 +287,14 @@ function getFields() {
                 'default_en' => "Job Benefits"
             ],
             [
+                'name' => 'job_headline_applicationProcess',
+                'label' => __('Label for', 'rrze-jobs') . ' ' . __("Application Process", 'rrze-jobs'),
+                'desc' => '',
+                'type' => 'textTranslation',
+                'default' => __("The application process", 'rrze-jobs'),
+                'default_en' => "The application process"
+            ],
+            [
                 'name' => 'job_headline_jobStartDate',
                 'label' => __('Label for', 'rrze-jobs') . ' ' . __("Job start date", 'rrze-jobs'),
                 'desc' => '',

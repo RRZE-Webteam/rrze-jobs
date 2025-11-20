@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2020-02-04 16:35+0000\n"
-"PO-Revision-Date: 2025-07-07 08:20+0000\n"
+"PO-Revision-Date: 2025-11-20 15:36+0000\n"
 "Language: de_DE\n"
 "X-Poedit-KeywordsList: __;_e;__ngettext:1,2;_n:1,2;__ngettext_noop:1,2;"
 "_n_noop:1,2;_c,_nc:4c,1,2;_x:1,2c;_nx:4c,1,2;_nx_noop:4c,1,2;_ex:1,2c;"
@@ -25,40 +25,44 @@ msgstr ""
 msgid "Accesses"
 msgstr "Zugänge"
 
-#: includes/Provider/BITE.php:1383 includes/Provider/UnivIS.php:1295
+#: includes/Provider/BITE.php:1386 includes/Provider/UnivIS.php:1295
 msgid "Afternoon times"
 msgstr "Nachmittags"
 
-#: config/config.php:363 config/config.php:366
+#: config/config.php:371 config/config.php:374
 msgid "Application"
 msgstr "Bewerbung"
 
-#: config/config.php:299 config/config.php:302
+#: config/config.php:307 config/config.php:310
 msgid "Application deadline"
 msgstr "Bewerbungsschluss"
 
-#: config/config.php:57 build/index.js:1 src/edit.js:104
+#: config/config.php:57 src/edit.js:104
 msgid "Application end"
 msgstr "Bewerbungsende"
 
-#: config/config.php:355 config/config.php:358
+#: config/config.php:291
+msgid "Application Process"
+msgstr "Bewerbungsverfahren"
+
+#: config/config.php:363 config/config.php:366
 msgid "Apply now"
 msgstr "Jetzt bewerben"
 
-#: includes/Provider/BITE.php:594 includes/Provider/UnivIS.php:418
+#: includes/Provider/UnivIS.php:418
 msgid "As soon as possible"
 msgstr "So bald wie möglich."
 
-#: config/config.php:67 build/index.js:1 src/edit.js:113
+#: config/config.php:67 src/edit.js:113
 msgid "Ascending"
 msgstr "aufsteigend"
 
-#: includes/Provider/BITE.php:396 includes/Provider/Interamt.php:277
+#: includes/Provider/BITE.php:397 includes/Provider/Interamt.php:277
 #: includes/Provider/UnivIS.php:344
 msgid "Bavaria"
 msgstr "Bayern"
 
-#: config/config.php:25 build/index.js:1 src/edit.js:76
+#: config/config.php:25 src/edit.js:76
 msgid "BITE"
 msgstr "BITE"
 
@@ -66,32 +70,32 @@ msgstr "BITE"
 msgid "BITE API Key"
 msgstr "BITE API Key"
 
-#: build/block.json src/block.json
+#: build/block.json:1 src/block.json:1
 msgctxt "block description"
 msgid "A block to show job offers."
 msgstr "Ein Block, der Jobangebote anzeigt."
 
-#: build/block.json src/block.json
+#: build/block.json:1 src/block.json:1
 msgctxt "block keyword"
 msgid "job"
 msgstr "job"
 
-#: build/block.json src/block.json
+#: build/block.json:1 src/block.json:1
 msgctxt "block keyword"
 msgid "jobs"
 msgstr "jobs"
 
-#: build/block.json src/block.json
+#: build/block.json:1 src/block.json:1
 msgctxt "block title"
 msgid "Jobs RRZE"
 msgstr ""
 "Jobs RRZE\n"
 
-#: includes/Provider/BITE.php:1381 includes/Provider/UnivIS.php:1293
+#: includes/Provider/BITE.php:1384 includes/Provider/UnivIS.php:1293
 msgid "By arrangement"
 msgstr "Nach Vereinbarung"
 
-#: config/config.php:331 config/config.php:334
+#: config/config.php:339 config/config.php:342
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -104,7 +108,7 @@ msgstr "Kontakt zur Bewerbung"
 msgid "Daily"
 msgstr "Täglich"
 
-#: includes/Provider/BITE.php:608
+#: includes/Provider/BITE.php:609
 msgctxt "Date format"
 msgid "F j, Y"
 msgstr "d.m.Y"
@@ -113,11 +117,11 @@ msgstr "d.m.Y"
 msgid "day"
 msgstr "Tag"
 
-#: config/config.php:85 build/index.js:1 src/edit.js:124
+#: config/config.php:85 src/edit.js:124
 msgid "Default application email subject"
 msgstr "Standard-Betreff der Bewerbungs-E-Mail"
 
-#: config/config.php:78 build/index.js:1 src/edit.js:119
+#: config/config.php:78 src/edit.js:119
 msgid "Default application link"
 msgstr "Voreingestellter Bewerbungslink"
 
@@ -217,7 +221,7 @@ msgstr "Department Sportwissenschaft und Sport"
 msgid "Department Werkstoffwissenschaften"
 msgstr "Department Werkstoffwissenschaften"
 
-#: config/config.php:68 build/index.js:1 src/edit.js:114
+#: config/config.php:68 src/edit.js:114
 msgid "Descending"
 msgstr "absteigend"
 
@@ -241,7 +245,7 @@ msgstr "DFG-Graduiertenkollegs"
 msgid "DFG-Sonderforschungsbereiche/ Transregios/Transferbereiche"
 msgstr "DFG-Sonderforschungsbereiche/ Transregios/Transferbereiche"
 
-#: config/config.php:482
+#: config/config.php:490
 msgid "Display internal jobs as admins"
 msgstr "Zeige Website-Administratoren interne Stellenanzeigen"
 
@@ -260,7 +264,6 @@ msgid "Einrichtungen, die nicht zum Universitätsklinikum Erlangen gehören"
 msgstr "Einrichtungen, die nicht zum Universitätsklinikum Erlangen gehören"
 
 #. Description of the plugin
-#: rrze-jobs.php
 msgid "Embedding job offers from job portal apis via shortcode"
 msgstr "Jobangebote aus Jobportal-Schnittstellen per Shortcode einbinden"
 
@@ -284,7 +287,7 @@ msgstr "Geben Sie hier die Partner-ID aus dem Interamt-Service ein"
 msgid "Error"
 msgstr "Fehler"
 
-#: config/config.php:414
+#: config/config.php:422
 msgid "Errormessages"
 msgstr "Fehlermeldungen"
 
@@ -308,7 +311,7 @@ msgstr "FAU Forschungszentren"
 msgid "FAU Kompetenzzentren"
 msgstr "FAU Kompetenzzentren"
 
-#: config/config.php:114 build/index.js:1 src/edit.js:148
+#: config/config.php:114 src/edit.js:148
 msgid "FAU.ORG Number"
 msgstr "FAU.ORG-Nummer"
 
@@ -316,15 +319,15 @@ msgstr "FAU.ORG-Nummer"
 msgid "FB Rechtsw."
 msgstr "FB Rechtsw."
 
-#: build/index.js:1 src/edit.js:70
+#: src/edit.js:70
 msgid "Filter"
 msgstr "Filter"
 
-#: config/config.php:108 build/index.js:1 src/edit.js:134
+#: config/config.php:108 src/edit.js:134
 msgid "Filter by occupationalCategory"
 msgstr "Filter nach occupationalCategory"
 
-#: config/config.php:542
+#: config/config.php:550
 msgid "Find instructions at "
 msgstr "Eine Anleitung finden Sie unter "
 
@@ -332,7 +335,7 @@ msgstr "Eine Anleitung finden Sie unter "
 msgid "First"
 msgstr "Erster"
 
-#: config/config.php:545
+#: config/config.php:553
 msgid "For more information"
 msgstr "Für mehr Information"
 
@@ -340,13 +343,8 @@ msgstr "Für mehr Information"
 msgid "Friday"
 msgstr "Freitag"
 
-#: includes/Provider/BITE.php:1332
-msgid "Full or part time"
-msgstr "Voll- oder Teilzeit"
-
-#: includes/Provider/BITE.php:290 includes/Provider/BITE.php:1330
-#: includes/Provider/Interamt.php:302 includes/Provider/UnivIS.php:372
-#: includes/Provider/UnivIS.php:1275
+#: includes/Provider/BITE.php:291 includes/Provider/Interamt.php:302
+#: includes/Provider/UnivIS.php:372 includes/Provider/UnivIS.php:1275
 msgid "Full time"
 msgstr "Vollzeit"
 
@@ -366,13 +364,13 @@ msgstr ""
 "Hier können Sie die Überschriften und Beschriftungen für die einzelnen "
 "Abschnitte im Stellenangebot festlegen."
 
-#: config/config.php:420
+#: config/config.php:428
 msgid "Hide errors and not found messages"
 msgstr ""
 "Verstecke Fehlermeldungen und Meldungen, dass keine Stellen gefunden wurden"
 
-#: includes/Provider/BITE.php:553 includes/Provider/Interamt.php:346
-#: includes/Provider/Interamt.php:348 includes/Provider/UnivIS.php:436
+#: includes/Provider/Interamt.php:346 includes/Provider/Interamt.php:348
+#: includes/Provider/UnivIS.php:436
 msgid "hours/week"
 msgstr "Std./Woche"
 
@@ -385,7 +383,6 @@ msgid "http://www.molmed.uni-erlangen.de/"
 msgstr "http://www.molmed.uni-erlangen.de/"
 
 #. Author URI of the plugin
-#: rrze-jobs.php
 msgid "https://blogs.fau.de/webworking/"
 msgstr "https://blogs.fau.de/webworking/"
 
@@ -393,8 +390,7 @@ msgstr "https://blogs.fau.de/webworking/"
 msgid "https://cs.fau.de/"
 msgstr "https://cs.fau.de/"
 
-#. Plugin URI of the plugin
-#: rrze-jobs.php
+#. URI of the plugin
 msgid "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 msgstr "https://gitlab.rrze.fau.de/rrze-webteam/rrze-jobs"
 
@@ -550,7 +546,7 @@ msgstr "https://www.theologie.fau.de"
 msgid "https://www.ww.tf.fau.de"
 msgstr "https://www.ww.tf.fau.de"
 
-#: config/config.php:415
+#: config/config.php:423
 msgid ""
 "In case of errors or in case that no job was found, you can switch off the "
 "errormessages."
@@ -599,7 +595,7 @@ msgstr "Institut für Zelluläre und Molekulare Physiologie"
 msgid "Institut und Poliklinik für Arbeits-, Sozial- und Umweltmedizin"
 msgstr "Institut und Poliklinik für Arbeits-, Sozial- und Umweltmedizin"
 
-#: config/config.php:26 build/index.js:1 src/edit.js:77
+#: config/config.php:26 src/edit.js:77
 msgid "Interamt"
 msgstr "Interamt"
 
@@ -611,7 +607,7 @@ msgstr "Interamt Partner ID"
 msgid "Interdisziplinäre Zentren"
 msgstr "Interdisziplinäre Zentren"
 
-#: config/config.php:493
+#: config/config.php:501
 msgid ""
 "Internal job positions will be displayed only on hosts from the given "
 "hostnames"
@@ -619,34 +615,34 @@ msgstr ""
 "Stellen, die als Intern markiert wurden, werden nur solchen Besuchern "
 "angezeigt, die eine der angegebenen Hostnamen verwenden."
 
-#: config/config.php:486
+#: config/config.php:494
 msgid "Internal jobs will always be visible for website admins"
 msgstr ""
 "Intene Stellenanzeigen werden immer für angemeldete Website-Admins angezeigt"
 
-#: config/config.php:432
+#: config/config.php:440
 msgid "Internal Position"
 msgstr "Interne Stellenanzeige"
 
-#: config/config.php:435
+#: config/config.php:443
 msgid "Internal position, avaible for members only"
 msgstr ""
 "Interne Stellenanzeige, die nur für Mitglieder der Einrichtung zugänglich "
 "sind"
 
-#: config/config.php:446
+#: config/config.php:454
 msgid "Invalid parameters or method"
 msgstr "Ungültige Parameter oder Methode"
 
-#: config/config.php:449
+#: config/config.php:457
 msgid "Invalid parameters or method."
 msgstr "Ungültige Parameter oder Methode."
 
-#: config/config.php:425 includes/Shortcode.php:208
+#: config/config.php:433 includes/Shortcode.php:208
 msgid "Invalid provider"
 msgstr "Ungültiger Provider"
 
-#: config/config.php:428
+#: config/config.php:436
 msgid "Invalid provider."
 msgstr "Ungültiger Provider."
 
@@ -654,11 +650,11 @@ msgstr "Ungültiger Provider."
 msgid "Job Benefits"
 msgstr "Wir bieten"
 
-#: config/config.php:42 build/index.js:1 src/edit.js:88
+#: config/config.php:42 src/edit.js:88
 msgid "Job ID (0 = all)"
 msgstr "Job ID (0 = alle)"
 
-#: config/config.php:403
+#: config/config.php:411
 msgid "Job Notices from job provider"
 msgstr "Stellenhinweise vom Job-Provider"
 
@@ -666,15 +662,15 @@ msgstr "Stellenhinweise vom Job-Provider"
 msgid "Job offer"
 msgstr "Stellenangebot"
 
-#: config/config.php:58 build/index.js:1 src/edit.js:105
+#: config/config.php:58 src/edit.js:105
 msgid "Job start"
 msgstr "Besetzung zum"
 
-#: config/config.php:291 config/config.php:294
+#: config/config.php:299 config/config.php:302
 msgid "Job start date"
 msgstr "Einstellungstermin"
 
-#: config/config.php:55 build/index.js:1 src/edit.js:103
+#: config/config.php:55 src/edit.js:103
 msgid "Job title"
 msgstr "Titel der Stellenanzeige"
 
@@ -682,7 +678,7 @@ msgstr "Titel der Stellenanzeige"
 msgid "Jobs"
 msgstr "Jobs"
 
-#: config/config.php:462
+#: config/config.php:470
 msgid "Jobs Page"
 msgstr "Jobs-Seite"
 
@@ -700,8 +696,8 @@ msgstr "Klinisch-Molekularbiologisches Forschungszentrum"
 #: config/config.php:283 config/config.php:291 config/config.php:299
 #: config/config.php:307 config/config.php:315 config/config.php:323
 #: config/config.php:331 config/config.php:339 config/config.php:347
-#: config/config.php:355 config/config.php:363 config/config.php:376
-#: config/config.php:384
+#: config/config.php:355 config/config.php:363 config/config.php:371
+#: config/config.php:384 config/config.php:392
 msgid "Label for"
 msgstr "Bezeichnung für"
 
@@ -709,23 +705,23 @@ msgstr "Bezeichnung für"
 msgid "Layout"
 msgstr "Layout"
 
-#: config/config.php:323 config/config.php:326
+#: config/config.php:331 config/config.php:334
 msgid "Limitation"
 msgstr "Befristung"
 
-#: includes/Provider/BITE.php:1356 includes/Provider/UnivIS.php:1285
+#: includes/Provider/BITE.php:1359 includes/Provider/UnivIS.php:1285
 msgid "Limited research project"
 msgstr "Befristetes Forschungsvorhaben"
 
-#: config/config.php:307 config/config.php:310
+#: config/config.php:315 config/config.php:318
 msgid "Location"
 msgstr "Ort"
 
-#: includes/Provider/BITE.php:1354 includes/Provider/UnivIS.php:1281
+#: includes/Provider/BITE.php:1357 includes/Provider/UnivIS.php:1281
 msgid "Maternity leave replacement"
 msgstr "Mutterschutzvertretung"
 
-#: includes/Provider/BITE.php:1355 includes/Provider/UnivIS.php:1283
+#: includes/Provider/BITE.php:1358 includes/Provider/UnivIS.php:1283
 msgid "Maternity/parental leave replacement"
 msgstr "Mutterschutz- / Elternzeitvertretung"
 
@@ -737,7 +733,7 @@ msgstr "Medizinische Fakultät"
 msgid "Misc"
 msgstr "Verschiedenes"
 
-#: config/config.php:453 config/config.php:456
+#: config/config.php:461 config/config.php:464
 msgid "Missing Provider Identifier"
 msgstr "Provider-Identifikation fehlt"
 
@@ -749,11 +745,11 @@ msgstr "Montag"
 msgid "month"
 msgstr "Monat"
 
-#: includes/Provider/BITE.php:612 includes/Provider/Interamt.php:317
+#: includes/Provider/Interamt.php:317
 msgid "months"
 msgstr "Monate"
 
-#: includes/Provider/BITE.php:1382 includes/Provider/UnivIS.php:1294
+#: includes/Provider/BITE.php:1385 includes/Provider/UnivIS.php:1294
 msgid "Morning times"
 msgstr "Vormittags"
 
@@ -769,37 +765,29 @@ msgstr "Naturwissenschaftliche Fakultät"
 msgid "Necessary qualifications"
 msgstr "Notwendige Qualifikationen"
 
-#: includes/Provider/BITE.php:578
-msgid "night duty"
-msgstr "Nachtdienst"
-
-#: config/config.php:105 build/index.js:1 src/edit.js:143
+#: config/config.php:105 src/edit.js:143
 msgid "No filter"
 msgstr "Kein Filter"
 
-#: config/config.php:439
+#: config/config.php:447
 msgid "No Jobs Message"
 msgstr "Nachricht \"Keine Stellenausschreibungen\""
 
-#: config/config.php:442
+#: config/config.php:450
 msgid "No open job positions found."
 msgstr "Keine offenen Stellen gefunden"
 
-#: config/config.php:376 config/config.php:379 config/config.php:392
+#: config/config.php:384 config/config.php:387 config/config.php:400
 msgid "Notice"
 msgstr "Anmerkung"
 
-#: config/config.php:49 build/index.js:1 src/edit.js:94
+#: config/config.php:49 src/edit.js:94
 msgid "Number of job offers"
 msgstr "Anzahl an Stellenanzeigen"
 
 #: includes/Provider/UnivIS.php:464
 msgid "On-call duty"
 msgstr "Bereitschaftsdienst   "
-
-#: includes/Provider/BITE.php:572
-msgid "on-call duty"
-msgstr "Bereitschaftsdienst"
 
 #: config/config.php:259
 msgid "Optional experience"
@@ -809,42 +797,41 @@ msgstr "Sonstige optionale Qualifikationen"
 msgid "Optional experiences"
 msgstr "Sonstige optionale Qualifikationen"
 
-#: config/config.php:71 build/index.js:1 src/edit.js:110
+#: config/config.php:71 src/edit.js:110
 msgid "Order"
 msgstr "Sortierung"
 
-#: config/config.php:61 build/index.js:1 src/edit.js:100
+#: config/config.php:61 src/edit.js:100
 msgid "Order by"
 msgstr "Sortieren nach"
 
-#: config/config.php:36 build/index.js:1 src/edit.js:83
+#: config/config.php:36 src/edit.js:83
 msgid "OrgID(s)"
 msgstr "OrgID(s)"
 
-#: config/config.php:104 includes/Provider.php:747 includes/Provider.php:751
-#: build/index.js:1 src/edit.js:142
+#: config/config.php:104 includes/Provider.php:748 includes/Provider.php:752
+#: src/edit.js:142
 msgid "Other"
 msgstr "Andere"
 
-#: config/config.php:392
+#: config/config.php:400
 msgid "Output for"
 msgstr "Ausgabe für"
 
-#: config/config.php:544
+#: config/config.php:552
 msgid "Overview"
 msgstr "Übersicht"
 
-#: includes/Provider/BITE.php:296 includes/Provider/BITE.php:1331
-#: includes/Provider/Interamt.php:305 includes/Provider/UnivIS.php:374
-#: includes/Provider/UnivIS.php:1276
+#: includes/Provider/BITE.php:297 includes/Provider/Interamt.php:305
+#: includes/Provider/UnivIS.php:374 includes/Provider/UnivIS.php:1276
 msgid "Part time"
 msgstr "Teilzeit"
 
-#: config/config.php:315 config/config.php:318
+#: config/config.php:323 config/config.php:326
 msgid "Payment"
 msgstr "Entgelt"
 
-#: includes/Provider/BITE.php:616 includes/Provider/UnivIS.php:383
+#: includes/Provider/UnivIS.php:383
 msgid "Permanent employment"
 msgstr "Unbefristete Anstellung"
 
@@ -852,20 +839,19 @@ msgstr "Unbefristete Anstellung"
 msgid "Philosophische Fakultät und Fachbereich Theologie"
 msgstr "Philosophische Fakultät und Fachbereich Theologie"
 
-#: config/config.php:103 includes/Provider.php:743 build/index.js:1
-#: src/edit.js:141
+#: config/config.php:103 includes/Provider.php:744 src/edit.js:141
 msgid "Professorships"
 msgstr "Professur"
 
-#: includes/Provider/BITE.php:1357
+#: includes/Provider/BITE.php:1360
 msgid "Project"
 msgstr "Projekt"
 
-#: config/config.php:30 build/index.js:1 src/edit.js:73
+#: config/config.php:30 src/edit.js:73
 msgid "Provider"
 msgstr "Provider"
 
-#: config/config.php:463
+#: config/config.php:471
 msgid "QR on Public Displays link to this target."
 msgstr "QR auf den Public Displays verlinken auf dieses Ziel."
 
@@ -881,38 +867,32 @@ msgstr "Rechts- und Wirtschaftswissenschaftliche Fakultät"
 msgid "Regionales Rechenzentrum Erlangen"
 msgstr "Regionales Rechenzentrum Erlangen"
 
-#: config/config.php:384 config/config.php:387
+#: config/config.php:392 config/config.php:395
 msgid "Release date"
 msgstr "Veröffentlichungsdatum"
 
-#: includes/Provider/BITE.php:1353 includes/Provider/UnivIS.php:1279
+#: includes/Provider/BITE.php:1356 includes/Provider/UnivIS.php:1279
 msgid "Replacement"
 msgstr "Vertretung"
 
-#: config/config.php:492
+#: config/config.php:500
 msgid "Required hosts for internal jobs"
 msgstr "Notwendige Hosts zur von internen Stellenangeboten "
 
-#: config/config.php:99 includes/Provider.php:726 build/index.js:1
-#: src/edit.js:137
+#: config/config.php:99 includes/Provider.php:727 src/edit.js:137
 msgid "Research & Teaching"
 msgstr "Forschung & Lehre"
 
-#: includes/Provider/BITE.php:581
-msgid "rotating shift"
-msgstr "Wechselschicht"
-
-#. Plugin Name of the plugin
-#: rrze-jobs.php config/config.php:130
+#. Name of the plugin
+#: config/config.php:130
 msgid "RRZE Jobs"
 msgstr "RRZE Jobs"
 
 #. Author of the plugin
-#: rrze-jobs.php
 msgid "RRZE Webteam"
 msgstr "RRZE Webteam"
 
-#: config/config.php:545
+#: config/config.php:553
 msgid "RRZE Webteam on Github"
 msgstr "RRZE-Webteam in Github"
 
@@ -924,28 +904,23 @@ msgstr "Samstag"
 msgid "Shift work"
 msgstr "Schichtdienst"
 
-#: includes/Provider/BITE.php:575
-msgid "shift work"
-msgstr "Schichtdienst"
-
-#: config/config.php:419
+#: config/config.php:427
 msgid "Show Errors and not found messages"
 msgstr "Zeige Fehlermeldungen und Nicht gefunden-Meldungen"
 
-#: config/config.php:90 build/index.js:1 src/edit.js:129
+#: config/config.php:90 src/edit.js:129
 msgid "Show only links to BITE"
 msgstr "Nur Links zu B-ITE anzeigen"
 
-#: includes/Provider/BITE.php:1358 includes/Provider/UnivIS.php:1287
+#: includes/Provider/BITE.php:1361 includes/Provider/UnivIS.php:1287
 msgid "Sickness replacement"
 msgstr "Krankheitsvertretung"
 
-#: config/config.php:371
+#: config/config.php:379
 msgid "Static Textentries below each job offer"
 msgstr "Statische Texteinträge unter den Stellenanzeigen"
 
-#: config/config.php:102 includes/Provider.php:740 build/index.js:1
-#: src/edit.js:140
+#: config/config.php:102 includes/Provider.php:741 src/edit.js:140
 msgid "Student assistants"
 msgstr "Studentische Hilfskräfte"
 
@@ -961,17 +936,16 @@ msgstr "Ergänzende Hinweise"
 msgid "Technische Fakultät"
 msgstr "Technische Fakultät"
 
-#: config/config.php:100 includes/Provider.php:733 build/index.js:1
-#: src/edit.js:138
+#: config/config.php:100 includes/Provider.php:734 src/edit.js:138
 msgid "Technology & Administration"
 msgstr "Technik & Verwaltung"
 
-#: includes/Provider/BITE.php:1309 includes/Provider/UnivIS.php:1271
+#: includes/Provider/BITE.php:1312 includes/Provider/UnivIS.php:1271
 msgid "temporary"
 msgstr "befristet"
 
-#: includes/Provider/BITE.php:299 includes/Provider/BITE.php:605
-#: includes/Provider/Interamt.php:313 includes/Provider/UnivIS.php:381
+#: includes/Provider/BITE.php:300 includes/Provider/Interamt.php:313
+#: includes/Provider/UnivIS.php:381
 msgid "Temporary employment"
 msgstr "Befristete Anstellung"
 
@@ -979,18 +953,17 @@ msgstr "Befristete Anstellung"
 msgid "Temporary employment until"
 msgstr "Befristete Anstellung bis zum"
 
-#. translators: "Temporary employment until $date"
-#: includes/Provider/BITE.php:610
-msgctxt "Temporary employment until $date"
-msgid "until %s"
-msgstr "bis %s"
-
-#: includes/Provider/BITE.php:1359 includes/Provider/UnivIS.php:1289
+#: includes/Provider/BITE.php:1362 includes/Provider/UnivIS.php:1289
 msgid "Temporary officials"
 msgstr "Beamtenschaft auf Zeit"
 
-#. Translators: 1: aktuelle PHP-Version, 2: erforderliche PHP-Version
+#: config/config.php:294
+msgid "The application process"
+msgstr "Wie läuft das Bewerbungsverfahren ab?"
+
+#. 1: aktuelle PHP-Version, 2: erforderliche PHP-Version
 #: rrze-jobs.php:78
+#, php-format
 msgid ""
 "The server is running PHP version %1$s. The Plugin requires at least PHP "
 "version %2$s."
@@ -998,8 +971,9 @@ msgstr ""
 "Der Server verwendet PHP in der Version %1$s. Das Plugin verlangt mindestens "
 "PHP Version %2$s."
 
-#. Translators: 1: aktuelle WP-Version, 2: erforderliche WP-Version
+#. 1: aktuelle WP-Version, 2: erforderliche WP-Version
 #: rrze-jobs.php:81
+#, php-format
 msgid ""
 "The server is running WordPress version %1$s. The Plugin requires at least "
 "WordPress version %2$s."
@@ -1012,7 +986,7 @@ msgid "This is an internal job offer, accessible from FAU network only."
 msgstr ""
 "Diese Stellenanzeige ist intern und nur aus dem Netzwerk der FAU sichtbar."
 
-#: config/config.php:454
+#: config/config.php:462
 msgid ""
 "This message will be displayed if a provider is adressed with a shortcode, "
 "but cannot be used cause of a missing id or key."
@@ -1021,17 +995,17 @@ msgstr ""
 "adressiert wird, diese aber augrund eines fehlenden Identifiers oder Keys "
 "nicht genutzt werden kann."
 
-#: config/config.php:447
+#: config/config.php:455
 msgid "This message will be displayed if shortcode uses wrong parameters."
 msgstr ""
 "Diese Nachricht wird gezeigt, wenn ein Shortcode mit fehlerhaften Parametern "
 "aufgerufen wird."
 
-#: config/config.php:440
+#: config/config.php:448
 msgid "This message will be displayed if the API does not return any data."
 msgstr "Dieser Text wird angezeigt, wenn die API keine Daten liefert."
 
-#: config/config.php:426
+#: config/config.php:434
 msgid ""
 "This message will be displayed if the given provider in the shortcode is "
 "invalid."
@@ -1039,7 +1013,7 @@ msgstr ""
 "Diese Nachricht wird gezeigt, wenn der im Shortcode angegebene Provider "
 "ungültig ist."
 
-#: config/config.php:433
+#: config/config.php:441
 msgid ""
 "This message will be displayed, if someone tries to get an internal "
 "positions without the needed authorization"
@@ -1055,12 +1029,11 @@ msgstr "Donnerstag"
 msgid "Title"
 msgstr "Titel"
 
-#: config/config.php:101 includes/Provider.php:736 build/index.js:1
-#: src/edit.js:139
+#: config/config.php:101 includes/Provider.php:737 src/edit.js:139
 msgid "Trainee"
 msgstr "Auszubildende"
 
-#: config/config.php:487
+#: config/config.php:495
 msgid "Treat admins like normal website users"
 msgstr "Behandle Website-Administratoren wie normale Seitenbesucher"
 
@@ -1072,7 +1045,7 @@ msgstr "Dienstag"
 msgid "Universitätsbibliothek"
 msgstr "Universitätsbibliothek"
 
-#: config/config.php:27 build/index.js:1 src/edit.js:78
+#: config/config.php:27 src/edit.js:78
 msgid "UnivIS"
 msgstr "UnivIS"
 
@@ -1080,19 +1053,19 @@ msgstr "UnivIS"
 msgid "UnivIS OrgId"
 msgstr "UnivIS OrgId"
 
-#: includes/Provider/BITE.php:1308 includes/Provider/UnivIS.php:1270
+#: includes/Provider/BITE.php:1311 includes/Provider/UnivIS.php:1270
 msgid "unlimited"
 msgstr "unbefristet"
 
-#: config/config.php:409
+#: config/config.php:417
 msgid "Use above text"
 msgstr "Nutze obigen Text"
 
-#: config/config.php:408
+#: config/config.php:416
 msgid "Use text from provider if given"
 msgstr "Nutze Text vom Job-Provider"
 
-#: config/config.php:404
+#: config/config.php:412
 msgid ""
 "Use the text from the provider and not the above text for additional notices."
 " (Currently from BITE only)."
@@ -1109,11 +1082,11 @@ msgstr "Mittwoch"
 msgid "week"
 msgstr "Woche"
 
-#: config/config.php:347 config/config.php:350
+#: config/config.php:355 config/config.php:358
 msgid "Weekly working hours"
 msgstr "Wochenarbeitszeit"
 
-#: config/config.php:339 config/config.php:342
+#: config/config.php:347 config/config.php:350
 msgid "Working time"
 msgstr "Arbeitszeit"
 
