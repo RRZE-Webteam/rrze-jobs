@@ -297,7 +297,7 @@ class BITE extends Provider {
                         $beschaeftigungsumfang .= __('Part time', 'rrze-jobs');
                     }
                     if ($val == 'TEMPORARY') {
-                        $res['text_befristet'] .= __('Temporary employment', 'rrze-jobs');
+                        $res['text_befristet'] = __('Temporary employment', 'rrze-jobs');
                     }
 
                 }
@@ -944,7 +944,7 @@ class BITE extends Provider {
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
-			"standard": {  "active": true }
+			"standard": {  "defaultChannelEndDate":"' . date('d.m.Y') . '..", "active": true }
 		    }
 		  }';
 
