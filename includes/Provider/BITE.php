@@ -943,10 +943,11 @@ class BITE extends Provider {
 
         if ($method == 'get_list') {
             $filter = '{
-		    "filter": {
-			"standard": {  "activatedDate":"' . date('d.m.Y', strtotime('6 months ago')) . '..", "active": true }
-		    }
-		  }';
+                "filter": {
+                    "standard": {"active":true}, 
+                    "custom": {"jobstartdate2":"' . date('d.m.Y', strtotime('yesterday')) . '.."}
+                }
+            }';
 
             $post_args = $request_args;
             $post_args['body'] = $filter;
