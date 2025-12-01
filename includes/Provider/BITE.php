@@ -944,7 +944,7 @@ class BITE extends Provider {
         if ($method == 'get_list') {
             $filter = '{
 		    "filter": {
-			"standard": {  "defaultChannelEndDate":"' . date('d.m.Y') . '..", "active": true }
+			"standard": {  "activatedDate":"' . date('d.m.Y', strtotime('6 months ago')) . '..", "active": true }
 		    }
 		  }';
 
