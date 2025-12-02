@@ -945,7 +945,7 @@ class BITE extends Provider {
             $filter = '{
                 "filter": {
                     "standard": {"active":true}, 
-                    "custom": {"jobstartdate2":"' . date('d.m.Y', strtotime('yesterday')) . '.."}
+                    "custom": {"bewerbungsfrist":"' . date('d.m.Y', strtotime('yesterday')) . '.."}
                 }
             }';
 
