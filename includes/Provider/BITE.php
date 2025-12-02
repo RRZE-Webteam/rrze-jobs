@@ -934,18 +934,23 @@ class BITE extends Provider {
 
         $request_args = $this->get_request_args($params);
        
-        if ($this->use_cache) {
+        /*if ($this->use_cache) {
             $cachedout = $cache->get_cached_job('BITE', $id, '', $method);
             if ($cachedout) {		
                 return $cachedout;
 	        }
-	    }
+	    }*/
 
         if ($method == 'get_list') {
-            $filter = '{
+            /*$filter = '{
                 "filter": {
                     "standard": {"active":true}, 
                     "custom": {"jobstartdate2":"' . date('d.m.Y', strtotime('yesterday')) . '.."}
+                }
+            }';*/
+            $filter = '{
+                "filter": {
+                    "standard": {"active":true}, 
                 }
             }';
 
