@@ -789,6 +789,7 @@ class Provider {
             case 'tech':
             case 'prak':
             case 'studjobs':
+            case 'medges':
                 // neue B-ITE-Gruppen
                 $res = $group;
                 break;
