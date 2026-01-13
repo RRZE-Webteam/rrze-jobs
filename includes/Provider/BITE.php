@@ -265,6 +265,7 @@ class BITE extends Provider {
         // job_id (needed by FAU-Jobportal)
         $res['job_id'] = $jobdata['id'];
 
+        $res['language'] = !empty($jobdata['custom']['jobposting_language']) ? strtolower($jobdata['custom']['jobposting_language']) : 'de';
       
        
 
