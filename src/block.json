@@ -2,7 +2,7 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "name": "create-block/rrze-jobs",
-    "version": "3.11.7",
+    "version": "3.11.8",
     "title": "Jobs RRZE",
     "description": "A block to show job offers.",
     "category": "widgets",
@@ -21,11 +21,15 @@
     "attributes": {
         "provider": {
             "type": "string",
-            "default": "interamt"
+            "default": "bite"
         },
         "orgids": {
             "type": "string",
             "default": ""
+        },
+        "language": {
+            "type": "string",
+            "default": "all"
         },
         "jobid": {
             "type": "number",

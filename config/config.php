@@ -30,6 +30,17 @@ function getShortcodeSettings() {
             'label' => __('Provider', 'rrze-jobs'),
             'type' => 'string',
         ],
+        'language' => [
+            'field_type' => 'select',
+            'values' => [
+                'all' => __('All', 'rrze-jobs'),
+                'de' => __('German', 'rrze-jobs'),
+                'en' => __('English', 'rrze-jobs'),
+            ],
+            'default' => 'all',
+            'label' => __('Language', 'rrze-jobs'),
+            'type' => 'string',
+        ],
         'orgids' => [
             'field_type' => 'text',
             'default' => '',

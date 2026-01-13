@@ -6,22 +6,15 @@ import ServerSideRender from '@wordpress/server-side-render';
 import metadata from './block.json'; // Import block.json metadata
 
 export default function Edit({ attributes, setAttributes }) {
-    const { provider, orgids, jobid, limit, orderby, order, fallback_apply, default_subject, link_only, category, fauorg } = attributes;
+    const { provider, language, orgids, jobid, limit, orderby, order, fallback_apply, default_subject, link_only, category, fauorg } = attributes;
     const blockProps = useBlockProps();
-
-    // Initialize attributes with default values from block.json
-    const defaultAttributes = {};
-    Object.keys(metadata.attributes).forEach(key => {
-        defaultAttributes[key] = metadata.attributes[key].default;
-    });
-
-    useEffect(() => {
-        // Set default attributes when the component mounts
-        setAttributes(defaultAttributes);
-    }, []);
 
     const onProviderChange = (newProvider) => {
         setAttributes({ provider: newProvider });
+    };
+
+    const onLanguageChange = (newLanguage) => {
+        setAttributes({ language: newLanguage });
     };
 
     const onOrgidsChange = (newOrgids) => {
@@ -78,6 +71,16 @@ export default function Edit({ attributes, setAttributes }) {
                             { label: __('UnivIS', 'rrze-jobs'), value: 'univis' }
                         ]}
                         onChange={onProviderChange}
+                    />
+                    <SelectControl
+                        label={__('Language', 'rrze-jobs')}
+                        value={language}
+                        options={[
+                            { label: __('All', 'rrze-jobs'), value: 'all' },
+                            { label: __('German', 'rrze-jobs'), value: 'de' },
+                            { label: __('English', 'rrze-jobs'), value: 'en' }
+                        ]}
+                        onChange={onLanguageChange}
                     />
                     <TextControl
                         label={__('OrgID(s)', 'rrze-jobs')}
@@ -136,6 +139,8 @@ export default function Edit({ attributes, setAttributes }) {
                         options={[
                             { label: __('Research & Teaching', 'rrze-jobs'), value: 'wiss' },
                             { label: __('Technology & Administration', 'rrze-jobs'), value: 'n-wiss' },
+                            { label: __('Healthcare & Medicine', 'rrze-jobs'), value: 'medges' },
+                            { label: __('IT', 'rrze-jobs'), value: 'it' },
                             { label: __('Trainee', 'rrze-jobs'), value: 'azubi' },
                             { label: __('Student assistants', 'rrze-jobs'), value: 'hiwi' },
                             { label: __('Professorships', 'rrze-jobs'), value: 'prof' },
