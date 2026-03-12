@@ -22,17 +22,20 @@
     
     aside,
 	section.keyfacts {
-	display: block;
-	@media (min-width: 1024px) {
-	    border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
-	    padding-left: 15px;
-	}
-	
-	span {
-	    font-size: inherit;
-	    line-height: inherit;
-	}
+		display: block;
+		@media (min-width: 1024px) {
+			border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
+			padding-left: 15px;
+		}
+
+		span {
+			font-size: inherit;
+			line-height: inherit;
+		}
     }
+	section.general-info {
+		grid-column: 1 / -1;
+	}
     
     @media (min-width: 600px) {
 	table.rrze-jobs-single-keyfacts {
