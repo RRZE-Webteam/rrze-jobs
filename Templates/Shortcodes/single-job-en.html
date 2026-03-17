@@ -36,19 +36,9 @@
 				{{=disambiguatingDescription}}
 			</div>
 			{{/disambiguatingDescription}}
-			
-			{{const.text_jobnotice}}
-			[alert]
-			<h3>{{=const.title_jobnotice_en}}</h3>
-			{{=const.text_jobnotice}}
-			[/alert]
-			{{/const.text_jobnotice}}
 
-			{{intern}}[alert style="warning"]{{=const.internal_message_en}}[/alert]{{/intern}}
-
-			<p>{{const.title_releasedate_en}}<em>{{=const.title_releasedate_en}}: {{=releaseDate}}</em>{{/const.title_releasedate_en}}{{pdfLinkUrl}}, <a href="{{=pdfLinkUrl}}">{{=pdfLinkText}}</a>{{/pdfLinkUrl}}</p>
 		</article>
-		<aside aria-label="{{=const.title_keyfacts_en}}">
+		<aside class="keyfacts" aria-label="{{=const.title_keyfacts_en}}">
 
 			<p>
 				{{applicationContact.url}}
@@ -144,6 +134,19 @@
 					</td>
 				</tr>
 			</table>
+		</aside>
+
+		<aside class="general-info" aria-label="General Information">
+			{{const.text_jobnotice}}
+			[alert]
+			<h3>{{=const.title_jobnotice_en}}</h3>
+			{{=const.text_jobnotice}}
+			[/alert]
+			{{/const.text_jobnotice}}
+
+			{{intern}}[alert style="warning"]{{=const.internal_message_en}}[/alert]{{/intern}}
+
+			<p>{{const.title_releasedate_en}}<em>{{=const.title_releasedate_en}}: {{=releaseDate}}</em>{{/const.title_releasedate_en}}{{pdfLinkUrl}}, <a href="{{=pdfLinkUrl}}">{{=pdfLinkText}}</a>{{/pdfLinkUrl}}</p>
 		</aside>
 	</div>
 </div>

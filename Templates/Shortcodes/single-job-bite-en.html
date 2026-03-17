@@ -44,27 +44,6 @@
 					{{=disambiguatingDescription}}
 				</div>
 			{{/disambiguatingDescription}}
-
-			{{const.text_fau_employer_en}}
-				<h2>{{=const.title_fau_employer_en}}</h2>
-				{{=const.text_fau_employer_en}}
-			{{/const.text_fau_employer_en}}
-
-			{{application_process}}
-				<h2>{{=const.title_applicationProcess_en}}</h2>
-				{{=application_process}}
-			{{/application_process}}
-
-			{{const.text_jobnotice_en}}
-				[alert]
-				<h2>{{=const.title_jobnotice_en}}</h2>
-				{{=const.text_jobnotice_en}}
-				[/alert]
-			{{/const.text_jobnotice_en}}
-
-			{{intern}}[alert style="warning"]{{=const.internal_message_en}}[/alert]{{/intern}}
-
-			<p>{{const.title_releasedate_en}}<em>{{=const.title_releasedate_en}}: {{=releaseDate}}</em>{{/const.title_releasedate_en}}{{pdfLinkUrl}}, <a href="{{=pdfLinkUrl}}">{{=pdfLinkText}}</a>{{/pdfLinkUrl}}</p>
 		</section>
 		<section class="keyfacts" aria-label="{{=const.title_keyfacts_en}}">
 			<p>
@@ -161,6 +140,28 @@
 					</td>
 				</tr>
 			</table>
+		</section>
+		<section class="general-info">
+			{{const.text_fau_employer_en}}
+			<h2>{{=const.title_fau_employer_en}}</h2>
+			{{=const.text_fau_employer_en}}
+			{{/const.text_fau_employer_en}}
+
+			{{application_process}}
+			<h2>{{=const.title_applicationProcess_en}}</h2>
+			{{=application_process}}
+			{{/application_process}}
+
+			{{const.text_jobnotice_en}}
+			[alert]
+			<h2>{{=const.title_jobnotice_en}}</h2>
+			{{=const.text_jobnotice_en}}
+			[/alert]
+			{{/const.text_jobnotice_en}}
+
+			{{intern}}[alert style="warning"]{{=const.internal_message_en}}[/alert]{{/intern}}
+
+			<p>{{const.title_releasedate_en}}<em>{{=const.title_releasedate_en}}: {{=releaseDate}}</em>{{/const.title_releasedate_en}}{{pdfLinkUrl}}, <a href="{{=pdfLinkUrl}}">{{=pdfLinkText}}</a>{{/pdfLinkUrl}}</p>
 		</section>
 	</div>
 </div>

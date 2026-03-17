@@ -22,22 +22,23 @@
 .rrze-jobs-single article {
   display: block;
 }
-.rrze-jobs-single aside,
+.rrze-jobs-single aside.keyfacts,
 .rrze-jobs-single section.keyfacts {
   display: block;
 }
 @media (min-width: 1024px) {
-  .rrze-jobs-single aside,
+  .rrze-jobs-single aside.keyfacts,
   .rrze-jobs-single section.keyfacts {
     border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
     padding-left: 15px;
   }
 }
-.rrze-jobs-single aside span,
+.rrze-jobs-single aside.keyfacts span,
 .rrze-jobs-single section.keyfacts span {
   font-size: inherit;
   line-height: inherit;
 }
+.rrze-jobs-single aside.general-info,
 .rrze-jobs-single section.general-info {
   grid-column: 1/-1;
 }

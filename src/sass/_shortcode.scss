@@ -10,17 +10,16 @@
 .rrze-jobs-single {
     display: block;
     @media (min-width: 1024px) {
-	 display: grid;
-	 gap: var(--gap-width, 30px);
-	 grid-template-columns: 1fr var(--min-width-aside, 300px);
+		display: grid;
+		gap: var(--gap-width, 30px);
+		grid-template-columns: 1fr var(--min-width-aside, 300px);
     }
-   
 
     article {
 	display: block;
     }
     
-    aside,
+    aside.keyfacts,
 	section.keyfacts {
 		display: block;
 		@media (min-width: 1024px) {
@@ -33,6 +32,8 @@
 			line-height: inherit;
 		}
     }
+
+	aside.general-info,
 	section.general-info {
 		grid-column: 1 / -1;
 	}
