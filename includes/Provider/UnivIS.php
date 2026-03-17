@@ -163,6 +163,7 @@ class UnivIS extends Provider {
 		// validThrough
 		$res['validThrough'] = $jobdata['enddate'];
 
+        $res['language'] = !empty($jobdata['lang']) ? strtolower($jobdata['lang']) : 'de';
 
 
 		// qualifications

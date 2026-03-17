@@ -13,6 +13,7 @@ include_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 class Shortcode {
     private $provider = '';
+    private $language = '';
     private $map_template = [];
     private $jobid = 0;
     private $aOrgIDs = [];
@@ -93,6 +94,7 @@ class Shortcode {
     private function setAtts($atts) {
         $aAtts = [
             'limit',
+            'language',
             'orderby',
             'order',
             'fallback_apply',
@@ -149,6 +151,9 @@ class Shortcode {
 
         // filter provider
         $search_provider = (!empty($atts['provider']) ? sanitize_text_field($atts['provider']) : '');
+
+        // language
+        $search_language = (!empty($atts['language']) ? sanitize_text_field($atts['language']) : '');
 
         // optional search for jobs with the given category in occupationalCategory
         $search_category = (!empty($atts['category']) ? sanitize_text_field($atts['category']) : '');
@@ -350,7 +355,7 @@ class Shortcode {
                     if ($hidethis) {
                         // Ignore/hide this position in display
                         // Also do not give an error message like at single display
-
+                        continue;
                     } else {
                         if ((!empty($search_category)) && (!empty($data['orig_occupationalCategory']))) {
                             $jobcategory = $positions->map_occupationalCategory($data['orig_occupationalCategory']);
@@ -365,6 +370,15 @@ class Shortcode {
                             }
                             $fauorg = $data['hiringOrganization']['fauorg'];
                             if ($search_fauorg !== $fauorg) {
+                                continue;
+                            }
+                        }
+
+                        if (!empty($search_language) && $search_language !== 'all') {
+                            if (!empty($data['_provider-values']['jobposting_language']) && $data['_provider-values']['jobposting_language'] !== $search_language) {
+                                continue;
+                            }
+                            if (!empty($data['_provider']['lang']) && $data['_provider']['lang'] !== $search_language) {
                                 continue;
                             }
                         }

@@ -10,29 +10,33 @@
 .rrze-jobs-single {
     display: block;
     @media (min-width: 1024px) {
-	 display: grid;
-	 gap: var(--gap-width, 30px);
-	 grid-template-columns: 1fr var(--min-width-aside, 300px);
+		display: grid;
+		gap: var(--gap-width, 30px);
+		grid-template-columns: 1fr var(--min-width-aside, 300px);
     }
-   
 
     article {
 	display: block;
     }
     
-    aside,
+    aside.keyfacts,
 	section.keyfacts {
-	display: block;
-	@media (min-width: 1024px) {
-	    border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
-	    padding-left: 15px;
-	}
-	
-	span {
-	    font-size: inherit;
-	    line-height: inherit;
-	}
+		display: block;
+		@media (min-width: 1024px) {
+			border-left: 2px solid var(--color-primary-ci-hell2, #ced9e7);
+			padding-left: 15px;
+		}
+
+		span {
+			font-size: inherit;
+			line-height: inherit;
+		}
     }
+
+	aside.general-info,
+	section.general-info {
+		grid-column: 1 / -1;
+	}
     
     @media (min-width: 600px) {
 	table.rrze-jobs-single-keyfacts {
