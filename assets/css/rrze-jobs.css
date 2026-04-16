@@ -75,6 +75,142 @@
     font-size: inherit;
     line-height: inherit;
   }
+  .rrze-jobs-single table.rrze-jobs-single-keyfacts tr.notice-validThrough {
+    display: none;
+  }
+}
+
+.fau-elemental .rrze-jobs-single {
+  display: flex;
+  flex-direction: column;
+  row-gap: 2em;
+}
+.fau-elemental .rrze-jobs-single .job-content {
+  order: 2;
+}
+.fau-elemental .rrze-jobs-single p.button-wrapper {
+  margin: 0;
+  text-align: right;
+  margin-bottom: var(--Spacing-4x, 1rem);
+}
+.fau-elemental .rrze-jobs-single a.standard-btn {
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--FAU-Col-FAU-Dunkelblau-100, #041e42);
+  color: #fff;
+  text-decoration: none;
+  padding: var(--Spacing-2x, 0.5rem) var(--Spacing-4x, 1rem);
+  padding-right: calc(var(--Spacing-4x, 1rem) + 2.9375rem);
+  position: relative;
+  overflow: hidden;
+  font-weight: 600;
+}
+.fau-elemental .rrze-jobs-single a.standard-btn:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2.9375rem;
+  height: 100%;
+  background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
+}
+.fau-elemental .rrze-jobs-single a.standard-btn:before {
+  content: "";
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 25px;
+  height: 25px;
+  background: white;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z'/%3E%3C/svg%3E") center/contain no-repeat;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 -960 960 960'%3E%3Cpath d='M647-440H160v-80h487L423-744l57-56 320 320-320 320-57-56 224-224Z'/%3E%3C/svg%3E") center/contain no-repeat;
+  transition: transform 0.2s ease;
+  z-index: 1;
+}
+.fau-elemental .rrze-jobs-single a.standard-btn:hover:before {
+  transform: translate(4px, -50%);
+}
+.fau-elemental .rrze-jobs-single .keyfacts {
+  order: 1;
+  border: none;
+  padding: 0;
+}
+.fau-elemental .rrze-jobs-single .keyfacts p.notice-validThrough {
+  display: none;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts {
+  box-sizing: border-box;
+  background-color: var(--FAU_Col_FAU-Dunkelblau_12_5, #DFE2E7);
+  padding: 40px var(--Spacing-4x, 1rem) var(--Spacing-4x, 1rem);
+  width: 100%;
+  max-width: 870px;
+  margin: var(--Spacing-8x, 2rem) 0 var(--Spacing-4x, 1rem);
+  position: relative;
+  font-size: unset;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts:after {
+  content: "";
+  background-image: url("../../assets/img/keep.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  display: block;
+  width: 48px;
+  height: 48px;
+  position: absolute;
+  top: -24px;
+  left: var(--Spacing-4x, 1rem);
+  background-color: var(--FAU-Col-FAU-Blau-100, #04316a);
+  color: #fff;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tbody {
+  display: block;
+}
+@media screen and (min-width: 600px) {
+  .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tbody {
+    column-count: 2;
+    column-gap: var(--Spacing-4x, 1rem);
+  }
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tr {
+  display: block;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts th {
+  vertical-align: top;
+  padding-right: var(--Spacing-2x, 0.5rem);
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul li {
+  list-style: none;
+}
+@media (min-width: 600px) {
+  .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul li {
+    list-style: none;
+  }
+}
+.fau-elemental .rrze-jobs-single .general-info {
+  order: 3;
+}
+.fau-elemental .rrze-jobs-single .general-info .title-application-process {
+  display: none;
+}
+.fau-elemental .rrze-jobs-single .general-info .application-process {
+  position: relative;
+  width: 100vw;
+  left: 50%;
+  margin-left: -50vw;
+  box-sizing: border-box;
+  padding: var(--Spacing-4x, 1rem);
+}
+
+.fau-theme .job-content p.button-wrapper {
+  display: none;
 }
 
 /*----------------------------------------------------------------------------*/

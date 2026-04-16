@@ -9,7 +9,7 @@
 		<meta itemprop="employmentType" content="{{=employmentType}}">
 		{{applicationContact.url}}<meta itemprop="directApply" content="true">{{/applicationContact.url}}
 		{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}">{{/text_keywords}}
-		<section>
+		<section class="job-content">
 
 			{{employerWorkplace}}
 				<h2>{{=const.title_workplace_en}}</h2>
@@ -44,9 +44,24 @@
 					{{=disambiguatingDescription}}
 				</div>
 			{{/disambiguatingDescription}}
+
+			<p class="button-wrapper">
+				{{applicationContact.url}}
+				<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button_en}}</span></a>
+				{{:applicationContact.url}}
+				{{applicationContact.email}}
+				<a class="standard-btn full-btn primary-btn" href="mailto:{{=applicationContact.email}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button_en}}</span></a>
+				{{:applicationContact.email}}
+				{{applicationContact.description}}
+				<strong>{{=applicationContact.description}}</strong>
+				{{/applicationContact.description}}
+				{{/applicationContact.email}}
+				{{/applicationContact.url}}
+			</p>
+
 		</section>
 		<section class="keyfacts" aria-label="{{=const.title_keyfacts_en}}">
-			<p>
+			<p class="button-wrapper">
 				{{applicationContact.url}}
 					<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button_en}}</span></a>
 				{{:applicationContact.url}}
@@ -75,6 +90,11 @@
 					<td itemprop="jobStartDate">{{=jobStartDate}}</td>
 				</tr>
 				{{/jobStartDate}}
+				{{validThrough_DE}}
+				<tr class="notice-validThrough">
+					<th class="title">{{=const.title_validThrough_en}}</th> <td class="validThrough">{{=validThrough_DE}}</td>
+				</tr>
+				{{/validThrough_DE}}
 				<tr>
 					<th>{{=const.title_Location_en}}</th>
 					<td>
@@ -148,7 +168,7 @@
 			{{/const.text_fau_employer_en}}
 
 			{{application_process}}
-			<h2>{{=const.title_applicationProcess_en}}</h2>
+			<h2 class="title-application-process">{{=const.title_applicationProcess_en}}</h2>
 			{{=application_process}}
 			{{/application_process}}
 
