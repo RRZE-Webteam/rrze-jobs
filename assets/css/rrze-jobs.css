@@ -22,6 +22,18 @@
 .rrze-jobs-single article {
   display: block;
 }
+.rrze-jobs-single .keyfacts ul.rrze-jobs-contact,
+.rrze-jobs-single .keyfacts ul.rrze-jobs-contact,
+.rrze-jobs-single .job-content ul.rrze-jobs-contact {
+  padding: 0;
+  margin: 0;
+}
+.rrze-jobs-single .keyfacts ul.rrze-jobs-contact li,
+.rrze-jobs-single .keyfacts ul.rrze-jobs-contact li,
+.rrze-jobs-single .job-content ul.rrze-jobs-contact li {
+  list-style: none;
+  padding: 0;
+}
 .rrze-jobs-single aside.keyfacts,
 .rrze-jobs-single section.keyfacts {
   display: block;
@@ -194,6 +206,35 @@
     list-style: none;
   }
 }
+.fau-elemental .rrze-jobs-single .job-content ul {
+  font-size: var(--P-Body-Text, 1.125rem);
+  line-height: var(--base-line-height, 1.5);
+  list-style-type: none;
+  padding-left: var(--Spacing-14x);
+  color: var(--FAU-Col-FAU-Schwarz-100);
+  font-weight: 400;
+  max-width: min(100vw - var(--Spacing-10x), var(--small-max-width));
+}
+.fau-elemental .rrze-jobs-single .job-content ul:not(.rrze-jobs-contact) li {
+  position: relative;
+  margin-bottom: var(--Spacing-6x);
+}
+.fau-elemental .rrze-jobs-single .job-content ul:not(.rrze-jobs-contact) li:before {
+  background-color: var(--FAU-Col-FAU-Blau-100);
+  content: "";
+  height: 0.125rem;
+  left: calc(var(--Spacing-14x) * -1);
+  position: absolute;
+  top: var(--Spacing-3x);
+  width: var(--Spacing-8x);
+}
+.fau-elemental .rrze-jobs-single .job-content ul.rrze-jobs-contact {
+  padding: 0;
+  margin: 0;
+}
+.fau-elemental .rrze-jobs-single .job-content ul.rrze-jobs-contact li {
+  list-style: none;
+}
 .fau-elemental .rrze-jobs-single .general-info {
   order: 3;
 }
@@ -207,6 +248,8 @@
   margin-left: -50vw;
   box-sizing: border-box;
   padding: var(--Spacing-4x, 1rem);
+  margin-top: var(--Spacing-6x, 1.5rem);
+  margin-bottom: var(--Spacing-6x, 1.5rem);
 }
 
 .fau-theme .job-content p.button-wrapper {
