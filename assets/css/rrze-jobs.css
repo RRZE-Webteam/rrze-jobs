@@ -188,6 +188,7 @@
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tr {
   display: block;
+  break-inside: avoid-column;
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts th {
   vertical-align: top;

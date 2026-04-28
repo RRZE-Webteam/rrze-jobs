@@ -183,6 +183,7 @@
 				}
 				tr {
 					display: block;
+					break-inside: avoid-column;
 				}
 				th {
 					vertical-align: top;
