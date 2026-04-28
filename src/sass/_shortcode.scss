@@ -18,6 +18,19 @@
     article {
 	display: block;
     }
+
+	.keyfacts,
+	.keyfacts,
+	.job-content {
+		ul.rrze-jobs-contact {
+			padding: 0;
+			margin: 0;
+			li {
+				list-style: none;
+				padding: 0;
+			}
+		}
+	}
     
     aside.keyfacts,
 	section.keyfacts {
@@ -39,44 +52,41 @@
 	}
     
     @media (min-width: 600px) {
-	table.rrze-jobs-single-keyfacts {
-	    background: transparent;
-	    border: none;
-
-	    tr {
-		 border: none;
-	    }
-	    th, td {
-		display: inline-block;
-		width: 100%;
-	    }
-	    th {
-		vertical-align: top;
-		border: none;
-		background: transparent;
-		padding: 0;
-		font-size: 0.9em;
-	    }
-	    td {
-		vertical-align: top;
-		border: none;
-		background: transparent;	    
-		padding: 0 0 1em 1em;
-
-
-		ul {
-		    margin: 0; 
-		    li {
-			list-style: inside disc;
-			font-size: inherit;
-			line-height: inherit;
-		    }
+		table.rrze-jobs-single-keyfacts {
+			background: transparent;
+			border: none;
+			tr {
+			 border: none;
+			}
+			th, td {
+				display: inline-block;
+				width: 100%;
+			}
+			th {
+				vertical-align: top;
+				border: none;
+				background: transparent;
+				padding: 0;
+				font-size: 0.9em;
+			}
+			td {
+				vertical-align: top;
+				border: none;
+				background: transparent;
+				padding: 0 0 1em 1em;
+				ul {
+					margin: 0;
+					li {
+						list-style: inside disc;
+						font-size: inherit;
+						line-height: inherit;
+					}
+				}
+			}
+			tr.notice-validThrough {
+				display: none;
+			}
 		}
-	    }
-		tr.notice-validThrough {
-			display: none;
-		}
-	} 
     }
 }
 
@@ -173,6 +183,7 @@
 				}
 				tr {
 					display: block;
+					break-inside: avoid-column;
 				}
 				th {
 					vertical-align: top;
@@ -191,6 +202,39 @@
 				}
 			}
 		}
+		.job-content {
+			ul {
+				font-size: var(--P-Body-Text, 1.125rem);
+				line-height: var(--base-line-height, 1.5);
+				list-style-type: none;
+				padding-left: var(--Spacing-14x);
+				color: var(--FAU-Col-FAU-Schwarz-100);
+				font-weight: 400;
+				max-width: min(100vw - var(--Spacing-10x), var(--small-max-width));
+				&:not(.rrze-jobs-contact) {
+					li {
+						position: relative;
+						margin-bottom: var(--Spacing-6x);
+						&:before {
+							background-color: var(--FAU-Col-FAU-Blau-100);
+							content: "";
+							height: .125rem;
+							left: calc(var(--Spacing-14x) * -1);
+							position: absolute;
+							top: var(--Spacing-3x);
+							width: var(--Spacing-8x);
+						}
+					}
+				}
+				&.rrze-jobs-contact {
+					padding: 0;
+					margin: 0;
+					li {
+						list-style: none;
+					}
+				}
+			}
+		}
 		.general-info {
 			order: 3;
 			.title-application-process {
@@ -203,6 +247,8 @@
 				margin-left: -50vw;
 				box-sizing: border-box;
 				padding: var(--Spacing-4x, 1rem);
+				margin-top: var(--Spacing-6x, 1.5rem);
+				margin-bottom: var(--Spacing-6x, 1.5rem);
 			}
 		}
 	}

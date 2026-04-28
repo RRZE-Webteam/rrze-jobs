@@ -1,6 +1,7 @@
 
 <div class="rrze-jobs">
 	<div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
+		<meta itemprop="title" content="{{=title}}">
 		<meta itemprop="identifier" content="{{=identifier}}">
 		<meta name="data-source" content="{{=_provider-values.provider}}">
 		<meta itemprop="datePosted" content="{{=datePosted}}">
@@ -45,6 +46,18 @@
 				</div>
 			{{/disambiguatingDescription}}
 
+			<h2>{{=const.title_contact}}</h2>
+			{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
+			{{=employmentUnit.name}}
+			<ul class="rrze-jobs-contact">
+				{{employmentUnit.email}}<li>E-Mail: <a href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
+				{{/employmentUnit.email}}
+				{{employmentUnit.telephone}}<li>Telefon: <span>{{=employmentUnit.telephone}}</span></li>
+				{{/employmentUnit.telephone}}
+				{{/applicationContact.description}}
+			</ul>
+
+
 			<p class="button-wrapper">
 				{{applicationContact.url}}
 				<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}" id="apply_{{=_provider-values.provider}}"><span>{{=const.title_application_button}}</span></a>
@@ -80,10 +93,6 @@
 			</p>
 
 			<table class="rrze-jobs-single-keyfacts">
-				<tr>
-					<th>{{=const.title_title}}</th>
-					<td itemprop="title">{{=title}}</td>
-				</tr>
 				{{jobStartDate}}
 				<tr>
 					<th>{{=const.title_jobStartDate}}</th>
@@ -149,7 +158,7 @@
 					<td>
 						{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
 						{{=employmentUnit.name}}
-						<ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
+						<ul class="rrze-jobs-contact" itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
 							{{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
 							{{/employmentUnit.email}}
 							{{employmentUnit.telephone}}<li>Telefon: <span
