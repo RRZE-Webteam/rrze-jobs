@@ -1,6 +1,6 @@
 [collapse title="{{=title}}" name="{{=identifier}}"]
 <div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
-<article>
+<section class="job-content">
 	<meta itemprop="identifier" content="{{=identifier}}">
 	<meta name="data-source" content="{{=_provider-values.provider}}">
 	<meta itemprop="datePosted" content="{{=datePosted}}">
@@ -47,8 +47,8 @@
 		{{intern}}[alert style="warning"]{{=const.internal_message}}[/alert]{{/intern}}
 
 		{{const.title_releasedate}}<p><em>{{=const.title_releasedate}}: {{=releaseDate}}</em></p>{{/const.title_releasedate}}
-	</article>
-	<aside aria-label="{{=const.title_keyfacts}}">
+	</section>
+	<section aria-label="{{=const.title_keyfacts}}">
 
 		<p>
 			{{applicationContact.url}}
@@ -102,9 +102,9 @@
 			<th>{{=const.title_payment}}</th>
 			<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
 				<meta itemprop="currency" content="EUR">
-				<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
-					<meta itemprop="uniText" content="MONTH">
-					<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
+				<span itemprop="value" itemscope itemtype="http://schema.org/QuantitativeValue">
+					<meta itemprop="unitText" content="YEAR">
+					{{=estimatedSalary.stringvalue}}
 				</span>
 			</td>
 			</tr>
@@ -143,6 +143,6 @@
 				</td>
 			</tr>
 		</table>
-	</aside>
+	</section>
 </div>
 [/collapse]

@@ -5,6 +5,10 @@
 .rrze-jobs {
     --min-width-aside: 300px;
     --gap-width: 30px;
+	p:empty {
+		margin: 0 !important;
+		padding: 0 !important;
+	}
 }
 
 .rrze-jobs-single {
@@ -151,6 +155,7 @@
 				display: none;
 			}
 			table.rrze-jobs-single-keyfacts {
+				display: block;
 				box-sizing: border-box;
 				background-color: var(--FAU_Col_FAU-Dunkelblau_12_5, #DFE2E7);
 				padding: 40px var(--Spacing-4x, 1rem) var(--Spacing-4x, 1rem);
@@ -176,6 +181,7 @@
 				}
 				tbody {
 					display: block;
+					border: none;
 					@media screen and (min-width: 600px) {
 						column-count: 2;
 						column-gap: var(--Spacing-4x, 1rem);
@@ -184,10 +190,12 @@
 				tr {
 					display: block;
 					break-inside: avoid-column;
+					background-color: transparent;
 				}
 				th {
 					vertical-align: top;
 					padding-right: var(--Spacing-2x, .5rem);
+					font-weight: bold;
 				}
 				ul {
 					margin: 0;
@@ -195,6 +203,11 @@
 					list-style: none;
 					li {
 						list-style: none;
+						margin-bottom: 0;
+						font-size: initial;
+						&:before {
+							display: none;
+						}
 						@media (min-width: 600px) {
 							list-style: none;
 						}
