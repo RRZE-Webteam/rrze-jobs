@@ -1,6 +1,6 @@
 [collapse title="{{=title}}" name="{{=identifier}}"]
 <div class="rrze-jobs-single" itemscope itemtype="https://schema.org/JobPosting" lang="{{=_provider-values.lang}}">
-	<section>
+	<section class="job-content">
 		<meta itemprop="identifier" content="{{=identifier}}">
 		<meta name="data-source" content="{{=_provider-values.provider}}">
 		<meta itemprop="datePosted" content="{{=datePosted}}">
@@ -57,7 +57,7 @@
 	</section>
 
 	<section class="keyfacts" aria-label="{{=const.title_keyfacts}}">
-		<p>
+		<p class="button-wrapper">
 			{{applicationContact.url}}
 			<a class="standard-btn full-btn primary-btn" href="{{=applicationContact.url}}"><span>{{=const.title_application_button}}</span></a>
 			{{:applicationContact.url}}
@@ -104,17 +104,33 @@
 						</span>
 				</td>
 			</tr>
-			{{estimatedSalary.stringvalue}}
-			<th>{{=const.title_payment}}</th>
-			<td itemprop="estimatedSalary" itemtype="http://schema.org/MonetaryAmount">
-				<meta itemprop="currency" content="EUR">
-				<span itemprop="value" itemtype="http://schema.org/QuantitativeValue">
-						<meta itemprop="uniText" content="MONTH">
-						<span itemprop="value">{{=estimatedSalary.stringvalue}}</span>
+			{{baseSalary.stringvalue}}
+			<tr>
+				<th>{{=const.title_payment}}</th>
+				<td itemprop="baseSalary" itemscope itemtype="http://schema.org/MonetaryAmount">
+					<meta itemprop="currency" content="EUR">
+					<span itemprop="value" itemscope itemtype="http://schema.org/QuantitativeValue">
+						{{baseSalary.value.minValue}}<meta itemprop="minValue" content="{{=baseSalary.value.minValue}}">{{/baseSalary.value.minValue}}
+						{{baseSalary.value.maxValue}}<meta itemprop="maxValue" content="{{=baseSalary.value.maxValue}}">{{/baseSalary.value.maxValue}}
+						<meta itemprop="unitText" content="YEAR">
+						{{=estimatedSalary.stringvalue}} ({{=baseSalary.stringvalue}})
 					</span>
-			</td>
+				</td>
 			</tr>
-			{{/estimatedSalary.stringvalue}}
+			{{:baseSalary.stringvalue}}
+				{{estimatedSalary.stringvalue}}
+				<tr>
+					<th>{{=const.title_payment}}</th>
+					<td itemprop="baseSalary" itemscope itemtype="http://schema.org/MonetaryAmount">
+						<meta itemprop="currency" content="EUR">
+						<span itemprop="value" itemscope itemtype="http://schema.org/QuantitativeValue">
+							<meta itemprop="unitText" content="YEAR">
+							{{=estimatedSalary.stringvalue}}
+						</span>
+					</td>
+				</tr>
+				{{/estimatedSalary.stringvalue}}
+			{{/baseSalary.stringvalue}}
 			{{text_workingtime}}
 			<tr>
 				<th>{{=const.title_workingtime}}</th>
@@ -137,7 +153,7 @@
 				<th>{{=const.title_contact}}</th>
 				<td>
 					{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
-					{{=employmentUnit.name}}
+					<span>{{=employmentUnit.name}}</span>
 					<ul itemprop="employmentUnit" itemscope="" itemtype="http://schema.org/Organization">
 						{{employmentUnit.email}}<li>E-Mail: <a itemprop="email" href="mailto:{{=employmentUnit.email}}">{{=employmentUnit.email}}</a></li>
 						{{/employmentUnit.email}}

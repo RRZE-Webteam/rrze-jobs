@@ -8,6 +8,10 @@
   --min-width-aside: 300px;
   --gap-width: 30px;
 }
+.rrze-jobs p:empty {
+  margin: 0 !important;
+  padding: 0 !important;
+}
 
 .rrze-jobs-single {
   display: block;
@@ -154,6 +158,7 @@
   display: none;
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts {
+  display: block;
   box-sizing: border-box;
   background-color: var(--FAU_Col_FAU-Dunkelblau_12_5, #DFE2E7);
   padding: 40px var(--Spacing-4x, 1rem) var(--Spacing-4x, 1rem);
@@ -179,6 +184,7 @@
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tbody {
   display: block;
+  border: none;
 }
 @media screen and (min-width: 600px) {
   .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tbody {
@@ -189,10 +195,12 @@
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts tr {
   display: block;
   break-inside: avoid-column;
+  background-color: transparent;
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts th {
   vertical-align: top;
   padding-right: var(--Spacing-2x, 0.5rem);
+  font-weight: bold;
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul {
   margin: 0;
@@ -201,6 +209,11 @@
 }
 .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul li {
   list-style: none;
+  margin-bottom: 0;
+  font-size: initial;
+}
+.fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul li:before {
+  display: none;
 }
 @media (min-width: 600px) {
   .fau-elemental .rrze-jobs-single .keyfacts table.rrze-jobs-single-keyfacts ul li {

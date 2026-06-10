@@ -111,7 +111,7 @@ class BITE extends Provider {
             "place_of_employment_house_number", "beschort_hn", "place_of_employment_postcode", "place_of_employment_city",
             "contact_email", "contact_tel", "contact_name", "06c_schluss", "entgelt_ar",
             "job_limitation_duration", "beschaeftigungsende_datum", "abschlusstext", "06_schluss",
-            "estimatedsalary", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
+            "estimatedsalary", "gehaltsrange", "framework", "jobstartdate", "jobstartdate2", "job_workhours", "workHours", "befristung",
             "bite_pa_data", "befristung_wrapper", "job_limitation_duration_wrapper",
             "angebot_wrapper", "stellenzusatz_wrapper", "e-mail_signatur_persoenlich",
             "e-mail_signatur_neutral", "workhours_wrapper", "job_qualifications_nth_wrapper", "status");
@@ -537,6 +537,12 @@ class BITE extends Provider {
 
         if ((empty($res['estimatedSalary'])) && (isset($jobdata['custom']['festbetrag'])) && (!empty($jobdata['custom']['festbetrag']))) {
             $res['estimatedSalary'] = $this->get_Salary_by_TVL($jobdata['custom']['festbetrag']);
+        }
+
+        $res['baseSalary'] = '';
+        if ((!empty($jobdata['custom']['gehaltsrange']))) {
+            $range = sanitize_text_field($jobdata['custom']['gehaltsrange']);
+            $res['baseSalary'] = $this->get_baseSalary_from_range($range);
         }
 
         // workHours

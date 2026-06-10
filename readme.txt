@@ -1,8 +1,8 @@
 === RRZE Jobs ===
 Contributors: RRZE-Webteam
 Requires at least: 4.7
-Tested up to: 6.9.4
-Stable tag: 3.11.11
+Tested up to: 7.0.0
+Stable tag: 3.12.0
 Requires PHP: 8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html

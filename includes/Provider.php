@@ -544,6 +544,43 @@ class Provider {
 
     }
 
+    /*
+     * "baseSalary": {
+    "@type": "MonetaryAmount",
+    "currency": "EUR",
+    "value": {
+      "@type": "QuantitativeValue",
+      "minValue": 55000,
+      "maxValue": 70000,
+      "unitText": "YEAR"
+    } */
+    public function get_baseSalary_from_range($salary_range) {
+        $res = [];
+        //$salary_range = str_replace(['€', 'EUR', ' '], '', $salary_range);
+        $values = explode(' – ', $salary_range);
+        if (count($values) != 2) {
+            return false;
+        }
+        foreach ($values as &$value) {
+            $value = (float) strtr(
+                preg_replace('/[^\d.,-]/u', '', $value),
+                [
+                    '.' => '',
+                    ',' => '.',
+                ]
+            );
+        }
+        unset($value);
+
+        $res['stringvalue'] = sanitize_text_field($salary_range);
+        $res['currency'] = 'EUR';
+        $res['value']['unitText'] = 'YEAR';
+        $res['value']['minValue'] = $values[0];
+        $res['value']['maxValue'] = $values[1];
+
+        return $res;
+    }
+
     // Nimmt einen String entgegen, der eine Entgeltgruppe darstellen soll
     // und formatiert den in eine einheitliche Form
     public function sanitize_tvl($entgelt) {
