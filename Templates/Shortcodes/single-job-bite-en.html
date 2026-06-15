@@ -13,19 +13,19 @@
 		<section class="job-content">
 
 			{{employerWorkplace}}
-				<h2>{{=const.title_workplace_en}}</h2>
+				{{const.title_workplace_en}}<h2>{{=const.title_workplace_en}}</h2>{{/const.title_workplace_en}}
 				{{=employerWorkplace}}
 			{{/employerWorkplace}}
 
 			{{jobBenefits}}
-				<h2>{{=const.title_jobBenefits_en}}</h2>
+				{{const.title_jobBenefits_en}}<h2>{{=const.title_jobBenefits_en}}</h2>{{/const.title_jobBenefits_en}}
 				<div itemprop="jobBenefits">
 					{{=jobBenefits}}
 				</div>
 			{{/jobBenefits}}
 
 			{{description}}
-				<h2>{{=const.title_description_en}}</h2>
+				{{const.title_description_en}}<h2>{{=const.title_description_en}}</h2>{{/const.title_description_en}}
 				<div itemprop="description">
 					{{=description}}
 				</div>
@@ -33,14 +33,14 @@
 
 
 			{{qualifications}}
-				<h2>{{=const.title_qualifications_en}}</h2>
+				{{const.title_qualifications_en}}<h2>{{=const.title_qualifications_en}}</h2>{{/const.title_qualifications_en}}
 				<div itemprop="qualifications">
 					{{=qualifications}}
 				</div>
 			{{/qualifications}}
 
 			{{disambiguatingDescription}}
-				<h2>{{=const.title_disambiguatingDescription_en}}</h2>
+				{{const.title_disambiguatingDescription_en}}<h2>{{=const.title_disambiguatingDescription_en}}</h2>{{/const.title_disambiguatingDescription_en}}
 				<div itemprop="disambiguatingDescription">
 					{{=disambiguatingDescription}}
 				</div>
@@ -175,18 +175,18 @@
 		</section>
 		<section class="general-info">
 			{{const.text_fau_employer_en}}
-			<h2>{{=const.title_fau_employer_en}}</h2>
+			{{const.title_fau_employer_en}}<h2>{{=const.title_fau_employer_en}}</h2>{{/const.title_fau_employer_en}}
 			{{=const.text_fau_employer_en}}
 			{{/const.text_fau_employer_en}}
 
 			{{application_process}}
-			<h2 class="title-application-process">{{=const.title_applicationProcess_en}}</h2>
+			{{const.title_applicationProcess_en}}<h2 class="title-application-process">{{=const.title_applicationProcess_en}}</h2>{{/const.title_applicationProcess_en}}
 			{{=application_process}}
 			{{/application_process}}
 
 			{{const.text_jobnotice_en}}
 			[alert]
-			<h2>{{=const.title_jobnotice_en}}</h2>
+			{{const.title_jobnotice_en}}<h2>{{=const.title_jobnotice_en}}</h2>{{/const.title_jobnotice_en}}
 			{{=const.text_jobnotice_en}}
 			[/alert]
 			{{/const.text_jobnotice_en}}
