@@ -15,7 +15,7 @@
 		    <div itemprop="employerOverview">
 			    {{=employerOverview}}
 		    </div>
-		    <h3>{{=const.title_description_en}}</h3>
+			{{const.title_description_en}}<h3>{{=const.title_description_en}}</h3>{{/const.title_description_en}}
 		    {{/employerOverview}}
 			<div itemprop="description">
 				{{=description}}
@@ -26,13 +26,13 @@
 				{{=qualifications}}
 			</div>
 			{{jobBenefits}}
-			<h3>{{=const.title_jobBenefits_en}}</h3>
+			{{const.title_jobBenefits_en}}<h3>{{=const.title_jobBenefits_en}}</h3>{{/const.title_jobBenefits_en}}
 			<div itemprop="jobBenefits">
 				{{=jobBenefits}}
 			</div>
 			{{/jobBenefits}}
 			{{disambiguatingDescription}}
-			<h3>{{=const.title_disambiguatingDescription_en}}</h3>
+			{{const.title_disambiguatingDescription_en}}<h3>{{=const.title_disambiguatingDescription_en}}</h3>{{/const.title_disambiguatingDescription_en}}
 			<div itemprop="disambiguatingDescription">
 				{{=disambiguatingDescription}}
 			</div>
@@ -155,7 +155,7 @@
 		<aside class="general-info" aria-label="General Information">
 			{{const.text_jobnotice}}
 			[alert]
-			<h3>{{=const.title_jobnotice_en}}</h3>
+			{{const.title_jobnotice_en}}<h3>{{=const.title_jobnotice_en}}</h3>{{/const.title_jobnotice_en}}
 			{{=const.text_jobnotice}}
 			[/alert]
 			{{/const.text_jobnotice}}

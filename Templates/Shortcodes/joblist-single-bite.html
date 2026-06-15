@@ -11,19 +11,19 @@
 		{{text_keywords}}<meta name="keywords" content="{{=text_keywords}}" >{{/text_keywords}}
 
 		{{employerWorkplace}}
-		<h2>{{=const.title_workplace}}</h2>
+		{{const.title_workplace}}<h2>{{=const.title_workplace}}</h2>{{/const.title_workplace}}
 		{{=employerWorkplace}}
 		{{/employerWorkplace}}
 
 		{{jobBenefits}}
-		<h2>{{=const.title_jobBenefits}}</h2>
+		{{const.title_jobBenefits}}<h2>{{=const.title_jobBenefits}}</h2>{{/const.title_jobBenefits}}
 		<div itemprop="jobBenefits">
 			{{=jobBenefits}}
 		</div>
 		{{/jobBenefits}}
 
 		{{description}}
-		<h2>{{=const.title_description}}</h2>
+		{{const.title_description}}<h2>{{=const.title_description}}</h2>{{/const.title_description}}
 		<div itemprop="description">
 			{{=description}}
 		</div>
@@ -31,14 +31,14 @@
 
 
 		{{qualifications}}
-		<h2>{{=const.title_qualifications}}</h2>
+		{{const.title_qualifications}}<h2>{{=const.title_qualifications}}</h2>{{/const.title_qualifications}}
 		<div itemprop="qualifications">
 			{{=qualifications}}
 		</div>
 		{{/qualifications}}
 
 		{{disambiguatingDescription}}
-		<h2>{{=const.title_disambiguatingDescription}}</h2>
+		{{const.title_disambiguatingDescription}}<h2>{{=const.title_disambiguatingDescription}}</h2>{{/const.title_disambiguatingDescription}}
 		<div itemprop="disambiguatingDescription">
 			{{=disambiguatingDescription}}
 		</div>
@@ -46,7 +46,7 @@
 
 		{{text_jobnotice}}
 		[alert]
-		<h2>{{=const.title_jobnotice}}</h2>
+		{{const.title_jobnotice}}<h2>{{=const.title_jobnotice}}</h2>{{/const.title_jobnotice}}
 		{{=text_jobnotice}}
 		[/alert]
 		{{/text_jobnotice}}

@@ -13,19 +13,19 @@
 		<section class="job-content">
 
 			{{employerWorkplace}}
-				<h2>{{=const.title_workplace}}</h2>
+				{{const.title_workplace}}<h2>{{=const.title_workplace}}</h2>{{/const.title_workplace}}
 				{{=employerWorkplace}}
 			{{/employerWorkplace}}
 
 			{{jobBenefits}}
-				<h2>{{=const.title_jobBenefits}}</h2>
+				{{const.title_jobBenefits}}<h2>{{=const.title_jobBenefits}}</h2>{{/const.title_jobBenefits}}
 				<div itemprop="jobBenefits">
 					{{=jobBenefits}}
 				</div>
 			{{/jobBenefits}}
 
 			{{description}}
-				<h2>{{=const.title_description}}</h2>
+				{{const.title_description}}<h2>{{=const.title_description}}</h2>{{/const.title_description}}
 				<div itemprop="description">
 					{{=description}}
 				</div>
@@ -33,20 +33,20 @@
 
 
 			{{qualifications}}
-				<h2>{{=const.title_qualifications}}</h2>
+				{{const.title_qualifications}}<h2>{{=const.title_qualifications}}</h2>{{/const.title_qualifications}}
 				<div itemprop="qualifications">
 					{{=qualifications}}
 				</div>
 			{{/qualifications}}
 
 			{{disambiguatingDescription}}
-				<h2>{{=const.title_disambiguatingDescription}}</h2>
+				{{const.title_disambiguatingDescription}}<h2>{{=const.title_disambiguatingDescription}}</h2>{{/const.title_disambiguatingDescription}}
 				<div itemprop="disambiguatingDescription">
 					{{=disambiguatingDescription}}
 				</div>
 			{{/disambiguatingDescription}}
 
-			<h2>{{=const.title_contact}}</h2>
+			{{const.title_contact}}<h2>{{=const.title_contact}}</h2>{{/const.title_contact}}
 			{{applicationContact.description}}{{=applicationContact.description}}{{:applicationContact.description}}
 			{{=employmentUnit.name}}
 			<ul class="rrze-jobs-contact">
@@ -187,19 +187,19 @@
 		</section>
 		<section class="general-info">
 			{{const.text_fau_employer}}
-			<h2>{{=const.title_fau_employer}}</h2>
+			{{const.title_fau_employer}}<h2>{{=const.title_fau_employer}}</h2>{{/const.title_fau_employer}}
 			{{=const.text_fau_employer}}
 			{{/const.text_fau_employer}}
 
 			{{application_process}}
-			<h2 class="title-application-process">{{=const.title_applicationProcess}}</h2>
+			{{const.title_applicationProcess}}<h2 class="title-application-process">{{=const.title_applicationProcess}}</h2>{{/const.title_applicationProcess}}
 			{{=application_process}}
 			{{/application_process}}
 
 
 			{{text_jobnotice}}
 			[alert]
-			<h2>{{=const.title_jobnotice}}</h2>
+			{{const.title_jobnotice}}<h2>{{=const.title_jobnotice}}</h2>{{/const.title_jobnotice}}
 			{{=text_jobnotice}}
 			[/alert]
 			{{/text_jobnotice}}
