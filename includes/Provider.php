@@ -573,7 +573,7 @@ class Provider {
         unset($value);
 
         /* translators: %s: salary range */
-        $res['stringvalue'] = sprintf(__('(Full time: %s gross per year)', 'rrze-jobs'), sanitize_text_field($salary_range));
+        $res['stringvalue'] = sprintf(__('Full time: %s gross per year', 'rrze-jobs'), sanitize_text_field($salary_range));
         $res['currency'] = 'EUR';
         $res['value']['unitText'] = 'YEAR';
         $res['value']['minValue'] = $values[0];
