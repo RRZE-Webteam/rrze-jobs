@@ -26,8 +26,8 @@ msgstr ""
 
 #. translators: %s: salary range
 #: includes/Provider.php:576
-msgid "(Full time: %s gross per year)"
-msgstr "(Vollzeit: %s brutto/Jahr)"
+msgid "Full time: %s gross per year"
+msgstr "Vollzeit: %s brutto/Jahr"
 
 #: config/config.php:157
 msgid "Accesses"
