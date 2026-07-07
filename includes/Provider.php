@@ -766,6 +766,7 @@ class Provider {
                 break;
             case 'verw':
             case 'tech':
+            case 'it':
             case 'pflege':
             case 'arb':
             case 'n-wiss':
@@ -780,6 +781,9 @@ class Provider {
                 break;
             case 'prof':
                 $res = __('Professorships', 'rrze-jobs');
+                break;
+            case 'medges':
+                $res = __('Healthcare & Medicine', 'rrze-jobs');
                 break;
             case 'aush':
             case 'other':

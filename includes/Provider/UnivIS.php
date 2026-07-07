@@ -440,7 +440,7 @@ class UnivIS extends Provider {
 			if (!empty($res['workHours'])) {
 				$res['workHours'] .= ', ';
 			}
-			$res['workHours'] = $jobdata['type4'];
+			$res['workHours'] .= $jobdata['type4'];
 		}
 
 		if ((isset($jobdata['nd'])) && ($jobdata['nd'] === true)) {
