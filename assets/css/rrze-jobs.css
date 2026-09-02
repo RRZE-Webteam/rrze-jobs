@@ -220,6 +220,9 @@
     list-style: none;
   }
 }
+.fau-elemental .rrze-jobs-single .keyfacts .rrze-elements.alert.alert-warning:last-child {
+  margin-bottom: 0;
+}
 .fau-elemental .rrze-jobs-single .job-content ul {
   font-size: var(--P-Body-Text, 1.125rem);
   line-height: var(--base-line-height, 1.5);
