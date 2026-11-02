@@ -365,11 +365,12 @@ class Shortcode {
                         }
 
                         if (!empty($search_fauorg)) {
-                            if (empty($data['hiringOrganization']['fauorg'])) {
+                            if (empty($data['hiringOrganization']['fauorg']) && empty($data['employmentUnit']['fauorg'])) {
                                 continue;
                             }
-                            $fauorg = $data['hiringOrganization']['fauorg'];
-                            if ($search_fauorg !== $fauorg) {
+                            $fauorgHiring = $data['hiringOrganization']['fauorg'];
+                            $fauorgEmployment = (string)$data['employmentUnit']['fauorg'];
+                            if ($search_fauorg !== $fauorgHiring && $search_fauorg !== $fauorgEmployment) {
                                 continue;
                             }
                         }
